@@ -17,7 +17,7 @@ const EntryRoute = React.memo(() => {
       <div
         className={clsx(
           styles.entryLeft,
-          'entry-left w-[420px] mobile:w-full px-10 bg-gray-600 min-h-full flex items-center justify-center bg-repeat-y z-10'
+          'entry-left w-[340px] mobile:w-full px-8 bg-gray-600 min-h-full flex items-center justify-center bg-repeat-y z-10'
         )}
         style={{ backgroundImage: `url(${loginPatternUrl})` }}
       >
