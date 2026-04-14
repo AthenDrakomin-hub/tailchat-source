@@ -1,9 +1,7 @@
 services:
   # Tailchat Core Services
   service-core:
-    build:
-      context: .
-    image: tailchat
+    image: caifu-chat:latest
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -22,9 +20,7 @@ services:
 
   # Open Platform
   service-openapi:
-    build:
-      context: .
-    image: tailchat
+    image: caifu-chat:latest
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -44,9 +40,7 @@ services:
 
   # Plugin Service (All Plugins)
   service-all-plugins:
-    build:
-      context: .
-    image: tailchat
+    image: caifu-chat:latest
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
