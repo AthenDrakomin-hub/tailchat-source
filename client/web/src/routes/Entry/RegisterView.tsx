@@ -26,7 +26,9 @@ import { TipIcon } from '@/components/TipIcon';
  * 注册视图
  */
 export const RegisterView: React.FC = React.memo(() => {
+  const [loginMethod, setLoginMethod] = useState<'phone' | 'email'>('phone');
   const [email, setEmail] = useState('');
+  const [orgCode, setOrgCode] = useState('');
   const [nickname, setNickname] = useState('');
   const [password, setPassword] = useState('');
   const [emailOTP, setEmailOTP] = useState('');
@@ -52,6 +54,7 @@ export const RegisterView: React.FC = React.memo(() => {
       password,
       nickname,
       emailOTP,
+      orgCode,
     });
 
     setGlobalUserLoginInfo(data);
@@ -62,7 +65,7 @@ export const RegisterView: React.FC = React.memo(() => {
     } else {
       navigate('/main');
     }
-  }, [email, nickname, password, emailOTP, navRedirect]);
+  }, [email, nickname, password, emailOTP, orgCode, navRedirect]);
 
   const [{ loading: sendEmailLoading }, handleSendEmail] =
     useAsyncRequest(async () => {
@@ -83,15 +86,43 @@ export const RegisterView: React.FC = React.memo(() => {
     <div className="w-full text-white">
       <div className="mb-8 text-3xl font-bold tracking-wider">{t('注册账号')}</div>
 
+      <div className="flex bg-black bg-opacity-20 rounded-md p-1 mb-6">
+        <button
+          type="button"
+          className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${loginMethod === 'phone' ? 'bg-[#0b192c] text-[#d4af37]' : 'text-gray-300 hover:text-white'}`}
+          onClick={() => { setLoginMethod('phone'); setEmail(''); }}
+        >
+          {t('手机号')}
+        </button>
+        <button
+          type="button"
+          className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${loginMethod === 'email' ? 'bg-[#0b192c] text-[#d4af37]' : 'text-gray-300 hover:text-white'}`}
+          onClick={() => { setLoginMethod('email'); setEmail(''); }}
+        >
+          {t('邮箱')}
+        </button>
+      </div>
+
       <div>
         <div className="mb-4">
-          <div className="mb-2">{t('邮箱或手机号')}</div>
+          <div className="mb-2">{loginMethod === 'phone' ? t('手机号') : t('邮箱')}</div>
           <EntryInput
             name="reg-email"
-            placeholder="账号"
+            placeholder={loginMethod === 'phone' ? t('请输入手机号') : t('请输入邮箱')}
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+
+        <div className="mb-4 relative">
+          <div className="mb-2">{t('组织代码')}</div>
+          <EntryInput
+            name="reg-orgcode"
+            placeholder={t('请输入组织代码')}
+            type="text"
+            value={orgCode}
+            onChange={(e) => setOrgCode(e.target.value)}
           />
         </div>
 

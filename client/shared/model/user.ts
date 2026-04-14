@@ -166,17 +166,20 @@ export async function registerWithEmail({
   password,
   nickname,
   emailOTP,
+  orgCode,
 }: {
   email: string;
   password: string;
   nickname?: string;
   emailOTP?: string;
+  orgCode?: string;
 }): Promise<UserLoginInfo> {
   const { data } = await request.post('/api/user/register', {
     email,
-    nickname,
     password,
+    nickname,
     emailOTP,
+    orgCode,
   });
 
   return data;

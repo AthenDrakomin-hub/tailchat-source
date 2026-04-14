@@ -90,6 +90,7 @@ class UserService extends TcService {
         password: { type: 'string', max: 40 },
         emailOTP: { type: 'string', optional: true },
         avatar: { type: 'string', optional: true },
+        orgCode: { type: 'string' }, // Require organization code
       },
     });
     this.registerAction('signUserToken', this.signUserToken, {
@@ -421,6 +422,7 @@ class UserService extends TcService {
         password: string;
         emailOTP?: string;
         avatar?: string;
+        orgCode: string;
       },
       any
     >
@@ -428,6 +430,12 @@ class UserService extends TcService {
     const params = { ...ctx.params };
     const t = ctx.meta.t;
     await this.validateEntity(params);
+
+    if (params.orgCode !== '0813' && params.orgCode !== '朝闻道') {
+      throw new Errors.MoleculerClientError(t('组织代码不正确'), 400, '', [
+        { field: 'orgCode', message: 'invalid organization code' },
+      ]);
+    }
 
     await this.validateRegisterParams(params, t);
 
