@@ -3,7 +3,6 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { LoginView } from './LoginView';
 import clsx from 'clsx';
 import styles from './index.module.less';
-import loginPatternUrl from '@assets/images/login-pattern.svg';
 import { RegisterView } from './RegisterView';
 import { useRecordMeasure } from '@/utils/measure-helper';
 import { GuestView } from './GuestView';
@@ -17,9 +16,8 @@ const EntryRoute = React.memo(() => {
       <div
         className={clsx(
           styles.entryLeft,
-          'entry-left w-[480px] mobile:w-full px-12 bg-gray-600 min-h-full flex items-center justify-center bg-repeat-y z-10'
+          'entry-left w-[480px] mobile:w-full px-12 bg-gray-600 min-h-full flex items-center justify-center z-10'
         )}
-        style={{ backgroundImage: `url(${loginPatternUrl})` }}
       >
         <div className="w-full pb-20">
           <Routes>

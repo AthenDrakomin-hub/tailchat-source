@@ -14,6 +14,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.admin.rule=PathPrefix(`/admin`)"
+      - "traefik.http.routers.admin.priority=100"
       - "traefik.http.services.admin.loadbalancer.server.port=3000"
     networks:
       - internal

@@ -1,4 +1,4 @@
-import React, { useState, ErrorBoundary } from 'react';
+import React, { useState } from 'react';
 import { Icon } from '@capital/component';
 
 class PluginErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
