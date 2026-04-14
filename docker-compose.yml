@@ -14,6 +14,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-gw.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.api-gw.entrypoints=web"
+      - "traefik.http.routers.api-gw.priority=1"
       - "traefik.http.services.api-gw.loadbalancer.server.port=3000"
     networks:
       - internal
