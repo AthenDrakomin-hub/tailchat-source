@@ -19,16 +19,13 @@ RUN chmod +x /usr/local/bin/mc
 # Install plugins and sdk dependency
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./packages ./packages
+COPY ./client ./client
 COPY ./server/packages ./server/packages
 COPY ./server/plugins ./server/plugins
 COPY ./server/package.json ./server/package.json
 COPY ./server/tsconfig.json ./server/tsconfig.json
 COPY ./package.json ./pnpm-lock.yaml ./pnpm-workspace.yaml ./.npmrc ./
 COPY ./patches ./patches
-RUN pnpm install --no-frozen-lockfile
-
-# Copy client
-COPY ./client ./client
 RUN pnpm install --no-frozen-lockfile
 
 # Copy all source
