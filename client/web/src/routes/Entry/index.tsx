@@ -16,20 +16,20 @@ const EntryRoute = React.memo(() => {
       <div
         className={clsx(
           styles.entryLeft,
-          'entry-left w-[420px] mobile:w-full px-10 bg-gray-600 min-h-full flex items-center justify-center z-10'
+          'entry-left w-[520px] mobile:w-full px-10 bg-gradient-to-b from-gray-800 to-gray-900 min-h-full flex items-center justify-center z-10'
         )}
       >
         <div className="w-full pb-20">
           <Routes>
-          <Route path="/login" element={<LoginView />} />
-          <Route path="/register" element={<RegisterView />} />
-          <Route path="/guest" element={<GuestView />} />
-          <Route path="/forget" element={<ForgetPasswordView />} />
-          <Route
-            path="/"
-            element={<Navigate to="/entry/login" replace={true} />}
-          />
-        </Routes>
+            <Route path="/login" element={<LoginView />} />
+            <Route path="/register" element={<RegisterView />} />
+            <Route path="/guest" element={<GuestView />} />
+            <Route path="/forget" element={<ForgetPasswordView />} />
+            <Route
+              path="/"
+              element={<Navigate to="/entry/login" replace={true} />}
+            />
+          </Routes>
         </div>
       </div>
 

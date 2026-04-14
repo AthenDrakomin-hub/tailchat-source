@@ -21,6 +21,7 @@ import { EntryInput } from './components/Input';
 import { SecondaryBtn } from './components/SecondaryBtn';
 import { PrimaryBtn } from './components/PrimaryBtn';
 import { TipIcon } from '@/components/TipIcon';
+import logoUrl from '../../../assets/images/logo.png';
 
 /**
  * 注册视图
@@ -84,20 +85,40 @@ export const RegisterView: React.FC = React.memo(() => {
 
   return (
     <div className="w-full text-white">
-      <div className="mb-8 text-3xl font-bold tracking-wider">{t('注册账号')}</div>
+      <div className="mb-8 flex justify-center">
+        <img
+          src={logoUrl}
+          alt="Logo"
+          className="max-h-24 max-w-[80%] object-contain"
+        />
+      </div>
 
       <div className="flex bg-black bg-opacity-20 rounded-md p-1 mb-6">
         <button
           type="button"
-          className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${loginMethod === 'phone' ? 'bg-[#0b192c] text-[#d4af37]' : 'text-gray-300 hover:text-white'}`}
-          onClick={() => { setLoginMethod('phone'); setEmail(''); }}
+          className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${
+            loginMethod === 'phone'
+              ? 'bg-[#0b192c] text-[#d4af37]'
+              : 'text-gray-300 hover:text-white'
+          }`}
+          onClick={() => {
+            setLoginMethod('phone');
+            setEmail('');
+          }}
         >
           {t('手机号')}
         </button>
         <button
           type="button"
-          className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${loginMethod === 'email' ? 'bg-[#0b192c] text-[#d4af37]' : 'text-gray-300 hover:text-white'}`}
-          onClick={() => { setLoginMethod('email'); setEmail(''); }}
+          className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${
+            loginMethod === 'email'
+              ? 'bg-[#0b192c] text-[#d4af37]'
+              : 'text-gray-300 hover:text-white'
+          }`}
+          onClick={() => {
+            setLoginMethod('email');
+            setEmail('');
+          }}
         >
           {t('邮箱')}
         </button>
@@ -105,10 +126,14 @@ export const RegisterView: React.FC = React.memo(() => {
 
       <div>
         <div className="mb-4">
-          <div className="mb-2">{loginMethod === 'phone' ? t('手机号') : t('邮箱')}</div>
+          <div className="mb-2">
+            {loginMethod === 'phone' ? t('手机号') : t('邮箱')}
+          </div>
           <EntryInput
             name="reg-email"
-            placeholder={loginMethod === 'phone' ? t('请输入手机号') : t('请输入邮箱')}
+            placeholder={
+              loginMethod === 'phone' ? t('请输入手机号') : t('请输入邮箱')
+            }
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

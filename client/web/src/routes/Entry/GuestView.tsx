@@ -16,6 +16,7 @@ import { useNavToView } from './utils';
 import { EntryInput } from './components/Input';
 import { PrimaryBtn } from './components/PrimaryBtn';
 import { SecondaryBtn } from './components/SecondaryBtn';
+import logoUrl from '../../../assets/images/logo.png';
 
 export const GuestView: React.FC = React.memo(() => {
   const navigate = useNavigate();
@@ -40,7 +41,13 @@ export const GuestView: React.FC = React.memo(() => {
 
   return (
     <div className="w-full text-white">
-      <div className="mb-8 text-3xl font-bold tracking-wider">{t('游客访问')}</div>
+      <div className="mb-8 flex justify-center">
+        <img
+          src={logoUrl}
+          alt="Logo"
+          className="max-h-24 max-w-[80%] object-contain"
+        />
+      </div>
 
       <div>
         <div className="mb-4">
