@@ -107,17 +107,6 @@ export const builtinPlugins: PluginManifest[] = _compact([
     requireRestart: true,
   },
   {
-    label: 'Agora',
-    name: 'com.msgbyte.agora',
-    url: '{BACKEND}/plugins/com.msgbyte.agora/index.js',
-    icon: '{BACKEND}/plugins/com.msgbyte.agora/assets/icon.png',
-    version: '0.0.0',
-    author: 'moonrailgun',
-    description: 'Add the Agora audio and video communication feature to Tailchat',
-    'description.zh-CN': '为Tailchat增加声网音视频通讯功能',
-    requireRestart: true,
-  },
-  {
     label: 'Audio and video service (WIP)',
     'label.zh-CN': '音视频服务(WIP)',
     name: 'com.msgbyte.meeting',
