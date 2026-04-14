@@ -17,11 +17,12 @@ const EntryRoute = React.memo(() => {
       <div
         className={clsx(
           styles.entryLeft,
-          'entry-left w-142 mobile:w-full pt-40 px-4 bg-gray-600 min-h-full flex justify-center bg-repeat-y z-10'
+          'entry-left w-[420px] mobile:w-full px-10 bg-gray-600 min-h-full flex items-center justify-center bg-repeat-y z-10'
         )}
         style={{ backgroundImage: `url(${loginPatternUrl})` }}
       >
-        <Routes>
+        <div className="w-full pb-20">
+          <Routes>
           <Route path="/login" element={<LoginView />} />
           <Route path="/register" element={<RegisterView />} />
           <Route path="/guest" element={<GuestView />} />
@@ -31,6 +32,7 @@ const EntryRoute = React.memo(() => {
             element={<Navigate to="/entry/login" replace={true} />}
           />
         </Routes>
+        </div>
       </div>
 
       <div className="flex-1 mobile:hidden tc-background" />

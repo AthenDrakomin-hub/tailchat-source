@@ -39,8 +39,8 @@ export const GuestView: React.FC = React.memo(() => {
   }, [nickname, navigate, navRedirect]);
 
   return (
-    <div className="w-96 text-white">
-      <div className="mb-4 text-2xl">{t('创建访客')}</div>
+    <div className="w-full text-white">
+      <div className="mb-8 text-3xl font-bold tracking-wider">{t('游客访问')}</div>
 
       <div>
         <div className="mb-4">

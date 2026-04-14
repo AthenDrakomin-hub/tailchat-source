@@ -72,8 +72,8 @@ export const LoginView: React.FC = React.memo(() => {
   const navToView = useNavToView();
 
   return (
-    <div className="w-96 text-white relative">
-      <div className="mb-4 text-2xl">
+    <div className="w-full text-white relative">
+      <div className="mb-8 text-3xl font-bold tracking-wider">
         {t('登录 {{serverName}}', {
           serverName: serverName || 'Tailchat',
         })}

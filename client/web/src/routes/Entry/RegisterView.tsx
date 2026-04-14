@@ -80,8 +80,8 @@ export const RegisterView: React.FC = React.memo(() => {
   const navToView = useNavToView();
 
   return (
-    <div className="w-96 text-white">
-      <div className="mb-4 text-2xl">{t('注册账号')}</div>
+    <div className="w-full text-white">
+      <div className="mb-8 text-3xl font-bold tracking-wider">{t('注册账号')}</div>
 
       <div>
         <div className="mb-4">
