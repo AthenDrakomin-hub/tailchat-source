@@ -76,9 +76,7 @@ services:
     restart: on-failure
     networks:
       - internal
-    environment:
-      MINIO_ROOT_USER: tailchat
-      MINIO_ROOT_PASSWORD: com.msgbyte.tailchat
+    env_file: docker-compose.env
     volumes:
       - storage:/data
     command: minio server /data --console-address ":9001"
