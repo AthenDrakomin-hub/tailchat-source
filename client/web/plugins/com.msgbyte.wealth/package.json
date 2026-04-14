@@ -1,0 +1,6 @@
+{
+  "name": "@plugins/com.msgbyte.wealth",
+  "main": "src/index.tsx",
+  "version": "1.0.0",
+  "private": true
+}

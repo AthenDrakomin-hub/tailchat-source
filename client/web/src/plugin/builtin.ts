@@ -96,6 +96,16 @@ export const builtinPlugins: PluginManifest[] = _compact([
     requireRestart: true,
   },
   {
+    label: 'AI 财富助手',
+    name: 'com.msgbyte.wealth',
+    url: '/plugins/com.msgbyte.wealth/index.js',
+    icon: '/plugins/com.msgbyte.wealth/assets/icon.png',
+    version: '1.0.0',
+    author: 'WealthLounge',
+    description: '提供轻量级免费的智能选股与诊股功能',
+    requireRestart: true,
+  },
+  {
     label: 'Livekit',
     name: 'com.msgbyte.livekit',
     url: '{BACKEND}/plugins/com.msgbyte.livekit/index.js',
