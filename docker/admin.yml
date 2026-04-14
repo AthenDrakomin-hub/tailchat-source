@@ -5,7 +5,7 @@ services:
   tailchat-admin:
     build:
       context: ../
-    image: tailchat
+    image: caifu-chat:latest
     restart: unless-stopped
     env_file: docker-compose.env
     depends_on:

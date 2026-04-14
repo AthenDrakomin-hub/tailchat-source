@@ -1,7 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, ErrorBoundary } from 'react';
 import { Icon } from '@capital/component';
 
-const WealthPanel: React.FC = () => {
+class PluginErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
+  constructor(props: {children: React.ReactNode}) {
+    super(props);
+    this.state = { hasError: false, errorMsg: '' };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true, errorMsg: String(error) };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 text-red-500 flex flex-col items-center justify-center h-full">
+          <Icon icon="mdi:alert-circle" className="text-4xl mb-2" />
+          <p>抱歉，财富助手插件加载遇到问题。</p>
+          <p className="text-xs mt-2 opacity-50">{this.state.errorMsg}</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+const WealthPanelInner: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'pick' | 'diag'>('pick');
   const [stockCode, setStockCode] = useState('');
   const [diagUrl, setDiagUrl] = useState('');
@@ -127,5 +151,11 @@ const WealthPanel: React.FC = () => {
     </div>
   );
 };
+
+const WealthPanel: React.FC = () => (
+  <PluginErrorBoundary>
+    <WealthPanelInner />
+  </PluginErrorBoundary>
+);
 
 export default WealthPanel;
