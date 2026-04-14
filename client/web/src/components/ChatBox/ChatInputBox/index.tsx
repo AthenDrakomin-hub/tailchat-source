@@ -17,12 +17,15 @@ import {
   useSharedEventHandler,
 } from 'tailchat-shared';
 import { ChatInputEmotion } from './Emotion';
+import { MuteAllButton } from './MuteAllButton';
 import _uniq from 'lodash/uniq';
 import { ChatDropArea } from './ChatDropArea';
 import { Icon } from 'tailchat-design';
 import { usePasteHandler } from './usePasteHandler';
 
 interface ChatInputBoxProps {
+  groupId?: string;
+  panelId?: string;
   onSendMsg: (msg: string, meta?: SendMessagePayloadMeta) => Promise<void>;
 }
 /**
@@ -147,6 +150,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
               )}
 
               <ChatInputEmotion />
+              <MuteAllButton groupId={props.groupId} panelId={props.panelId} />
 
               {message ? (
                 <Icon

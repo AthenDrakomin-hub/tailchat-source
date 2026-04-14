@@ -44,16 +44,6 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
         },
         {
           type: 'item',
-          title: t('服务状态'),
-          content: <SettingsStatus />,
-        },
-        {
-          type: 'item',
-          title: t('性能统计'),
-          content: <SettingsPerformance />,
-        },
-        {
-          type: 'item',
           title: t('关于'),
           content: <SettingsAbout />,
         },

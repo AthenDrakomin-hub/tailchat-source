@@ -127,31 +127,11 @@ export const LoginView: React.FC = React.memo(() => {
           </SecondaryBtn>
         )}
 
-        {!disableGuestLogin && (
-          <SecondaryBtn
-            disabled={loading}
-            onClick={() => navToView('/entry/guest')}
-          >
-            {t('游客访问')}
-            <Icon icon="mdi:arrow-right" className="ml-1 inline" />
-          </SecondaryBtn>
-        )}
-
         {pluginLoginAction.map((item) => {
           const { name, component: Component } = item;
 
           return <Component key={name} />;
         })}
-      </div>
-
-      <div className="absolute bottom-4 left-0 space-x-2">
-        <IconBtn
-          icon="mdi:cog"
-          shape="square"
-          onClick={() => openModal(<ServiceUrlSettings />)}
-        />
-
-        <LanguageSelect size="middle" />
       </div>
     </div>
   );
