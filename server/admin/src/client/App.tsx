@@ -41,7 +41,7 @@ function App() {
   return (
     <Tushan
       basename="/admin"
-      header={'Tailchat Admin'}
+      header={'财富会客厅 Admin'}
       footer={'Build with MsgByte'}
       dashboard={<Dashboard />}
       dataProvider={dataProvider}
