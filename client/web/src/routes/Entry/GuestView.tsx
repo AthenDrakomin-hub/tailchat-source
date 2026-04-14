@@ -40,7 +40,7 @@ export const GuestView: React.FC = React.memo(() => {
   }, [nickname, navigate, navRedirect]);
 
   return (
-    <div className="w-full text-white">
+    <div className="w-full">
       <div className="mb-8 flex justify-center">
         <img
           src={logoUrl}

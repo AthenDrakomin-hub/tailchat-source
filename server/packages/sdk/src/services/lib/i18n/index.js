@@ -1,0 +1,47 @@
+'use strict';
+var __importDefault =
+  (this && this.__importDefault) ||
+  function (mod) {
+    return mod && mod.__esModule ? mod : { default: mod };
+  };
+Object.defineProperty(exports, '__esModule', { value: true });
+exports.t = void 0;
+const i18next_1 = __importDefault(require('i18next'));
+const i18next_fs_backend_1 = __importDefault(require('i18next-fs-backend'));
+const path_1 = __importDefault(require('path'));
+const crc_1 = require('crc');
+i18next_1.default.use(i18next_fs_backend_1.default).init({
+  // initImmediate: false,
+  lng: 'en-US',
+  fallbackLng: 'en-US',
+  preload: ['zh-CN', 'en-US'],
+  ns: ['translation'],
+  defaultNS: 'translation',
+  backend: {
+    /**
+     * 加载启动目录下的
+     */
+    loadPath: path_1.default.resolve(
+      process.cwd(),
+      './locales/{{lng}}/{{ns}}.json'
+    ),
+  },
+});
+/**
+ * 国际化翻译
+ */
+const t = (key, defaultValue, options) => {
+  try {
+    const hashKey = `k${(0, crc_1.crc32)(key).toString(16)}`;
+    let words = i18next_1.default.t(hashKey, defaultValue, options);
+    if (words === hashKey) {
+      words = key;
+      console.info(`[i18n] 翻译缺失: [${hashKey}]${key}`);
+    }
+    return words;
+  } catch (err) {
+    console.error(err);
+    return key;
+  }
+};
+exports.t = t;

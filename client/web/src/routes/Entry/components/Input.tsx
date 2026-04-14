@@ -7,7 +7,7 @@ export const EntryInput: React.FC<InputHTMLAttributes<HTMLInputElement>> =
       <input
         {...props}
         className={clsx(
-          'appearance-none rounded-md relative block w-full px-4 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 text-base mobile:text-sm',
+          'appearance-none rounded-md relative block w-full px-4 py-2 bg-gray-100 border border-gray-300 placeholder-gray-500 text-gray-800 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 text-base mobile:text-sm',
           props.className
         )}
       >

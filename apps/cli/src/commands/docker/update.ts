@@ -35,7 +35,7 @@ export const dockerUpdateCommand: CommandModule = {
           spinner.info('The remote image has been found, start downloading');
 
           docker.modem.followProgress(
-            stream,
+            stream as any,
             (err, output) => {
               // onFinish
               // console.log('finish', err, output);

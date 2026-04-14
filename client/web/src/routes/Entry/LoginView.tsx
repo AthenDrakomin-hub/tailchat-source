@@ -72,7 +72,7 @@ export const LoginView: React.FC = React.memo(() => {
   const navToView = useNavToView();
 
   return (
-    <div className="w-full text-white relative">
+    <div className="w-full relative">
       <div className="mb-8 flex justify-center">
         <img
           src={logoUrl}
@@ -81,13 +81,13 @@ export const LoginView: React.FC = React.memo(() => {
         />
       </div>
 
-      <div className="flex bg-black bg-opacity-20 rounded-md p-1 mb-6">
+      <div className="flex bg-gray-100 rounded-md p-1 mb-6">
         <button
           type="button"
           className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${
             loginMethod === 'phone'
-              ? 'bg-[#0b192c] text-[#d4af37]'
-              : 'text-gray-300 hover:text-white'
+              ? 'bg-[#0b192c] text-white'
+              : 'text-gray-500 hover:text-gray-800'
           }`}
           onClick={() => {
             setLoginMethod('phone');
@@ -100,8 +100,8 @@ export const LoginView: React.FC = React.memo(() => {
           type="button"
           className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${
             loginMethod === 'email'
-              ? 'bg-[#0b192c] text-[#d4af37]'
-              : 'text-gray-300 hover:text-white'
+              ? 'bg-[#0b192c] text-white'
+              : 'text-gray-500 hover:text-gray-800'
           }`}
           onClick={() => {
             setLoginMethod('email');

@@ -1,0 +1,13 @@
+# Tasks
+- [x] Task 1: 修改左侧面板基础背景与文字颜色
+  - [x] SubTask 1.1: 在 `Entry/index.tsx` 中，将 `bg-gradient-to-b from-gray-800 to-gray-900` 替换为浅色背景（如 `bg-white` 或 `bg-gray-50`）。
+  - [x] SubTask 1.2: 在 `Entry/index.tsx` 中，将基础文字颜色从 `text-white` 修改为 `text-gray-800`。
+- [x] Task 2: 调整 `LoginView.tsx` 及其它视图的局部样式
+  - [x] SubTask 2.1: 在 `LoginView.tsx` 中，修改手机号/邮箱切换按钮组的背景和高亮文字颜色，使其适应浅色主题（例如选中时使用主色调背景加白字，未选中时使用浅灰背景加深灰字）。
+  - [x] SubTask 2.2: 确保所有视图（注册、游客、找回密码）的文本均在浅色背景下清晰可见。
+- [x] Task 3: 调整输入框与按钮组件
+  - [x] SubTask 3.1: 检查并修改 `components/Input.tsx`，将深色透明背景改为浅色带边框的输入框样式（如 `bg-gray-100 border-gray-300 text-gray-800`）。
+  - [x] SubTask 3.2: 检查并修改辅助按钮（如 `SecondaryBtn`），确保文字和悬停效果在浅色背景下正常。
+- [ ] Task 4: 构建并验证前端应用
+  - [ ] SubTask 4.1: 在 `client/web` 目录下执行打包命令。
+  - [ ] SubTask 4.2: 确保 Docker 镜像可正常构建并重启生效。

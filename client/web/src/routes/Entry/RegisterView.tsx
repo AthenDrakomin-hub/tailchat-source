@@ -84,7 +84,7 @@ export const RegisterView: React.FC = React.memo(() => {
   const navToView = useNavToView();
 
   return (
-    <div className="w-full text-white">
+    <div className="w-full">
       <div className="mb-8 flex justify-center">
         <img
           src={logoUrl}
@@ -93,13 +93,13 @@ export const RegisterView: React.FC = React.memo(() => {
         />
       </div>
 
-      <div className="flex bg-black bg-opacity-20 rounded-md p-1 mb-6">
+      <div className="flex bg-gray-100 rounded-md p-1 mb-6">
         <button
           type="button"
           className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${
             loginMethod === 'phone'
-              ? 'bg-[#0b192c] text-[#d4af37]'
-              : 'text-gray-300 hover:text-white'
+              ? 'bg-[#0b192c] text-white'
+              : 'text-gray-500 hover:text-gray-800'
           }`}
           onClick={() => {
             setLoginMethod('phone');
@@ -112,8 +112,8 @@ export const RegisterView: React.FC = React.memo(() => {
           type="button"
           className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${
             loginMethod === 'email'
-              ? 'bg-[#0b192c] text-[#d4af37]'
-              : 'text-gray-300 hover:text-white'
+              ? 'bg-[#0b192c] text-white'
+              : 'text-gray-500 hover:text-gray-800'
           }`}
           onClick={() => {
             setLoginMethod('email');
@@ -165,7 +165,7 @@ export const RegisterView: React.FC = React.memo(() => {
           />
 
           <Icon
-            className="absolute bottom-1 right-1 w-8 h-8 p-2 rounded cursor-pointer bg-opacity-20 bg-black z-10"
+            className="absolute bottom-1 right-1 w-8 h-8 p-2 rounded cursor-pointer bg-gray-200 hover:bg-gray-300 text-gray-600 z-10 transition-colors"
             icon={customNickname ? 'mdi:pencil-off' : 'mdi:pencil'}
             onClick={() =>
               setCustomNickname((customNickname) => !customNickname)
