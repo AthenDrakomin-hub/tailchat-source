@@ -25,15 +25,15 @@ COPY ./server/package.json ./server/package.json
 COPY ./server/tsconfig.json ./server/tsconfig.json
 COPY ./package.json ./pnpm-lock.yaml ./pnpm-workspace.yaml ./.npmrc ./
 COPY ./patches ./patches
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Copy client
 COPY ./client ./client
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Copy all source
 COPY . .
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Build and cleanup (client and server)
 ENV NODE_ENV=production
