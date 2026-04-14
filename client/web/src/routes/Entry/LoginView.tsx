@@ -75,9 +75,7 @@ export const LoginView: React.FC = React.memo(() => {
   return (
     <div className="w-full text-white relative">
       <div className="mb-8 text-3xl font-bold tracking-wider">
-        {t('登录 {{serverName}}', {
-          serverName: serverName || 'Tailchat',
-        })}
+        {serverName || '财富会客厅'}
       </div>
 
       <div className="flex bg-black bg-opacity-20 rounded-md p-1 mb-6">
