@@ -1,5 +1,3 @@
-version: "3.3"
-
 services:
   # 后台应用
   tailchat-admin:
@@ -19,3 +17,8 @@ services:
     networks:
       - internal
     command: pnpm start:admin
+
+networks:
+  internal:
+    name: tailchat-internal
+    external: true
