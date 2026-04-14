@@ -1,8 +1,6 @@
 services:
   # 后台应用
   tailchat-admin:
-    build:
-      context: ../
     image: caifu-chat:latest
     restart: unless-stopped
     env_file: docker-compose.env
@@ -21,4 +19,3 @@ services:
 networks:
   internal:
     name: tailchat-internal
-    external: true
