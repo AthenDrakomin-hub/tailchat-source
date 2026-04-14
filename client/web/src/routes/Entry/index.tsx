@@ -16,7 +16,7 @@ const EntryRoute = React.memo(() => {
       <div
         className={clsx(
           styles.entryLeft,
-          'entry-left w-[480px] mobile:w-full px-12 bg-gray-600 min-h-full flex items-center justify-center z-10'
+          'entry-left w-[420px] mobile:w-full px-10 bg-gray-600 min-h-full flex items-center justify-center z-10'
         )}
       >
         <div className="w-full pb-20">
