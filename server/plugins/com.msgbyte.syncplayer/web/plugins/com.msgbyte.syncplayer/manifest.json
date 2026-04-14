@@ -1,0 +1,8 @@
+{
+  "label": "视频演播室 (Sync Player)",
+  "name": "com.msgbyte.syncplayer",
+  "version": "1.0.0",
+  "author": "Tailchat",
+  "description": "群组置顶视频同步演播室",
+  "requireRestart": true
+}

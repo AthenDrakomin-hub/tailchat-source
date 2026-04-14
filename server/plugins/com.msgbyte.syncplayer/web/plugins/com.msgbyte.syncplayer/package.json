@@ -1,0 +1,16 @@
+{
+  "name": "com.msgbyte.syncplayer",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.tsx",
+  "scripts": {
+    "build": "tailchat-plugin build"
+  },
+  "dependencies": {
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "tailchat-shared": "workspace:*",
+    "tailchat-design": "workspace:*"
+  }
+}

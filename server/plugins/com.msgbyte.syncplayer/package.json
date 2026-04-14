@@ -1,0 +1,17 @@
+{
+  "name": "com.msgbyte.syncplayer",
+  "version": "1.0.0",
+  "description": "Group Video Sync Player / Watch Party",
+  "author": "Tailchat",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "tailchat-server-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5"
+  }
+}
