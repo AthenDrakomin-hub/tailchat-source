@@ -5,21 +5,18 @@ import { AllowedLanguage, setLanguage as setI18NLanguage } from './index';
 import { getStorage, useStorage } from '../manager/storage';
 import { LANGUAGE_KEY } from '../utils/consts';
 
-export const defaultLanguage = 'en-US';
+export const defaultLanguage = 'zh-CN';
 
 function getNavigatorLanguage(): AllowedLanguage {
-  if (!navigator.language) {
-    return defaultLanguage;
-  }
-
-  return navigator.language.startsWith('zh') ? 'zh-CN' : 'en-US';
+  return 'zh-CN';
 }
 
 /**
  * Get current language
  */
 async function getLanguage(): Promise<string> {
-  return await getStorage().get(LANGUAGE_KEY, getNavigatorLanguage());
+  // Ignore local storage and navigator language to force zh-CN
+  return 'zh-CN';
 }
 
 /**

@@ -1,7 +1,7 @@
 {
-  "name": "财富会客厅 Application",
+  "name": "财富会客厅",
   "short_name": "财富会客厅",
-  "description": "A open source chat application",
+  "description": "您的专属财富管家与交流平台",
   "icons": [
     {
       "src": "/images/logo/logo@32.png",
