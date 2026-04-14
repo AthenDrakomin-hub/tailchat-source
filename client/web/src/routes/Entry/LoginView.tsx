@@ -122,12 +122,6 @@ export const LoginView: React.FC = React.memo(() => {
         {loading === false && error && (
           <div className="flex justify-between mb-4">
             <p className="text-red-500 text-sm">{error.message}</p>
-            <div
-              className="text-gray-200 cursor-pointer"
-              onClick={() => navToView('/entry/forget')}
-            >
-              {t('忘记密码？')}
-            </div>
           </div>
         )}
 
