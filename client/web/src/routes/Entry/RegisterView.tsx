@@ -37,9 +37,8 @@ export const RegisterView: React.FC = React.memo(() => {
 
   const [{ loading, error }, handleRegister] = useAsyncFn(async () => {
     await string()
-      .email(t('邮箱格式不正确'))
-      .required(t('邮箱不能为空'))
-      .max(40, t('邮箱最长限制40个字符'))
+      .required(t('账号不能为空'))
+      .max(40, t('账号最长限制40个字符'))
       .validate(email);
 
     await string()
@@ -86,36 +85,15 @@ export const RegisterView: React.FC = React.memo(() => {
 
       <div>
         <div className="mb-4">
-          <div className="mb-2">{t('邮箱')}</div>
+          <div className="mb-2">{t('邮箱或手机号')}</div>
           <EntryInput
             name="reg-email"
-            placeholder="name@example.com"
+            placeholder="账号"
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-
-        {getGlobalConfig().emailVerification && (
-          <>
-            {!sendedEmail && (
-              <PrimaryBtn loading={sendEmailLoading} onClick={handleSendEmail}>
-                {t('向邮箱发送校验码')}
-              </PrimaryBtn>
-            )}
-
-            <div className="mb-4">
-              <div className="mb-2">{t('邮箱校验码')}</div>
-              <EntryInput
-                name="reg-email-otp"
-                type="text"
-                placeholder="6位校验码"
-                value={emailOTP}
-                onChange={(e) => setEmailOTP(e.target.value)}
-              />
-            </div>
-          </>
-        )}
 
         <div className="mb-4 relative">
           <div className="mb-2 flex items-center">

@@ -67,7 +67,7 @@ class UserService extends TcService {
       rest: 'POST /login',
       params: {
         username: [{ type: 'string', optional: true }],
-        email: [{ type: 'email', optional: true }],
+        email: [{ type: 'string', optional: true }], // Changed from 'email' to 'string'
         password: 'string',
       },
     });
@@ -85,7 +85,7 @@ class UserService extends TcService {
       rest: 'POST /register',
       params: {
         username: { type: 'string', optional: true, max: 40 },
-        email: { type: 'email', optional: true, max: 40 },
+        email: { type: 'string', optional: true, max: 40 }, // Changed from 'email' to 'string' to support both phone and email
         nickname: { type: 'string', optional: true, max: 40 },
         password: { type: 'string', max: 40 },
         emailOTP: { type: 'string', optional: true },
@@ -308,13 +308,13 @@ class UserService extends TcService {
     } else if (typeof email === 'string') {
       user = await this.adapter.findOne({ email });
       if (!user) {
-        throw new EntityError(t('用户不存在, 请检查您的邮箱'), 422, '', [
-          { field: 'email', message: t('邮箱不存在') },
+        throw new EntityError(t('用户不存在, 请检查您的账号'), 422, '', [
+          { field: 'email', message: t('账号不存在') },
         ]);
       }
     } else {
-      throw new EntityError(t('用户名或邮箱为空'), 422, '', [
-        { field: 'email', message: t('邮箱不存在') },
+      throw new EntityError(t('用户名或账号为空'), 422, '', [
+        { field: 'email', message: t('账号不存在') },
       ]);
     }
 
@@ -352,14 +352,14 @@ class UserService extends TcService {
     const otp = generateRandomNumStr(6); // 产生一次性6位数字密码
 
     const html = `
-    <p>您正在尝试验证 Tailchat 账号的邮箱, 请使用以下 OTP 作为邮箱验证凭证:</p>
+    <p>您正在尝试验证 财富会客厅 账号的邮箱, 请使用以下 OTP 作为邮箱验证凭证:</p>
     <h3>OTP: <strong>${otp}</strong></h3>
     <p>该 OTP 将会在 10分钟 后过期</p>
     <p style="color: grey;">如果并不是您触发的验证操作，请忽略此电子邮件。</p>`;
 
     await ctx.call('mail.sendMail', {
       to: email,
-      subject: `Tailchat 邮箱验证: ${otp}`,
+      subject: `财富会客厅 邮箱验证: ${otp}`,
       html,
     });
 
@@ -444,18 +444,20 @@ class UserService extends TcService {
     let emailVerified = false;
     if (config.emailVerification === true) {
       // 检查OTP
-      const cacheKey = this.buildVerifyEmailKey(params.email);
-      const cachedOTP = await this.broker.cacher.get(cacheKey);
+      if (params.email) {
+        const cacheKey = this.buildVerifyEmailKey(params.email);
+        const cachedOTP = await this.broker.cacher.get(cacheKey);
 
-      if (!cachedOTP) {
-        throw new Error(t('校验失败, OTP已过期'));
+        if (!cachedOTP) {
+          throw new Error(t('校验失败, OTP已过期'));
+        }
+
+        if (String(cachedOTP) !== params.emailOTP) {
+          throw new Error(t('邮箱校验失败, 请输入正确的邮箱OTP'));
+        }
+
+        emailVerified = true;
       }
-
-      if (String(cachedOTP) !== params.emailOTP) {
-        throw new Error(t('邮箱校验失败, 请输入正确的邮箱OTP'));
-      }
-
-      emailVerified = true;
     }
 
     const password = await this.hashPassword(params.password);
@@ -641,7 +643,7 @@ class UserService extends TcService {
 
     await ctx.call('mail.sendMail', {
       to: email,
-      subject: `Tailchat 忘记密码: ${otp}`,
+      subject: `财富会客厅 忘记密码: ${otp}`,
       html,
     });
 
@@ -1225,7 +1227,7 @@ class UserService extends TcService {
     t: TFunction
   ) {
     if (!params.username && !params.email) {
-      throw new Errors.ValidationError(t('用户名或邮箱为空'));
+      throw new Errors.ValidationError(t('用户名或账号为空'));
     }
 
     if (params.username) {
@@ -1240,7 +1242,7 @@ class UserService extends TcService {
     if (params.email) {
       const found = await this.adapter.findOne({ email: params.email });
       if (found) {
-        throw new Errors.MoleculerClientError(t('邮箱已存在!'), 422, '', [
+        throw new Errors.MoleculerClientError(t('账号已存在!'), 422, '', [
           { field: 'email', message: 'is exist' },
         ]);
       }

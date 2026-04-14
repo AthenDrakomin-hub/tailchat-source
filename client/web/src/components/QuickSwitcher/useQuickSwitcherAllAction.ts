@@ -6,6 +6,7 @@ import {
   useUserId,
   getDMConverseName,
   model,
+  useUserInfo,
 } from 'tailchat-shared';
 import { useDebugValue, useMemo } from 'react';
 import type { QuickActionContext } from './useQuickSwitcherActionContext';
@@ -22,24 +23,35 @@ export interface QuickAction {
 /**
  * 内置操作
  */
-const builtinActions: QuickAction[] = [
-  {
-    key: 'personal',
-    source: 'core',
-    label: t('个人主页'),
-    action({ navigate }) {
-      navigate('/main/personal/friends');
-    },
-  },
-  {
-    key: 'plugins',
-    source: 'core',
-    label: t('插件中心'),
-    action({ navigate }) {
-      navigate('/main/personal/plugins');
-    },
-  },
-];
+const useBuiltinActions = (): QuickAction[] => {
+  const userInfo = useUserInfo();
+
+  return useMemo(() => {
+    const actions: QuickAction[] = [
+      {
+        key: 'personal',
+        source: 'core',
+        label: t('个人主页'),
+        action({ navigate }) {
+          navigate('/main/personal/friends');
+        },
+      },
+    ];
+
+    if (userInfo?.type === 'admin') {
+      actions.push({
+        key: 'plugins',
+        source: 'core',
+        label: t('插件中心'),
+        action({ navigate }) {
+          navigate('/main/personal/plugins');
+        },
+      });
+    }
+
+    return actions;
+  }, [userInfo?.type]);
+};
 
 /**
  * 私信快速会话
@@ -113,10 +125,13 @@ function useGroupPanelActions(): QuickAction[] {
  * @returns 返回所有的快速操作
  */
 export function useQuickSwitcherAllActions() {
+  const builtinActions = useBuiltinActions();
+  const dmConverseActions = useDMConverseActions();
+  const groupPanelActions = useGroupPanelActions();
   const allActions = [
     ...builtinActions,
-    ...useDMConverseActions(),
-    ...useGroupPanelActions(),
+    ...dmConverseActions,
+    ...groupPanelActions,
   ];
 
   return allActions;

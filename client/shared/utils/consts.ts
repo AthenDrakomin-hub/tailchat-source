@@ -22,7 +22,7 @@ export const defaultGlobalConfig: GlobalConfig = {
   tianji: {},
   uploadFileLimit: 1 * 1024 * 1024,
   emailVerification: false,
-  serverName: 'Tailchat',
+  serverName: '财富会客厅',
   disableMsgpack: false,
   disableUserRegister: false,
   disableGuestLogin: false,

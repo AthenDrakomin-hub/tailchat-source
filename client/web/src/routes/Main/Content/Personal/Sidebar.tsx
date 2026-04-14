@@ -62,7 +62,7 @@ export const PersonalSidebar: React.FC = React.memo(() => {
           badge={hasFriendRequest}
         />
 
-        {!disablePluginStore && (
+        {!disablePluginStore && userInfo?.type === 'admin' && (
           <SidebarItem
             name={t('插件中心')}
             icon={<Icon icon="mdi:puzzle" />}
