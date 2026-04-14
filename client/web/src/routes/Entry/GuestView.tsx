@@ -16,7 +16,7 @@ import { useNavToView } from './utils';
 import { EntryInput } from './components/Input';
 import { PrimaryBtn } from './components/PrimaryBtn';
 import { SecondaryBtn } from './components/SecondaryBtn';
-import logoUrl from '../../../assets/images/logo.png';
+import logoUrl from '../../assets/images/logo.png';
 
 export const GuestView: React.FC = React.memo(() => {
   const navigate = useNavigate();

@@ -12,7 +12,7 @@ import { useNavToView } from './utils';
 import { EntryInput } from './components/Input';
 import { SecondaryBtn } from './components/SecondaryBtn';
 import { PrimaryBtn } from './components/PrimaryBtn';
-import logoUrl from '../../../assets/images/logo.png';
+import logoUrl from '../../assets/images/logo.png';
 
 /**
  * 登录视图

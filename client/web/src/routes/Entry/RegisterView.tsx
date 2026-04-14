@@ -21,7 +21,7 @@ import { EntryInput } from './components/Input';
 import { SecondaryBtn } from './components/SecondaryBtn';
 import { PrimaryBtn } from './components/PrimaryBtn';
 import { TipIcon } from '@/components/TipIcon';
-import logoUrl from '../../../assets/images/logo.png';
+import logoUrl from '../../assets/images/logo.png';
 
 /**
  * 注册视图
