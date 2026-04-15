@@ -1,0 +1,9 @@
+{
+  "label": "伪直播",
+  "name": "com.msgbyte.pseudolive",
+  "version": "1.0.0",
+  "author": "Tailchat",
+  "description": "上传 MP4 转成 HLS 并在群里发送直播卡片",
+  "requireRestart": true
+}
+

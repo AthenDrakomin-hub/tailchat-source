@@ -3,6 +3,8 @@ import {
   getStorage,
   parseUrlStr,
   PluginManifest,
+  showToasts,
+  t,
 } from 'tailchat-shared';
 import { initMiniStar, loadSinglePlugin } from 'mini-star';
 import _once from 'lodash/once';
@@ -10,6 +12,7 @@ import { builtinPlugins } from './builtin';
 import { showPluginLoadError } from './showPluginLoadError';
 import { injectTailchatGlobalValue } from '@/utils/global-helper';
 import _uniqBy from 'lodash/uniqBy';
+import { isAllowedPluginUrl } from './allowedPluginUrl';
 
 class PluginManager {
   /**
@@ -94,6 +97,11 @@ class PluginManager {
    * 安装插件
    */
   async installPlugin(manifest: PluginManifest) {
+    if (!isAllowedPluginUrl(manifest.url)) {
+      showToasts(t('仅允许安装来自本服务器的插件'), 'error');
+      throw new Error(t('仅允许安装来自本服务器的插件'));
+    }
+
     const plugins = await this.getInstalledPlugins();
 
     const findedIndex = plugins.findIndex((p) => p.name === manifest.name);

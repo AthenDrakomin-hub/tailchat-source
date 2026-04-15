@@ -106,6 +106,15 @@ export const builtinPlugins: PluginManifest[] = _compact([
     requireRestart: true,
   },
   {
+    label: '伪直播',
+    name: 'com.msgbyte.pseudolive',
+    url: '{BACKEND}/plugins/com.msgbyte.pseudolive/index.js',
+    version: '1.0.0',
+    author: 'WealthLounge',
+    description: '上传 MP4 转成 HLS 并在群里发送直播卡片',
+    requireRestart: true,
+  },
+  {
     label: 'Livekit',
     name: 'com.msgbyte.livekit',
     url: '{BACKEND}/plugins/com.msgbyte.livekit/index.js',

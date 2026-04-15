@@ -1,0 +1,14 @@
+{
+  "name": "@plugins/com.msgbyte.pseudolive",
+  "main": "src/index.tsx",
+  "version": "0.0.0",
+  "description": "Pseudo live streaming card",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "@types/styled-components": "^5.1.26",
+    "react": "18.2.0",
+    "styled-components": "^5.3.6"
+  }
+}
+
