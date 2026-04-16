@@ -801,8 +801,23 @@ export const TcMinioService = {
    */
   started() {
     /* istanbul ignore next */
+    const retryPing = async (retries = 10, delayMs = 3000) => {
+      for (let i = 0; i < retries; i++) {
+        try {
+          await this.ping();
+          return;
+        } catch (e) {
+          this.logger.warn(`Minio backend ping failed, retrying in ${delayMs}ms... (${i + 1}/${retries})`, e.message);
+          if (i === retries - 1) {
+            throw e;
+          }
+          await new this.Promise((resolve) => setTimeout(resolve, delayMs));
+        }
+      }
+    };
+
     return this.Promise.resolve()
-      .then(() => this.ping())
+      .then(() => retryPing())
       .then(() => {
         this.settings.minioHealthCheckInterval
           ? (this.healthCheckInterval = setInterval(
