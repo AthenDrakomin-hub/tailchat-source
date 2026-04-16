@@ -39,6 +39,9 @@ ENV NODE_ENV=production
 ENV VERSION=$VERSION
 RUN pnpm build
 
+# Fix missing public files by ensuring client/web/dist is fully copied to server/dist/public
+RUN mkdir -p server/dist/public && cp -r client/web/dist/* server/dist/public/
+
 # web static service port
 EXPOSE 3000
 
