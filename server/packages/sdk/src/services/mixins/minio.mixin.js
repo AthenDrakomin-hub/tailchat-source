@@ -173,7 +173,7 @@ exports.TcMinioService = {
         bucketName: { type: 'string' },
       },
       handler(ctx) {
-        return this.client.bucketExists(ctx.params.bucketName);
+        return this.client.bucketExists(ctx.params.bucketName || 'tailchat');
       },
     },
     /**
