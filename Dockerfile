@@ -8,6 +8,8 @@ WORKDIR /app/tailchat
 
 RUN ulimit -n 10240
 
+RUN apk add --no-cache ffmpeg
+
 # Install dependencies
 RUN npm install -g pnpm@8.15.8
 RUN npm install -g tailchat-cli@latest

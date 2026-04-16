@@ -160,7 +160,7 @@ export const VideoConference: React.FC<VideoConferenceProps> = React.memo(
                 </IsCallingContainer>
               )}
 
-              <ControlBar />
+              <ControlBar controls={{ camera: false, screenShare: false }} />
             </div>
 
             {rightPanel === 'chat' && (

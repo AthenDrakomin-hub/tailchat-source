@@ -2,6 +2,7 @@ docker/swag.env
 client/locales
 .vercel
 .DS_Store
+.pnpm-store/
 
 # yalc
 .yalc

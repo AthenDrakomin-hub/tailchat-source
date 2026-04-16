@@ -1,0 +1,14 @@
+{
+  "server": "http://127.0.0.1:11000",
+  "email": "bot@example.com",
+  "password": "******",
+  "jobs": [
+    {
+      "intervalSeconds": 600,
+      "groupId": "GROUP_ID",
+      "panelId": "PANEL_ID",
+      "messages": ["话术1", "话术2"]
+    }
+  ]
+}
+

@@ -1,7 +1,5 @@
 import {
   regCustomPanel,
-  regGroupPanel,
-  regGroupPanelBadge,
   regPluginPanelAction,
   regPluginPanelRoute,
   panelWindowManager,
@@ -12,7 +10,7 @@ import {
   isMobile,
 } from '@capital/common';
 import { Loadable } from '@capital/component';
-import { useIconIsShow, usePersionPanelIsShow } from './navbar/useIconIsShow';
+import { usePersionPanelIsShow } from './navbar/useIconIsShow';
 import { Translate } from './translate';
 import React from 'react';
 import { useLivekitState } from './store/useLivekitState';
@@ -24,10 +22,6 @@ console.log(`Plugin ${PLUGIN_ID} is loaded`);
 (() => {
   new Audio('/audio/telephone.mp3').preload = 'auto';
 })();
-
-const LivekitPanel = Loadable(() => import('./group/LivekitPanel'), {
-  componentName: `${PLUGIN_ID}:LivekitPanel`,
-});
 
 const LivekitMeetingPanel = Loadable(
   () => import('./panel/LivekitMeetingPanel'),
@@ -42,39 +36,6 @@ const InviteCallNotification = Loadable(
     componentName: `${PLUGIN_ID}:InviteCallNotification`,
   }
 );
-
-regGroupPanel({
-  name: `${PLUGIN_ID}/livekitPanel`,
-  label: Translate.voiceChannel,
-  provider: PLUGIN_ID,
-  render: LivekitPanel,
-});
-
-regGroupPanelBadge({
-  name: `${PLUGIN_ID}/livekitPanelBadge`,
-  panelType: `${PLUGIN_ID}/livekitPanel`,
-  render: Loadable(() => import('./group/LivekitPanelBadge'), {
-    componentName: `${PLUGIN_ID}:LivekitPanelBadge`,
-    fallback: null,
-  }),
-});
-
-regCustomPanel({
-  position: 'navbar-more',
-  icon: 'mingcute:voice-line',
-  name: `${PLUGIN_ID}/livekitNavbarIcon`,
-  label: Translate.toVoiceChannel,
-  render: Loadable(
-    () =>
-      import('./navbar/redirect').then(
-        (module) => module.LivekitNavbarRedirect
-      ),
-    {
-      componentName: `${PLUGIN_ID}:LivekitNavbarRedirect`,
-    }
-  ),
-  useIsShow: useIconIsShow,
-});
 
 regPluginPanelRoute({
   name: `${PLUGIN_ID}/livekitPanel`,

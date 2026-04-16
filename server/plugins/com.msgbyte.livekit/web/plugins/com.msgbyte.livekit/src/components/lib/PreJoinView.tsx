@@ -33,7 +33,7 @@ export type LocalUserChoices = {
 
 const DEFAULT_USER_CHOICES = {
   username: '',
-  videoEnabled: true,
+  videoEnabled: false,
   audioEnabled: true,
   videoDeviceId: 'default',
   audioDeviceId: 'default',
@@ -87,18 +87,12 @@ export const PreJoinView: React.FC<PreJoinProps> = React.memo(
     debug,
     joinLabel = Translate.joinLabel,
     micLabel = Translate.micLabel,
-    camLabel = Translate.camLabel,
     ...htmlProps
   }) => {
     const { nickname, avatar } = useCurrentUserInfo();
     const [userChoices, setUserChoices] = useState(DEFAULT_USER_CHOICES);
-    const [videoEnabled, setVideoEnabled] = useState<boolean>(
-      defaults.videoEnabled ?? DEFAULT_USER_CHOICES.videoEnabled
-    );
-    const initialVideoDeviceId =
-      defaults.videoDeviceId ?? DEFAULT_USER_CHOICES.videoDeviceId;
-    const [videoDeviceId, setVideoDeviceId] =
-      useState<string>(initialVideoDeviceId);
+    const videoEnabled = false;
+    const videoDeviceId = DEFAULT_USER_CHOICES.videoDeviceId;
     const initialAudioDeviceId =
       defaults.audioDeviceId ?? DEFAULT_USER_CHOICES.audioDeviceId;
     const [audioEnabled, setAudioEnabled] = useState<boolean>(
@@ -110,7 +104,7 @@ export const PreJoinView: React.FC<PreJoinProps> = React.memo(
     const tracks = usePreviewTracks(
       {
         audio: audioEnabled ? { deviceId: initialAudioDeviceId } : false,
-        video: videoEnabled ? { deviceId: initialVideoDeviceId } : false,
+        video: false,
       },
       onError
     );
@@ -173,13 +167,7 @@ export const PreJoinView: React.FC<PreJoinProps> = React.memo(
       };
       setUserChoices(newUserChoices);
       setIsValid(handleValidation(newUserChoices));
-    }, [
-      videoEnabled,
-      handleValidation,
-      audioEnabled,
-      audioDeviceId,
-      videoDeviceId,
-    ]);
+    }, [handleValidation, audioEnabled, audioDeviceId, nickname]);
 
     function handleSubmit(event: React.FormEvent) {
       event.preventDefault();
@@ -227,24 +215,6 @@ export const PreJoinView: React.FC<PreJoinProps> = React.memo(
                 disabled={!audioTrack}
                 tracks={{ audioinput: audioTrack }}
                 onActiveDeviceChange={(_, id) => setAudioDeviceId(id)}
-              />
-            </div>
-          </div>
-          <div className="lk-button-group video">
-            <TrackToggle
-              initialState={videoEnabled}
-              source={Track.Source.Camera}
-              onChange={(enabled) => setVideoEnabled(enabled)}
-            >
-              {camLabel}
-            </TrackToggle>
-            <div className="lk-button-group-menu">
-              <MediaDeviceMenu
-                initialSelection={videoDeviceId}
-                kind="videoinput"
-                disabled={!videoTrack}
-                tracks={{ videoinput: videoTrack }}
-                onActiveDeviceChange={(_, id) => setVideoDeviceId(id)}
               />
             </div>
           </div>

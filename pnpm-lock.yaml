@@ -665,6 +665,9 @@ importers:
       generate-json-webpack-plugin:
         specifier: ^2.0.0
         version: 2.0.0
+      hls.js:
+        specifier: ^1.5.20
+        version: 1.6.16
       immer:
         specifier: 9.0.21
         version: 9.0.21
@@ -1416,6 +1419,9 @@ importers:
       mime:
         specifier: ^2.5.2
         version: 2.6.0
+      minio:
+        specifier: ^7.1.1
+        version: 7.1.4
       mkdirp:
         specifier: ^1.0.4
         version: 1.0.4
@@ -1587,7 +1593,7 @@ importers:
         version: link:packages/swagger-jsdoc-generator
       ts-jest:
         specifier: 27.1.4
-        version: 27.1.4(@babel/core@7.29.0)(@types/jest@26.0.24)(babel-jest@27.5.1(@babel/core@7.29.0))(esbuild@0.12.29)(jest@27.5.1(ts-node@10.9.1(@types/node@18.11.9)(typescript@4.9.4)))(typescript@4.9.4)
+        version: 27.1.4(@babel/core@7.29.0)(@types/jest@26.0.24)(babel-jest@27.5.1(@babel/core@7.29.0))(esbuild@0.15.18)(jest@27.5.1(ts-node@10.9.1(@types/node@18.11.9)(typescript@4.9.4)))(typescript@4.9.4)
       vinyl-fs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -2118,6 +2124,37 @@ importers:
       tailchat-server-sdk:
         specifier: '*'
         version: 0.0.12(debug@4.4.3)(encoding@0.1.13)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.4)(redlock@4.2.0)
+
+  server/plugins/com.msgbyte.pseudolive:
+    dependencies:
+      tailchat-server-sdk:
+        specifier: '*'
+        version: 0.0.12(debug@4.4.3)(encoding@0.1.13)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.4)(redlock@4.2.0)
+    devDependencies:
+      '@types/react':
+        specifier: 18.0.20
+        version: 18.0.20
+      mini-star:
+        specifier: '*'
+        version: 1.3.1(@types/node@18.11.9)
+      normalize-path:
+        specifier: ^3.0.0
+        version: 3.0.0
+      rollup-plugin-copy:
+        specifier: ^3.4.0
+        version: 3.5.0
+
+  server/plugins/com.msgbyte.pseudolive/web/plugins/com.msgbyte.pseudolive:
+    devDependencies:
+      '@types/styled-components':
+        specifier: ^5.1.26
+        version: 5.1.36
+      react:
+        specifier: 18.2.0
+        version: 18.2.0
+      styled-components:
+        specifier: ^5.3.6
+        version: 5.3.11(@babel/core@7.29.0)(react-dom@18.2.0(react@18.2.0))(react-is@19.2.5)(react@18.2.0)
 
   server/plugins/com.msgbyte.simplenotify:
     devDependencies:
@@ -11218,6 +11255,9 @@ packages:
   history@4.10.1:
     resolution: {integrity: sha512-36nwAD620w12kuzPAsyINPWJqlNbij+hpK1k9XRloDtym8mxzGYl2c17LnV6IAGB2Dmg4tEa7G7DlawS0+qjew==}
 
+  hls.js@1.6.16:
+    resolution: {integrity: sha512-VSIRpLfRwlAAdGL4wiTucx2ScRipo0ed1FBatWkyt832jC4CReKstga6yIhYVwGu9LOBjuX9wzmRMeQdBJtzEA==}
+
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
 
@@ -19198,7 +19238,7 @@ snapshots:
       '@babel/types': 7.29.0
       '@jridgewell/remapping': 2.3.5
       convert-source-map: 2.0.0
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -20164,7 +20204,7 @@ snapshots:
       '@babel/parser': 7.29.2
       '@babel/template': 7.28.6
       '@babel/types': 7.29.0
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -26182,7 +26222,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -28568,10 +28608,6 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
-  debug@4.4.3:
-    dependencies:
-      ms: 2.1.3
-
   debug@4.4.3(supports-color@10.2.2):
     dependencies:
       ms: 2.1.3
@@ -29103,7 +29139,7 @@ snapshots:
   engine.io-client@6.6.4:
     dependencies:
       '@socket.io/component-emitter': 3.1.2
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       engine.io-parser: 5.2.3
       ws: 8.18.3
       xmlhttprequest-ssl: 2.1.2
@@ -29123,7 +29159,7 @@ snapshots:
       base64id: 2.0.0
       cookie: 0.7.2
       cors: 2.8.6
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       engine.io-parser: 5.2.3
       ws: 8.18.3
     transitivePeerDependencies:
@@ -31012,6 +31048,8 @@ snapshots:
       tiny-warning: 1.0.3
       value-equal: 1.0.1
 
+  hls.js@1.6.16: {}
+
   hoist-non-react-statics@3.3.2:
     dependencies:
       react-is: 16.13.1
@@ -31188,7 +31226,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 1.1.2
       agent-base: 6.0.2
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -31233,7 +31271,7 @@ snapshots:
   https-proxy-agent@5.0.1:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -31553,7 +31591,7 @@ snapshots:
     dependencies:
       '@ioredis/commands': 1.6.0
       cluster-key-slot: 1.1.2
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       denque: 1.5.1
       lodash.defaults: 4.2.0
       lodash.flatten: 4.4.0
@@ -31998,7 +32036,7 @@ snapshots:
 
   istanbul-lib-source-maps@4.0.1:
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       istanbul-lib-coverage: 3.2.2
       source-map: 0.6.1
     transitivePeerDependencies:
@@ -32733,7 +32771,7 @@ snapshots:
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookies: 0.9.1
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       delegates: 1.0.0
       depd: 2.0.0
       destroy: 1.2.0
@@ -33421,7 +33459,7 @@ snapshots:
     dependencies:
       chokidar: 4.0.3
       commander: 11.1.0
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       gray-matter: 4.0.3
       is-utf8: 0.2.1
       lodash.clonedeepwith: 4.5.0
@@ -33977,7 +34015,7 @@ snapshots:
       node-fetch: 2.7.0(encoding@0.1.13)
       recursive-watch: 1.1.4
     optionalDependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       ioredis: 4.31.0
       nats: 1.4.12
       notepack.io: 3.0.1
@@ -34034,7 +34072,7 @@ snapshots:
 
   mquery@4.0.0:
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       regexp-clone: 1.0.0
       sliced: 1.0.1
     transitivePeerDependencies:
@@ -34470,7 +34508,7 @@ snapshots:
     dependencies:
       '@koa/cors': 3.4.3
       cacheable-lookup: 6.1.0
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       ejs: 3.1.10
       got: 11.8.3
       jose: 4.15.9
@@ -37445,7 +37483,7 @@ snapshots:
   rollup-plugin-esbuild@4.10.3(esbuild@0.12.29)(rollup@2.80.0):
     dependencies:
       '@rollup/pluginutils': 4.2.1
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       es-module-lexer: 0.9.3
       esbuild: 0.12.29
       joycon: 3.1.1
@@ -38057,7 +38095,7 @@ snapshots:
 
   socket.io-adapter@2.5.6:
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       ws: 8.18.3
     transitivePeerDependencies:
       - bufferutil
@@ -38067,7 +38105,7 @@ snapshots:
   socket.io-client@4.8.3:
     dependencies:
       '@socket.io/component-emitter': 3.1.2
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       engine.io-client: 6.6.4
       socket.io-parser: 4.2.6
     transitivePeerDependencies:
@@ -38083,7 +38121,7 @@ snapshots:
   socket.io-parser@4.2.6:
     dependencies:
       '@socket.io/component-emitter': 3.1.2
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -38092,7 +38130,7 @@ snapshots:
       accepts: 1.3.8
       base64id: 2.0.0
       cors: 2.8.6
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       engine.io: 6.6.6
       socket.io-adapter: 2.5.6
       socket.io-parser: 4.2.6
@@ -39195,7 +39233,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-jest@27.1.4(@babel/core@7.29.0)(@types/jest@26.0.24)(babel-jest@27.5.1(@babel/core@7.29.0))(esbuild@0.12.29)(jest@27.5.1(ts-node@10.9.1(@types/node@18.11.9)(typescript@4.9.4)))(typescript@4.9.4):
+  ts-jest@27.1.4(@babel/core@7.29.0)(@types/jest@26.0.24)(babel-jest@27.5.1(@babel/core@7.29.0))(esbuild@0.15.18)(jest@27.5.1(ts-node@10.9.1(@types/node@18.11.9)(typescript@4.9.4)))(typescript@4.9.4):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
@@ -39211,7 +39249,7 @@ snapshots:
       '@babel/core': 7.29.0
       '@types/jest': 26.0.24
       babel-jest: 27.5.1(@babel/core@7.29.0)
-      esbuild: 0.12.29
+      esbuild: 0.15.18
 
   ts-jest@27.1.4(@babel/core@7.29.0)(@types/jest@27.5.2)(babel-jest@27.5.1(@babel/core@7.29.0))(esbuild@0.15.18)(jest@27.5.1(ts-node@10.9.1(@types/node@18.11.9)(typescript@4.9.4)))(typescript@4.9.4):
     dependencies:
