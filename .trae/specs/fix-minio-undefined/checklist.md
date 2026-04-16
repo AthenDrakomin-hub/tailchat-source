@@ -1,0 +1,4 @@
+- [ ] `ping()` 方法不再因为缺少 `bucketName` 抛出异常
+- [ ] 容器不再进入 `restarting` 循环
+- [ ] 在 `minio.mixin.ts` 中针对健康检查和初始化逻辑提供了稳定的默认值
+- [ ] GitHub 上的代码包含了这个最终修复

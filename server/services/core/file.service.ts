@@ -45,6 +45,7 @@ class FileService extends TcService {
     this.registerSetting('accessKey', config.storage.user);
     this.registerSetting('secretKey', config.storage.pass);
     this.registerSetting('pathStyle', config.storage.pathStyle);
+    this.registerSetting('bucketName', this.bucketName);
 
     this.registerAction('save', this.save);
     this.registerAction('saveFileWithUrl', this.saveFileWithUrl, {
