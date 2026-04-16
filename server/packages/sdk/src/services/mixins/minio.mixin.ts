@@ -175,7 +175,9 @@ export const TcMinioService = {
         bucketName: { type: 'string' },
       },
       handler(ctx) {
-        return this.client.bucketExists(ctx.params.bucketName || 'tailchat');
+        return this.client.bucketExists(
+          ctx.params.bucketName || 'tailchat'
+        );
       },
     },
     /**
