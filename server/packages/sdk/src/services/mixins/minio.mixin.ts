@@ -124,7 +124,7 @@ export const TcMinioService = {
           ? this.client.bucketExists(this.settings.bucketName)
           : this.client.listBuckets()
         ).then(() => true),
-        this.Promise.delay(timeout).then(() => {
+        new this.Promise((resolve) => setTimeout(resolve, timeout)).then(() => {
           throw new MinioPingError();
         }),
       ]);
