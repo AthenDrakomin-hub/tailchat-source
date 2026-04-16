@@ -44,20 +44,33 @@ async function start() {
   }
   for (const p of availableInstallPlugins) {
     console.log('┌ 开始安装:', p);
-    let manifest = await fs.readJSON(
-      path.resolve(containerPath, `./${p}/web/plugins/${p}/manifest.json`)
+    const manifestPath = path.resolve(
+      containerPath,
+      `./${p}/web/plugins/${p}/manifest.json`
     );
+    if (!fs.existsSync(manifestPath)) {
+      console.log('└ 跳过安装 (无前端配置):', p);
+      continue;
+    }
+    let manifest = await fs.readJSON(manifestPath);
     if (!manifest) {
       console.error('配置加载失败, 跳转安装');
       return;
     }
 
-    // 编译插件文件
-    await execa('pnpm', ['build:web'], {
-      cwd: path.resolve(containerPath, p),
-      stdout: 'inherit',
-      stderr: 'inherit',
-    });
+    const packageJson = await fs
+      .readJSON(path.resolve(containerPath, p, 'package.json'))
+      .catch(() => ({}));
+    if (packageJson.scripts && packageJson.scripts['build:web']) {
+      // 编译插件文件
+      await execa('pnpm', ['build:web'], {
+        cwd: path.resolve(containerPath, p),
+        stdout: 'inherit',
+        stderr: 'inherit',
+      });
+    } else {
+      console.log(`└ 跳过编译 (无 build:web 脚本):`, p);
+    }
 
     // 追加前端配置到registry
     const originRegistry =

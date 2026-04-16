@@ -252,7 +252,7 @@ const config: Configuration = {
     minimizer: [
       new CssMinimizerPlugin(),
       new TerserPlugin({
-        minify: TerserPlugin.esbuildMinify,
+        parallel: 2, // Limit parallel workers to save memory
       }),
     ],
   },

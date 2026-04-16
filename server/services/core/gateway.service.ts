@@ -328,7 +328,7 @@ export default class ApiService extends TcService {
         onError(req: IncomingMessage, res: ServerResponse, err) {
           if (
             String(req.method).toLowerCase() === 'get' && // get请求
-            accepts(req).types(['html']) && // 且请求html页面
+            req.headers.accept?.includes('text/html') && // 且请求html页面
             err.code === 404
           ) {
             // 如果没有找到, 则返回index.html(for spa)

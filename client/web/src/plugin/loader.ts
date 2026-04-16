@@ -21,6 +21,7 @@ function registerDependencies() {
     'zustand/middleware/immer',
     () => import('zustand/middleware/immer')
   ); // 仅用于第三方插件. tailchat本身更多使用 tailwindcss
+  regDependency('hls.js', () => import('hls.js')); // 供视频直播/播放类插件使用
 }
 
 function registerModules() {
