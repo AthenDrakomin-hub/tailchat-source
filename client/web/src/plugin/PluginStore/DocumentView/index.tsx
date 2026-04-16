@@ -1,16 +1,22 @@
 import { Problem } from '@/components/Problem';
 import React from 'react';
-import styled from 'styled-components';
 import { isValidStr, t } from 'tailchat-shared';
 import { DocumentMarkdownRender } from './DocumentMarkdownRender';
 
-const DocumentIframe = styled.iframe`
-  .tc-modal & {
-    width: 60vw;
-    height: 70vh;
-    min-width: 100%;
-  }
-`;
+const DocumentIframe: React.FC<{ src: string }> = React.memo((props) => {
+  return (
+    <iframe
+      src={props.src}
+      style={{
+        width: '60vw',
+        height: '70vh',
+        minWidth: '100%',
+        border: 'none',
+      }}
+    />
+  );
+});
+DocumentIframe.displayName = 'DocumentIframe';
 
 interface DocumentViewProps {
   documentUrl?: string;

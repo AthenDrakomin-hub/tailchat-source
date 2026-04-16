@@ -3,12 +3,13 @@ import { getMessageTextDecorators, useGroupIdContext } from '@/plugin/common';
 import { stopPropagation } from '@/utils/dom-helper';
 import React from 'react';
 import { Mention, MentionsInput } from 'react-mentions';
+import type { MentionsInputStyle } from 'react-mentions';
 import { getGroupConfigWithInfo, t, useGroupInfo } from 'tailchat-shared';
 import { useChatInputMentionsContext } from './context';
 import { MentionCommandItem } from './MentionCommandItem';
 import './input.less';
 
-const defaultChatInputBoxInputStyle = {
+const defaultChatInputBoxInputStyle: MentionsInputStyle = {
   input: {
     overflow: 'auto',
     maxHeight: 70,

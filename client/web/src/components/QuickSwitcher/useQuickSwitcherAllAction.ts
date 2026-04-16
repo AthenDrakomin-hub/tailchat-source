@@ -6,7 +6,7 @@ import {
   useUserId,
   getDMConverseName,
   model,
-  useUserInfo,
+  useGlobalConfigStore,
 } from 'tailchat-shared';
 import { useDebugValue, useMemo } from 'react';
 import type { QuickActionContext } from './useQuickSwitcherActionContext';
@@ -24,7 +24,9 @@ export interface QuickAction {
  * 内置操作
  */
 const useBuiltinActions = (): QuickAction[] => {
-  const userInfo = useUserInfo();
+  const disablePluginStore = useGlobalConfigStore(
+    (state) => state.disablePluginStore
+  );
 
   return useMemo(() => {
     const actions: QuickAction[] = [
@@ -38,7 +40,7 @@ const useBuiltinActions = (): QuickAction[] => {
       },
     ];
 
-    if (userInfo?.type === 'admin') {
+    if (!disablePluginStore) {
       actions.push({
         key: 'plugins',
         source: 'core',
@@ -50,7 +52,7 @@ const useBuiltinActions = (): QuickAction[] => {
     }
 
     return actions;
-  }, [userInfo?.type]);
+  }, [disablePluginStore]);
 };
 
 /**
