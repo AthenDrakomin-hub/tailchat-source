@@ -1,0 +1,2 @@
+export declare const leftCornerHandle: string;
+export declare const rightCornerHandle: string;

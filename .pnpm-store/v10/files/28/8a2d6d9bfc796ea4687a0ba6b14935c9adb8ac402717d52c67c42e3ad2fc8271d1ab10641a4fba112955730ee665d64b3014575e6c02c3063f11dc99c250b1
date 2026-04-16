@@ -1,0 +1,69 @@
+import { ApplySchemaAttributes, CommandFunction, LiteralUnion, NodeExtension, NodeExtensionSpec, NodeSpecOverride, NodeViewMethod, ProsemirrorAttributes } from '@remirror/core';
+import { IframeOptions } from './iframe-types';
+export type IframeAttributes = ProsemirrorAttributes<{
+    src: string;
+    frameBorder?: number | string;
+    allowFullScreen?: 'true' | boolean;
+    width?: number;
+    height?: number;
+    type?: LiteralUnion<'youtube', string>;
+}>;
+/**
+ * An extension for the remirror editor.
+ */
+export declare class IframeExtension extends NodeExtension<IframeOptions> {
+    get name(): "iframe";
+    createTags(): "block"[];
+    createNodeViews(): NodeViewMethod | Record<string, NodeViewMethod>;
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    /**
+     * Add a custom iFrame to the editor.
+     */
+    addIframe(attributes: IframeAttributes): CommandFunction;
+    /**
+     * Add a YouTube embedded iFrame to the editor.
+     */
+    addYouTubeVideo(props: CreateYouTubeIframeProps): CommandFunction;
+    /**
+     * Update the iFrame source for the currently selected video.
+     */
+    updateIframeSource(src: string): CommandFunction;
+    /**
+     * Update the YouTube video iFrame.
+     */
+    updateYouTubeVideo(props: CreateYouTubeIframeProps): CommandFunction;
+}
+interface CreateYouTubeIframeProps {
+    /**
+     * The video id (dQw4w9WgXcQ) or full link
+     * (https://www.youtube.com/watch?v=dQw4w9WgXcQ).
+     */
+    video: string;
+    /**
+     * The number os seconds in to start at.
+     * @defaultValue 0
+     */
+    startAt?: number;
+    /**
+     * When true will show the player controls.
+     *
+     * @defaultValue true
+     */
+    showControls?: boolean;
+    /**
+     * According to YouTube: _When you turn on privacy-enhanced mode, YouTube
+     * won't store information about visitors on your website unless they play the
+     * video._
+     *
+     * @defaultValue true
+     */
+    enhancedPrivacy?: boolean;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            iframe: IframeExtension;
+        }
+    }
+}
+export {};

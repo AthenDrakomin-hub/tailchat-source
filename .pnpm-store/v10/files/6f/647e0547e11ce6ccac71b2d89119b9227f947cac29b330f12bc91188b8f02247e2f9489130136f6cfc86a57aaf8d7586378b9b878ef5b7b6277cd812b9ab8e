@@ -1,0 +1,28 @@
+{
+    "name": "@types/dts-generator",
+    "version": "2.1.11",
+    "description": "TypeScript definitions for dts-generator",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/dts-generator",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Matt Traynham",
+            "githubUsername": "mtraynham",
+            "url": "https://github.com/mtraynham"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/dts-generator"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/bluebird": "*",
+        "typescript": "*"
+    },
+    "typesPublisherContentHash": "41a8606751c63bd3eadcd3db1d75412f55c7ec132b31004ef2b982a66fe9eb4a",
+    "typeScriptVersion": "4.5"
+}

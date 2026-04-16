@@ -1,0 +1,265 @@
+import { FromToProps, Handler, Static, GetMarkRange, ProsemirrorAttributes, MarkExtension, ApplySchemaAttributes, MarkSpecOverride, MarkExtensionSpec, KeyBindingProps, CommandFunction, CreateExtensionPlugin, ProsemirrorNode, LiteralUnion } from '@remirror/core';
+import { CreateEventHandlers } from '@remirror/extension-events';
+import { MarkPasteRule } from '@remirror/pm/paste-rules';
+import { Selection } from '@remirror/pm/state';
+
+/**
+ * Can be an empty string which sets url's to '//google.com'.
+ */
+type DefaultProtocol = 'http:' | 'https:' | '' | string;
+interface FoundAutoLink {
+    /** link href */
+    href: string;
+    /** link text */
+    text: string;
+    /** offset of matched text */
+    start: number;
+    /** index of next char after match end */
+    end: number;
+}
+interface EventMeta {
+    selection: Selection;
+    range: FromToProps | undefined;
+    doc: ProsemirrorNode;
+    attrs: LinkAttributes;
+}
+interface ShortcutHandlerActiveLink extends FromToProps {
+    attrs: LinkAttributes;
+}
+interface ShortcutHandlerProps extends FromToProps {
+    selectedText: string;
+    activeLink: ShortcutHandlerActiveLink | undefined;
+}
+type LinkTarget = LiteralUnion<'_blank' | '_self' | '_parent' | '_top', string> | null;
+interface LinkOptions {
+    /**
+     * @deprecated use `onShortcut` instead
+     */
+    onActivateLink?: Handler<(selectedText: string) => void>;
+    /**
+     * Called when the user activates the keyboard shortcut.
+     *
+     * It is called with the active link in the selected range, if it exists.
+     *
+     * If multiple links exist within the range, only the first is returned. I'm
+     * open to PR's if you feel it's important to capture all contained links.
+     *
+     * @defaultValue undefined
+     */
+    onShortcut?: Handler<(props: ShortcutHandlerProps) => void>;
+    /**
+     * Called after the `commands.updateLink` has been called.
+     *
+     * @defaultValue undefined
+     */
+    onUpdateLink?: Handler<(selectedText: string, meta: EventMeta) => void>;
+    /**
+     * Whether to select the text of the full active link when clicked.
+     *
+     * @defaultValue false
+     */
+    selectTextOnClick?: boolean;
+    /**
+     * Listen to click events for links.
+     */
+    onClick?: Handler<(event: MouseEvent, data: LinkClickData) => boolean>;
+    /**
+     * Extract the `href` attribute from the provided `url` text.
+     *
+     * @remarks
+     *
+     * By default this will return the `url` text with a `${defaultProtocol}//` or
+     * `mailto:` prefix if needed.
+     */
+    extractHref?: Static<(props: {
+        url: string;
+        defaultProtocol: DefaultProtocol;
+    }) => string>;
+    /**
+     * Whether the link is opened when being clicked.
+     *
+     * @deprecated use `onClick` handler instead.
+     */
+    openLinkOnClick?: boolean;
+    /**
+     * Whether automatic links should be created.
+     *
+     * @defaultValue false
+     */
+    autoLink?: boolean;
+    /**
+     * The regex matcher for matching against the RegExp. The matcher must capture
+     * the URL part of the string as it's first match. Take a look at the default
+     * value.
+     *
+     * @default
+     * /(?:(?:(?:https?|ftp):)?\/\/)?(?:\S+(?::\S*)?@)?(?:(?:[\da-z\u00A1-\uFFFF][\w\u00A1-\uFFFF-]{0,62})?[\da-z\u00A1-\uFFFF]\.)*(?:(?:\d(?!\.)|[a-z\u00A1-\uFFFF])(?:[\da-z\u00A1-\uFFFF][\w\u00A1-\uFFFF-]{0,62})?[\da-z\u00A1-\uFFFF]\.)+[a-z\u00A1-\uFFFF]{2,}(?::\d{2,5})?(?:[#/?]\S*)?/gi
+     */
+    autoLinkRegex?: Static<RegExp>;
+    /**
+     * An array of valid Top Level Domains (TLDs) to limit the scope of auto linking.
+     *
+     * @remarks
+     *
+     * The default autoLinkRegex does not limit the TLD of a URL for performance and maintenance reasons.
+     * This can lead to the auto link behaviour being overly aggressive.
+     *
+     * Defaults to the top 50 TLDs (as of May 2022).
+     *
+     * If you find this too permissive, you can override this with an array of your own TLDs.  i.e. you could use the top 10 TLDs.
+     *
+     * ['com', 'de', 'net', 'org', 'uk', 'cn', 'ga', 'nl', 'cf', 'ml']
+     *
+     * However, this would prevent auto linking to domains like remirror.io!
+     *
+     * For a complete list of TLDs, you could use an external package like "tlds" or "global-tld-list"
+     *
+     * Or to extend the default list you could
+     *
+     * ```ts
+     * import { LinkExtension, TOP_50_TLDS } from 'remirror/extensions';
+     * const extensions = () => [
+     *   new LinkExtension({ autoLinkAllowedTLDs: [...TOP_50_TLDS, 'london', 'tech'] })
+     * ];
+     * ```
+     *
+     * @defaultValue the top 50 TLDs by usage (May 2022)
+     */
+    autoLinkAllowedTLDs?: Static<string[]>;
+    /**
+     * Returns a list of links found in string where each element is a hash
+     * with properties { href: string; text: string; start: number; end: number; }
+     *
+     * @remarks
+     *
+     * This function is used instead of matching links with the autoLinkRegex option.
+     *
+     * @default null
+     *
+     * @param {string} input
+     * @param {string} defaultProtocol
+     * @returns {array} FoundAutoLink[]
+     */
+    findAutoLinks?: Static<(input: string, defaultProtocol: string) => FoundAutoLink[]>;
+    /**
+     * Check if the given string is a link
+     *
+     * @remarks
+     *
+     * Used instead of validating a link with the autoLinkRegex and autoLinkAllowedTLDs option.
+     *
+     * @default null
+     *
+     * @param {string} input
+     * @param {string} defaultProtocol
+     * @returns {boolean}
+     */
+    isValidUrl?: Static<(input: string, defaultProtocol: string) => boolean>;
+    /**
+     * The default protocol to use when it can't be inferred.
+     *
+     * @defaultValue ''
+     */
+    defaultProtocol?: DefaultProtocol;
+    /**
+     * The default target to use for links.
+     *
+     * @defaultValue null
+     */
+    defaultTarget?: LinkTarget;
+    /**
+     * The supported targets which can be parsed from the DOM or added with
+     * `insertLink`.
+     *
+     * @defaultValue []
+     */
+    supportedTargets?: LinkTarget[];
+}
+interface LinkClickData extends GetMarkRange, LinkAttributes {
+}
+type LinkAttributes = ProsemirrorAttributes<{
+    /**
+     * The link which is a required property for the link mark.
+     */
+    href: string;
+    /**
+     * True when this was an automatically generated link. False when the link was
+     * added specifically by the user.
+     *
+     * @defaultValue false
+     */
+    auto?: boolean;
+    /**
+     * The target for the link..
+     */
+    target?: LinkTarget;
+}>;
+declare class LinkExtension extends MarkExtension<LinkOptions> {
+    get name(): "link";
+    /**
+     * The autoLinkRegex option with the global flag removed, ensure no "lastIndex" state is maintained over multiple matches
+     * @private
+     */
+    private _autoLinkRegexNonGlobal;
+    createTags(): ("link" | "excludeFromInputRules")[];
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    onCreate(): void;
+    /**
+     * Add a handler to the `onActivateLink` to capture when .
+     */
+    shortcut({ tr }: KeyBindingProps): boolean;
+    /**
+     * Create or update the link if it doesn't currently exist at the current
+     * selection or provided range.
+     */
+    updateLink(attrs: LinkAttributes, range?: FromToProps): CommandFunction;
+    /**
+     * Select the link at the current location.
+     */
+    selectLink(): CommandFunction;
+    /**
+     * Remove the link at the current selection
+     */
+    removeLink(range?: FromToProps): CommandFunction;
+    /**
+     * Create the paste rules that can transform a pasted link in the document.
+     */
+    createPasteRules(): MarkPasteRule[];
+    /**
+     * Track click events passed through to the editor.
+     */
+    createEventHandlers(): CreateEventHandlers;
+    createPlugin(): CreateExtensionPlugin;
+    private buildHref;
+    private getLinkMarksInRange;
+    private findTextBlocksInRange;
+    private addLinkProperties;
+    private findAutoLinks;
+    private isValidUrl;
+    private isValidTLD;
+}
+/**
+ * Extract the `href` from the provided text.
+ *
+ * @remarks
+ *
+ * This will return the `url` text with a `${defaultProtocol}//` or `mailto:` prefix if needed.
+ */
+declare function extractHref({ url, defaultProtocol, }: {
+    url: string;
+    defaultProtocol: DefaultProtocol;
+}): string;
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            link: LinkExtension;
+        }
+    }
+}
+
+/**
+ * The top 50 Top Level Domains (as of May 2022), ordered by most popular, for performance.
+ */
+declare const TOP_50_TLDS: string[];
+
+export { type DefaultProtocol, type LinkAttributes, type LinkClickData, LinkExtension, type LinkOptions, type ShortcutHandlerProps, TOP_50_TLDS, extractHref };

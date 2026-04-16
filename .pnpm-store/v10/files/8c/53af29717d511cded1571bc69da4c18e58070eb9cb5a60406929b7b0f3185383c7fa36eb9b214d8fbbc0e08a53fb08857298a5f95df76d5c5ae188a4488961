@@ -1,0 +1,49 @@
+import { ApplySchemaAttributes, CommandFunction, KeyBindings, NodeExtension, NodeExtensionSpec, NodeSpecOverride, NodeViewMethod, ProsemirrorAttributes, Static } from '@remirror/core';
+import { NodeType } from '@remirror/pm/model';
+import { ListItemSharedExtension } from './list-item-shared-extension';
+/**
+ * Creates the node for a list item.
+ */
+export declare class ListItemExtension extends NodeExtension<ListItemOptions> {
+    get name(): "listItem";
+    createTags(): "listItemNode"[];
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    createNodeViews(): NodeViewMethod | Record<string, never>;
+    createKeymap(): KeyBindings;
+    createExtensions(): ListItemSharedExtension[];
+    /**
+     * Toggles the current list item.
+     *
+     * @param closed - the `closed` attribute. If it's a boolean value, then it
+     * will be set as an attribute. If it's undefined, then the `closed` attribuate
+     * will be toggled.
+     */
+    toggleListItemClosed(closed?: boolean | undefined): CommandFunction;
+    /**
+     * Lift the content inside a list item around the selection out of list
+     */
+    liftListItemOutOfList(listItemType?: NodeType | undefined): CommandFunction;
+}
+export interface ListItemOptions {
+    /**
+     * Set this to true to support toggling.
+     */
+    enableCollapsible?: Static<boolean>;
+}
+export type ListItemAttributes = ProsemirrorAttributes<{
+    /**
+     * @defaultValue false
+     */
+    closed: boolean;
+    /**
+     * @defaultValue false
+     */
+    nested: boolean;
+}>;
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            listItem: ListItemExtension;
+        }
+    }
+}

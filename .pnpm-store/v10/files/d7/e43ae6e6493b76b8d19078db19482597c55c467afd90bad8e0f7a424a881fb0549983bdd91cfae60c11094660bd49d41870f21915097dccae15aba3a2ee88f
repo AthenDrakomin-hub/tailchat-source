@@ -1,0 +1,27 @@
+{
+  "name": "rollup-plugin-source-ref",
+  "version": "1.0.7",
+  "description": "",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "keywords": [
+    "sourcecode",
+    "pointer",
+    "webpack"
+  ],
+  "author": "moonrailgun",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^15.12.5",
+    "rollup": "^2.75.0",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "source-ref-core": "^1.0.7"
+  },
+  "scripts": {
+    "build": "tsc"
+  }
+}

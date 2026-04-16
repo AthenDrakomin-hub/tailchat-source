@@ -1,0 +1,7 @@
+import { PopperProps } from '@mui/material';
+import { FC } from 'react';
+import type { PositionerParam } from '@remirror/extension-positioner';
+export interface FloatingToolbarProps extends Omit<PopperProps, 'open' | 'anchorEl'> {
+    positioner?: PositionerParam;
+}
+export declare const FloatingToolbar: FC<FloatingToolbarProps>;

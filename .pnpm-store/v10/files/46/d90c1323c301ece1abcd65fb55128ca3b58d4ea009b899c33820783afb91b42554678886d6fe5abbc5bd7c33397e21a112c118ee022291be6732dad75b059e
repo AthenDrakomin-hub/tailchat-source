@@ -1,0 +1,80 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.defaultSettings = void 0;
+exports.defaultSettings = {
+    resolution: 'medium',
+    aspectRatio: 1.778,
+    frameRate: 30,
+    simulcast: true,
+    simulcastProfiles: {
+        '320': [
+            {
+                scaleResolutionDownBy: 1,
+                maxBitRate: 150000,
+            },
+        ],
+        '640': [
+            {
+                scaleResolutionDownBy: 2,
+                maxBitRate: 150000,
+            },
+            {
+                scaleResolutionDownBy: 1,
+                maxBitRate: 500000,
+            },
+        ],
+        '1280': [
+            {
+                scaleResolutionDownBy: 4,
+                maxBitRate: 150000,
+            },
+            {
+                scaleResolutionDownBy: 2,
+                maxBitRate: 500000,
+            },
+            {
+                scaleResolutionDownBy: 1,
+                maxBitRate: 1200000,
+            },
+        ],
+        '1920': [
+            {
+                scaleResolutionDownBy: 6,
+                maxBitRate: 150000,
+            },
+            {
+                scaleResolutionDownBy: 3,
+                maxBitRate: 500000,
+            },
+            {
+                scaleResolutionDownBy: 1,
+                maxBitRate: 3500000,
+            },
+        ],
+        '3840': [
+            {
+                scaleResolutionDownBy: 12,
+                maxBitRate: 150000,
+            },
+            {
+                scaleResolutionDownBy: 6,
+                maxBitRate: 500000,
+            },
+            {
+                scaleResolutionDownBy: 1,
+                maxBitRate: 10000000,
+            },
+        ],
+    },
+    autoGainControl: true,
+    echoCancellation: true,
+    noiseSuppression: true,
+    sampleRate: 48000,
+    channelCount: 1,
+    sampleSize: 16,
+    opusStereo: false,
+    opusDtx: true,
+    opusFec: true,
+    opusPtime: 20,
+    opusMaxPlaybackRate: 48000,
+};

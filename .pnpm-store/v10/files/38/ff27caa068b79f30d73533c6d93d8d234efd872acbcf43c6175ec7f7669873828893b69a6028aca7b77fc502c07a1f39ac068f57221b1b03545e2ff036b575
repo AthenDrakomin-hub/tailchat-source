@@ -1,0 +1,5 @@
+import { EntityReferenceMetaData } from '../types';
+/**
+ * @returns entityReferences joined by ID
+ */
+export declare const joinDisjoinedEntityReferences: (disjoinedEntityReferences: EntityReferenceMetaData[]) => EntityReferenceMetaData[];

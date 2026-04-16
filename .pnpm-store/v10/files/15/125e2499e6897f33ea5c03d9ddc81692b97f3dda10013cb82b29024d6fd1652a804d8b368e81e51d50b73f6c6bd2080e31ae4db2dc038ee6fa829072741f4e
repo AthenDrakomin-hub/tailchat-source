@@ -1,0 +1,6 @@
+import { EntityReferenceMetaData } from '../types';
+/**
+ * Helper function to extract the extreme boundaries of the passed array of highlights.
+ * minimum `from` and the maximum `to`
+ */
+export declare const findMinMaxRange: (array: Array<Pick<EntityReferenceMetaData, 'from' | 'to'>>) => [number, number];

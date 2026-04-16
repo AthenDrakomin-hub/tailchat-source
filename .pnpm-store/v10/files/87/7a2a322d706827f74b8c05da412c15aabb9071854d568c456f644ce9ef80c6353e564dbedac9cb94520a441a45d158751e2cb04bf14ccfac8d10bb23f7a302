@@ -1,0 +1,27 @@
+import { FromToProps } from '@remirror/core';
+import type { Annotation, OmitText } from './annotation-types';
+/**
+ * Reflects one non-overlapping segment
+ */
+export interface Segment<Type extends Annotation> extends FromToProps {
+    annotations: Array<OmitText<Type>>;
+}
+/**
+ * Creates non-overlapping segments based on overlapping annotations.
+ *
+ * Prosemirror combines overlapping inline decorations by creating segments in
+ * which the props of each overlapping decoration are merged.
+ *
+ * The Prosemirror approach doesn't allow to calculate styles based on multiple
+ * annotations, e.g. a darker background shade if there are multiple
+ * annotations.
+ *
+ * To overcome this limitations, this method calculates non-overlapping segments
+ * with overlapping annotations. These segments can be used to create
+ * ProseMirror decorations with a style that reflects all all annotations within
+ * the segment.
+ *
+ * Approach was confirmed by Marijn:
+ * https://discuss.prosemirror.net/t/how-to-style-overlapping-inline-decorations/3162
+ */
+export declare function toSegments<A extends Annotation>(annotations: Array<OmitText<A>>): Array<Segment<A>>;

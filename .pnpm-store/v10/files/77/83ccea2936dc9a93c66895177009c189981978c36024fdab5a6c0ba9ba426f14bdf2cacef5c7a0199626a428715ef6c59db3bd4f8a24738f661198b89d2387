@@ -1,0 +1,17 @@
+import type { ParticleEffect } from './epic-mode-types';
+export declare const COLORS: string[];
+export declare const VIBRANT_COLORS: string[];
+export declare const MAX_PARTICLES = 500;
+export declare const PARTICLE_NUM_RANGE: {
+    min: number;
+    max: number;
+};
+export declare const PARTICLE_GRAVITY = 0.08;
+export declare const PARTICLE_ALPHA_FADEOUT = 0.96;
+export declare const PARTICLE_VELOCITY_RANGE: {
+    readonly x: readonly [-1, 1];
+    readonly y: readonly [-3.5, -1.5];
+};
+export declare const defaultEffect: ParticleEffect;
+export declare const spawningEffect: ParticleEffect;
+export declare const heartEffect: ParticleEffect;

@@ -1,0 +1,201 @@
+"use strict";
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-columns/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  ColumnsExtension: () => ColumnsExtension,
+  DEFAULT_COLUMN_ATTRIBUTES: () => DEFAULT_COLUMN_ATTRIBUTES,
+  toggleColumnsOptions: () => toggleColumnsOptions
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-columns/src/columns-extension.ts
+var import_core = require("@remirror/core");
+var import_messages = require("@remirror/messages");
+var toggleColumnsOptions = {
+  icon: ({ attrs }) => ({
+    name: "layoutColumnLine",
+    sup: attrs?.count
+  }),
+  label: ({ t, attrs }) => t({
+    ...import_messages.ExtensionColumnsMessages.LABEL,
+    values: {
+      count: attrs?.count
+    }
+  }),
+  description: ({ t, attrs }) => t({
+    ...import_messages.ExtensionColumnsMessages.DESCRIPTION,
+    values: {
+      count: attrs?.count
+    }
+  })
+};
+var DEFAULT_COLUMN_ATTRIBUTES = {
+  count: 2,
+  fill: "auto",
+  gap: "inherit",
+  ruleColor: "inherit",
+  ruleStyle: "none",
+  ruleWidth: "inherit",
+  width: "inherit"
+};
+var COLUMN_DATA_ATTRIBUTE = "data-column-type";
+var ColumnsExtension = class extends import_core.NodeExtension {
+  get name() {
+    return "columns";
+  }
+  createTags() {
+    return [import_core.ExtensionTag.Block];
+  }
+  createNodeSpec(extra, override) {
+    return {
+      ...override,
+      content: "block+",
+      attrs: {
+        ...extra.defaults(),
+        count: {
+          default: this.options.defaults.count
+        },
+        fill: {
+          default: this.options.defaults.fill
+        },
+        gap: {
+          default: this.options.defaults.gap
+        },
+        ruleColor: {
+          default: this.options.defaults.ruleColor
+        },
+        ruleStyle: {
+          default: this.options.defaults.ruleStyle
+        },
+        ruleWidth: {
+          default: this.options.defaults.ruleWidth
+        },
+        width: {
+          default: this.options.defaults.width
+        }
+      },
+      parseDOM: [
+        {
+          tag: `div[${COLUMN_DATA_ATTRIBUTE}]`,
+          getAttrs: (node) => {
+            if (!(0, import_core.isElementDomNode)(node)) {
+              return false;
+            }
+            const {
+              columnCount,
+              columnFill,
+              columnGap,
+              columnRuleColor,
+              columnRuleStyle,
+              columnRuleWidth,
+              columnWidth
+            } = node.style;
+            return {
+              ...extra.parse(node),
+              count: columnCount,
+              fill: columnFill,
+              gap: columnGap,
+              ruleColor: columnRuleColor,
+              ruleStyle: columnRuleStyle,
+              ruleWidth: columnRuleWidth,
+              width: columnWidth
+            };
+          }
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => {
+        const { count, fill, gap, ruleColor, ruleStyle, ruleWidth, width, ...other } = (0, import_core.omitExtraAttributes)(node.attrs, extra);
+        const { style: currentStyle = "", ...rest } = extra.dom(node);
+        const style = (0, import_core.joinStyles)(
+          {
+            columnCount: count,
+            columnFill: fill,
+            columnGap: gap,
+            columnRuleColor: ruleColor,
+            columnRuleStyle: ruleStyle,
+            columnRuleWidth: ruleWidth,
+            columnWidth: width
+          },
+          currentStyle
+        );
+        const attributes = {
+          ...rest,
+          ...other,
+          style,
+          [COLUMN_DATA_ATTRIBUTE]: "true"
+        };
+        return ["div", attributes, 0];
+      }
+    };
+  }
+  /**
+   * Add a column span attribute to all block nodes within the editor.
+   */
+  createSchemaAttributes() {
+    const columnSpan = {
+      default: null,
+      parseDOM: (node) => node.getAttribute("column-span") ?? "none",
+      toDOM: (attrs) => attrs.columnSpan ? ["column-span", attrs.columnSpan === "all" ? "all" : "none"] : null
+    };
+    return [
+      {
+        identifiers: {
+          tags: [import_core.ExtensionTag.Block],
+          type: "node",
+          excludeNames: ["columns"]
+        },
+        attributes: {
+          columnSpan
+        }
+      }
+    ];
+  }
+  toggleColumns(attrs = {}, options = {}) {
+    return this.store.commands.toggleWrappingNode.original(this.type, attrs, options.selection);
+  }
+};
+__decorateClass([
+  (0, import_core.command)(toggleColumnsOptions)
+], ColumnsExtension.prototype, "toggleColumns", 1);
+ColumnsExtension = __decorateClass([
+  (0, import_core.extension)({
+    defaultOptions: {
+      defaults: DEFAULT_COLUMN_ATTRIBUTES
+    },
+    staticKeys: ["defaults"]
+  })
+], ColumnsExtension);
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  ColumnsExtension,
+  DEFAULT_COLUMN_ATTRIBUTES,
+  toggleColumnsOptions
+});

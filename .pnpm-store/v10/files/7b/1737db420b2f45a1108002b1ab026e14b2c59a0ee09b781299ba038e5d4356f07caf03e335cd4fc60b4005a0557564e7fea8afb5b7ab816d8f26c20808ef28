@@ -1,0 +1,27 @@
+import path from 'path';
+import fs from 'fs/promises';
+import findCacheDir from 'find-cache-dir';
+export const BASELINE_STATS_DIR = findCacheDir({ name: 'bundle-stats' }) || path.join(process.cwd(), './node_modules/.cache');
+export const BASELINE_STATS_BASE = 'baseline.json';
+export const getBaselinePath = (outputPath = process.cwd(), outputDir = '', filepath = '') => {
+    if (!filepath) {
+        return path.join(BASELINE_STATS_DIR, BASELINE_STATS_BASE);
+    }
+    if (path.isAbsolute(filepath)) {
+        return filepath;
+    }
+    return path.join(outputPath, outputDir, filepath);
+};
+export const getBaselineRelativePath = (outputPath = process.cwd(), outputDir = '', filepath = '') => {
+    const absoluteFilepath = getBaselinePath(outputPath, outputDir, filepath);
+    return path.relative(outputPath, absoluteFilepath);
+};
+export async function readBaseline(baselineFilepath) {
+    const file = await fs.readFile(baselineFilepath, 'utf-8');
+    return JSON.parse(file);
+}
+export async function writeBaseline(data, baselineFilepath) {
+    await fs.mkdir(path.dirname(baselineFilepath), { recursive: true });
+    return fs.writeFile(baselineFilepath, JSON.stringify(data), {});
+}
+//# sourceMappingURL=baseline.js.map

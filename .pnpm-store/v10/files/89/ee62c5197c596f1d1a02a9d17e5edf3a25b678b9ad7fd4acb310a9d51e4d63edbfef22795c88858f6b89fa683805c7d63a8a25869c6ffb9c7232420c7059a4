@@ -1,0 +1,223 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TcService = void 0;
+const moleculer_1 = require("moleculer");
+const lodash_1 = require("lodash");
+const db_mixin_1 = require("./mixins/db.mixin");
+const i18n_1 = require("./lib/i18n");
+class TcService extends moleculer_1.Service {
+    _mixins = [];
+    _actions = {};
+    _methods = {};
+    _settings = {};
+    _events = {};
+    _generateAndParseSchema() {
+        this.parseServiceSchema({
+            name: this.serviceName,
+            mixins: this._mixins,
+            settings: this._settings,
+            actions: this._actions,
+            events: this._events,
+            started: this.onStart,
+            stopped: this.onStop,
+        });
+    }
+    constructor(broker) {
+        super(broker); // Skip 父级的 parseServiceSchema 方法
+        this.onInit(); // 初始化服务
+        this._generateAndParseSchema();
+        this.logger = this.buildLoggerWithPrefix(this.logger);
+        this.onInited(); // 初始化完毕
+    }
+    onInited() { }
+    async onStart() { }
+    async onStop() { }
+    registerMixin(mixin) {
+        this._mixins.push(mixin);
+    }
+    /**
+     * 注册微服务绑定的数据库
+     * 不能调用多次
+     */
+    registerLocalDb = (0, lodash_1.once)((model) => {
+        this.registerMixin((0, db_mixin_1.TcDbService)(model));
+    });
+    /**
+     * 注册数据表可见字段列表
+     * @param fields 字段列表
+     */
+    registerDbField(fields) {
+        this.registerSetting('fields', fields);
+    }
+    /**
+     * 注册一个操作
+     *
+     * 该操作会同时生成http请求和socketio事件的处理
+     * @param name 操作名, 需微服务内唯一
+     * @param handler 处理方法
+     * @returns
+     */
+    registerAction(name, handler, schema) {
+        if (this._actions[name]) {
+            this.logger.warn(`重复注册操作: ${name}。操作被跳过...`);
+            return;
+        }
+        this._actions[name] = {
+            ...schema,
+            handler(ctx) {
+                // 调用时生成t函数
+                ctx.meta.t = (key, defaultValue) => (0, i18n_1.t)(key, defaultValue, {
+                    lng: ctx.meta.language,
+                });
+                return handler.call(this, ctx);
+            },
+        };
+    }
+    /**
+     * 注册一个内部方法
+     */
+    registerMethod(name, method) {
+        if (this._methods[name]) {
+            this.logger.warn(`重复注册方法: ${name}。操作被跳过...`);
+            return;
+        }
+        this._methods[name] = method;
+    }
+    /**
+     * 注册一个配置项
+     */
+    registerSetting(key, value) {
+        if (this._settings[key]) {
+            this.logger.warn(`重复注册配置: ${key}。之前的设置将被覆盖...`);
+        }
+        this._settings[key] = value;
+    }
+    /**
+     * 注册一个事件监听器
+     */
+    registerEventListener(eventName, handler, options = {}) {
+        this._events[eventName] = {
+            ...options,
+            handler: (ctx) => {
+                handler(ctx.params, ctx);
+            },
+        };
+    }
+    /**
+     * 注册跳过token鉴权的路由地址
+     * @param urls 鉴权路由
+     * @example "/user/login"
+     */
+    registerAuthWhitelist(urls) {
+        this.waitForServices('gateway').then(() => {
+            this.broker.broadcast('gateway.auth.addWhitelists', {
+                urls,
+            }, 'gateway');
+        });
+    }
+    /**
+     * 等待微服务启动
+     * @param serviceNames
+     * @param timeout
+     * @param interval
+     * @param logger
+     * @returns
+     */
+    waitForServices(serviceNames, timeout, interval, logger) {
+        if (process.env.NODE_ENV === 'test') {
+            // 测试环境中跳过
+            return Promise.resolve({
+                services: [],
+                statuses: [],
+            });
+        }
+        return super.waitForServices(serviceNames, timeout, interval, logger);
+    }
+    /**
+     * 清理action缓存
+     * NOTICE: 这里使用Redis作为缓存管理器，因此不需要通知所有的service
+     */
+    async cleanActionCache(actionName, keys = []) {
+        await this.broker.cacher.clean(`${this.serviceName}.${actionName}:${keys.join('|')}**`);
+    }
+    /**
+     * 生成一个有命名空间的通知事件名
+     */
+    generateNotifyEventName(eventName) {
+        return `notify:${this.serviceName}.${eventName}`;
+    }
+    /**
+     * 本地调用操作，不经过外部转发
+     */
+    localCall(actionName, params, opts) {
+        return this.actions[actionName](params, opts);
+    }
+    buildLoggerWithPrefix(_originLogger) {
+        const prefix = `[${this.serviceName}]`;
+        const originLogger = _originLogger;
+        return {
+            info: (...args) => {
+                originLogger.info(prefix, ...args);
+            },
+            fatal: (...args) => {
+                originLogger.fatal(prefix, ...args);
+            },
+            error: (...args) => {
+                originLogger.error(prefix, ...args);
+            },
+            warn: (...args) => {
+                originLogger.warn(prefix, ...args);
+            },
+            debug: (...args) => {
+                originLogger.debug(prefix, ...args);
+            },
+            trace: (...args) => {
+                originLogger.trace(prefix, ...args);
+            },
+        };
+    }
+    /**
+     * 单播推送socket事件
+     */
+    unicastNotify(ctx, userId, eventName, eventData) {
+        return ctx.call('gateway.notify', {
+            type: 'unicast',
+            target: userId,
+            eventName: this.generateNotifyEventName(eventName),
+            eventData,
+        });
+    }
+    /**
+     * 列播推送socket事件
+     */
+    listcastNotify(ctx, userIds, eventName, eventData) {
+        return ctx.call('gateway.notify', {
+            type: 'listcast',
+            target: userIds,
+            eventName: this.generateNotifyEventName(eventName),
+            eventData,
+        });
+    }
+    /**
+     * 组播推送socket事件
+     */
+    roomcastNotify(ctx, roomId, eventName, eventData) {
+        return ctx.call('gateway.notify', {
+            type: 'roomcast',
+            target: roomId,
+            eventName: this.generateNotifyEventName(eventName),
+            eventData,
+        });
+    }
+    /**
+     * 群播推送socket事件
+     */
+    broadcastNotify(ctx, eventName, eventData) {
+        return ctx.call('gateway.notify', {
+            type: 'broadcast',
+            eventName: this.generateNotifyEventName(eventName),
+            eventData,
+        });
+    }
+}
+exports.TcService = TcService;

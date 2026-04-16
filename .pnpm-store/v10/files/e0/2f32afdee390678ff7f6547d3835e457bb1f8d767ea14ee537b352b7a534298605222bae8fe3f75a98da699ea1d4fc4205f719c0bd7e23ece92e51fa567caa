@@ -1,0 +1,61 @@
+{
+  "name": "moleculer-cli",
+  "version": "0.7.1",
+  "description": ":herb: Command line tool for Moleculer",
+  "scripts": {
+    "dev": "node ./bin/moleculer",
+    "deps": "npm-check -u",
+    "lint": "eslint src/**/*.js -c .eslintrc.js",
+    "dev:init": "node ./bin/moleculer init project tmp"
+  },
+  "bin": {
+    "moleculer": "./bin/moleculer.js"
+  },
+  "keywords": [
+    "cli",
+    "moleculer",
+    "microservices"
+  ],
+  "author": "MoleculerJS",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^3.2.0",
+    "consolidate": "^0.15.1",
+    "download-git-repo": "^3.0.2",
+    "exeq": "^3.0.0",
+    "glob": "^7.1.6",
+    "handlebars": "^4.7.6",
+    "inquirer": "^7.1.0",
+    "kleur": "^3.0.3",
+    "lodash": "^4.17.15",
+    "metalsmith": "^2.3.0",
+    "minimatch": "^3.0.4",
+    "mkdirp": "^1.0.4",
+    "moleculer": "^0.14.5",
+    "moleculer-repl": "^0.6.4",
+    "multimatch": "^4.0.0",
+    "nats": "^1.4.8",
+    "request": "^2.88.2",
+    "rimraf": "^3.0.2",
+    "update-notifier": "^4.1.0",
+    "yargs": "^15.3.1"
+  },
+  "devDependencies": {
+    "coveralls": "^3.0.11",
+    "eslint": "^6.8.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-security": "^1.4.0",
+    "jest": "^25.3.0",
+    "jest-cli": "^25.3.0",
+    "npm-check": "^5.9.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moleculerjs/moleculer-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/moleculerjs/moleculer-cli/issues"
+  },
+  "homepage": "https://github.com/moleculerjs/moleculer-cli#readme"
+}

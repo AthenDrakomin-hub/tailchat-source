@@ -1,0 +1,32 @@
+import type { Context } from 'moleculer';
+import type { TFunction } from 'i18next';
+import type { GroupStruct } from '../structs/group';
+import type { BuiltinEventMap } from '../structs/events';
+export interface UserJWTPayload {
+    _id: string;
+    nickname: string;
+    email: string;
+    avatar: string;
+}
+interface TranslationMeta {
+    t: TFunction;
+}
+export declare type PureContext<P = {}> = Context<P, {}>;
+export interface TcPureContext<P = {}, M = {}> extends Omit<Context<P>, 'emit'> {
+    meta: TranslationMeta & M;
+    emit<K extends string>(eventName: K, data: K extends keyof BuiltinEventMap ? BuiltinEventMap[K] : unknown, groups?: string | string[]): Promise<void>;
+    emit(eventName: string): Promise<void>;
+}
+export declare type TcContext<P = {}, M = {}> = TcPureContext<P, {
+    user: UserJWTPayload;
+    token: string;
+    userId: string;
+    /**
+     * 仅在 socket.io 的请求中会出现
+     */
+    socketId?: string;
+} & M>;
+export declare type GroupBaseInfo = Pick<GroupStruct, 'name' | 'avatar' | 'owner'> & {
+    memberCount: number;
+};
+export {};

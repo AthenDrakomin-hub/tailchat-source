@@ -1,0 +1,378 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-mention/src/mention-extension.ts
+import {
+  command,
+  ErrorConstant,
+  extension,
+  ExtensionTag,
+  getMarkRange,
+  getMatchString,
+  InputRulesExtension,
+  invariant,
+  isElementDomNode,
+  isMarkActive,
+  isPlainObject,
+  isString,
+  LEAF_NODE_REPLACING_CHARACTER,
+  MarkExtension,
+  omitExtraAttributes,
+  pick,
+  removeMark,
+  replaceText
+} from "@remirror/core";
+import {
+  createRegexFromSuggester,
+  DEFAULT_SUGGESTER,
+  isInvalidSplitReason,
+  isRemovedReason,
+  isSelectionExitReason,
+  isSplitReason
+} from "@remirror/pm/suggest";
+var MentionExtension = class extends MarkExtension {
+  get name() {
+    return "mention";
+  }
+  /**
+   * Tag this as a behavior influencing mark.
+   */
+  createTags() {
+    return [ExtensionTag.Behavior, ExtensionTag.ExcludeInputRules];
+  }
+  createMarkSpec(extra, override) {
+    const dataAttributeId = "data-mention-id";
+    const dataAttributeName = "data-mention-name";
+    return {
+      excludes: "_",
+      inclusive: false,
+      ...override,
+      attrs: {
+        ...extra.defaults(),
+        id: {},
+        label: {},
+        name: {}
+      },
+      parseDOM: [
+        {
+          tag: `${this.options.mentionTag}[${dataAttributeId}]`,
+          getAttrs: (element) => {
+            if (!isElementDomNode(element)) {
+              return false;
+            }
+            const id = element.getAttribute(dataAttributeId);
+            const name = element.getAttribute(dataAttributeName);
+            const label = element.textContent;
+            return { ...extra.parse(element), id, label, name };
+          }
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (mark) => {
+        const { id, name } = omitExtraAttributes(mark.attrs, extra);
+        const matcher = this.options.matchers.find((matcher2) => matcher2.name === name);
+        const mentionClassName = matcher ? matcher.mentionClassName ?? DEFAULT_MATCHER.mentionClassName : DEFAULT_MATCHER.mentionClassName;
+        return [
+          this.options.mentionTag,
+          {
+            ...extra.dom(mark),
+            class: name ? `${mentionClassName} ${mentionClassName}-${name}` : mentionClassName,
+            [dataAttributeId]: id,
+            [dataAttributeName]: name
+          },
+          0
+        ];
+      }
+    };
+  }
+  onCreate() {
+    this.store.getExtension(InputRulesExtension).addHandler("shouldSkipInputRule", this.shouldSkipInputRule.bind(this));
+  }
+  /**
+   * Track click events passed through to the editor.
+   */
+  createEventHandlers() {
+    return {
+      clickMark: (event, clickState) => {
+        const markRange = clickState.getMark(this.type);
+        if (!markRange) {
+          return;
+        }
+        return this.options.onClick(event, markRange);
+      }
+    };
+  }
+  /**
+   * Manages the paste rules for the mention.
+   *
+   * It creates regex tests for each of the configured matchers.
+   */
+  createPasteRules() {
+    return this.options.matchers.map((matcher) => {
+      const { startOfLine, char, supportedCharacters, name, matchOffset } = {
+        ...DEFAULT_MATCHER,
+        ...matcher
+      };
+      const regexp = new RegExp(
+        `(${createRegexFromSuggester({
+          char,
+          matchOffset,
+          startOfLine,
+          supportedCharacters,
+          captureChar: true,
+          caseInsensitive: false,
+          multiline: false
+        }).source})`,
+        "g"
+      );
+      return {
+        type: "mark",
+        regexp,
+        markType: this.type,
+        getAttributes: (string) => ({
+          id: getMatchString(string.slice(string[2]?.length, string.length)),
+          label: getMatchString(string),
+          name
+        })
+      };
+    });
+  }
+  /**
+   * Create the suggesters from the matchers that were passed into the editor.
+   */
+  createSuggesters() {
+    let cachedRange;
+    const options = pick(this.options, [
+      "invalidMarks",
+      "invalidNodes",
+      "isValidPosition",
+      "validMarks",
+      "validNodes",
+      "suggestTag",
+      "disableDecorations"
+    ]);
+    return this.options.matchers.map((matcher) => ({
+      ...DEFAULT_MATCHER,
+      ...options,
+      ...matcher,
+      onChange: (props) => {
+        const command2 = (attrs = {}) => {
+          this.mentionExitHandler(props, attrs)(this.store.helpers.getCommandProp());
+        };
+        this.options.onChange(
+          { ...props, defaultAppendTextValue: this.options.appendText },
+          command2
+        );
+      },
+      checkNextValidSelection: ($pos, tr) => {
+        const range = getMarkRange($pos, this.type);
+        if (!range || range.from === cachedRange?.from && range.to === cachedRange?.to) {
+          return;
+        }
+        const text = $pos.doc.textBetween(range.from, range.to, LEAF_NODE_REPLACING_CHARACTER, " ");
+        const isValidMention = isValidMentionAttributes(range.mark.attrs) && this.options.isMentionValid(range.mark.attrs, text);
+        if (isValidMention) {
+          return;
+        }
+        cachedRange = range;
+        return this.store.chain(tr).removeMention({ range }).tr();
+      }
+    }));
+  }
+  mentionExitHandler(handler, attrs = {}) {
+    return (props) => {
+      const reason = handler.exitReason ?? handler.changeReason;
+      const isInvalid = isInvalidSplitReason(reason);
+      const isRemoved = isRemovedReason(reason);
+      if (isInvalid || isRemoved) {
+        handler.setMarkRemoved();
+        try {
+          return isInvalid && this.removeMention({ range: handler.range })(props);
+        } catch {
+          return true;
+        }
+      }
+      const { tr } = props;
+      const { range, text, query, name } = handler;
+      const { from, to } = range;
+      const isActive = isMarkActive({ from, to, type: this.type, trState: tr });
+      const command2 = isActive ? this.updateMention.bind(this) : this.createMention.bind(this);
+      const {
+        replacementType = isSplitReason(reason) ? "partial" : "full",
+        id = query[replacementType],
+        label = text[replacementType],
+        appendText = this.options.appendText,
+        ...rest
+      } = attrs;
+      const keepSelection = isSelectionExitReason(reason);
+      return command2({
+        name,
+        id,
+        label,
+        appendText,
+        replacementType,
+        range,
+        keepSelection,
+        ...rest
+      })(props);
+    };
+  }
+  createMention(config) {
+    return (props) => this.createMentionFactory(config, false)(props);
+  }
+  updateMention(config) {
+    return (props) => this.createMentionFactory(config, true)(props);
+  }
+  removeMention({ range } = {}) {
+    const value = removeMark({ type: this.type, expand: true, range });
+    return value;
+  }
+  /**
+   * The factory method for mention commands to update and create new mentions.
+   */
+  createMentionFactory(config, shouldUpdate) {
+    invariant(isValidMentionAttributes(config), {
+      code: ErrorConstant.EXTENSION,
+      message: "Invalid configuration attributes passed to the MentionExtension command."
+    });
+    const { range, appendText, replacementType, keepSelection, name, ...attributes } = config;
+    const allowedNames = this.options.matchers.map(({ name: name2 }) => name2);
+    const matcher = getMatcher(name, this.options.matchers);
+    invariant(allowedNames.includes(name) && matcher, {
+      code: ErrorConstant.EXTENSION,
+      message: `The name '${name}' specified for this command is invalid. Please choose from: ${JSON.stringify(
+        allowedNames
+      )}.`
+    });
+    return (props) => {
+      const { tr } = props;
+      const { from, to } = {
+        from: range?.from ?? tr.selection.from,
+        to: range?.cursor ?? tr.selection.to
+      };
+      if (shouldUpdate) {
+        let { oldFrom, oldTo } = { oldFrom: from, oldTo: range ? range.to : to };
+        const $oldTo = tr.doc.resolve(oldTo);
+        ({ from: oldFrom, to: oldTo } = getMarkRange($oldTo, this.type) ?? {
+          from: oldFrom,
+          to: oldTo
+        });
+        tr.removeMark(oldFrom, oldTo, this.type).setMeta("addToHistory", false);
+        const $newTo = tr.selection.$from;
+        const { from: newFrom, to: newTo } = getMarkRange($newTo, this.type) ?? {
+          from: $newTo.pos,
+          to: $newTo.pos
+        };
+        tr.removeMark(newFrom, newTo, this.type).setMeta("addToHistory", false);
+      }
+      return replaceText({
+        keepSelection,
+        type: this.type,
+        attrs: { ...attributes, name },
+        appendText: getAppendText(appendText, matcher.appendText),
+        range: range ? { from, to: replacementType === "full" ? range.to || to : to } : void 0,
+        content: attributes.label
+      })(props);
+    };
+  }
+  shouldSkipInputRule(props) {
+    const { ruleType, state, end, start } = props;
+    if (ruleType === "node") {
+      return false;
+    }
+    if (
+      // Check if the mark for this mention is active anywhere in the captured
+      // input rule group.
+      isMarkActive({ trState: state, type: this.type, from: start, to: end }) || // Check whether the suggester is active and it's name is one of the
+      // registered matchers.
+      this.isMatcherActive(start, end)
+    ) {
+      return true;
+    }
+    return false;
+  }
+  /**
+   * Check whether the mark is active within the provided start and end range.
+   */
+  isMatcherActive(start, end) {
+    const suggestState = this.store.helpers.getSuggestState();
+    const names = new Set(this.options.matchers.map(({ name }) => name));
+    const activeName = suggestState.match?.suggester.name;
+    return this.options.matchers.some((matcher) => activeName === matcher.name) || suggestState.decorationSet.find(start, end, ({ name }) => names.has(name)).length > 0;
+  }
+};
+__decorateClass([
+  command()
+], MentionExtension.prototype, "mentionExitHandler", 1);
+__decorateClass([
+  command()
+], MentionExtension.prototype, "createMention", 1);
+__decorateClass([
+  command()
+], MentionExtension.prototype, "updateMention", 1);
+__decorateClass([
+  command()
+], MentionExtension.prototype, "removeMention", 1);
+MentionExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      mentionTag: "a",
+      matchers: [],
+      appendText: "",
+      suggestTag: "a",
+      disableDecorations: false,
+      invalidMarks: [],
+      invalidNodes: [],
+      isValidPosition: () => true,
+      validMarks: null,
+      validNodes: null,
+      isMentionValid: isMentionValidDefault
+    },
+    handlerKeyOptions: { onClick: { earlyReturnValue: true } },
+    handlerKeys: ["onChange", "onClick"],
+    staticKeys: ["mentionTag", "matchers"]
+  })
+], MentionExtension);
+var DEFAULT_MATCHER = {
+  ...pick(DEFAULT_SUGGESTER, [
+    "startOfLine",
+    "supportedCharacters",
+    "validPrefixCharacters",
+    "invalidPrefixCharacters",
+    "suggestClassName"
+  ]),
+  appendText: "",
+  matchOffset: 1,
+  mentionClassName: "mention"
+};
+function isValidMentionAttributes(attributes) {
+  return !!(attributes && isPlainObject(attributes) && attributes.id && isString(attributes.id) && attributes.label && isString(attributes.label) && attributes.name && isString(attributes.name));
+}
+function getMatcher(name, matchers) {
+  const matcher = matchers.find((matcher2) => matcher2.name === name);
+  return matcher ? { ...DEFAULT_MATCHER, ...matcher } : void 0;
+}
+function getAppendText(preferred, fallback) {
+  if (isString(preferred)) {
+    return preferred;
+  }
+  if (isString(fallback)) {
+    return fallback;
+  }
+  return DEFAULT_MATCHER.appendText;
+}
+function isMentionValidDefault(attrs, text) {
+  return attrs.label === text;
+}
+export {
+  MentionExtension
+};

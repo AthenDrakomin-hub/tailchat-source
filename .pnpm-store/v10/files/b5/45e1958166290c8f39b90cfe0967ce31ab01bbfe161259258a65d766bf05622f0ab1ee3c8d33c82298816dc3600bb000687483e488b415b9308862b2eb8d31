@@ -1,0 +1,2 @@
+// packages/remirror__pm/src/suggest.ts
+export * from "prosemirror-suggest";

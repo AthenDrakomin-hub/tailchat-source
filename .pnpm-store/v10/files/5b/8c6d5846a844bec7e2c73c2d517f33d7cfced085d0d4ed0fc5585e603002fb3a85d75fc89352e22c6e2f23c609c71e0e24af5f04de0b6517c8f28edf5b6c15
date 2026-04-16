@@ -1,0 +1,131 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// packages/remirror__extension-code-block/src/formatter.ts
+var formatter_exports = {};
+__export(formatter_exports, {
+  formatter: () => formatter
+});
+module.exports = __toCommonJS(formatter_exports);
+var import_parser_babel = __toESM(require("prettier/parser-babel"), 1);
+var import_parser_graphql = __toESM(require("prettier/parser-graphql"), 1);
+var import_parser_html = __toESM(require("prettier/parser-html"), 1);
+var import_parser_markdown = __toESM(require("prettier/parser-markdown"), 1);
+var import_parser_postcss = __toESM(require("prettier/parser-postcss"), 1);
+var import_parser_typescript = __toESM(require("prettier/parser-typescript"), 1);
+var import_parser_yaml = __toESM(require("prettier/parser-yaml"), 1);
+var import_standalone = __toESM(require("prettier/standalone"), 1);
+var plugins = [
+  import_parser_babel.default,
+  import_parser_html.default,
+  import_parser_typescript.default,
+  import_parser_markdown.default,
+  import_parser_graphql.default,
+  import_parser_postcss.default,
+  import_parser_yaml.default
+];
+var options = {
+  bracketSpacing: true,
+  arrowParens: "always",
+  jsxSingleQuote: true,
+  singleQuote: true,
+  semi: true
+};
+function formatCode({ parser, source, cursorOffset }) {
+  return import_standalone.default.formatWithCursor(source, {
+    ...options,
+    cursorOffset,
+    plugins,
+    parser
+  });
+}
+function offsetIncrement(source, initialCursor, formatted, endCursor, replacementPairs) {
+  const beforeCursorSource = source.slice(initialCursor - 1, initialCursor);
+  const afterCursorFormatted = formatted.slice(endCursor, endCursor + 1);
+  for (const [invalid, replacement] of replacementPairs) {
+    if (beforeCursorSource === invalid && afterCursorFormatted === replacement) {
+      return 1;
+    }
+  }
+  return 0;
+}
+function formatter(props) {
+  const { cursorOffset, language, source } = props;
+  const fn = (result, pairs = [
+    ['"', "'"],
+    ["'", '"']
+  ]) => {
+    const increment = offsetIncrement(
+      source,
+      cursorOffset,
+      result.formatted,
+      result.cursorOffset,
+      pairs
+    );
+    return { ...result, cursorOffset: result.cursorOffset + increment };
+  };
+  try {
+    switch (language) {
+      case "typescript":
+      case "ts":
+      case "tsx":
+        return fn(formatCode({ source, cursorOffset, parser: "typescript" }));
+      case "javascript":
+      case "jsx":
+      case "js":
+        return fn(formatCode({ source, cursorOffset, parser: "babel-flow" }));
+      case "markdown":
+      case "md":
+        return fn(formatCode({ source, cursorOffset, parser: "markdown" }));
+      case "mdx":
+        return fn(formatCode({ source, cursorOffset, parser: "mdx" }));
+      case "yml":
+      case "yaml":
+        return fn(formatCode({ source, cursorOffset, parser: "yaml" }));
+      case "html":
+        return fn(formatCode({ source, cursorOffset, parser: "html" }));
+      case "css":
+        return fn(formatCode({ source, cursorOffset, parser: "css" }));
+      case "less":
+        return fn(formatCode({ source, cursorOffset, parser: "less" }));
+      case "json":
+        return fn(formatCode({ source, cursorOffset, parser: "json" }));
+      case "json5":
+        return fn(formatCode({ source, cursorOffset, parser: "json5" }));
+      default:
+        return;
+    }
+  } catch {
+    return;
+  }
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  formatter
+});

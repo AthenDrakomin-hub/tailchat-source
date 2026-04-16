@@ -1,0 +1,237 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-find/src/find-extension.ts
+import escapeStringRegex from "escape-string-regexp";
+import matchAll from "string.prototype.matchall";
+import {
+  command,
+  extension,
+  helper,
+  PlainExtension
+} from "@remirror/core";
+import { Decoration, DecorationSet } from "@remirror/pm/view";
+
+// packages/remirror__extension-find/src/find-utils.ts
+function rotateIndex(index, length) {
+  if (length <= 0) {
+    return 0;
+  }
+  return (index % length + length) % length;
+}
+
+// packages/remirror__extension-find/src/find-extension.ts
+var FindExtension = class extends PlainExtension {
+  constructor() {
+    super(...arguments);
+    this._updating = false;
+    this._query = "";
+    this._caseSensitive = true;
+    this._ranges = [];
+    this._activeIndex = void 0;
+  }
+  get name() {
+    return "find";
+  }
+  find({ query, activeIndex, caseSensitive }) {
+    if (!query) {
+      return this.stopFind();
+    }
+    this.setProps({ query, activeIndex, caseSensitive });
+    return ({ tr, dispatch }) => {
+      return this.updateView(tr, dispatch);
+    };
+  }
+  stopFind() {
+    return ({ tr, dispatch }) => {
+      this._query = "";
+      this._activeIndex = void 0;
+      return this.updateView(tr, dispatch);
+    };
+  }
+  findAndReplace({
+    query,
+    caseSensitive,
+    replacement,
+    index
+  }) {
+    return (props) => {
+      this.setProps({ query, caseSensitive });
+      const { tr, dispatch } = props;
+      const ranges = this.gatherFindResults(tr.doc);
+      index = rotateIndex(index ?? this._activeIndex ?? 0, ranges.length);
+      const result = ranges[index];
+      if (!result) {
+        return false;
+      }
+      if (!dispatch) {
+        return true;
+      }
+      tr.insertText(replacement, result.from, result.to);
+      return this.updateView(tr, dispatch);
+    };
+  }
+  findAndReplaceAll({
+    query,
+    caseSensitive,
+    replacement
+  }) {
+    return (props) => {
+      this.setProps({ query, caseSensitive });
+      const { tr } = props;
+      const ranges = this.gatherFindResults(tr.doc);
+      for (let i = ranges.length - 1; i >= 0; i--) {
+        const { from, to } = ranges[i];
+        tr.insertText(replacement, from, to);
+      }
+      return this.stopFind()(props);
+    };
+  }
+  findRanges(options) {
+    this.store.commands.find(options);
+    return {
+      activeIndex: this._activeIndex,
+      ranges: this._ranges
+    };
+  }
+  /**
+   * This plugin is responsible for do the searching and updating the
+   * decorations.
+   */
+  createPlugin() {
+    return {
+      state: {
+        init() {
+          return DecorationSet.empty;
+        },
+        apply: (tr, old) => {
+          if (this._updating || tr.docChanged && this.options.alwaysFind) {
+            const doc = tr.doc;
+            this._ranges = this.gatherFindResults(doc);
+            this.normalizeActiveIndex();
+            this.scrollToActiveResult();
+            return this.createDecorationSet(doc);
+          }
+          if (tr.docChanged) {
+            return old.map(tr.mapping, tr.doc);
+          }
+          return old;
+        }
+      },
+      props: {
+        decorations: (state) => {
+          return this.getPluginState(state);
+        }
+      }
+    };
+  }
+  setProps({
+    query,
+    activeIndex,
+    caseSensitive
+  }) {
+    this._query = escapeStringRegex(query);
+    this._activeIndex = activeIndex;
+    this._caseSensitive = caseSensitive ?? false;
+  }
+  gatherFindResults(doc) {
+    if (!this._query) {
+      return [];
+    }
+    const re = new RegExp(this._query, this._caseSensitive ? "gu" : "gui");
+    const ranges = [];
+    doc.descendants((node, pos) => {
+      if (!node.isTextblock) {
+        return true;
+      }
+      const start = pos + 1;
+      for (const match of matchAll(node.textContent, re)) {
+        const from = start + (match.index ?? 0);
+        const to = from + match[0].length;
+        ranges.push({ from, to });
+      }
+      return false;
+    });
+    return ranges;
+  }
+  normalizeActiveIndex() {
+    if (this._activeIndex != null) {
+      this._activeIndex = rotateIndex(this._activeIndex, this._ranges.length);
+    }
+  }
+  createDecorationSet(doc) {
+    const decorations = this._ranges.map((deco, index) => {
+      return Decoration.inline(
+        deco.from,
+        deco.to,
+        index === this._activeIndex ? this.options.activeDecoration : this.options.decoration
+      );
+    });
+    return DecorationSet.create(doc, decorations);
+  }
+  /**
+   * Dispatch an empty transaction to trigger an update of the decoration.
+   */
+  updateView(tr, dispatch) {
+    this._updating = true;
+    if (dispatch) {
+      dispatch(tr);
+    }
+    this._updating = false;
+    return true;
+  }
+  scrollToActiveResult() {
+    var _a;
+    if (this._activeIndex == null) {
+      return;
+    }
+    const activeResult = this._ranges[this._activeIndex];
+    if (!activeResult) {
+      return;
+    }
+    const view = this.store.view;
+    const maxSize = view.state.doc.content.size;
+    const pos = activeResult.from;
+    if (pos > maxSize) {
+      return;
+    }
+    const dom = view.domAtPos(pos).node;
+    (_a = dom == null ? void 0 : dom.scrollIntoView) == null ? void 0 : _a.call(dom, { block: "nearest", behavior: "smooth" });
+  }
+};
+__decorateClass([
+  command()
+], FindExtension.prototype, "find", 1);
+__decorateClass([
+  command()
+], FindExtension.prototype, "stopFind", 1);
+__decorateClass([
+  command()
+], FindExtension.prototype, "findAndReplace", 1);
+__decorateClass([
+  command()
+], FindExtension.prototype, "findAndReplaceAll", 1);
+__decorateClass([
+  helper()
+], FindExtension.prototype, "findRanges", 1);
+FindExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      decoration: { style: "background-color: yellow;" },
+      activeDecoration: { style: "background-color: orange;" },
+      alwaysFind: false
+    }
+  })
+], FindExtension);
+export {
+  FindExtension
+};

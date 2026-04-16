@@ -1,0 +1,9 @@
+import { MenuProps } from '@mui/material';
+import { FC, ReactNode } from 'react';
+import { CoreIcon } from '@remirror/core';
+export interface DropdownButtonProps extends Omit<MenuProps, 'open' | 'anchorEl' | 'id'> {
+    'aria-label': string;
+    label?: NonNullable<ReactNode>;
+    icon?: CoreIcon | JSX.Element;
+}
+export declare const DropdownButton: FC<DropdownButtonProps>;

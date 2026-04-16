@@ -1,0 +1,5 @@
+import { BundleAuditResult, AuditParam, Logger, EntryPoint } from '../types';
+export * from './rules';
+export declare const audit: (param: Readonly<AuditParam>, logger: Logger) => BundleAuditResult[];
+export declare function calcBundleScore(entries: EntryPoint[]): number;
+export declare function calcEntryPointScore(audits: BundleAuditResult[]): number;

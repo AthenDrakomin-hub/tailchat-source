@@ -1,0 +1,26 @@
+declare module 'moleculer' {
+    class Runner {
+        flags?: {
+            config?: string;
+            repl?: boolean;
+            hot?: boolean;
+            silent?: boolean;
+            env?: boolean;
+            envfile?: string;
+            instances?: number;
+            mask?: string;
+        };
+        servicePaths: string[];
+        start(): void;
+        startWorkers(instances: number): void;
+        _run(): void;
+    }
+}
+interface DevRunnerOptions {
+    config?: string;
+}
+/**
+ * 开始一个启动器
+ */
+export declare function startDevRunner(options: DevRunnerOptions): void;
+export {};

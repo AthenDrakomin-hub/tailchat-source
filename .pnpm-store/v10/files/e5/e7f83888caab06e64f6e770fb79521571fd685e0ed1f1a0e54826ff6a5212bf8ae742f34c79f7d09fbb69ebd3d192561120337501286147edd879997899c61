@@ -1,0 +1,358 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-entity-reference/src/entity-reference-extension.ts
+import {
+  assert,
+  command,
+  extension,
+  getTextSelection,
+  helper,
+  isElementDomNode,
+  MarkExtension,
+  uniqueId,
+  within
+} from "@remirror/core";
+import { TextSelection } from "@remirror/pm/state";
+import { DecorationSet } from "@remirror/pm/view";
+
+// packages/remirror__extension-entity-reference/src/utils/decorate-entity-references.tsx
+import { Decoration } from "@remirror/pm/view";
+
+// packages/remirror__extension-entity-reference/src/utils/ranges.ts
+var findMinMaxRange = (array) => {
+  const min = Math.min(...array.map((a) => a.from));
+  const max = Math.max(...array.map((a) => a.to));
+  return [min, max];
+};
+
+// packages/remirror__extension-entity-reference/src/utils/decorate-entity-references.tsx
+var decorateEntityReferences = (entityReferences) => {
+  if (entityReferences.length === 0) {
+    return [];
+  }
+  const decorations = entityReferences.map((overlappingEntityReferences) => {
+    const backgroundShade = Math.min(overlappingEntityReferences.length, 5) / 5;
+    const notBlue = 200 * (1 - backgroundShade) + 55;
+    const style = `background: rgb(${notBlue}, ${notBlue}, 255);padding: 6px 0;`;
+    const [from, to] = findMinMaxRange(overlappingEntityReferences);
+    const specs = {
+      inclusiveStart: true,
+      inclusiveEnd: true
+    };
+    return Decoration.inline(from, to, { style }, specs);
+  });
+  return [...decorations];
+};
+
+// packages/remirror__extension-entity-reference/src/utils/disjoined-entity-references.ts
+function getDisjoinedEntityReferencesFromNode(node, pos, markTypeName) {
+  const isEntityReference = (mark) => mark.type.name === markTypeName;
+  return node.marks.filter(isEntityReference).map((mark) => {
+    const { id, ...rest } = mark.attrs;
+    const metaData = {
+      from: pos,
+      to: pos + Math.max(node.textContent.length, 1),
+      id,
+      text: node.textContent
+    };
+    if (Object.keys(rest).length > 0) {
+      metaData.attrs = rest;
+    }
+    return metaData;
+  });
+}
+
+// packages/remirror__extension-entity-reference/src/utils/joined-entity-references.ts
+function partitionEntityReferences(array, filter) {
+  const matches = array.filter((e) => filter(e));
+  const notMatches = array.filter((e) => !filter(e));
+  return [matches, notMatches];
+}
+var joinDisjoinedEntityReference = (entityReferences, entityReference) => {
+  const { id, text } = entityReference;
+  if (entityReference.from >= entityReference.to) {
+    return entityReferences;
+  }
+  const [same, diff] = partitionEntityReferences(entityReferences, (h) => h.id === id);
+  const [from, to] = findMinMaxRange([...same, entityReference]);
+  const fullText = same.map((h) => h.text).join(" ");
+  const newEntityReference = {
+    ...entityReference,
+    from,
+    to,
+    text: fullText + text
+  };
+  return [...diff, newEntityReference];
+};
+var joinDisjoinedEntityReferences = (disjoinedEntityReferences) => {
+  let joinedEntityReferences = [];
+  for (const disjoinedEntityReference of disjoinedEntityReferences) {
+    joinedEntityReferences = joinDisjoinedEntityReference(
+      joinedEntityReferences,
+      disjoinedEntityReference
+    );
+  }
+  return joinedEntityReferences;
+};
+
+// packages/remirror__extension-entity-reference/src/utils/shortest-entity-reference.ts
+var getShortestEntityReference = (entityReferences) => entityReferences.sort(({ text: a }, { text: b }) => a.length - b.length)[0];
+
+// packages/remirror__extension-entity-reference/src/entity-reference-extension.ts
+var getEntityReferencesFromPluginState = (props) => {
+  const { extension: extension2, state } = props;
+  const { entityReferences } = extension2.getPluginState(state);
+  return entityReferences;
+};
+var createDecorationSet = (props) => {
+  const { extension: extension2, state } = props;
+  const entityReferences = getEntityReferencesFromPluginState(props);
+  return DecorationSet.create(state.doc, extension2.options.getStyle(entityReferences));
+};
+var EntityReferenceExtension = class extends MarkExtension {
+  get name() {
+    return "entity-reference";
+  }
+  createMarkSpec(extra, override) {
+    const idAttr = `data-entity-reference`;
+    return {
+      ...override,
+      excludes: "",
+      attrs: {
+        ...extra.defaults(),
+        id: { default: "" }
+      },
+      toDOM: (mark) => [
+        "span",
+        {
+          ...extra.dom(mark),
+          [idAttr]: mark.attrs.id
+        },
+        0
+      ],
+      parseDOM: [
+        {
+          tag: `span[${idAttr}]`,
+          getAttrs: (node) => {
+            if (!isElementDomNode(node)) {
+              return false;
+            }
+            const id = node.getAttribute(idAttr);
+            return { ...extra.parse(node), id };
+          }
+        },
+        ...override.parseDOM ?? []
+      ]
+    };
+  }
+  /**
+   * Track click events passed through to the editor.
+   */
+  createEventHandlers() {
+    return {
+      /**
+       * listens to click events and call the "onClickMark" handler with any of:
+       * 1. no argument if the text clicked is not an entity reference
+       * 2. the id of the clicked entity reference
+       * 3. id of the shortest entity reference in case of overlapping entities
+       */
+      click: (_event, clickState) => {
+        const entityReferences = this.getEntityReferencesAt(clickState.pos);
+        if (entityReferences.length === 0) {
+          return this.options.onClickMark();
+        }
+        const shortest = getShortestEntityReference(entityReferences);
+        if (shortest) {
+          this.options.onClick(shortest);
+        }
+        return this.options.onClickMark(entityReferences);
+      }
+    };
+  }
+  /**
+   * Create the extension plugin for inserting decorations into the editor.
+   */
+  createPlugin() {
+    return {
+      state: {
+        init: (_, state) => {
+          const entityReferences = this.getDisjoinedEntityReferences(state.doc);
+          return { entityReferences };
+        },
+        apply: (_tr, _value, _oldState, newState) => {
+          const entityReferences = this.getDisjoinedEntityReferences(newState.doc);
+          return { entityReferences };
+        }
+      },
+      props: {
+        decorations: (state) => createDecorationSet({ state, extension: this })
+      }
+    };
+  }
+  addEntityReference(id, attrs = {}) {
+    return ({ state, tr, dispatch }) => {
+      const { from, to } = state.selection;
+      const newMark = this.type.create({ ...attrs, id: id ?? uniqueId() });
+      try {
+        tr = tr.addMark(from, to, newMark);
+      } catch (error) {
+        throw new Error(
+          `Can't add entityReference ${JSON.stringify(
+            newMark
+          )} to range {from: ${from}, to: ${to}}: ${error.message}`
+        );
+      }
+      dispatch?.(tr);
+      return true;
+    };
+  }
+  removeEntityReference(entityReferenceId) {
+    return ({ tr, dispatch }) => {
+      assert(entityReferenceId, `EntityReference can't be removed without specifying tags its ID!`);
+      const singleMark = this.type.create({ id: entityReferenceId });
+      try {
+        tr = tr.removeMark(1, tr.doc.content.size, singleMark);
+      } catch (error) {
+        throw new Error(`Can't remove entityReference ${entityReferenceId}: ${error.message}`);
+      }
+      dispatch?.(tr);
+      return true;
+    };
+  }
+  scrollToEntityReference(entityReferenceId) {
+    return ({ tr, dispatch }) => {
+      const entityReference = this.getEntityReferenceById(entityReferenceId);
+      if (!entityReference) {
+        return false;
+      }
+      const { doc } = tr;
+      const resolvedFrom = doc.resolve(entityReference.from);
+      const resolvedTo = doc.resolve(entityReference.to);
+      const entityReferenceSelection = TextSelection.between(resolvedFrom, resolvedTo);
+      dispatch?.(tr.setSelection(entityReferenceSelection).scrollIntoView());
+      return true;
+    };
+  }
+  getDisjoinedEntityReferences(doc) {
+    const disjoinedEntityReferences = [];
+    doc.descendants((node, pos) => {
+      const subDisjoinedEntityReferences = getDisjoinedEntityReferencesFromNode(
+        node,
+        pos,
+        this.name
+      );
+      if (subDisjoinedEntityReferences.length === 0) {
+        return true;
+      }
+      disjoinedEntityReferences.push(subDisjoinedEntityReferences);
+      return true;
+    });
+    return disjoinedEntityReferences;
+  }
+  getEntityReferences(state = this.store.getState()) {
+    const entityReferences = getEntityReferencesFromPluginState({
+      extension: this,
+      state
+    }).flat();
+    return joinDisjoinedEntityReferences(entityReferences);
+  }
+  getEntityReferenceById(entityReferenceId, state = this.store.getState()) {
+    const entityReferences = getEntityReferencesFromPluginState({
+      extension: this,
+      state
+    }).flat();
+    return joinDisjoinedEntityReferences(entityReferences).find(
+      (entityReference) => entityReference.id === entityReferenceId
+    );
+  }
+  getEntityReferencesAt(pos, state = this.store.getState()) {
+    const { doc, selection } = state;
+    const { from, to } = getTextSelection(pos ?? selection, doc);
+    const disjointedEntityReferences = getEntityReferencesFromPluginState({
+      extension: this,
+      state
+    }).flat();
+    const entityReferenceIdsInPos = new Set(
+      disjointedEntityReferences.filter(
+        (entityReference) => within(from, entityReference.from, entityReference.to) || within(to, entityReference.from, entityReference.to) || within(entityReference.from, from, to) || within(entityReference.to, from, to)
+      ).map((h) => h.id)
+    );
+    return joinDisjoinedEntityReferences(disjointedEntityReferences).filter(
+      (h) => entityReferenceIdsInPos.has(h.id)
+    );
+  }
+};
+__decorateClass([
+  command()
+], EntityReferenceExtension.prototype, "addEntityReference", 1);
+__decorateClass([
+  command()
+], EntityReferenceExtension.prototype, "removeEntityReference", 1);
+__decorateClass([
+  command()
+], EntityReferenceExtension.prototype, "scrollToEntityReference", 1);
+__decorateClass([
+  helper()
+], EntityReferenceExtension.prototype, "getDisjoinedEntityReferences", 1);
+__decorateClass([
+  helper()
+], EntityReferenceExtension.prototype, "getEntityReferences", 1);
+__decorateClass([
+  helper()
+], EntityReferenceExtension.prototype, "getEntityReferenceById", 1);
+__decorateClass([
+  helper()
+], EntityReferenceExtension.prototype, "getEntityReferencesAt", 1);
+EntityReferenceExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      getStyle: decorateEntityReferences,
+      blockSeparator: void 0,
+      onClickMark: () => {
+      }
+    },
+    handlerKeys: ["onClick"]
+  })
+], EntityReferenceExtension);
+
+// packages/remirror__extension-entity-reference/src/entity-reference-positioners.ts
+import { selectionPositioner } from "@remirror/extension-positioner";
+var centeredEntityReferencePositioner = selectionPositioner.clone({
+  getActive: (props) => {
+    const { state, view, helpers } = props;
+    if (!state.selection.empty) {
+      return [];
+    }
+    const entityReferences = helpers.getEntityReferencesAt(
+      state.selection.from
+    );
+    if (entityReferences.length === 0) {
+      return [];
+    }
+    const shortestEntityReference = entityReferences.sort(
+      (entityReference1, entityReference2) => (entityReference1.text ?? "").length - (entityReference2.text ?? "").length
+    )[0];
+    if (!shortestEntityReference) {
+      return [];
+    }
+    const from = view.coordsAtPos(shortestEntityReference.from);
+    const to = view.coordsAtPos(shortestEntityReference.to);
+    return [{ from, to }];
+  }
+});
+export {
+  EntityReferenceExtension,
+  centeredEntityReferencePositioner,
+  findMinMaxRange,
+  getShortestEntityReference
+};

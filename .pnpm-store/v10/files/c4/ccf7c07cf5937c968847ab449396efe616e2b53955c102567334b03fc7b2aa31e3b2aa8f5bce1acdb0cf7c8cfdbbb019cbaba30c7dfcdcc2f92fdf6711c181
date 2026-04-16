@@ -1,0 +1,152 @@
+import { CommandFunction, CreateExtensionPlugin, FromToProps, Handler, Helper, PlainExtension, Static } from '@remirror/core';
+import { DecorationSet } from '@remirror/pm/view';
+import { Commit, TrackState } from './diff-utils';
+export interface DiffOptions {
+    /**
+     * @defaultValue 'blame-marker';
+     */
+    blameMarkerClass?: Static<string>;
+    /**
+     * @defaultValue `(message: string) => "Revert: '" + message + "'"`
+     */
+    revertMessage?: (message: string) => string;
+    /**
+     * A handler that is called whenever a tracked change is hovered over in the
+     * editor.
+     */
+    onMouseOverCommit?: Handler<(props: HandlerProps) => void>;
+    /**
+     * A handler that is called whenever a tracked change was being hovered is no
+     * longer hovered.
+     */
+    onMouseLeaveCommit?: Handler<(props: HandlerProps) => void>;
+    /**
+     * Called when the commit is part of the current text selection. Called with
+     * an array of possible selection.
+     */
+    onSelectCommits?: Handler<(selections: HandlerProps[], previousSelections?: HandlerProps[]) => void>;
+    /**
+     * Called when commits are deselected.
+     */
+    onDeselectCommits?: Handler<(selections: HandlerProps[]) => void>;
+}
+/**
+ * An extension for the remirror editor. CHANGE ME.
+ */
+export declare class DiffExtension extends PlainExtension<DiffOptions> {
+    get name(): "diff";
+    private hovered?;
+    private selections?;
+    /**
+     * Create the custom change tracking plugin.
+     *
+     * This has been adapted from the prosemirror website demo.
+     * https://github.com/ProseMirror/website/blob/master/example/track/index.js
+     */
+    createPlugin(): CreateExtensionPlugin;
+    /**
+     * Highlight the provided commit.
+     */
+    highlightCommit(commit: Commit | CommitId): CommandFunction;
+    /**
+     * Remove the highlight from the commit.
+     */
+    removeHighlightedCommit(commit: Commit | CommitId): CommandFunction;
+    /**
+     * Add a commit to the transaction history.
+     */
+    commitChange(message: string): CommandFunction;
+    /**
+     * Revert a commit which was added to the transaction history.
+     */
+    revertCommit(commit?: Commit): CommandFunction;
+    /**
+     * Get the full list of tracked commit changes
+     */
+    getCommits(): Helper<Commit[]>;
+    private getIndexByName;
+    /**
+     * Get the commit by it's index
+     */
+    getCommit(id: CommitId): Helper<Commit>;
+    private getCommitId;
+    /**
+     * Get the meta data for this custom plugin.
+     */
+    private getMeta;
+    /**
+     * Set the meta data for the plugin.
+     */
+    private setMeta;
+    /**
+     * Calls the selection handlers when the selection changes the number of
+     * commit spans covered.
+     */
+    private handleSelection;
+    /**
+     * Transform the view and event into a commit and span.
+     */
+    private getHandlerPropsFromEvent;
+    /**
+     * Capture the mouseover event and trigger the `onMouseOverCommit` handler
+     * when it is captured.
+     */
+    private handlerMouseOver;
+    /**
+     * Capture the mouseleave event and trigger the `onMouseLeaveCommit` handler.
+     */
+    private handleMouseLeave;
+    /**
+     * Create the initial plugin state for the custom plugin.
+     */
+    private createInitialState;
+    /**
+     * Apply state updates in response to document changes.
+     */
+    private applyStateUpdates;
+    private createDecorationSet;
+    /**
+     * Apply updates to the highlight decorations.
+     */
+    private updateHighlights;
+    /**
+     * Apply updates for the commit tracker.
+     *
+     * Please note this isn't able to track marks and diffs. It can only
+     * track changes to content.
+     */
+    private updateTracked;
+}
+interface TrackedStateProps {
+    /**
+     * The tracked state.
+     */
+    tracked: TrackState;
+}
+interface HighlightStateProps {
+    /**
+     * The decorations for highlighted commits.
+     */
+    decorations: DecorationSet;
+    /**
+     * The id's of the commits to be highlighted.
+     */
+    commits?: number[];
+}
+export interface DiffPluginState extends TrackedStateProps, HighlightStateProps {
+}
+type CommitId = number | 'first' | 'last';
+export interface HandlerProps extends FromToProps {
+    /**
+     * The commit.
+     */
+    commit: Commit;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            diff: DiffExtension;
+        }
+    }
+}
+export {};

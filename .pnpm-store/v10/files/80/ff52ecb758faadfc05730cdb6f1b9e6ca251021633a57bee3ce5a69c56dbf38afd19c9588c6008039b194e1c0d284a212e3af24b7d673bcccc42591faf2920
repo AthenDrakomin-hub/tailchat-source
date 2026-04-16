@@ -1,0 +1,28 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.METRIC_TYPE_CONFIGS = void 0;
+const format_1 = require("../utils/format");
+const constants_1 = require("../constants");
+exports.METRIC_TYPE_CONFIGS = {
+    [constants_1.MetricTypes.Numeric]: {
+        biggerIsBetter: false,
+        formatter: format_1.formatNumber,
+    },
+    [constants_1.MetricTypes.Score]: {
+        biggerIsBetter: true,
+        formatter: format_1.formatNumber,
+    },
+    [constants_1.MetricTypes.Duration]: {
+        biggerIsBetter: false,
+        formatter: format_1.formatDuration,
+    },
+    [constants_1.MetricTypes.FileSize]: {
+        biggerIsBetter: false,
+        formatter: format_1.formatFileSize,
+    },
+    [constants_1.MetricTypes.Percentage]: {
+        biggerIsBetter: true,
+        formatter: format_1.formatPercentage,
+    },
+};
+//# sourceMappingURL=metric-types.js.map

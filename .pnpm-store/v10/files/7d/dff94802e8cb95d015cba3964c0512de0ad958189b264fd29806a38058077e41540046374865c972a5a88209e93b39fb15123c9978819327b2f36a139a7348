@@ -1,0 +1,5 @@
+import { FC, ReactNode } from 'react';
+export interface BasicFormattingButtonGroupProps {
+    children?: ReactNode | ReactNode[];
+}
+export declare const BasicFormattingButtonGroup: FC<BasicFormattingButtonGroupProps>;

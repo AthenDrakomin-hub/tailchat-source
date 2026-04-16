@@ -1,0 +1,53 @@
+import { EventEmitter } from 'eventemitter-strict';
+import type { Producer, ProducerOptions } from 'mediasoup-client/lib/Producer';
+import type { Transport } from 'mediasoup-client/lib/Transport';
+import type { RtpCapabilities } from 'mediasoup-client/lib/RtpParameters';
+import type { SignalingClient } from './signaling';
+import type { MediaClientConsumer } from '../types';
+export declare type MediaChange = 'pause' | 'resume' | 'close';
+interface MediaCapabilities {
+    canSendMic: boolean;
+    canSendWebcam: boolean;
+    canShareScreen: boolean;
+}
+interface MediaClientEventMap {
+    consumerCreated: (consumer: MediaClientConsumer, producerPaused: boolean) => void;
+    consumerClosed: (consumer: MediaClientConsumer) => void;
+    consumerPaused: (consumer: MediaClientConsumer) => void;
+    consumerResumed: (consumer: MediaClientConsumer) => void;
+    producerClosed: (producer: Producer) => void;
+    producerPaused: (producer: Producer) => void;
+    producerResumed: (producer: Producer) => void;
+}
+export declare class MediaClient extends EventEmitter<MediaClientEventMap> {
+    signaling: SignalingClient;
+    private mediasoup;
+    private sendTransport;
+    private recvTransport;
+    private producers;
+    private consumers;
+    private tracks;
+    constructor(signaling: SignalingClient);
+    close(): void;
+    getConsumer(consumerId: string): MediaClientConsumer | undefined;
+    getConsumers(): MediaClientConsumer[];
+    getProducer(producerId: string): Producer | undefined;
+    getProducers(): Producer[];
+    getTrack(trackId: string): MediaStreamTrack | undefined;
+    addTrack(track: MediaStreamTrack): void;
+    removeTrack(trackId: string | undefined): void;
+    private handleSignaling;
+    get mediaCapabilities(): MediaCapabilities;
+    get rtpCapabilities(): RtpCapabilities;
+    changeConsumer(consumerId: string, change: MediaChange, local?: boolean): Promise<void>;
+    changeProducer(producerId: string, change: MediaChange, local?: boolean): Promise<void>;
+    createTransports(iceServers?: RTCIceServer[]): Promise<{
+        sendTransport: Transport | undefined;
+        recvTransport: Transport | undefined;
+    }>;
+    private createTransport;
+    produce(producerOptions: ProducerOptions): Promise<Producer>;
+    private resumeConsumer;
+    private closeConsumer;
+}
+export {};

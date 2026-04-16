@@ -1,0 +1,48 @@
+interface FormatterProps {
+    /**
+     * The code to be formatted
+     */
+    source: string;
+    /**
+     * Specify where the cursor is. This option cannot be used with rangeStart and
+     * rangeEnd. This allows the command to both formats the code, and translates
+     * a cursor position from unformatted code to formatted code.
+     */
+    cursorOffset: number;
+    /**
+     * The language of the code block. Should be used to determine whether the
+     * formatter can support the transformation.
+     *
+     * Possible languages are available here
+     * https://github.com/wooorm/refractor/tree/716fe904c37cd7ebfde53ac5157e7d6c323a3986/lang
+     */
+    language: string;
+}
+/**
+ * Data returned from a code formatter.
+ */
+interface FormattedContent {
+    /**
+     * The transformed source.
+     */
+    formatted: string;
+    /**
+     * The new cursor position after formatting
+     */
+    cursorOffset: number;
+}
+
+/**
+ * @module
+ *
+ * A formatter for code which can be consumed via
+ * `@remirror/extension-code-block/formatter`.
+ */
+
+/**
+ * A prettier based code formatter which can be dropped in for use within the
+ * `CodeBlockExtension`.
+ */
+declare function formatter(props: FormatterProps): FormattedContent | undefined;
+
+export { formatter };

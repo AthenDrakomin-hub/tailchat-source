@@ -1,0 +1,30 @@
+export declare const PC_PROPRIETARY_CONSTRAINTS: {
+    optional: {
+        googDscp: boolean;
+    }[];
+};
+export declare const VIDEO_CONSTRAINS: {
+    low: {
+        width: number;
+    };
+    medium: {
+        width: number;
+    };
+    high: {
+        width: number;
+    };
+    veryhigh: {
+        width: number;
+    };
+    ultra: {
+        width: number;
+    };
+};
+export declare function getVideoConstrains(resolution: keyof typeof VIDEO_CONSTRAINS, aspectRatio: number): {
+    width: {
+        ideal: number;
+    };
+    height: {
+        ideal: number;
+    };
+};

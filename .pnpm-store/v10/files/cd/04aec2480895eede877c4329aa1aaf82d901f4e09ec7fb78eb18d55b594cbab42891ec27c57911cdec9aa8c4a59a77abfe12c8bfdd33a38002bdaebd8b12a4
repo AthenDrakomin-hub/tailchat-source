@@ -1,0 +1,50 @@
+import { ContextHook as _ } from 'create-context-state';
+import { I18n } from '@remirror/i18n';
+/**
+ * A Provider and hooks component for the remirror i18n helper library.
+ *
+ * This uses `@lingui/core` in the background. So please star and support the
+ * project when you have a moment.
+ */
+export declare const I18nProvider: import("react").ComponentType<import("react").PropsWithChildren<I18nProps>>, useI18n: _<UseI18nReturn>;
+export interface UseI18nReturn extends Required<I18nProps> {
+    /**
+     * A translation utility for translating a predefined string.
+     */
+    t: I18n['_'];
+}
+export interface I18nProps {
+    /**
+     * Provide your own i18n with all the locales you need for your app.
+     *
+     * ```ts
+     * import { i18n } from '@remirror/i18n';
+     * import esLocale from '@remirror/i18n/es';
+     * import { SocialEditor } from '@remirror/react-social-editor';
+     * import { es } from 'make-plural/plurals';
+     *
+     * i18n.loadLocaleData('es', { plurals: es });
+     *
+     * i18n.load({
+     *   es: esLocale.messages,
+     * });
+     *
+     * const Editor = () => {
+     *   <SocialEditor i18n={i18n} />
+     * }
+     * ```
+     */
+    i18n?: I18n;
+    /**
+     * The current locale for this context.
+     *
+     * @defaultValue 'en'
+     */
+    locale?: string;
+    /**
+     * Supported locales. Defaults to including the locale.
+     *
+     * @defaultValue [locale]
+     */
+    supportedLocales?: string[];
+}

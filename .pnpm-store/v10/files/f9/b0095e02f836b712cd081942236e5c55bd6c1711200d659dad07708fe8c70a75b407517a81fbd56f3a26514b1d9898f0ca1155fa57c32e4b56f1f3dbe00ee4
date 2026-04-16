@@ -1,0 +1,78 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WebpackStatsViewerPlugin = void 0;
+const path_1 = __importDefault(require("path"));
+const fs_extra_1 = __importDefault(require("fs-extra"));
+const opener_1 = __importDefault(require("opener"));
+const chalk_1 = __importDefault(require("chalk"));
+const publicDir = path_1.default.resolve(__dirname, '../public');
+const DEFAULT_OPTIONS = {
+    outDir: '',
+    open: true,
+    /**
+     * Modify your own filename
+     * @default `webpack-stats-viewer-${hash}.html`
+     */
+    filename: '',
+    stats: {
+        assets: true,
+        modules: false,
+        hash: true,
+        builtAt: true,
+        chunks: true,
+        chunkRelations: true,
+        chunkModules: true,
+        chunkOrigins: true,
+        chunkGroups: false,
+        reasons: true,
+        optimizationBailout: true,
+    },
+};
+const PLUGIN_NAME = 'webpack-stats-viewer';
+class WebpackStatsViewerPlugin {
+    options;
+    constructor(options) {
+        this.options = {
+            ...DEFAULT_OPTIONS,
+            ...options,
+        };
+    }
+    apply(compiler) {
+        const done = (stats, callback) => {
+            this.generateReport(stats).then(() => callback());
+        };
+        if (compiler.hooks) {
+            compiler.hooks.done.tapAsync(PLUGIN_NAME, done);
+        }
+        else {
+            // webpack4
+            // @ts-ignore
+            compiler.plugin('done', done);
+        }
+    }
+    async generateReport(stats) {
+        const { outDir } = this.options;
+        const compilation = stats.compilation;
+        const logger = compilation.getLogger(PLUGIN_NAME);
+        const source = compilation.getStats().toJson(this.options.stats);
+        let html = await fs_extra_1.default.readFile(path_1.default.resolve(publicDir, './index.html'), {
+            encoding: 'utf8',
+        });
+        html = html.replace('<!-- window.stats -->', `<script type="module">window.stats = ${JSON.stringify(source)};</script>`);
+        html = html.replace(/\.\/assets/g, `${path_1.default.resolve(publicDir, './assets')}`);
+        const filename = path_1.default.join(outDir, this.options.filename ||
+            `${PLUGIN_NAME}-${source.hash ?? Date.now()}.html`);
+        const generatedFilePath = path_1.default.resolve(compilation.outputOptions.path ?? '', filename);
+        await fs_extra_1.default.ensureDir(path_1.default.dirname(generatedFilePath));
+        await fs_extra_1.default.writeFile(generatedFilePath, html);
+        logger.info(`${chalk_1.default.bold(PLUGIN_NAME)} saved stats file to ${chalk_1.default.bold(generatedFilePath)}`);
+        if (this.options.open) {
+            const uri = `file://${generatedFilePath}`;
+            (0, opener_1.default)(uri);
+        }
+    }
+}
+exports.WebpackStatsViewerPlugin = WebpackStatsViewerPlugin;

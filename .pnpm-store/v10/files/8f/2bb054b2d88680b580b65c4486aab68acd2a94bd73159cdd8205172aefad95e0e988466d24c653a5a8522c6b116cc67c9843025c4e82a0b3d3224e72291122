@@ -1,0 +1,5 @@
+export declare function getAllPackagesVersions(repoPath: string, modules: Map<string, string>): {
+    name: string;
+    version: string;
+}[];
+export declare function resolveModuleVersion(path: string, rootPath: string): readonly [string, string] | undefined;

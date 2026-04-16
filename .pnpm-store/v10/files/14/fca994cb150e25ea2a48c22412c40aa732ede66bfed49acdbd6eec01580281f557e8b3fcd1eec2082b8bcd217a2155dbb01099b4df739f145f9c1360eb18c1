@@ -1,0 +1,90 @@
+import { Static, PrimitiveSelection, TupleOf, MarkExtension, ApplySchemaAttributes, MarkSpecOverride, MarkExtensionSpec, CommandFunction, Helper } from '@remirror/core';
+import { I18n } from '@remirror/i18n';
+
+interface TextColorAttributes {
+    /**
+     * The color of the text. This can be a color value like `red` `#fff`
+     * `rgb(0,0,0)` or a computed property like `--rmr-color-primary`.
+     *
+     * @defaultValue ''
+     */
+    color?: string;
+}
+interface TextColorOptions {
+    /**
+     * The default color value.
+     *
+     * @defaultValue 'inherit'
+     */
+    defaultColor?: Static<string>;
+    /**
+     * The color palette which is a function that returns a list of colors and
+     * labels for help with ui. It is completely optional and you are free to use use whatever colors
+     * you choose.
+     */
+    palette?: Palette;
+}
+interface SetTextColorOptions {
+    selection?: PrimitiveSelection;
+}
+interface ColorWithLabel {
+    label: string;
+    color: string;
+}
+type ColorWithLabelTuple = TupleOf<ColorWithLabel, 10>;
+interface HuePalette {
+    label: string;
+    hues: ColorWithLabelTuple;
+}
+type HuePaletteMap = Record<keyof Remirror.ThemeHue, HuePalette> & Record<string, HuePalette>;
+interface ColorPalette {
+    black: ColorWithLabel;
+    white: ColorWithLabel;
+    transparent: ColorWithLabel;
+    hues: HuePaletteMap;
+}
+/**
+ * Create a palette the `t` method provided for internalization.
+ */
+type Palette = (t: I18n['_']) => ColorPalette;
+
+/**
+ * Wraps text with a styled span using the color css property. The name of the wrapper tag should be configurable.
+ */
+declare class TextColorExtension extends MarkExtension<TextColorOptions> {
+    get name(): "textColor";
+    createTags(): ("formattingMark" | "fontStyle")[];
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    /**
+     * Set the text color value for the selected text.
+     *
+     * To remove the color you can set the value to null.
+     */
+    setTextColor(color: string, options?: SetTextColorOptions): CommandFunction;
+    /**
+     * Remove the color mark from the selection.
+     */
+    removeTextColor(options?: SetTextColorOptions): CommandFunction;
+    /**
+     * Get the color from the provided string. The string can be a computed
+     * property as well.
+     */
+    getHexColor(color: string): Helper<string>;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            textColor: TextColorExtension;
+        }
+    }
+}
+
+declare const setTextColorOptions: Remirror.CommandDecoratorOptions;
+/**
+ * The default color palette which uses css properties to update the colors.
+ */
+declare function palette(t: I18n['_']): ColorPalette;
+declare const CSS_VAR_REGEX: RegExp;
+declare const TEXT_COLOR_ATTRIBUTE = "data-text-color-mark";
+
+export { CSS_VAR_REGEX, type ColorPalette, type ColorWithLabel, type ColorWithLabelTuple, type HuePalette, type HuePaletteMap, type Palette, type SetTextColorOptions, TEXT_COLOR_ATTRIBUTE, type TextColorAttributes, TextColorExtension, type TextColorOptions, palette, setTextColorOptions };

@@ -1,0 +1,11 @@
+import { MetricReportRowTransformFn } from '../report/types';
+export declare const compareModuleDuplicateSize: (jobs: Array<unknown>, rowTransformers?: Array<MetricReportRowTransformFn>) => import("..").ReportMetricRow[];
+export declare const compareModuleTotalSize: (jobs: Array<unknown>, rowTransformers?: Array<MetricReportRowTransformFn>) => import("..").ReportMetricRow[];
+export declare const compareBySection: {
+    stats: (jobs: Array<unknown>, rowTransformers?: Array<MetricReportRowTransformFn>) => import("..").ReportMetricRow[];
+    sizes: (jobs: Array<unknown>, rowTransformers?: Array<MetricReportRowTransformFn>) => import("..").ReportMetricRow[];
+    assets: (jobs: Array<unknown>, rowTransformers?: Array<MetricReportRowTransformFn>) => import("..").ReportMetricRow[];
+    modules: (jobs: Array<unknown>, rowTransformers?: Array<MetricReportRowTransformFn>) => import("..").ReportMetricRow[];
+    packages: (jobs: Array<unknown>, rowTransformers?: Array<MetricReportRowTransformFn>) => import("..").ReportMetricRow[];
+};
+export declare const compare: (jobs: Array<unknown>) => {};

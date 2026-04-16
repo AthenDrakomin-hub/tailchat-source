@@ -1,0 +1,31 @@
+import { EventEmitter } from 'eventemitter-strict';
+import type { ChatMessageData, ConnectWebRtcTransport, ConsumerData, CreateWebRtcTransport, DisplayNameData, FilesharingData, JoinData, PauseProducerData, ProduceData, PromotePeerData, ResumeProducerData, SocketInboundNotification } from '../types';
+interface SignalingClientEventMap {
+    connect: () => void;
+    disconnect: () => void;
+    reconnect: (attempt?: number) => void;
+    reconnect_failed: () => void;
+    notification: (notification: SocketInboundNotification) => void;
+}
+export declare class SignalingClient extends EventEmitter<SignalingClientEventMap> {
+    /**
+     * 请求重试次数
+     */
+    requestRetries: number;
+    /**
+     * 请求超时时间
+     */
+    requestTimeout: number;
+    /**
+     * 信令服务器的嵌套字
+     */
+    private socket?;
+    connect({ url }: {
+        url: string;
+    }): void;
+    disconnect(): void;
+    private handleSocket;
+    private sendRequestOnWire;
+    sendRequest<T>(method: string, data?: CreateWebRtcTransport | ConnectWebRtcTransport | ProduceData | ConsumerData | JoinData | PauseProducerData | ResumeProducerData | DisplayNameData | PromotePeerData | ChatMessageData | FilesharingData | undefined): Promise<T>;
+}
+export {};

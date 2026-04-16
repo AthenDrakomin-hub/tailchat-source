@@ -1,0 +1,88 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-hard-break/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  HardBreakExtension: () => HardBreakExtension
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-hard-break/src/hard-break-extension.ts
+var import_core = require("@remirror/core");
+var import_commands = require("@remirror/pm/commands");
+var HardBreakExtension = class extends import_core.NodeExtension {
+  get name() {
+    return "hardBreak";
+  }
+  createTags() {
+    return [import_core.ExtensionTag.InlineNode];
+  }
+  createNodeSpec(extra, override) {
+    return {
+      inline: true,
+      selectable: false,
+      atom: true,
+      leafText: () => {
+        return "\n";
+      },
+      ...override,
+      attrs: extra.defaults(),
+      parseDOM: [{ tag: "br", getAttrs: extra.parse }, ...override.parseDOM ?? []],
+      toDOM: (node) => ["br", extra.dom(node)]
+    };
+  }
+  createKeymap() {
+    const command2 = (0, import_core.chainCommands)((0, import_core.convertCommand)(import_commands.exitCode), () => {
+      this.store.commands.insertHardBreak();
+      return true;
+    });
+    return {
+      "Mod-Enter": command2,
+      "Shift-Enter": command2
+    };
+  }
+  insertHardBreak() {
+    return (props) => {
+      const { tr, dispatch } = props;
+      dispatch == null ? void 0 : dispatch(tr.replaceSelectionWith(this.type.create()).scrollIntoView());
+      return true;
+    };
+  }
+};
+__decorateClass([
+  (0, import_core.command)()
+], HardBreakExtension.prototype, "insertHardBreak", 1);
+HardBreakExtension = __decorateClass([
+  (0, import_core.extension)({
+    defaultPriority: import_core.ExtensionPriority.Low
+  })
+], HardBreakExtension);
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  HardBreakExtension
+});

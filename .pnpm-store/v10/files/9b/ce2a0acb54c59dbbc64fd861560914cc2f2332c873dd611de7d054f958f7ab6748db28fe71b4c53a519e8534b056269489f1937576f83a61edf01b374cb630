@@ -1,0 +1,29 @@
+import { Transaction, TransactionProps } from '@remirror/core';
+import { DecorationSet } from '@remirror/pm/view';
+import { AddAnnotationAction, RemoveAnnotationsAction, SetAnnotationsAction, UpdateAnnotationAction } from './annotation-actions';
+import type { Annotation, AnnotationStore, GetStyle, OmitText } from './annotation-types';
+interface ApplyProps extends TransactionProps {
+    action: any;
+}
+export declare class AnnotationState<Type extends Annotation = Annotation> {
+    private readonly getStyle;
+    private readonly store;
+    /**
+     * Cache of annotations being currently shown
+     */
+    annotations: Array<OmitText<Type>>;
+    /**
+     * Decorations are computed based on the annotations. The state contains a
+     * copy of the decoration for performance optimization.
+     */
+    decorationSet: DecorationSet;
+    constructor(getStyle: GetStyle<Type>, store: AnnotationStore<Type>);
+    addAnnotation(addAction: AddAnnotationAction<Type>): void;
+    updateAnnotation(updateAction: UpdateAnnotationAction<Type>): void;
+    removeAnnotations(removeAction: RemoveAnnotationsAction): void;
+    setAnnotations(setAction: SetAnnotationsAction<Type>): void;
+    formatAnnotations(): Array<OmitText<Type>>;
+    createDecorations(tr: Transaction, annotations?: Array<OmitText<Type>>): DecorationSet;
+    apply({ tr, action }: ApplyProps): this;
+}
+export {};

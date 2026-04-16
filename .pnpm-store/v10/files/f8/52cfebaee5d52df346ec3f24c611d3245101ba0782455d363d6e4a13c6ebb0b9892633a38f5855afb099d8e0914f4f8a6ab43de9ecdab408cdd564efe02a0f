@@ -1,0 +1,4 @@
+import { OfficialGachaIndex, OfficialGachaPool, OfficialGachaType } from '../types';
+export declare function getGachaIndex(): Promise<OfficialGachaIndex[]>;
+export declare function getGachaData(id: string): Promise<OfficialGachaPool>;
+export declare function getOfficialGachaPool(type: keyof OfficialGachaType): Promise<OfficialGachaPool | null>;

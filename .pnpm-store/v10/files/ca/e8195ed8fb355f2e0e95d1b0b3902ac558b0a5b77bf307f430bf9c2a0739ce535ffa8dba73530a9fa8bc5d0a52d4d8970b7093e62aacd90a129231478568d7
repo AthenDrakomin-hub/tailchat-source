@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.extractData = void 0;
+/**
+ * 提取数据
+ */
+function extractData(source) {
+    /**
+     * 入口文件
+     */
+    const entrypoints = Object.values(source.entrypoints ?? {});
+    const chunks = source.chunks ?? [];
+    return { entrypoints, chunks };
+}
+exports.extractData = extractData;

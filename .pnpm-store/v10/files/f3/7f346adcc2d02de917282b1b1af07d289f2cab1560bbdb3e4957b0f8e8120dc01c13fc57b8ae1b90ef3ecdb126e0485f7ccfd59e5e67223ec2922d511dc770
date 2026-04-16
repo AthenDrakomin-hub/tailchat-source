@@ -1,0 +1,7 @@
+import { FC } from 'react';
+import { CalloutExtensionAttributes } from '@remirror/extension-callout';
+import { CommandMenuItemProps } from './command-menu-item';
+export interface ToggleCalloutMenuItemProps extends Omit<CommandMenuItemProps, 'commandName' | 'active' | 'enabled' | 'attrs' | 'onSelect'> {
+    attrs?: Partial<CalloutExtensionAttributes>;
+}
+export declare const ToggleCalloutMenuItem: FC<ToggleCalloutMenuItemProps>;

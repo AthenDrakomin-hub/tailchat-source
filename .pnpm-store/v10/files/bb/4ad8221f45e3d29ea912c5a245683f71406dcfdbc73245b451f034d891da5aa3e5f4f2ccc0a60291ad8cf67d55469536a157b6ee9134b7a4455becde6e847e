@@ -1,0 +1,41 @@
+{
+  "name": "eventemitter-strict",
+  "version": "1.0.1",
+  "description": "A eventemitter with typescript full support",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "author": "moonrailgun <moonrailgun@gmail.com>",
+  "repository": "https://github.com/moonrailgun/eventemitter-strict.git",
+  "scripts": {
+    "prepare": "tsc",
+    "release": "npm publish --registry https://registry.npmjs.com/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "lib"
+  ],
+  "keywords": [
+    "EventEmitter",
+    "EventEmitter2",
+    "EventEmitter3",
+    "Events",
+    "addEventListener",
+    "addListener",
+    "on",
+    "off",
+    "emit",
+    "emits",
+    "emitter",
+    "event",
+    "once",
+    "pubsub",
+    "pub/sub",
+    "publish",
+    "reactor",
+    "subscribe"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.7.3"
+  }
+}

@@ -1,0 +1,32 @@
+export interface InjectTraceIdJSXOptions {
+    filepath: string;
+    opener: {
+        type: 'vscode';
+    } | {
+        type: 'github';
+        url: string;
+        branch?: string;
+        cwd?: string;
+    } | {
+        type: 'jetbrains';
+        port?: number;
+    };
+}
+/**
+ * inject Trace Id in jsx code
+ */
+export declare function injectTraceIdJSX(jsx: string, options: InjectTraceIdJSXOptions): {
+    code: string;
+    map: {
+        version: number;
+        sources: string[];
+        names: string[];
+        sourceRoot?: string;
+        sourcesContent?: string[];
+        mappings: string;
+        file: string;
+    };
+} | {
+    code: string;
+    map?: undefined;
+};

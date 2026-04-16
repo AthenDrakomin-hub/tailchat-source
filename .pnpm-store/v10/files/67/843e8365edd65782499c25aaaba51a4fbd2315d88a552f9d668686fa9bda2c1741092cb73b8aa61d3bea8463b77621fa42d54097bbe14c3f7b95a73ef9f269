@@ -1,0 +1,4 @@
+import * as types from './types';
+type RunMetrics = Record<string, types.MetricValue>;
+export declare const mergeMetricsByKey: (runs: Array<RunMetrics>, rowTransformers?: Array<types.MetricReportRowTransformFn>) => Array<types.ReportRow>;
+export {};

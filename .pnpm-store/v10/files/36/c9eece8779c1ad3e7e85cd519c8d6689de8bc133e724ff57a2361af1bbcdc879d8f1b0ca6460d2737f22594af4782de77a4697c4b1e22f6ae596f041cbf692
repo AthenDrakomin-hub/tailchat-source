@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getShortTimeStr = exports.getPluginPackagePath = void 0;
+var path_1 = __importDefault(require("path"));
+var config_1 = require("../bundler/config");
+function getPluginPackagePath(pluginName) {
+    return path_1.default.resolve(config_1.config.pluginRoot, './plugins/', pluginName, './package.json');
+}
+exports.getPluginPackagePath = getPluginPackagePath;
+/**
+ * Return HH:mm
+ */
+function getShortTimeStr() {
+    var now = new Date();
+    return String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+}
+exports.getShortTimeStr = getShortTimeStr;

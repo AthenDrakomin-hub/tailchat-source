@@ -1,0 +1,16 @@
+export declare enum ResizableHandleType {
+    Right = 0,
+    Left = 1,
+    Bottom = 2,
+    BottomRight = 3,
+    BottomLeft = 4
+}
+export declare class ResizableHandle {
+    #private;
+    dom: HTMLDivElement;
+    type: ResizableHandleType;
+    constructor(type: ResizableHandleType);
+    createHandle(type: ResizableHandleType): void;
+    setHandleVisibility(visible: boolean): void;
+    dataSetDragging(isDraging: boolean): void;
+}

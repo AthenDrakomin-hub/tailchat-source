@@ -1,0 +1,1279 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-list/src/bullet-list-extension.ts
+import {
+  assertGet,
+  command as command2,
+  extension as extension2,
+  ExtensionPriority as ExtensionPriority2,
+  ExtensionTag as ExtensionTag4,
+  keyBinding,
+  NamedShortcut,
+  NodeExtension as NodeExtension2
+} from "@remirror/core";
+import { ExtensionListMessages as Messages } from "@remirror/messages";
+import { InputRule, wrappingInputRule } from "@remirror/pm/inputrules";
+import { NodeSelection as NodeSelection2 } from "@remirror/pm/state";
+import { ExtensionListTheme as ExtensionListTheme3 } from "@remirror/theme";
+
+// packages/remirror__extension-list/src/list-commands.ts
+import {
+  chainableEditorState,
+  ExtensionTag as ExtensionTag2,
+  findParentNode,
+  getNodeType,
+  isNodeSelection
+} from "@remirror/core";
+import { joinBackward } from "@remirror/pm/commands";
+import { Fragment, Slice } from "@remirror/pm/model";
+import { liftListItem, sinkListItem, wrapInList } from "@remirror/pm/schema-list";
+import { TextSelection } from "@remirror/pm/state";
+import { canJoin, canSplit, ReplaceAroundStep } from "@remirror/pm/transform";
+
+// packages/remirror__extension-list/src/list-utils.ts
+import { ExtensionTag } from "@remirror/core";
+function isList(type) {
+  return !!type.spec.group?.includes(ExtensionTag.ListContainerNode);
+}
+function isListItem(type) {
+  return !!type.spec.group?.includes(ExtensionTag.ListItemNode);
+}
+function isListNode(node) {
+  return isList(node.type);
+}
+function isListItemNode(node) {
+  return isListItem(node.type);
+}
+
+// packages/remirror__extension-list/src/list-commands.ts
+function toggleList(listType, itemType) {
+  return (props) => {
+    const { dispatch, tr } = props;
+    const state = chainableEditorState(tr, props.state);
+    const { $from, $to } = tr.selection;
+    const range = $from.blockRange($to);
+    if (!range) {
+      return false;
+    }
+    const parentList = findParentNode({
+      predicate: (node) => isList(node.type),
+      selection: tr.selection
+    });
+    if (
+      // the selection range is right inside the list
+      parentList && range.depth - parentList.depth <= 1 && // the selectron range is the first child of the list
+      range.startIndex === 0
+    ) {
+      if (parentList.node.type === listType) {
+        return liftListItemOutOfList(itemType)(props);
+      }
+      if (isList(parentList.node.type)) {
+        if (listType.validContent(parentList.node.content)) {
+          dispatch?.(tr.setNodeMarkup(parentList.pos, listType));
+          return true;
+        }
+        if (deepChangeListType(tr, parentList, listType, itemType)) {
+          dispatch?.(tr.scrollIntoView());
+          return true;
+        }
+        return false;
+      }
+    }
+    return wrapInList(listType)(state, dispatch);
+  };
+}
+function splitListItem(listItemTypeOrName, ignoreAttrs = ["checked"]) {
+  return function({ tr, dispatch, state }) {
+    const listItemType = getNodeType(listItemTypeOrName, state.schema);
+    const { $from, $to } = tr.selection;
+    if (
+      // Don't apply to node selection where the selected node is a block (inline nodes might be okay)
+      // eslint-disable-next-line unicorn/consistent-destructuring
+      isNodeSelection(tr.selection) && tr.selection.node.isBlock || // List items can only exists at a depth of 2 or greater
+      $from.depth < 2 || // Don't apply to a selection which spans multiple nodes.
+      !$from.sameParent($to)
+    ) {
+      return false;
+    }
+    const grandParent = $from.node(-1);
+    if (grandParent.type !== listItemType) {
+      return false;
+    }
+    if ($from.parent.content.size === 0 && $from.node(-1).childCount === $from.indexAfter(-1)) {
+      if ($from.depth === 2 || $from.node(-3).type !== listItemType || $from.index(-2) !== $from.node(-2).childCount - 1) {
+        return false;
+      }
+      if (dispatch) {
+        const keepItem = $from.index(-1) > 0;
+        let wrap = Fragment.empty;
+        for (let depth = $from.depth - (keepItem ? 1 : 2); depth >= $from.depth - 3; depth--) {
+          wrap = Fragment.from($from.node(depth).copy(wrap));
+        }
+        const content = listItemType.contentMatch.defaultType?.createAndFill() || void 0;
+        wrap = wrap.append(Fragment.from(listItemType.createAndFill(null, content) || void 0));
+        const depthAfter = $from.indexAfter(-1) < $from.node(-2).childCount ? 1 : $from.indexAfter(-2) < $from.node(-3).childCount ? 2 : 3;
+        tr.replace(
+          $from.before(keepItem ? void 0 : -1),
+          $from.after(-depthAfter),
+          new Slice(wrap, keepItem ? 3 : 2, 2)
+        );
+        tr.setSelection(
+          tr.selection.constructor.near(
+            tr.doc.resolve($from.pos + (keepItem ? 3 : 2))
+          )
+        );
+        dispatch(tr.scrollIntoView());
+      }
+      return true;
+    }
+    if (grandParent.attrs.closed && $from.sameParent($to) && $to.pos === $to.end()) {
+      if (dispatch) {
+        const newListItemStartPos = $from.after(-1);
+        const content = listItemType.contentMatch.defaultType?.createAndFill() || void 0;
+        const newListItem = listItemType.createAndFill(null, content);
+        if (newListItem) {
+          tr.insert(newListItemStartPos, newListItem);
+          tr.setSelection(TextSelection.near(tr.doc.resolve(newListItemStartPos + 1)));
+        }
+        tr.delete($from.pos, $to.pos);
+        dispatch(tr.scrollIntoView());
+      }
+      return true;
+    }
+    const listItemAttributes = Object.fromEntries(
+      Object.entries(grandParent.attrs).filter(([attr]) => !ignoreAttrs.includes(attr))
+    );
+    const contentType = $to.pos === $from.end() ? grandParent.contentMatchAt(0).defaultType : null;
+    const contentAttributes = { ...$from.node().attrs };
+    tr.delete($from.pos, $to.pos);
+    const types = contentType ? [
+      { type: listItemType, attrs: listItemAttributes },
+      { type: contentType, attrs: contentAttributes }
+    ] : [{ type: listItemType, attrs: listItemAttributes }];
+    if (!canSplit(tr.doc, $from.pos, 2)) {
+      return false;
+    }
+    if (dispatch) {
+      dispatch(tr.split($from.pos, 2, types).scrollIntoView());
+    }
+    return true;
+  };
+}
+function getAllListItemNames(allExtensions) {
+  return allExtensions.filter((extension4) => extension4.tags.includes(ExtensionTag2.ListItemNode)).map((extension4) => extension4.name);
+}
+function getOrderedListItemTypes(listItemNames, state) {
+  const { $from, $to } = state.selection;
+  const sharedDepth = $from.sharedDepth($to.pos);
+  const listItemTypes = /* @__PURE__ */ new Map();
+  for (let depth = sharedDepth; depth >= 0; depth--) {
+    const type = $from.node(depth).type;
+    if (listItemNames.includes(type.name) && !listItemTypes.has(type.name)) {
+      listItemTypes.set(type.name, type);
+    }
+  }
+  return listItemTypes;
+}
+function sharedSinkListItem(allExtensions) {
+  const listItemNames = getAllListItemNames(allExtensions);
+  return ({ dispatch, state }) => {
+    const listItemTypes = getOrderedListItemTypes(listItemNames, state);
+    for (const type of listItemTypes.values()) {
+      if (sinkListItem(type)(state, dispatch)) {
+        return true;
+      }
+    }
+    return listItemTypes.size > 0;
+  };
+}
+function sharedLiftListItem(allExtensions) {
+  const listItemNames = getAllListItemNames(allExtensions);
+  return ({ dispatch, state }) => {
+    const listItemTypes = getOrderedListItemTypes(listItemNames, state);
+    for (const type of listItemTypes.values()) {
+      if (liftListItem(type)(state, dispatch)) {
+        return true;
+      }
+    }
+    return listItemTypes.size > 0;
+  };
+}
+function deepChangeListType(tr, foundList, listType, itemType) {
+  const oldList = foundList.node;
+  const $start = tr.doc.resolve(foundList.start);
+  const listParent = $start.node(-1);
+  const indexBefore = $start.index(-1);
+  if (!listParent) {
+    return false;
+  }
+  if (!listParent.canReplace(indexBefore, indexBefore + 1, Fragment.from(listType.create()))) {
+    return false;
+  }
+  const newItems = [];
+  for (let index = 0; index < oldList.childCount; index++) {
+    const oldItem = oldList.child(index);
+    if (!itemType.validContent(oldItem.content)) {
+      return false;
+    }
+    const newItem = itemType.createChecked(null, oldItem.content);
+    newItems.push(newItem);
+  }
+  const newList = listType.createChecked(null, newItems);
+  const start = foundList.pos;
+  const end = start + oldList.nodeSize;
+  const from = tr.selection.from;
+  tr.replaceRangeWith(start, end, newList);
+  tr.setSelection(tr.selection.constructor.near(tr.doc.resolve(from)));
+  return true;
+}
+function wrapItems({
+  listType,
+  itemType,
+  tr,
+  range
+}) {
+  const oldList = range.parent;
+  const slice = tr.doc.slice(range.start, range.end);
+  if (oldList.type === listType && slice.content.firstChild?.type === itemType) {
+    return false;
+  }
+  const newItems = [];
+  for (let i = 0; i < slice.content.childCount; i++) {
+    const oldItem = slice.content.child(i);
+    if (!itemType.validContent(oldItem.content)) {
+      return false;
+    }
+    const newItem = itemType.createChecked(null, oldItem.content);
+    newItems.push(newItem);
+  }
+  const newList = listType.createChecked(null, newItems);
+  tr.replaceRange(range.start, range.end, new Slice(Fragment.from(newList), 0, 0));
+  return true;
+}
+function wrapSelectedItems({
+  listType,
+  itemType,
+  tr
+}) {
+  const range = calculateItemRange(tr.selection);
+  if (!range) {
+    return false;
+  }
+  const atStart = range.startIndex === 0;
+  const { from, to } = tr.selection;
+  if (!wrapItems({ listType, itemType, tr, range })) {
+    return false;
+  }
+  tr.setSelection(
+    TextSelection.between(
+      tr.doc.resolve(atStart ? from : from + 2),
+      tr.doc.resolve(atStart ? to : to + 2)
+    )
+  );
+  tr.scrollIntoView();
+  return true;
+}
+function liftOutOfList(state, dispatch, range) {
+  const tr = state.tr, list = range.parent;
+  const originMappingLength = tr.mapping.maps.length;
+  for (let pos = range.end, i = range.endIndex - 1, e = range.startIndex; i > e; i--) {
+    pos -= list.child(i).nodeSize;
+    tr.delete(pos - 1, pos + 1);
+  }
+  const $start = tr.doc.resolve(range.start), item = $start.nodeAfter;
+  if (!item) {
+    return false;
+  }
+  if (tr.mapping.slice(originMappingLength).map(range.end) !== range.start + item.nodeSize) {
+    return false;
+  }
+  const atStart = range.startIndex === 0, atEnd = range.endIndex === list.childCount;
+  const parent = $start.node(-1), indexBefore = $start.index(-1);
+  if (!parent.canReplace(
+    indexBefore + (atStart ? 0 : 1),
+    indexBefore + 1,
+    item.content.append(atEnd ? Fragment.empty : Fragment.from(list))
+  )) {
+    return false;
+  }
+  const start = $start.pos, end = start + item.nodeSize;
+  tr.step(
+    new ReplaceAroundStep(
+      start - (atStart ? 1 : 0),
+      end + (atEnd ? 1 : 0),
+      start + 1,
+      end - 1,
+      new Slice(
+        (atStart ? Fragment.empty : Fragment.from(list.copy(Fragment.empty))).append(
+          atEnd ? Fragment.empty : Fragment.from(list.copy(Fragment.empty))
+        ),
+        atStart ? 0 : 1,
+        atEnd ? 0 : 1
+      ),
+      atStart ? 0 : 1
+    )
+  );
+  dispatch(tr.scrollIntoView());
+  return true;
+}
+function maybeJoinList(tr, $pos) {
+  const $from = $pos || tr.selection.$from;
+  let joinable = [];
+  let index;
+  let parent;
+  let before;
+  let after;
+  for (let depth = $from.depth; depth >= 0; depth--) {
+    parent = $from.node(depth);
+    index = $from.index(depth);
+    before = parent.maybeChild(index - 1);
+    after = parent.maybeChild(index);
+    if (before && after && before.type.name === after.type.name && isListNode(before)) {
+      const pos = $from.before(depth + 1);
+      joinable.push(pos);
+    }
+    index = $from.indexAfter(depth);
+    before = parent.maybeChild(index - 1);
+    after = parent.maybeChild(index);
+    if (before && after && before.type.name === after.type.name && isListNode(before)) {
+      const pos = $from.after(depth + 1);
+      joinable.push(pos);
+    }
+  }
+  joinable = [...new Set(joinable)].sort((a, b) => b - a);
+  let updated = false;
+  for (const pos of joinable) {
+    if (canJoin(tr.doc, pos)) {
+      tr.join(pos);
+      updated = true;
+    }
+  }
+  return updated;
+}
+function liftListItemOutOfList(itemType) {
+  return (props) => {
+    const { dispatch, tr } = props;
+    const state = chainableEditorState(tr, props.state);
+    const range = getItemRange(itemType, tr.selection);
+    if (!range) {
+      return false;
+    }
+    if (!dispatch) {
+      return true;
+    }
+    liftOutOfList(state, dispatch, range);
+    return true;
+  };
+}
+function getItemRange(itemType, selection) {
+  const { $from, $to } = selection;
+  const range = $from.blockRange($to, (node) => node.firstChild?.type === itemType);
+  return range;
+}
+function calculateItemRange(selection) {
+  const { $from, $to } = selection;
+  return $from.blockRange($to, isListNode);
+}
+function wrapListBackward(tr) {
+  const $cursor = tr.selection.$from;
+  const range = $cursor.blockRange();
+  if (!range || !isListItemNode(range.parent) || range.startIndex !== 0) {
+    return false;
+  }
+  const root = $cursor.node(range.depth - 2);
+  const itemIndex = $cursor.index(range.depth);
+  const listIndex = $cursor.index(range.depth - 1);
+  const rootIndex = $cursor.index(range.depth - 2);
+  const previousList = root.maybeChild(rootIndex - 1);
+  const previousListItem = previousList?.lastChild;
+  if (
+    // current node must be the first node in its parent list item;
+    itemIndex !== 0 || // current list item must be the first list item in its parent list;
+    listIndex !== 0
+  ) {
+    return false;
+  }
+  if (
+    // there is a list before current list;
+    previousList && isListNode(previousList) && // we can find the list item type for previousList;
+    previousListItem && isListItemNode(previousListItem)
+  ) {
+    return wrapSelectedItems({
+      listType: previousList.type,
+      itemType: previousListItem.type,
+      tr
+    });
+  }
+  if (isListItemNode(root)) {
+    const parentListItem = root;
+    const parentList = $cursor.node(range.depth - 3);
+    if (isListNode(parentList)) {
+      return wrapSelectedItems({
+        listType: parentList.type,
+        itemType: parentListItem.type,
+        tr
+      });
+    }
+  }
+  return false;
+}
+function listBackspace({ view }) {
+  if (!view) {
+    return false;
+  }
+  {
+    const $cursor = view.state.selection.$cursor;
+    if (!$cursor || $cursor.parentOffset > 0) {
+      return false;
+    }
+    const range = $cursor.blockRange();
+    if (!range || !isListItemNode(range.parent) || range.startIndex !== 0) {
+      return false;
+    }
+  }
+  {
+    const tr = view.state.tr;
+    if (wrapListBackward(tr)) {
+      view.dispatch(tr);
+    }
+  }
+  {
+    const $cursor = view.state.selection.$cursor;
+    if (!$cursor || $cursor.parentOffset > 0) {
+      return false;
+    }
+    const range = $cursor.blockRange();
+    if (!range || !isListItemNode(range.parent) || range.startIndex !== 0) {
+      return false;
+    }
+    const itemIndex = $cursor.index(range.depth);
+    const listIndex = $cursor.index(range.depth - 1);
+    const rootIndex = $cursor.index(range.depth - 2);
+    const isNestedList = range.depth - 2 >= 1 && isListItemNode($cursor.node(range.depth - 2));
+    if (itemIndex === 0 && listIndex === 0 && rootIndex <= 1 && isNestedList) {
+      liftListItem(range.parent.type)(view.state, view.dispatch);
+    }
+  }
+  joinBackward(view.state, view.dispatch, view);
+  return true;
+}
+
+// packages/remirror__extension-list/src/list-item-extension.ts
+import {
+  command,
+  extension,
+  ExtensionPriority,
+  ExtensionTag as ExtensionTag3,
+  isBoolean,
+  isNodeSelection as isNodeSelection2,
+  NodeExtension
+} from "@remirror/core";
+import { NodeSelection } from "@remirror/pm/state";
+import { ExtensionListTheme as ExtensionListTheme2 } from "@remirror/theme";
+
+// packages/remirror__extension-list/src/list-item-node-view.ts
+import { ExtensionListTheme } from "@remirror/theme";
+function createCustomMarkListItemNodeView({
+  node,
+  mark,
+  updateDOM,
+  updateMark
+}) {
+  const markContainer = document.createElement("label");
+  markContainer.contentEditable = "false";
+  markContainer.classList.add(ExtensionListTheme.LIST_ITEM_MARKER_CONTAINER);
+  markContainer.append(mark);
+  const contentDOM = document.createElement("div");
+  const dom = document.createElement("li");
+  dom.classList.add(ExtensionListTheme.LIST_ITEM_WITH_CUSTOM_MARKER);
+  dom.append(markContainer);
+  dom.append(contentDOM);
+  const update = (newNode) => {
+    if (newNode.type !== node.type) {
+      return false;
+    }
+    node = newNode;
+    updateDOM(node, dom);
+    updateMark(node, mark);
+    return true;
+  };
+  update(node);
+  return { dom, contentDOM, update };
+}
+
+// packages/remirror__extension-list/src/list-item-shared-extension.ts
+import { environment, PlainExtension } from "@remirror/core";
+
+// packages/remirror__extension-list/src/list-command-dedent.ts
+import { Fragment as Fragment2, NodeRange as NodeRange2, Slice as Slice2 } from "@remirror/pm/model";
+import { liftTarget, ReplaceAroundStep as ReplaceAroundStep2 } from "@remirror/pm/transform";
+function findParentItem($from, range) {
+  const parentItem = $from.node(range.depth - 1);
+  const parentList = $from.node(range.depth - 2);
+  if (!isListItemNode(parentItem) || !isListNode(parentList)) {
+    return false;
+  }
+  return { parentItem, parentList };
+}
+function indentSiblingsOfItems(tr, range) {
+  const selectedList = range.parent;
+  const lastSelectedItem = range.parent.child(range.endIndex - 1);
+  const endOfRange = range.end;
+  const endOfSelectedList = range.$to.end(range.depth);
+  if (endOfRange < endOfSelectedList) {
+    tr.step(
+      new ReplaceAroundStep2(
+        endOfRange - 1,
+        endOfSelectedList,
+        endOfRange,
+        endOfSelectedList,
+        new Slice2(Fragment2.from(lastSelectedItem.type.create(null, selectedList.copy())), 1, 0),
+        1,
+        true
+      )
+    );
+    return new NodeRange2(
+      tr.doc.resolve(range.$from.pos),
+      tr.doc.resolve(endOfSelectedList),
+      range.depth
+    );
+  }
+  return range;
+}
+function indentSiblingsOfList(tr, range) {
+  const selectedList = range.parent;
+  const lastSelectedItem = range.parent.child(range.endIndex - 1);
+  const endOfSelectedList = range.end;
+  const endOfParentListItem = range.$to.end(range.depth - 1);
+  if (endOfSelectedList + 1 < endOfParentListItem) {
+    tr.step(
+      new ReplaceAroundStep2(
+        endOfSelectedList - 1,
+        endOfParentListItem,
+        endOfSelectedList + 1,
+        endOfParentListItem,
+        new Slice2(
+          Fragment2.from(selectedList.type.create(null, lastSelectedItem.type.create(null))),
+          2,
+          0
+        ),
+        0,
+        true
+      )
+    );
+    return new NodeRange2(tr.selection.$from, tr.selection.$to, range.depth);
+  }
+  return range;
+}
+function changeItemsType(tr, range, parentList, parentItem) {
+  const wrapped = wrapSelectedItems({
+    listType: parentList.type,
+    itemType: parentItem.type,
+    tr
+  });
+  if (wrapped) {
+    return new NodeRange2(tr.selection.$from, tr.selection.$to, range.depth);
+  }
+  return range;
+}
+function dedentList(tr) {
+  let range = calculateItemRange(tr.selection);
+  if (!range) {
+    return false;
+  }
+  const findParentItemResult = findParentItem(tr.selection.$from, range);
+  if (!findParentItemResult) {
+    return false;
+  }
+  const { parentItem, parentList } = findParentItemResult;
+  range = indentSiblingsOfItems(tr, range);
+  range = indentSiblingsOfList(tr, range);
+  range = changeItemsType(tr, range, parentList, parentItem);
+  const target = liftTarget(range);
+  if (typeof target !== "number") {
+    return true;
+  }
+  tr.lift(range, target);
+  range = calculateItemRange(tr.selection);
+  if (range) {
+    maybeJoinList(tr, tr.doc.resolve(range.end - 2));
+  }
+  return true;
+}
+var dedentListCommand = ({ tr, dispatch }) => {
+  if (dedentList(tr)) {
+    dispatch?.(tr.scrollIntoView());
+    return true;
+  }
+  return false;
+};
+
+// packages/remirror__extension-list/src/list-command-indent.ts
+import { Fragment as Fragment3 } from "@remirror/pm/model";
+import { TextSelection as TextSelection2 } from "@remirror/pm/state";
+function findPreviousItem(selectedList, $from, range) {
+  let previousItem;
+  let previousList;
+  let previousItemStart;
+  let previousListStart;
+  const doc = $from.doc;
+  if (range.startIndex >= 1) {
+    previousItem = selectedList.child(range.startIndex - 1);
+    previousList = selectedList;
+    previousListStart = doc.resolve(range.start).start(range.depth);
+    previousItemStart = previousListStart + 1;
+    for (let i = 0; i < range.startIndex - 1; i++) {
+      previousItemStart += previousList.child(i).nodeSize;
+    }
+  } else {
+    const listIndex = $from.index(range.depth - 1);
+    if (listIndex >= 1) {
+      const listParent = $from.node(range.depth - 1);
+      const listParentStart = $from.start(range.depth - 1);
+      previousList = listParent.child(listIndex - 1);
+      if (!isListNode(previousList)) {
+        return false;
+      }
+      previousListStart = listParentStart + 1;
+      for (let i = 0; i < listIndex - 1; i++) {
+        previousListStart += listParent.child(i).nodeSize;
+      }
+      previousItem = previousList.child(previousList.childCount - 1);
+      previousItemStart = previousListStart + previousList.nodeSize - previousItem.nodeSize - 1;
+      if (!isListItemNode(previousItem)) {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+  return {
+    previousItem,
+    previousList,
+    previousItemStart,
+    previousListStart
+  };
+}
+function sliceSelectedItems(doc, $to, range) {
+  let selectedSlice;
+  let unselectedSlice;
+  const start = range.start;
+  const mid = $to.depth >= range.depth + 2 ? $to.end(range.depth + 2) : range.end - 1;
+  const end = range.end;
+  if (mid + 1 >= end) {
+    selectedSlice = doc.slice(start, end);
+    unselectedSlice = null;
+  } else {
+    selectedSlice = doc.slice(start, mid);
+    unselectedSlice = doc.slice(mid + 1, end - 1);
+  }
+  return { selectedSlice, unselectedSlice };
+}
+function indentList(tr) {
+  const { $from, $to } = tr.selection;
+  const range = calculateItemRange(tr.selection);
+  if (!range) {
+    return false;
+  }
+  const selectedList = tr.doc.resolve(range.start).node();
+  if (!isListNode(selectedList)) {
+    return false;
+  }
+  const findPreviousItemResult = findPreviousItem(selectedList, $from, range);
+  if (!findPreviousItemResult) {
+    return false;
+  }
+  const { previousItem, previousList, previousItemStart } = findPreviousItemResult;
+  const { selectedSlice, unselectedSlice } = sliceSelectedItems(tr.doc, $to, range);
+  const newPreviousItemContent = previousItem.content.append(Fragment3.fromArray([selectedList.copy(selectedSlice.content)])).append(unselectedSlice ? unselectedSlice.content : Fragment3.empty);
+  tr.deleteRange(range.start, range.end);
+  const previousItemEnd = previousItemStart + previousItem.nodeSize - 2;
+  const newPreviousItem = previousItem.copy(newPreviousItemContent);
+  newPreviousItem.check();
+  tr.replaceRangeWith(previousItemStart - 1, previousItemEnd + 1, newPreviousItem);
+  tr.setSelection(
+    previousList === selectedList ? TextSelection2.between(tr.doc.resolve($from.pos), tr.doc.resolve($to.pos)) : TextSelection2.between(tr.doc.resolve($from.pos - 2), tr.doc.resolve($to.pos - 2))
+  );
+  return true;
+}
+var indentListCommand = ({ tr, dispatch }) => {
+  if (indentList(tr)) {
+    dispatch?.(tr.scrollIntoView());
+    return true;
+  }
+  return false;
+};
+
+// packages/remirror__extension-list/src/list-item-shared-extension.ts
+var ListItemSharedExtension = class extends PlainExtension {
+  get name() {
+    return "listItemShared";
+  }
+  createKeymap() {
+    const pcKeymap = {
+      Tab: indentListCommand,
+      "Shift-Tab": dedentListCommand,
+      Backspace: listBackspace,
+      "Mod-Backspace": listBackspace
+    };
+    if (environment.isMac) {
+      const macKeymap = {
+        "Ctrl-h": pcKeymap["Backspace"],
+        "Alt-Backspace": pcKeymap["Mod-Backspace"]
+      };
+      return { ...pcKeymap, ...macKeymap };
+    }
+    return pcKeymap;
+  }
+  createPlugin() {
+    return {
+      appendTransaction: (_transactions, _oldState, newState) => {
+        const tr = newState.tr;
+        const updated = maybeJoinList(tr);
+        return updated ? tr : null;
+      }
+    };
+  }
+};
+
+// packages/remirror__extension-list/src/list-item-extension.ts
+var ListItemExtension = class extends NodeExtension {
+  get name() {
+    return "listItem";
+  }
+  createTags() {
+    return [ExtensionTag3.ListItemNode];
+  }
+  createNodeSpec(extra, override) {
+    return {
+      content: "paragraph block*",
+      defining: true,
+      draggable: false,
+      ...override,
+      attrs: {
+        ...extra.defaults(),
+        closed: { default: false },
+        nested: { default: false }
+      },
+      parseDOM: [
+        {
+          tag: "li",
+          getAttrs: extra.parse,
+          priority: ExtensionPriority.Lowest
+          // Make sure this rule has lower priority then `TaskListItemExtension`'s
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => {
+        const attrs = extra.dom(node);
+        return ["li", attrs, 0];
+      }
+    };
+  }
+  createNodeViews() {
+    if (!this.options.enableCollapsible) {
+      return {};
+    }
+    return (node, view, getPos) => {
+      const mark = document.createElement("div");
+      mark.classList.add(ExtensionListTheme2.COLLAPSIBLE_LIST_ITEM_BUTTON);
+      mark.contentEditable = "false";
+      mark.addEventListener("click", () => {
+        if (mark.classList.contains("disabled")) {
+          return;
+        }
+        const pos = getPos();
+        const selection = NodeSelection.create(view.state.doc, pos);
+        view.dispatch(view.state.tr.setSelection(selection));
+        this.store.commands.toggleListItemClosed();
+        return true;
+      });
+      return createCustomMarkListItemNodeView({
+        mark,
+        node,
+        updateDOM: updateNodeViewDOM,
+        updateMark: updateNodeViewMark
+      });
+    };
+  }
+  createKeymap() {
+    return {
+      Enter: splitListItem(this.type)
+    };
+  }
+  createExtensions() {
+    return [new ListItemSharedExtension()];
+  }
+  toggleListItemClosed(closed) {
+    return ({ state: { tr, selection }, dispatch }) => {
+      if (!isNodeSelection2(selection) || selection.node.type.name !== this.name) {
+        return false;
+      }
+      const { node, from } = selection;
+      closed = isBoolean(closed) ? closed : !node.attrs.closed;
+      dispatch?.(tr.setNodeMarkup(from, void 0, { ...node.attrs, closed }));
+      return true;
+    };
+  }
+  liftListItemOutOfList(listItemType) {
+    return liftListItemOutOfList(listItemType ?? this.type);
+  }
+};
+__decorateClass([
+  command()
+], ListItemExtension.prototype, "toggleListItemClosed", 1);
+__decorateClass([
+  command()
+], ListItemExtension.prototype, "liftListItemOutOfList", 1);
+ListItemExtension = __decorateClass([
+  extension({
+    defaultOptions: { enableCollapsible: false },
+    staticKeys: ["enableCollapsible"]
+  })
+], ListItemExtension);
+function updateNodeViewDOM(node, dom) {
+  node.attrs.closed ? dom.classList.add(ExtensionListTheme2.COLLAPSIBLE_LIST_ITEM_CLOSED) : dom.classList.remove(ExtensionListTheme2.COLLAPSIBLE_LIST_ITEM_CLOSED);
+}
+function updateNodeViewMark(node, mark) {
+  node.childCount <= 1 ? mark.classList.add("disabled") : mark.classList.remove("disabled");
+}
+
+// packages/remirror__extension-list/src/bullet-list-extension.ts
+var BulletListExtension = class extends NodeExtension2 {
+  get name() {
+    return "bulletList";
+  }
+  createTags() {
+    return [ExtensionTag4.Block, ExtensionTag4.ListContainerNode];
+  }
+  createNodeSpec(extra, override) {
+    return {
+      content: "listItem+",
+      ...override,
+      attrs: extra.defaults(),
+      parseDOM: [{ tag: "ul", getAttrs: extra.parse }, ...override.parseDOM ?? []],
+      toDOM: (node) => ["ul", extra.dom(node), 0]
+    };
+  }
+  createNodeViews() {
+    if (!this.options.enableSpine) {
+      return {};
+    }
+    return (_, view, getPos) => {
+      const dom = document.createElement("div");
+      dom.style.position = "relative";
+      const pos = getPos();
+      const $pos = view.state.doc.resolve(pos + 1);
+      const parentListItemNode = $pos.node($pos.depth - 1);
+      const isFirstLevel = parentListItemNode?.type?.name !== "listItem";
+      if (!isFirstLevel) {
+        const spine = document.createElement("div");
+        spine.contentEditable = "false";
+        spine.classList.add(ExtensionListTheme3.LIST_SPINE);
+        spine.addEventListener("click", (event) => {
+          const pos2 = getPos();
+          const $pos2 = view.state.doc.resolve(pos2 + 1);
+          const parentListItemPos = $pos2.start($pos2.depth - 1);
+          const selection = NodeSelection2.create(view.state.doc, parentListItemPos - 1);
+          view.dispatch(view.state.tr.setSelection(selection));
+          this.store.commands.toggleListItemClosed();
+          event.preventDefault();
+          event.stopPropagation();
+        });
+        dom.append(spine);
+      }
+      const contentDOM = document.createElement("ul");
+      contentDOM.classList.add(ExtensionListTheme3.UL_LIST_CONTENT);
+      dom.append(contentDOM);
+      return {
+        dom,
+        contentDOM
+      };
+    };
+  }
+  createExtensions() {
+    return [
+      new ListItemExtension({
+        priority: ExtensionPriority2.Low,
+        enableCollapsible: this.options.enableSpine
+      })
+    ];
+  }
+  toggleBulletList() {
+    return toggleList(this.type, assertGet(this.store.schema.nodes, "listItem"));
+  }
+  listShortcut(props) {
+    return this.toggleBulletList()(props);
+  }
+  createInputRules() {
+    const regexp = /^\s*([*+-])\s$/;
+    return [
+      wrappingInputRule(regexp, this.type),
+      new InputRule(regexp, (state, _match, start, end) => {
+        const tr = state.tr;
+        tr.deleteRange(start, end);
+        const canUpdate = wrapSelectedItems({
+          listType: this.type,
+          itemType: assertGet(this.store.schema.nodes, "listItem"),
+          tr
+        });
+        if (!canUpdate) {
+          return null;
+        }
+        return tr;
+      })
+    ];
+  }
+};
+__decorateClass([
+  command2({ icon: "listUnordered", label: ({ t }) => t(Messages.BULLET_LIST_LABEL) })
+], BulletListExtension.prototype, "toggleBulletList", 1);
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.BulletList, command: "toggleBulletList" })
+], BulletListExtension.prototype, "listShortcut", 1);
+BulletListExtension = __decorateClass([
+  extension2({
+    defaultOptions: { enableSpine: false },
+    staticKeys: ["enableSpine"]
+  })
+], BulletListExtension);
+
+// packages/remirror__extension-list/src/ordered-list-extension.ts
+import {
+  assertGet as assertGet2,
+  command as command3,
+  extension as extension3,
+  ExtensionPriority as ExtensionPriority3,
+  ExtensionTag as ExtensionTag5,
+  findParentNodeOfType,
+  isElementDomNode,
+  keyBinding as keyBinding2,
+  NamedShortcut as NamedShortcut2,
+  NodeExtension as NodeExtension3
+} from "@remirror/core";
+import { ExtensionListMessages as Messages2 } from "@remirror/messages";
+import { InputRule as InputRule2, wrappingInputRule as wrappingInputRule2 } from "@remirror/pm/inputrules";
+var OrderedListExtension = class extends NodeExtension3 {
+  get name() {
+    return "orderedList";
+  }
+  createTags() {
+    return [ExtensionTag5.Block, ExtensionTag5.ListContainerNode];
+  }
+  createNodeSpec(extra, override) {
+    return {
+      content: "listItem+",
+      ...override,
+      attrs: {
+        ...extra.defaults(),
+        order: {
+          default: 1
+        }
+      },
+      parseDOM: [
+        {
+          tag: "ol",
+          getAttrs: (node) => {
+            if (!isElementDomNode(node)) {
+              return {};
+            }
+            return {
+              ...extra.parse(node),
+              order: +(node.getAttribute("start") ?? 1)
+            };
+          }
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => {
+        const extraAttributes = extra.dom(node);
+        return node.attrs.order === 1 ? ["ol", extraAttributes, 0] : ["ol", { ...extraAttributes, start: node.attrs.order }, 0];
+      }
+    };
+  }
+  /**
+   * Automatically add the `ListItemExtension` which is required here.
+   */
+  createExtensions() {
+    return [new ListItemExtension({ priority: ExtensionPriority3.Low })];
+  }
+  toggleOrderedList() {
+    return toggleList(this.type, assertGet2(this.store.schema.nodes, "listItem"));
+  }
+  listShortcut(props) {
+    return this.toggleOrderedList()(props);
+  }
+  createInputRules() {
+    const regexp = /^(\d+)\.\s$/;
+    return [
+      wrappingInputRule2(
+        regexp,
+        this.type,
+        (match) => ({ order: +assertGet2(match, 1) }),
+        (match, node) => node.childCount + node.attrs.order === +assertGet2(match, 1)
+      ),
+      new InputRule2(regexp, (state, match, start, end) => {
+        const tr = state.tr;
+        tr.deleteRange(start, end);
+        const canUpdate = wrapSelectedItems({
+          listType: this.type,
+          itemType: assertGet2(this.store.schema.nodes, "listItem"),
+          tr
+        });
+        if (!canUpdate) {
+          return null;
+        }
+        const order = +assertGet2(match, 1);
+        if (order !== 1) {
+          const found = findParentNodeOfType({ selection: tr.selection, types: this.type });
+          if (found) {
+            tr.setNodeMarkup(found.pos, void 0, { order });
+          }
+        }
+        return tr;
+      })
+    ];
+  }
+};
+__decorateClass([
+  command3({ icon: "listOrdered", label: ({ t }) => t(Messages2.ORDERED_LIST_LABEL) })
+], OrderedListExtension.prototype, "toggleOrderedList", 1);
+__decorateClass([
+  keyBinding2({ shortcut: NamedShortcut2.OrderedList, command: "toggleOrderedList" })
+], OrderedListExtension.prototype, "listShortcut", 1);
+OrderedListExtension = __decorateClass([
+  extension3({})
+], OrderedListExtension);
+
+// packages/remirror__extension-list/src/task-list-extension.ts
+import {
+  assertGet as assertGet4,
+  command as command5,
+  ExtensionPriority as ExtensionPriority5,
+  ExtensionTag as ExtensionTag7,
+  keyBinding as keyBinding3,
+  NamedShortcut as NamedShortcut3,
+  NodeExtension as NodeExtension5
+} from "@remirror/core";
+import { ExtensionListMessages as Messages3 } from "@remirror/messages";
+
+// packages/remirror__extension-list/src/task-list-item-extension.ts
+import {
+  assertGet as assertGet3,
+  command as command4,
+  ExtensionPriority as ExtensionPriority4,
+  ExtensionTag as ExtensionTag6,
+  findParentNodeOfType as findParentNodeOfType2,
+  getMatchString,
+  isElementDomNode as isElementDomNode2,
+  NodeExtension as NodeExtension4
+} from "@remirror/core";
+import { InputRule as InputRule3, wrappingInputRule as wrappingInputRule3 } from "@remirror/pm/inputrules";
+import { ExtensionListTheme as ExtensionListTheme4 } from "@remirror/theme";
+var TaskListItemExtension = class extends NodeExtension4 {
+  get name() {
+    return "taskListItem";
+  }
+  createTags() {
+    return [ExtensionTag6.ListItemNode];
+  }
+  createNodeSpec(extra, override) {
+    return {
+      content: "paragraph block*",
+      defining: true,
+      draggable: false,
+      ...override,
+      attrs: {
+        ...extra.defaults(),
+        checked: { default: false }
+      },
+      parseDOM: [
+        {
+          tag: "li[data-task-list-item]",
+          getAttrs: (node) => {
+            let checked = false;
+            if (isElementDomNode2(node) && node.getAttribute("data-checked") !== null) {
+              checked = true;
+            }
+            return {
+              checked,
+              ...extra.parse(node)
+            };
+          },
+          // Make sure it has higher priority then ListItemExtension's parseDOM by default
+          priority: ExtensionPriority4.Medium
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => [
+        "li",
+        {
+          ...extra.dom(node),
+          "data-task-list-item": "",
+          "data-checked": node.attrs.checked ? "" : void 0
+        },
+        0
+      ]
+    };
+  }
+  createNodeViews() {
+    return (node, view, getPos) => {
+      const mark = document.createElement("input");
+      mark.type = "checkbox";
+      mark.classList.add(ExtensionListTheme4.LIST_ITEM_CHECKBOX);
+      mark.contentEditable = "false";
+      mark.addEventListener("click", (e) => {
+        if (!view.editable) {
+          e.preventDefault();
+        }
+      });
+      mark.addEventListener("change", () => {
+        const pos = getPos();
+        const $pos = view.state.doc.resolve(pos + 1);
+        this.store.commands.toggleCheckboxChecked({ $pos });
+      });
+      mark.checked = node.attrs.checked;
+      return createCustomMarkListItemNodeView({
+        node,
+        mark,
+        updateDOM: updateNodeViewDOM2,
+        updateMark: updateNodeViewMark2
+      });
+    };
+  }
+  createKeymap() {
+    return {
+      Enter: splitListItem(this.type)
+    };
+  }
+  createExtensions() {
+    return [new ListItemSharedExtension()];
+  }
+  toggleCheckboxChecked(props) {
+    let checked;
+    let $pos;
+    if (typeof props === "boolean") {
+      checked = props;
+    } else if (props) {
+      checked = props.checked;
+      $pos = props.$pos;
+    }
+    return ({ tr, dispatch }) => {
+      const found = findParentNodeOfType2({
+        selection: $pos ?? tr.selection.$from,
+        types: this.type
+      });
+      if (!found) {
+        return false;
+      }
+      const { node, pos } = found;
+      const attrs = { ...node.attrs, checked: checked ?? !node.attrs.checked };
+      dispatch?.(tr.setNodeMarkup(pos, void 0, attrs));
+      return true;
+    };
+  }
+  createInputRules() {
+    const regexp = /^\s*(\[( ?|x|X)]\s)$/;
+    return [
+      wrappingInputRule3(regexp, this.type, (match) => ({
+        checked: ["x", "X"].includes(getMatchString(match, 2))
+      })),
+      new InputRule3(regexp, (state, match, start, end) => {
+        const tr = state.tr;
+        tr.deleteRange(start, end);
+        const canUpdate = wrapSelectedItems({
+          listType: assertGet3(this.store.schema.nodes, "taskList"),
+          itemType: this.type,
+          tr
+        });
+        if (!canUpdate) {
+          return null;
+        }
+        const checked = ["x", "X"].includes(getMatchString(match, 2));
+        if (checked) {
+          const found = findParentNodeOfType2({ selection: tr.selection, types: this.type });
+          if (found) {
+            tr.setNodeMarkup(found.pos, void 0, { checked });
+          }
+        }
+        return tr;
+      })
+    ];
+  }
+};
+__decorateClass([
+  command4()
+], TaskListItemExtension.prototype, "toggleCheckboxChecked", 1);
+function updateNodeViewDOM2(node, dom) {
+  node.attrs.checked ? dom.setAttribute("data-checked", "") : dom.removeAttribute("data-checked");
+  dom.setAttribute("data-task-list-item", "");
+}
+function updateNodeViewMark2(node, mark) {
+  mark.checked = !!node.attrs.checked;
+}
+
+// packages/remirror__extension-list/src/task-list-extension.ts
+var TaskListExtension = class extends NodeExtension5 {
+  get name() {
+    return "taskList";
+  }
+  createTags() {
+    return [ExtensionTag7.Block, ExtensionTag7.ListContainerNode];
+  }
+  createNodeSpec(extra, override) {
+    return {
+      content: "taskListItem+",
+      ...override,
+      attrs: extra.defaults(),
+      parseDOM: [
+        {
+          tag: "ul[data-task-list]",
+          getAttrs: extra.parse,
+          // Make sure it has higher priority then BulletListExtension's parseDOM by default
+          priority: ExtensionPriority5.Medium
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => ["ul", { ...extra.dom(node), "data-task-list": "" }, 0]
+    };
+  }
+  createExtensions() {
+    return [new TaskListItemExtension({})];
+  }
+  toggleTaskList() {
+    return toggleList(this.type, assertGet4(this.store.schema.nodes, "taskListItem"));
+  }
+  listShortcut(props) {
+    return this.toggleTaskList()(props);
+  }
+};
+__decorateClass([
+  command5({ icon: "checkboxMultipleLine", label: ({ t }) => t(Messages3.TASK_LIST_LABEL) })
+], TaskListExtension.prototype, "toggleTaskList", 1);
+__decorateClass([
+  keyBinding3({ shortcut: NamedShortcut3.TaskList, command: "toggleTaskList" })
+], TaskListExtension.prototype, "listShortcut", 1);
+export {
+  BulletListExtension,
+  ListItemExtension,
+  ListItemSharedExtension,
+  OrderedListExtension,
+  TaskListExtension,
+  TaskListItemExtension,
+  dedentList,
+  indentList,
+  sharedLiftListItem,
+  sharedSinkListItem,
+  toggleList,
+  wrapSelectedItems
+};

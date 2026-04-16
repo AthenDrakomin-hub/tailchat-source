@@ -1,0 +1,14 @@
+import { Plugin as RollupPlugin } from 'rollup';
+import { CustomPluginContext } from './types';
+interface MiniStarConfig {
+    scope: string;
+    pluginRoot: string;
+    outDir: string;
+    externalDeps: string[];
+    author?: string;
+    license?: string;
+    rollupPlugins: RollupPlugin[] | ((context: CustomPluginContext) => RollupPlugin[]);
+    buildRollupPlugins?: (defaultPlugins: RollupPlugin[], context: CustomPluginContext) => RollupPlugin[];
+}
+declare const config: MiniStarConfig;
+export { config };

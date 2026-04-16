@@ -1,0 +1,41 @@
+// packages/remirror__react-utils/src/react-utils.tsx
+import {
+  cloneElement,
+  Fragment,
+  isValidElement as isValidReactElement
+} from "react";
+import { ErrorConstant } from "@remirror/core-constants";
+import { invariant, isFunction, isObject, isString } from "@remirror/core-helpers";
+function isValidElement(value) {
+  return isObject(value) && isValidReactElement(value);
+}
+function isReactDOMElement(value) {
+  return isValidElement(value) && isString(value.type);
+}
+function isReactFragment(value) {
+  return isObject(value) && isValidElement(value) && value.type === Fragment;
+}
+function getElementProps(element) {
+  return isValidElement(element) ? element.props : {};
+}
+var propIsFunction = (value) => {
+  invariant(isFunction(value), {
+    code: ErrorConstant.INTERNAL,
+    message: "The child argument to the Remirror component must be a function."
+  });
+  return true;
+};
+function addKeyToElement(element, key) {
+  if (!isValidElement(element)) {
+    return element;
+  }
+  return cloneElement(element, { ...element.props, key });
+}
+export {
+  addKeyToElement,
+  getElementProps,
+  isReactDOMElement,
+  isReactFragment,
+  isValidElement,
+  propIsFunction
+};

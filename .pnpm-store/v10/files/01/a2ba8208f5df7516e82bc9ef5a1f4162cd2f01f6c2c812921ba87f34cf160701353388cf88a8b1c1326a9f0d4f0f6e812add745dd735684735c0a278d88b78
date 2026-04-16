@@ -1,0 +1,133 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-horizontal-rule/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  HorizontalRuleExtension: () => HorizontalRuleExtension
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-horizontal-rule/src/horizontal-rule-extension.ts
+var import_core = require("@remirror/core");
+var import_state = require("@remirror/pm/state");
+
+// packages/remirror__extension-horizontal-rule/src/horizontal-rule-utils.ts
+var import_messages = require("@remirror/messages");
+var insertHorizontalRuleOptions = {
+  icon: "separator",
+  label: ({ t }) => t(import_messages.ExtensionHorizontalRuleMessages.LABEL),
+  description: ({ t }) => t(import_messages.ExtensionHorizontalRuleMessages.DESCRIPTION)
+};
+
+// packages/remirror__extension-horizontal-rule/src/horizontal-rule-extension.ts
+var HorizontalRuleExtension = class extends import_core.NodeExtension {
+  get name() {
+    return "horizontalRule";
+  }
+  createTags() {
+    return [import_core.ExtensionTag.Block];
+  }
+  createNodeSpec(extra, override) {
+    return {
+      ...override,
+      attrs: extra.defaults(),
+      parseDOM: [{ tag: "hr", getAttrs: extra.parse }, ...override.parseDOM ?? []],
+      toDOM: (node) => ["hr", extra.dom(node)]
+    };
+  }
+  insertHorizontalRule() {
+    return (props) => {
+      const { tr, dispatch } = props;
+      const $pos = tr.selection.$anchor;
+      const initialParent = $pos.parent;
+      if (initialParent.type.name === "doc" || initialParent.isAtom || initialParent.isLeaf) {
+        return false;
+      }
+      if (!dispatch) {
+        return true;
+      }
+      const shouldDuplicateEmptyNode = tr.selection.empty && (0, import_core.isEmptyBlockNode)(initialParent);
+      if (shouldDuplicateEmptyNode) {
+        tr.insert($pos.pos + 1, initialParent);
+      }
+      tr.replaceSelectionWith(this.type.create());
+      this.updateFromNodeSelection(tr);
+      dispatch(tr.scrollIntoView());
+      return true;
+    };
+  }
+  createInputRules() {
+    return [
+      (0, import_core.nodeInputRule)({
+        // Allow dash + hyphen to cater for ShortcutsExtension, which replaces first
+        // two hyphens with a dash, i.e. "---" becomes "<dash>-"
+        regexp: /^(?:---|—-|___\s|\*\*\*\s)$/,
+        type: this.type,
+        beforeDispatch: ({ tr }) => {
+          this.updateFromNodeSelection(tr);
+        }
+      })
+    ];
+  }
+  /**
+   * Updates the transaction after a `horizontalRule` has been inserted to make
+   * sure the currently selected node isn't a Horizontal Rule.
+   *
+   * This should only be called for empty selections.
+   */
+  updateFromNodeSelection(tr) {
+    if (!(0, import_core.isNodeSelection)(tr.selection) || tr.selection.node.type.name !== this.name) {
+      return;
+    }
+    const pos = tr.selection.$from.pos + 1;
+    const { insertionNode } = this.options;
+    if (!insertionNode) {
+      return;
+    }
+    const type = this.store.schema.nodes[insertionNode];
+    (0, import_core.invariant)(type, {
+      code: import_core.ErrorConstant.EXTENSION,
+      message: `'${insertionNode}' node provided as the insertionNode to the '${this.constructorName}' does not exist.`
+    });
+    const node = type.create();
+    tr.insert(pos, node);
+    tr.setSelection(import_state.TextSelection.near(tr.doc.resolve(pos + 1)));
+  }
+};
+__decorateClass([
+  (0, import_core.command)(insertHorizontalRuleOptions)
+], HorizontalRuleExtension.prototype, "insertHorizontalRule", 1);
+HorizontalRuleExtension = __decorateClass([
+  (0, import_core.extension)({
+    defaultOptions: { insertionNode: "paragraph" }
+  })
+], HorizontalRuleExtension);
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  HorizontalRuleExtension
+});

@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TimeStamps = exports.Severity = exports.modelOptions = exports.prop = exports.getModelForClass = void 0;
+var typegoose_1 = require("@typegoose/typegoose");
+Object.defineProperty(exports, "getModelForClass", { enumerable: true, get: function () { return typegoose_1.getModelForClass; } });
+Object.defineProperty(exports, "prop", { enumerable: true, get: function () { return typegoose_1.prop; } });
+Object.defineProperty(exports, "modelOptions", { enumerable: true, get: function () { return typegoose_1.modelOptions; } });
+Object.defineProperty(exports, "Severity", { enumerable: true, get: function () { return typegoose_1.Severity; } });
+var defaultClasses_1 = require("@typegoose/typegoose/lib/defaultClasses");
+Object.defineProperty(exports, "TimeStamps", { enumerable: true, get: function () { return defaultClasses_1.TimeStamps; } });

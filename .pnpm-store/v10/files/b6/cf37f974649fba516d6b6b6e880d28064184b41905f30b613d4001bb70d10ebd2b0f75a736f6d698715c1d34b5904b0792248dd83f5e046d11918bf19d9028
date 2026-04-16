@@ -1,0 +1,50 @@
+{
+  "name": "@remirror/extension-gap-cursor",
+  "version": "2.0.13",
+  "description": "Enable cursors for difficult to reach parts of the document.",
+  "keywords": [
+    "remirror",
+    "extension"
+  ],
+  "homepage": "https://github.com/remirror/remirror/tree/HEAD/packages/remirror__extension-gap-cursor",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remirror/remirror.git",
+    "directory": "packages/remirror__extension-gap-cursor"
+  },
+  "license": "MIT",
+  "contributors": [
+    "Ifiok Jr. <ifiokotung@gmail.com>"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/remirror-extension-gap-cursor.d.ts",
+      "import": "./dist/remirror-extension-gap-cursor.js",
+      "require": "./dist/remirror-extension-gap-cursor.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/remirror-extension-gap-cursor.cjs",
+  "module": "./dist/remirror-extension-gap-cursor.js",
+  "types": "./dist/remirror-extension-gap-cursor.d.ts",
+  "files": [
+    "dist",
+    "dist-types"
+  ],
+  "dependencies": {
+    "@babel/runtime": "^7.21.0",
+    "@remirror/core": "^2.0.13",
+    "@remirror/messages": "^2.0.3"
+  },
+  "devDependencies": {
+    "@remirror/pm": "^2.0.5"
+  },
+  "peerDependencies": {
+    "@remirror/pm": "^2.0.5"
+  },
+  "@remirror": {
+    "sizeLimit": "5 KB"
+  }
+}

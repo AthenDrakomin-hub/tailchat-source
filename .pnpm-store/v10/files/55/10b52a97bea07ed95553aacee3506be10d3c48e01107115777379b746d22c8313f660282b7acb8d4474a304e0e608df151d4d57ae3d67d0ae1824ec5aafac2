@@ -1,0 +1,61 @@
+import React, { FC, ComponentType } from 'react';
+import { RemirrorJSON, Literal } from '@remirror/core';
+
+declare const Callout: FC<{
+    node: RemirrorJSON;
+    markMap: MarkMap;
+    children?: never;
+}>;
+
+type MarkMap = Partial<Record<string, string | ComponentType<any>>>;
+
+declare const CodeBlock: FC<{
+    node: RemirrorJSON;
+    markMap: MarkMap;
+}>;
+
+declare const Heading: FC<{
+    node: RemirrorJSON;
+    markMap: MarkMap;
+}>;
+
+type IFrameHandler = FC<{
+    node: RemirrorJSON;
+    markMap: MarkMap;
+}>;
+declare const createIFrameHandler: (overwriteAttrs?: Record<string, Literal>) => IFrameHandler;
+
+type LinkHandler = FC<{
+    href: string;
+    target?: string | null;
+    children: React.ReactElement<HTMLElement>;
+}>;
+declare const createLinkHandler: (overwriteAttrs?: Record<string, Literal>) => LinkHandler;
+
+interface TextHandlerProps {
+    node: RemirrorJSON;
+    markMap: MarkMap;
+    skipUnknownMarks?: boolean;
+}
+declare const TextHandler: FC<TextHandlerProps>;
+
+declare const Doc: FC<SubRenderTreeProps>;
+interface BaseRenderTreeProps {
+    skipUnknownTypes: boolean;
+    skipUnknownMarks: boolean;
+    markMap: MarkMap;
+    typeMap: MarkMap;
+    children?: never;
+}
+interface SubRenderTreeProps extends BaseRenderTreeProps {
+    node: RemirrorJSON;
+}
+interface RenderTreeProps extends Partial<BaseRenderTreeProps> {
+    json: RemirrorJSON;
+}
+/**
+ * A recursively rendered tree.
+ */
+declare const RemirrorRenderer: FC<RenderTreeProps>;
+
+export { Callout, CodeBlock, Doc, Heading, MarkMap, RemirrorRenderer, TextHandler, createIFrameHandler, createLinkHandler };

@@ -1,0 +1,416 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-node-formatting/src/node-formatting-extension.ts
+import {
+  clamp as clamp2,
+  command,
+  extension,
+  ExtensionPriority,
+  ExtensionTag,
+  isEmptyArray,
+  joinStyles,
+  keyBinding,
+  NamedShortcut,
+  PlainExtension
+} from "@remirror/core";
+
+// packages/remirror__extension-node-formatting/src/node-formatting-utils.ts
+import {
+  clamp,
+  extractPixelSize,
+  isNumber,
+  last
+} from "@remirror/core";
+import { ExtensionNodeFormattingMessages as Messages } from "@remirror/messages";
+var increaseIndentOptions = {
+  label: ({ t }) => t(Messages.INCREASE_INDENT_LABEL),
+  icon: "indentIncrease"
+};
+var decreaseIndentOptions = {
+  label: ({ t }) => t(Messages.DECREASE_INDENT_LABEL),
+  icon: "indentDecrease"
+};
+var centerAlignOptions = {
+  label: ({ t }) => t(Messages.CENTER_ALIGN_LABEL),
+  icon: "alignCenter",
+  active: createActiveCheck(({ node }) => node.attrs.nodeTextAlignment === "center")
+};
+var justifyAlignOptions = {
+  label: ({ t }) => t(Messages.JUSTIFY_ALIGN_LABEL),
+  icon: "alignJustify",
+  active: createActiveCheck(({ node }) => node.attrs.nodeTextAlignment === "justify")
+};
+var rightAlignOptions = {
+  label: ({ t }) => t(Messages.RIGHT_ALIGN_LABEL),
+  icon: "alignRight",
+  active: createActiveCheck(({ node }) => node.attrs.nodeTextAlignment === "right")
+};
+var leftAlignOptions = {
+  label: ({ t }) => t(Messages.LEFT_ALIGN_LABEL),
+  icon: "alignLeft",
+  active: createActiveCheck(({ node }) => {
+    const { nodeTextAlignment } = node.attrs;
+    return nodeTextAlignment === "left" || nodeTextAlignment === "";
+  })
+};
+function createActiveCheck(predicate) {
+  return ({ excludeNodes }, store) => {
+    const { getState, nodeTags } = store;
+    const gatheredNodes = gatherNodes(getState(), nodeTags.formattingNode, excludeNodes);
+    return gatheredNodes.some(predicate);
+  };
+}
+function isValidNodeType(type, included, excluded) {
+  if (excluded.includes(type.name)) {
+    return false;
+  }
+  return included.includes(type.name);
+}
+function gatherNodes(state, included, excluded) {
+  const gatheredNodes = [];
+  const { $from, $to } = state.selection;
+  const range = $from.blockRange($to);
+  if (!range) {
+    return [];
+  }
+  const { parent, start, end } = range;
+  const isRangeEntireParentContent = parent.nodeSize - 2 === end - start;
+  if (isRangeEntireParentContent && isValidNodeType(parent.type, included, excluded)) {
+    return [
+      {
+        node: parent,
+        pos: start - 1
+      }
+    ];
+  }
+  state.doc.nodesBetween(start, end, (node, pos) => {
+    if (pos < start || pos > end) {
+      return;
+    }
+    if (isValidNodeType(node.type, included, excluded)) {
+      gatheredNodes.push({ node, pos });
+      return false;
+    }
+    return;
+  });
+  return gatheredNodes;
+}
+var NODE_INDENT_ATTRIBUTE = "data-node-indent";
+var NODE_TEXT_ALIGNMENT_ATTRIBUTE = "data-node-text-align";
+var NODE_LINE_HEIGHT_ATTRIBUTE = "data-line-height-align";
+function extractIndent(indents, marginLeft) {
+  const largestIndent = extractPixelSize(last(indents));
+  const value = extractPixelSize(marginLeft ?? "0");
+  const max = indents.length ?? 1;
+  const indentIncrement = largestIndent / max;
+  return clamp({ max, min: 0, value: Math.floor(value / indentIncrement) });
+}
+var NUMERIC_REGEX = /^\d+(?:\.\d+)?$/;
+var PERCENT_REGEX = /^(\d+(?:\.\d+)?)%$/;
+function extractLineHeight(lineHeight) {
+  if (isNumber(lineHeight)) {
+    return lineHeight;
+  }
+  if (!lineHeight) {
+    return null;
+  }
+  const lineHeightStr = lineHeight.trim();
+  const percentMatch = lineHeightStr.match(PERCENT_REGEX);
+  if (percentMatch) {
+    return Number.parseFloat(percentMatch[1]) / 100;
+  }
+  const numberMatch = lineHeightStr.match(NUMERIC_REGEX);
+  if (numberMatch) {
+    return Number.parseFloat(numberMatch[0]);
+  }
+  return null;
+}
+
+// packages/remirror__extension-node-formatting/src/node-formatting-extension.ts
+var NodeFormattingExtension = class extends PlainExtension {
+  get name() {
+    return "nodeFormatting";
+  }
+  /**
+   * Set up the extra attributes which are applied to the formattable node
+   * blocks.
+   */
+  createSchemaAttributes() {
+    return [
+      {
+        identifiers: {
+          type: "node",
+          tags: [ExtensionTag.FormattingNode],
+          excludeNames: this.options.excludeNodes
+        },
+        attributes: {
+          nodeIndent: this.nodeIndent(),
+          nodeTextAlignment: this.nodeTextAlignment(),
+          nodeLineHeight: this.nodeLineHeight(),
+          style: {
+            default: "",
+            parseDOM: () => "",
+            toDOM: ({ nodeIndent, nodeTextAlignment, nodeLineHeight, style }) => {
+              const marginLeft = nodeIndent ? this.options.indents[nodeIndent] : void 0;
+              const textAlign = nodeTextAlignment && nodeTextAlignment !== "none" ? nodeTextAlignment : void 0;
+              const lineHeight = nodeLineHeight ? nodeLineHeight : void 0;
+              return {
+                // Compose the style string together with the currently set style.
+                style: joinStyles({ marginLeft, textAlign, lineHeight }, style)
+              };
+            }
+          }
+        }
+      }
+    ];
+  }
+  setLineHeight(lineHeight) {
+    return this.setNodeAttribute(({ node }) => {
+      if (lineHeight === node.attrs.nodeLineHeight) {
+        return;
+      }
+      return { nodeLineHeight: lineHeight };
+    });
+  }
+  setTextAlignment(alignment) {
+    return this.setNodeAttribute(({ node }) => {
+      if (alignment === node.attrs.nodeTextAlignment) {
+        return;
+      }
+      return { nodeTextAlignment: alignment };
+    });
+  }
+  setIndent(level) {
+    return this.setNodeAttribute(({ node }) => {
+      const currentIndent = node.attrs.nodeIndent ?? 0;
+      const value = level === "-1" ? currentIndent - 1 : level === "+1" ? currentIndent + 1 : level;
+      const indent = clamp2({ min: 0, max: this.options.indents.length - 1, value });
+      if (indent === currentIndent) {
+        return;
+      }
+      return { nodeIndent: indent };
+    });
+  }
+  centerAlign() {
+    return this.setTextAlignment("center");
+  }
+  justifyAlign() {
+    return this.setTextAlignment("justify");
+  }
+  leftAlign() {
+    return this.setTextAlignment("left");
+  }
+  rightAlign() {
+    return this.setTextAlignment("right");
+  }
+  increaseIndent() {
+    return (props) => this.setIndent("+1")(props);
+  }
+  decreaseIndent() {
+    return (props) => this.setIndent("-1")(props);
+  }
+  centerAlignShortcut(props) {
+    return this.centerAlign()(props);
+  }
+  justifyAlignShortcut(props) {
+    return this.justifyAlign()(props);
+  }
+  leftAlignShortcut(props) {
+    return this.leftAlign()(props);
+  }
+  rightAlignShortcut(props) {
+    return this.rightAlign()(props);
+  }
+  increaseIndentShortcut(props) {
+    return this.increaseIndent()(props);
+  }
+  decreaseIndentShortcut(props) {
+    return this.decreaseIndent()(props);
+  }
+  /**
+   * Add an indentation attribute to the formattable node blocks.
+   */
+  nodeIndent() {
+    return {
+      default: null,
+      parseDOM: (element) => element.getAttribute(NODE_INDENT_ATTRIBUTE) ?? extractIndent(this.options.indents, element.style.marginLeft),
+      toDOM: (attrs) => {
+        if (!attrs.nodeIndent) {
+          return;
+        }
+        const indentIndex = `${attrs.nodeIndent}`;
+        const marginLeft = this.options.indents[attrs.nodeIndent];
+        if (!marginLeft) {
+          return;
+        }
+        return {
+          [NODE_INDENT_ATTRIBUTE]: indentIndex
+        };
+      }
+    };
+  }
+  /**
+   * Add the `nodeTextAlignment` attribute to the formattable block nodes.
+   */
+  nodeTextAlignment() {
+    return {
+      default: null,
+      parseDOM: (element) => element.getAttribute(NODE_TEXT_ALIGNMENT_ATTRIBUTE) ?? element.style.textAlign,
+      toDOM: (attrs) => {
+        const textAlign = attrs.nodeTextAlignment;
+        if (!textAlign || textAlign === "none") {
+          return;
+        }
+        return {
+          [NODE_TEXT_ALIGNMENT_ATTRIBUTE]: textAlign
+        };
+      }
+    };
+  }
+  /**
+   * Add a `line height` attribute to all the formattable block nodes selected.
+   */
+  nodeLineHeight() {
+    return {
+      default: null,
+      parseDOM: (element) => {
+        const val = element.getAttribute(NODE_LINE_HEIGHT_ATTRIBUTE);
+        return extractLineHeight(val) ?? extractLineHeight(element.style.lineHeight);
+      },
+      toDOM: (attrs) => {
+        const lineHeight = attrs.nodeLineHeight;
+        if (!lineHeight) {
+          return;
+        }
+        return {
+          [NODE_LINE_HEIGHT_ATTRIBUTE]: lineHeight.toString()
+        };
+      }
+    };
+  }
+  setNodeAttribute(getAttributes) {
+    return (props) => {
+      const { tr, dispatch } = props;
+      const gatheredNodes = gatherNodes(
+        tr,
+        this.store.nodeTags.formattingNode,
+        this.options.excludeNodes
+      );
+      if (isEmptyArray(gatheredNodes)) {
+        return false;
+      }
+      if (!dispatch) {
+        return true;
+      }
+      const updates = [];
+      for (const nodeWithPos of gatheredNodes) {
+        const { node, pos } = nodeWithPos;
+        const attrs = getAttributes(nodeWithPos);
+        if (!attrs) {
+          continue;
+        }
+        updates.push([pos, { ...node.attrs, ...attrs }]);
+      }
+      if (isEmptyArray(updates)) {
+        return false;
+      }
+      if (!dispatch) {
+        return true;
+      }
+      for (const [pos, attrs] of updates) {
+        tr.setNodeMarkup(pos, void 0, attrs);
+      }
+      dispatch(tr);
+      return true;
+    };
+  }
+};
+__decorateClass([
+  command()
+], NodeFormattingExtension.prototype, "setLineHeight", 1);
+__decorateClass([
+  command()
+], NodeFormattingExtension.prototype, "setTextAlignment", 1);
+__decorateClass([
+  command()
+], NodeFormattingExtension.prototype, "setIndent", 1);
+__decorateClass([
+  command(centerAlignOptions)
+], NodeFormattingExtension.prototype, "centerAlign", 1);
+__decorateClass([
+  command(justifyAlignOptions)
+], NodeFormattingExtension.prototype, "justifyAlign", 1);
+__decorateClass([
+  command(leftAlignOptions)
+], NodeFormattingExtension.prototype, "leftAlign", 1);
+__decorateClass([
+  command(rightAlignOptions)
+], NodeFormattingExtension.prototype, "rightAlign", 1);
+__decorateClass([
+  command(increaseIndentOptions)
+], NodeFormattingExtension.prototype, "increaseIndent", 1);
+__decorateClass([
+  command(decreaseIndentOptions)
+], NodeFormattingExtension.prototype, "decreaseIndent", 1);
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.CenterAlignment, command: "centerAlign" })
+], NodeFormattingExtension.prototype, "centerAlignShortcut", 1);
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.JustifyAlignment, command: "justifyAlign" })
+], NodeFormattingExtension.prototype, "justifyAlignShortcut", 1);
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.LeftAlignment, command: "leftAlign" })
+], NodeFormattingExtension.prototype, "leftAlignShortcut", 1);
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.RightAlignment, command: "rightAlign" })
+], NodeFormattingExtension.prototype, "rightAlignShortcut", 1);
+__decorateClass([
+  keyBinding({
+    shortcut: NamedShortcut.IncreaseIndent,
+    command: "increaseIndent",
+    // Ensure this has lower priority than the indent keybinding in @remirror/extension-list
+    priority: ExtensionPriority.Low
+  })
+], NodeFormattingExtension.prototype, "increaseIndentShortcut", 1);
+__decorateClass([
+  keyBinding({
+    shortcut: NamedShortcut.DecreaseIndent,
+    command: "decreaseIndent",
+    // Ensure this has higher priority than the dedent keybinding in @remirror/extension-list
+    priority: ExtensionPriority.Medium
+  })
+], NodeFormattingExtension.prototype, "decreaseIndentShortcut", 1);
+NodeFormattingExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      indents: [
+        "0",
+        "20px",
+        "40px",
+        "60px",
+        "80px",
+        "100px",
+        "120px",
+        "140px",
+        "160px",
+        "180px",
+        "200px"
+      ],
+      excludeNodes: []
+    },
+    staticKeys: ["indents"]
+  })
+], NodeFormattingExtension);
+export {
+  NodeFormattingExtension
+};

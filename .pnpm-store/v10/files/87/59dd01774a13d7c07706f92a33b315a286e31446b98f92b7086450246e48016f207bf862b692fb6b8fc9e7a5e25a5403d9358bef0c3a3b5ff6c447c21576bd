@@ -1,0 +1,43 @@
+import { FromToProps, ProsemirrorNode } from '@remirror/core';
+import { DecorationSet } from '@remirror/pm/view';
+import { WhitespaceDecorator, WhitespaceDecoratorSettings, WhitespaceRange } from './whitespace-types';
+interface GenerateDecorationsProps extends FromToProps {
+    /**
+     * The starting decoration set.
+     *
+     * @defaultValue DecorationSet.empty
+     */
+    decorationSet?: DecorationSet;
+    /**
+     * The document which is being acted on.
+     */
+    doc: ProsemirrorNode;
+    /**
+     * A list of the whitespace decorators which are used to create decorations
+     * from the provided ranges.
+     */
+    decorators: WhitespaceDecorator[];
+}
+/**
+ * Generate a decoration set of whitespace characters for the provided range.
+ */
+export declare function generateDecorations(props: GenerateDecorationsProps): DecorationSet;
+interface CharacterBuilderProps {
+    key: string;
+    /**
+     * Check the provided character to see if it is an invisible character.
+     */
+    predicate: (character: string) => boolean;
+}
+/**
+ * Build a hidden character creator which responds to certain characters in the
+ * document.
+ */
+export declare function createCharacterBuilder(builderOptions: CharacterBuilderProps): (details: WhitespaceRange) => DecorationSet;
+export declare function createDefaultWhitespaceDecorators(settings: WhitespaceDecoratorSettings): {
+    hardBreak: (details: WhitespaceRange) => DecorationSet;
+    paragraph: (details: WhitespaceRange) => DecorationSet;
+    space: (details: WhitespaceRange) => DecorationSet;
+};
+export declare const toggleWhitespaceOptions: Remirror.CommandDecoratorOptions;
+export {};

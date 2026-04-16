@@ -1,0 +1,17 @@
+import type { GlobalConfig, Module, Plugin } from './types';
+/**
+ * Load All Plugin from List
+ */
+export declare function loadPluginList(plugins: Plugin[]): Promise<Module[]>;
+/**
+ * Load Single Plugin
+ */
+export declare function loadSinglePlugin(plugin: Plugin): Promise<Module>;
+interface MiniStarOptions extends GlobalConfig {
+    plugins?: Plugin[];
+}
+/**
+ * Init Mini Star
+ */
+export declare function initMiniStar(options: MiniStarOptions): Promise<void>;
+export {};

@@ -1,0 +1,47 @@
+import { ApplySchemaAttributes, CommandFunction, InputRule, KeyBindings, NodeExtension, NodeExtensionSpec, NodeSpecOverride, ProsemirrorAttributes, Static } from '@remirror/core';
+import { NodePasteRule } from '@remirror/pm/paste-rules';
+export interface HeadingOptions {
+    /**
+     * The numerical value of the supporting headings.
+     *
+     * @defaultValue `[1, 2, 3, 4, 5, 6]`
+     */
+    levels?: Static<number[]>;
+    /**
+     * The default level heading to use.
+     *
+     * @defaultValue 1
+     */
+    defaultLevel?: Static<number>;
+}
+export type HeadingExtensionAttributes = ProsemirrorAttributes<{
+    /**
+     * The heading size.
+     */
+    level?: number;
+}>;
+export interface HeadingOptions {
+}
+export declare class HeadingExtension extends NodeExtension<HeadingOptions> {
+    get name(): "heading";
+    createTags(): ("formattingNode" | "block" | "textBlock")[];
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    /**
+     * Toggle the heading for the current block. If you don't provide the
+     * level it will use the options.defaultLevel.
+     */
+    toggleHeading(attrs?: HeadingExtensionAttributes): CommandFunction;
+    /**
+     * Dynamically create the shortcuts for the heading extension.
+     */
+    createKeymap(fn: (shortcut: string) => string[]): KeyBindings;
+    createInputRules(): InputRule[];
+    createPasteRules(): NodePasteRule[];
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            heading: HeadingExtension;
+        }
+    }
+}

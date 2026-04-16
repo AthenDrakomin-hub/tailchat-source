@@ -1,0 +1,8 @@
+/**
+ * Transform full source ref to sr
+ */
+export declare function compressToSr(node: Element): void;
+/**
+ * Transform sr to file URI
+ */
+export declare function srToURI(sr: string): string;

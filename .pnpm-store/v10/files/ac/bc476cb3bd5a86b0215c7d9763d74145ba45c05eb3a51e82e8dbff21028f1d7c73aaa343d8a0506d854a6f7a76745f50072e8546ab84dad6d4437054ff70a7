@@ -1,0 +1,101 @@
+import type { JoinOptions, MediaClientConsumer, MediaDevice, Peer } from '../types';
+import { SignalingClient } from './signaling';
+import { MediaClient } from './media';
+import { DeviceClient } from './device';
+import { TailchatMeetingClientSettings } from './settings';
+import type { Producer } from 'mediasoup-client/lib/types';
+import { EventEmitter } from 'eventemitter-strict';
+import { RoomClient } from './room';
+interface TailchatMeetingClientEventMap {
+    webcamProduce: (webcamProducer: Producer) => void;
+    webcamClose: (webcamProducerId: string) => void;
+    micProduce: (micProducer: Producer) => void;
+    micClose: (micProducerId: string) => void;
+    clientClose: () => void;
+}
+export declare class TailchatMeetingClient extends EventEmitter<TailchatMeetingClientEventMap> {
+    signalingHost: string;
+    peerId: string;
+    signaling?: SignalingClient;
+    media?: MediaClient;
+    room?: RoomClient;
+    device: DeviceClient;
+    private closed;
+    settings: TailchatMeetingClientSettings;
+    /**
+     * @param signalingHost 信令服务器地址，形如: wss://xxxx.com:443
+     * @param peerId 用户的唯一标识
+     */
+    constructor(signalingHost: string, peerId: string);
+    /**
+     * 加入房间
+     */
+    join(roomId: string, options: JoinOptions): Promise<void>;
+    /**
+     * 关闭客户端
+     */
+    close(): void;
+    /**
+     * 获取所有可用设备
+     * @returns
+     */
+    getAvailableMediaDevices(): Promise<MediaDevice[]>;
+    private currentWebcamProducer?;
+    get webcamEnabled(): boolean;
+    enableWebcam(): Promise<void>;
+    disableWebcam(): Promise<void>;
+    /**
+     * 更新摄像头
+     */
+    private updateWebcam;
+    private currentMicProducer?;
+    get micEnabled(): boolean;
+    enableMic(): Promise<void>;
+    disableMic(): Promise<void>;
+    updateMic({ start, restart, newDeviceId, selectedAudioDevice, }?: {
+        start?: boolean | undefined;
+        restart?: boolean | undefined;
+        newDeviceId?: null | undefined;
+        selectedAudioDevice?: string | undefined;
+    }): Promise<void>;
+    /**
+     * 根据参会者id查找消费端
+     * @param peerId 参会者ID
+     * @returns
+     */
+    getConsumersByPeerId(peerId: string): {
+        /**
+         * 麦克风
+         */
+        micConsumer: MediaClientConsumer | undefined;
+        /**
+         * 摄像头
+         */
+        webcamConsumer: MediaClientConsumer | undefined;
+        /**
+         * 共享屏幕
+         */
+        screenConsumer: MediaClientConsumer | undefined;
+        /**
+         * 额外视频源
+         */
+        extraVideoConsumers: MediaClientConsumer[];
+    };
+    /**
+     * 当有参会者入会时的回调
+     */
+    onPeerJoin(callback: (peer: Peer) => void): void;
+    /**
+     * 当有参会者离会时的回调
+     */
+    onPeerLeave(callback: (peer: Peer) => void): void;
+    /**
+     * 当参会者人员信息发生变化时的回调
+     */
+    onPeersUpdate(callback: (peers: Peer[]) => void): void;
+    /**
+     * 当参会者人员信息发生变化时的回调
+     */
+    onPeerConsumerUpdate(callback: (peerId: string, consumer: MediaClientConsumer | null) => void): void;
+}
+export {};

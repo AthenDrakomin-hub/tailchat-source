@@ -1,0 +1,115 @@
+"use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EventEmitter = void 0;
+/**
+ * A EventEmitter work like node/event
+ */
+var EventEmitter = /** @class */ (function () {
+    function EventEmitter() {
+        this.listeners = {};
+    }
+    /**
+     * Send Event to all listener
+     * @param eventName Event Name
+     * @param args arguments
+     */
+    EventEmitter.prototype.emit = function (eventName) {
+        var _this = this;
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        if (this.listeners[eventName]) {
+            try {
+                this.listeners[eventName].forEach(function (item) {
+                    if (typeof item.callback === 'function') {
+                        item.callback.apply(item, __spreadArray([], __read(args), false));
+                    }
+                    if (item.once === true) {
+                        _this.off(eventName, item.callback);
+                    }
+                });
+            }
+            catch (e) { }
+        }
+        return this;
+    };
+    /**
+     * Add event listener
+     * @param eventName Event Name
+     * @param callback Event Callback
+     */
+    EventEmitter.prototype.on = function (eventName, callback, options) {
+        if (!this.listeners[eventName]) {
+            this.listeners[eventName] = [];
+        }
+        this.listeners[eventName].push(__assign(__assign({}, options), { callback: callback }));
+        return this;
+    };
+    /**
+     * Remove event listener
+     * @param eventName Event Name
+     * @param callback Event Callback
+     */
+    EventEmitter.prototype.off = function (eventName, callback) {
+        if (!this.listeners[eventName]) {
+            return;
+        }
+        var index = this.listeners[eventName].findIndex(function (item) { return item.callback === callback; });
+        if (index >= 0) {
+            this.listeners[eventName].splice(index, 1);
+        }
+        if (this.listeners[eventName].length === 0) {
+            delete this.listeners[eventName];
+        }
+        return this;
+    };
+    /**
+     * Like on but just run once
+     * @param eventName Event Name
+     * @param callback Event Callback
+     */
+    EventEmitter.prototype.once = function (eventName, callback) {
+        this.on(eventName, callback, { once: true });
+        return this;
+    };
+    EventEmitter.onceSymbol = Symbol('once');
+    return EventEmitter;
+}());
+exports.EventEmitter = EventEmitter;

@@ -1,0 +1,76 @@
+{
+  "name": "bundle-stats-webpack-plugin",
+  "version": "4.22.0",
+  "description": "In-depth bundle analyzer for webpack(bundle size, assets, modules, packages)",
+  "main": "lib/index.js",
+  "types": "typings.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "engines": {
+    "node": ">= 14.0"
+  },
+  "scripts": {
+    "build": "babel src -d lib",
+    "lint": "eslint",
+    "test": "TZ=UTC jest src ",
+    "pretest:package": "cd test/package && npm install --force",
+    "test:package": "cd test/package && npm test --"
+  },
+  "keywords": [
+    "webpack",
+    "webpack-plugin",
+    "bundle-size",
+    "bundle-analyzer",
+    "bundle-stats",
+    "stats",
+    "bundle",
+    "size",
+    "assets",
+    "chunks",
+    "modules"
+  ],
+  "author": {
+    "name": "Viorel Cojocaru",
+    "email": "vio@relative-ci.com",
+    "url": "https://relative-ci.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/relative-ci/bundle-stats.git"
+  },
+  "bugs": {
+    "url": "https://github.com/relative-ci/bundle-stats/issues"
+  },
+  "homepage": "https://github.com/relative-ci/bundle-stats/blob/master/packages/webpack-plugin#readme",
+  "dependencies": {
+    "@bundle-stats/cli-utils": "4.22.0",
+    "@bundle-stats/plugin-webpack-validate": "4.22.0",
+    "core-js": "^3.21.0",
+    "lodash": "^4.17.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.28.6",
+    "@babel/core": "7.29.0",
+    "@babel/preset-env": "7.29.0",
+    "@types/jest": "29.5.14",
+    "jest": "29.7.0",
+    "jest-date-mock": "1.0.10",
+    "memory-fs": "0.5.0",
+    "webpack": "5.105.4"
+  },
+  "peerDependencies": {
+    "@rspack/core": "0.x || 1.x",
+    "webpack": "^4.0.0 || ^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@rspack/core": {
+      "optional": true
+    },
+    "webpack": {
+      "optional": true
+    }
+  },
+  "gitHead": "47f09937bef2a393f25943ad231fcb910d269b8c"
+}

@@ -1,0 +1,27 @@
+import type { Annotation, OmitText, OmitTextAndPosition } from './annotation-types';
+export declare enum ActionType {
+    ADD_ANNOTATION = 0,
+    REDRAW_ANNOTATIONS = 1,
+    REMOVE_ANNOTATIONS = 2,
+    SET_ANNOTATIONS = 3,
+    UPDATE_ANNOTATION = 4
+}
+export interface AddAnnotationAction<Type extends Annotation> {
+    type: ActionType.ADD_ANNOTATION;
+    from: number;
+    to: number;
+    annotationData: OmitTextAndPosition<Type>;
+}
+export interface UpdateAnnotationAction<Type extends Annotation> {
+    type: ActionType.UPDATE_ANNOTATION;
+    annotationId: string;
+    annotationData: OmitTextAndPosition<Type>;
+}
+export interface RemoveAnnotationsAction {
+    type: ActionType.REMOVE_ANNOTATIONS;
+    annotationIds: string[];
+}
+export interface SetAnnotationsAction<Type extends Annotation> {
+    type: ActionType.SET_ANNOTATIONS;
+    annotations: Array<OmitText<Type>>;
+}

@@ -1,0 +1,430 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-annotation/src/annotation-extension.ts
+import {
+  assert,
+  command,
+  environment,
+  extension,
+  ExtensionPriority,
+  getTextSelection,
+  helper,
+  isEmptyObject,
+  PlainExtension,
+  within
+} from "@remirror/core";
+
+// packages/remirror__extension-annotation/src/annotation-plugin.ts
+import { Decoration, DecorationSet } from "@remirror/pm/view";
+
+// packages/remirror__extension-annotation/src/annotation-segments.ts
+import { sort } from "@remirror/core";
+function toSegments(annotations) {
+  const segments = [];
+  const positionMap = /* @__PURE__ */ new Map();
+  for (const annotation of annotations) {
+    const currentFrom = positionMap.get(annotation.from) ?? [];
+    const currentTo = positionMap.get(annotation.to) ?? [];
+    positionMap.set(annotation.from, [...currentFrom, { type: "start", annotation }]);
+    positionMap.set(annotation.to, [...currentTo, { type: "end", annotation }]);
+  }
+  const sortedPositions = sort([...positionMap.entries()], ([a], [z]) => a - z);
+  let activeAnnotations = [];
+  let from = 0;
+  for (const [to, items] of sortedPositions) {
+    const startAnnotations = items.filter((item) => item.type === "start").map((item) => item.annotation);
+    const endIds = new Set(
+      items.filter((item) => item.type === "end").map((item) => item.annotation.id)
+    );
+    if (activeAnnotations.length > 0) {
+      segments.push({ from, to, annotations: activeAnnotations });
+    }
+    from = to;
+    activeAnnotations = [...activeAnnotations, ...startAnnotations].filter(
+      // Remove any annotation that is at the end of the annotation group.
+      (annotation) => !endIds.has(annotation.id)
+    );
+  }
+  return segments;
+}
+
+// packages/remirror__extension-annotation/src/annotation-plugin.ts
+var AnnotationState = class {
+  constructor(getStyle, store) {
+    this.getStyle = getStyle;
+    this.store = store;
+    /**
+     * Cache of annotations being currently shown
+     */
+    this.annotations = [];
+    /**
+     * Decorations are computed based on the annotations. The state contains a
+     * copy of the decoration for performance optimization.
+     */
+    this.decorationSet = DecorationSet.empty;
+  }
+  addAnnotation(addAction) {
+    const annotation = {
+      from: addAction.from,
+      to: addAction.to,
+      ...addAction.annotationData
+    };
+    this.store.addAnnotation(annotation);
+  }
+  updateAnnotation(updateAction) {
+    this.store.updateAnnotation(updateAction.annotationId, updateAction.annotationData);
+  }
+  removeAnnotations(removeAction) {
+    this.store.removeAnnotations(removeAction.annotationIds);
+  }
+  setAnnotations(setAction) {
+    this.store.setAnnotations(setAction.annotations);
+  }
+  formatAnnotations() {
+    return this.store.formatAnnotations();
+  }
+  createDecorations(tr, annotations = []) {
+    const decos = toSegments(annotations).map((segment) => {
+      const classNames = segment.annotations.map((a) => a.className).filter((className) => className);
+      const style = this.getStyle(segment.annotations);
+      return Decoration.inline(segment.from, segment.to, {
+        class: classNames.length > 0 ? classNames.join(" ") : void 0,
+        style
+      });
+    });
+    return DecorationSet.create(tr.doc, decos);
+  }
+  apply({ tr, action }) {
+    const actionType = action == null ? void 0 : action.type;
+    if (!action && !tr.docChanged) {
+      return this;
+    }
+    if (actionType !== void 0) {
+      if (actionType === 0 /* ADD_ANNOTATION */) {
+        this.addAnnotation(action);
+      }
+      if (actionType === 4 /* UPDATE_ANNOTATION */) {
+        this.updateAnnotation(action);
+      }
+      if (actionType === 2 /* REMOVE_ANNOTATIONS */) {
+        this.removeAnnotations(action);
+      }
+      if (actionType === 3 /* SET_ANNOTATIONS */) {
+        this.setAnnotations(action);
+      }
+      this.annotations = this.formatAnnotations();
+      this.decorationSet = this.createDecorations(tr, this.annotations);
+    } else {
+      this.annotations = this.annotations.map((annotation) => ({
+        ...annotation,
+        // 1 indicates that the annotation isn't extended when the user types
+        // at the beginning of the annotation
+        from: tr.mapping.map(annotation.from, 1),
+        // -1 indicates that the annotation isn't extended when the user types
+        // at the end of the annotation
+        to: tr.mapping.map(annotation.to, -1)
+      })).filter((annotation) => annotation.to !== annotation.from);
+      this.store.setAnnotations(this.annotations);
+      this.decorationSet = this.decorationSet.map(tr.mapping, tr.doc);
+    }
+    return this;
+  }
+};
+
+// packages/remirror__extension-annotation/src/annotation-store.ts
+var MapLikeAnnotationStore = class {
+  /**
+   * @param map a custom map-like object for storing internal annotations
+   */
+  constructor(map = /* @__PURE__ */ new Map(), positionToStored = (pos) => pos, positionFromStored = (storedPos) => storedPos) {
+    this.map = map;
+    this.positionToStored = positionToStored;
+    this.positionFromStored = positionFromStored;
+  }
+  addAnnotation({ from, to, ...annotation }) {
+    const storedAnnotation = {
+      from: this.positionToStored(from),
+      to: this.positionToStored(to),
+      ...annotation
+    };
+    this.map.set(annotation.id, storedAnnotation);
+  }
+  updateAnnotation(id, data) {
+    const existing = this.map.get(id);
+    if (!existing) {
+      return;
+    }
+    this.map.set(id, {
+      ...existing,
+      ...data
+    });
+  }
+  removeAnnotations(ids) {
+    ids.forEach((id) => {
+      this.map.delete(id);
+    });
+  }
+  setAnnotations(annotations) {
+    if (typeof this.map.clear === "function") {
+      this.map.clear();
+    } else {
+      this.map.forEach((annotation) => this.map.delete(annotation.id));
+    }
+    annotations.forEach((annotation) => {
+      this.addAnnotation(annotation);
+    });
+  }
+  formatAnnotations() {
+    const annotations = [];
+    this.map.forEach(({ from: storedFrom, to: storedTo, ...storedData }) => {
+      const from = this.positionFromStored(storedFrom);
+      const to = this.positionFromStored(storedTo);
+      if (!from || !to) {
+        return;
+      }
+      const annotation = {
+        from,
+        to,
+        ...storedData
+      };
+      annotations.push(annotation);
+    });
+    return annotations;
+  }
+};
+
+// packages/remirror__extension-annotation/src/annotation-extension.ts
+function defaultGetStyle(annotations) {
+  const backgroundShade = Math.min(annotations.length, 5) / 5;
+  const notBlue = 200 * (1 - backgroundShade) + 55;
+  return `background: rgb(${notBlue}, ${notBlue}, 255);`;
+}
+var AnnotationExtension = class extends PlainExtension {
+  constructor() {
+    super(...arguments);
+    /**
+     * Enrich text at annotation
+     */
+    this.enrichText = (annotation) => {
+      const { doc } = this.store.getState();
+      const text = annotation.to <= doc.content.size ? doc.textBetween(annotation.from, annotation.to, this.options.blockSeparator) : void 0;
+      return {
+        ...annotation,
+        text
+      };
+    };
+  }
+  get name() {
+    return "annotation";
+  }
+  onSetOptions(props) {
+    const { pickChanged } = props;
+    const changedPluginOptions = pickChanged([
+      "getStore",
+      "getMap",
+      "transformPosition",
+      "transformPositionBeforeRender"
+    ]);
+    if (!isEmptyObject(changedPluginOptions)) {
+      this.store.updateExtensionPlugins(this);
+    }
+  }
+  /**
+   * Create the custom code block plugin which handles the delete key amongst
+   * other things.
+   */
+  createPlugin() {
+    let store;
+    if (this.options.getMap) {
+      assert(
+        environment.isProduction || !this.options.getStore,
+        'Must not provide both "getMap" and "getStore"'
+      );
+      store = new MapLikeAnnotationStore(
+        this.options.getMap(),
+        this.options.transformPosition,
+        this.options.transformPositionBeforeRender
+      );
+    } else {
+      store = this.options.getStore();
+    }
+    const pluginState = new AnnotationState(this.options.getStyle, store);
+    return {
+      state: {
+        init() {
+          return pluginState;
+        },
+        apply(tr) {
+          const action = tr.getMeta(AnnotationExtension.name);
+          return pluginState.apply({ tr, action });
+        }
+      },
+      props: {
+        decorations(state) {
+          var _a;
+          return (_a = this.getState(state)) == null ? void 0 : _a.decorationSet;
+        }
+      }
+    };
+  }
+  addAnnotation(annotationData) {
+    return ({ tr, dispatch }) => {
+      const { empty, from, to } = tr.selection;
+      if (empty) {
+        return false;
+      }
+      dispatch == null ? void 0 : dispatch(
+        tr.setMeta(AnnotationExtension.name, {
+          type: 0 /* ADD_ANNOTATION */,
+          from,
+          to,
+          annotationData
+        })
+      );
+      return true;
+    };
+  }
+  updateAnnotation(id, annotationDataWithoutId) {
+    return ({ tr, dispatch }) => {
+      if (dispatch) {
+        const annotationData = {
+          ...annotationDataWithoutId,
+          id
+        };
+        const action = {
+          type: 4 /* UPDATE_ANNOTATION */,
+          annotationId: id,
+          annotationData
+        };
+        dispatch(tr.setMeta(AnnotationExtension.name, action));
+      }
+      return true;
+    };
+  }
+  removeAnnotations(annotationIds) {
+    return ({ tr, dispatch }) => {
+      dispatch == null ? void 0 : dispatch(
+        tr.setMeta(AnnotationExtension.name, {
+          type: 2 /* REMOVE_ANNOTATIONS */,
+          annotationIds
+        })
+      );
+      return true;
+    };
+  }
+  setAnnotations(annotations) {
+    return ({ tr, dispatch }) => {
+      dispatch == null ? void 0 : dispatch(
+        tr.setMeta(AnnotationExtension.name, { type: 3 /* SET_ANNOTATIONS */, annotations })
+      );
+      return true;
+    };
+  }
+  redrawAnnotations() {
+    return ({ tr, dispatch }) => {
+      dispatch == null ? void 0 : dispatch(tr.setMeta(AnnotationExtension.name, { type: 1 /* REDRAW_ANNOTATIONS */ }));
+      return true;
+    };
+  }
+  getAnnotations() {
+    const state = this.getPluginState();
+    return state.annotations.map(this.enrichText);
+  }
+  getAnnotationsAt(pos, includeEdges = true) {
+    const annotations = [];
+    const { doc, selection } = this.store.getState();
+    const state = this.getPluginState();
+    const { from, to } = getTextSelection(pos ?? selection, doc);
+    for (const annotation of state.annotations) {
+      if (within(from, annotation.from, annotation.to) || within(to, annotation.from, annotation.to) || within(annotation.from, from, to) || within(annotation.to, from, to)) {
+        if (includeEdges) {
+          annotations.push(this.enrichText(annotation));
+        } else if (annotation.from !== from && annotation.to !== to) {
+          annotations.push(this.enrichText(annotation));
+        }
+      }
+    }
+    return annotations;
+  }
+  selectionHasAnnotation(pos) {
+    return this.getAnnotationsAt(pos).length > 0;
+  }
+};
+__decorateClass([
+  command()
+], AnnotationExtension.prototype, "addAnnotation", 1);
+__decorateClass([
+  command()
+], AnnotationExtension.prototype, "updateAnnotation", 1);
+__decorateClass([
+  command()
+], AnnotationExtension.prototype, "removeAnnotations", 1);
+__decorateClass([
+  command()
+], AnnotationExtension.prototype, "setAnnotations", 1);
+__decorateClass([
+  command()
+], AnnotationExtension.prototype, "redrawAnnotations", 1);
+__decorateClass([
+  helper()
+], AnnotationExtension.prototype, "getAnnotations", 1);
+__decorateClass([
+  helper()
+], AnnotationExtension.prototype, "getAnnotationsAt", 1);
+__decorateClass([
+  helper()
+], AnnotationExtension.prototype, "selectionHasAnnotation", 1);
+AnnotationExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      getStyle: defaultGetStyle,
+      blockSeparator: void 0,
+      getStore: () => new MapLikeAnnotationStore(),
+      // Obsolete options
+      getMap: void 0,
+      transformPosition: void 0,
+      transformPositionBeforeRender: void 0
+    },
+    defaultPriority: ExtensionPriority.Low
+  })
+], AnnotationExtension);
+
+// packages/remirror__extension-annotation/src/annotation-positioners.ts
+import { selectionPositioner } from "@remirror/extension-positioner";
+function createCenteredAnnotationPositioner(getAnnotationsAt) {
+  return selectionPositioner.clone({
+    getActive: (props) => {
+      const { state, view } = props;
+      if (!state.selection.empty) {
+        return [];
+      }
+      const annotations = getAnnotationsAt(state.selection.from);
+      if (annotations.length === 0) {
+        return [];
+      }
+      const shortestAnnotation = annotations.sort(
+        (annotation1, annotation2) => (annotation1.text ?? "").length - (annotation2.text ?? "").length
+      )[0];
+      if (!shortestAnnotation) {
+        return [];
+      }
+      const from = view.coordsAtPos(shortestAnnotation.from);
+      const to = view.coordsAtPos(shortestAnnotation.to);
+      return [{ from, to }];
+    }
+  });
+}
+export {
+  AnnotationExtension,
+  createCenteredAnnotationPositioner
+};

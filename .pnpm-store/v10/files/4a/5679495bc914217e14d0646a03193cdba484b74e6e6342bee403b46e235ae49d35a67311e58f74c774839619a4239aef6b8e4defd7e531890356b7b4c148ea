@@ -1,0 +1,19 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.fieldSchema = exports.createFastifyFormSchema = void 0;
+/* eslint-disable id-blacklist */
+var yup_1 = require("yup");
+/**
+ * 创建FastifyForm的Schema
+ *
+ *
+ */
+function createFastifyFormSchema(fieldMap) {
+    return (0, yup_1.object)().shape(fieldMap);
+}
+exports.createFastifyFormSchema = createFastifyFormSchema;
+exports.fieldSchema = {
+    string: yup_1.string,
+    ref: yup_1.ref,
+    mixed: yup_1.mixed,
+};

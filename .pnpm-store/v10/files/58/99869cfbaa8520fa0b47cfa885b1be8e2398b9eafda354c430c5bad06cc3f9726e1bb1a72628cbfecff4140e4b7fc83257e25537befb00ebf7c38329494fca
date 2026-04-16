@@ -1,0 +1,53 @@
+import { EventEmitter } from 'eventemitter-strict';
+import type { LobbyPeer, Peer } from '../types';
+import type { SignalingClient } from './signaling';
+export declare type RoomConnectionState = 'new' | 'connecting' | 'connected' | 'disconnected' | 'closed';
+export declare type SettingsTab = 'media' | 'appearance';
+export interface RoomState {
+    name?: string;
+    joined?: boolean;
+    inLobby?: boolean;
+    overRoomLimit?: boolean;
+    activeSpeakerId?: string;
+    lockInProgress?: boolean;
+    localeInProgress?: boolean;
+    muteAllInProgress?: boolean;
+    lobbyPeersPromotionInProgress?: boolean;
+    stopAllVideoInProgress?: boolean;
+    closeMeetingInProgress?: boolean;
+    clearChatInProgress?: boolean;
+    clearFileSharingInProgress?: boolean;
+    startFileSharingInProgress?: boolean;
+    fullscreenConsumer?: string;
+    windowedConsumer?: string;
+    selectedPeers: string[];
+    spotlights: string[];
+    state: RoomConnectionState;
+}
+interface RoomClientEventMap {
+    roomStateUpdated: (roomState: RoomState) => void;
+    activeSpeakerChanged: (activeSpeakerId: string) => void;
+    peerJoin: (peer: Peer) => void;
+    peerLeave: (peer: Peer) => void;
+    peersUpdated: (peers: Peer[]) => void;
+    lobbyPeersUpdated: (lobbyPeers: LobbyPeer[]) => void;
+}
+export declare class RoomClient extends EventEmitter<RoomClientEventMap> {
+    signaling: SignalingClient;
+    iceServers?: RTCIceServer[];
+    roomState: RoomState;
+    activeSpeakerId?: string;
+    peers: Peer[];
+    lobbyPeers: LobbyPeer[];
+    constructor(signaling: SignalingClient);
+    handleSignaling(): void;
+    init({ peers, lobbyPeers }: {
+        peers: Peer[];
+        lobbyPeers: LobbyPeer[];
+    }): void;
+    private updateRoomState;
+    private setActiveSpeakerId;
+    private updatePeer;
+    private updateLobbyPeer;
+}
+export {};

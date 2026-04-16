@@ -1,0 +1,8 @@
+export { AllLocaleData, AllMessages, I18n, Locale, LocaleData, Locales, MessageDescriptor, Messages, formats, i18n, setupI18n } from '@lingui/core';
+
+/**
+ * Detect the locale that is being
+ */
+declare function detectLocale(key?: string, fallback?: string): string;
+
+export { detectLocale };

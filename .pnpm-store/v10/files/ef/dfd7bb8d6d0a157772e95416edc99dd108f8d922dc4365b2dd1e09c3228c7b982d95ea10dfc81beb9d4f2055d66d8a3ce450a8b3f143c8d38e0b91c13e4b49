@@ -1,0 +1,16 @@
+import { ResizableNodeView } from 'prosemirror-resizable-view';
+import { Shape } from '@remirror/core';
+import { EditorView, NodeView, ProsemirrorNode } from '@remirror/pm';
+import { IframeOptions } from './iframe-types';
+/**
+ * ResizableIframeView is a NodeView for iframe. You can resize the iframe by
+ * dragging the handle over the iframe.
+ */
+export declare class ResizableIframeView extends ResizableNodeView implements NodeView {
+    readonly options: IframeOptions;
+    constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number, iframeOptions: IframeOptions);
+    createElement({ node, options }: {
+        node: ProsemirrorNode;
+        options?: Shape;
+    }): HTMLIFrameElement;
+}

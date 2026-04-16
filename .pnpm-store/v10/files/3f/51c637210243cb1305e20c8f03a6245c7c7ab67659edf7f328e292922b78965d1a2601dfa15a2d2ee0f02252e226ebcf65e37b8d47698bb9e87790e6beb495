@@ -1,0 +1,547 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-link/src/link-extension.ts
+import extractDomain from "extract-domain";
+import {
+  command,
+  composeTransactionSteps,
+  extension,
+  ExtensionPriority,
+  ExtensionTag,
+  findMatches,
+  getChangedRanges,
+  getMarkRange,
+  getMatchString,
+  getSelectedWord,
+  includes,
+  isAllSelection,
+  isElementDomNode,
+  isMarkActive,
+  isSelectionEmpty,
+  isTextSelection,
+  keyBinding,
+  last,
+  MarkExtension,
+  NamedShortcut,
+  omitExtraAttributes,
+  removeMark,
+  updateMark
+} from "@remirror/core";
+import { undoDepth } from "@remirror/pm/history";
+import { ReplaceAroundStep, ReplaceStep } from "@remirror/pm/transform";
+
+// packages/remirror__extension-link/src/link-extension-utils.ts
+var TOP_50_TLDS = [
+  "com",
+  "de",
+  "net",
+  "org",
+  "uk",
+  "cn",
+  "ga",
+  "nl",
+  "cf",
+  "ml",
+  "tk",
+  "ru",
+  "br",
+  "gq",
+  "xyz",
+  "fr",
+  "eu",
+  "info",
+  "co",
+  "au",
+  "ca",
+  "it",
+  "in",
+  "ch",
+  "pl",
+  "es",
+  "online",
+  "us",
+  "top",
+  "be",
+  "jp",
+  "biz",
+  "se",
+  "at",
+  "dk",
+  "cz",
+  "za",
+  "me",
+  "ir",
+  "icu",
+  "shop",
+  "kr",
+  "site",
+  "mx",
+  "hu",
+  "io",
+  "cc",
+  "club",
+  "no",
+  "cyou"
+];
+
+// packages/remirror__extension-link/src/link-extension.ts
+var UPDATE_LINK = "updateLink";
+var DEFAULT_AUTO_LINK_REGEX = /(?:(?:(?:https?|ftp):)?\/\/)?(?:\S+(?::\S*)?@)?(?:(?:[\da-z\u00A1-\uFFFF][\w\u00A1-\uFFFF-]{0,62})?[\da-z\u00A1-\uFFFF]\.)*(?:(?:\d(?!\.)|[a-z\u00A1-\uFFFF])(?:[\da-z\u00A1-\uFFFF][\w\u00A1-\uFFFF-]{0,62})?[\da-z\u00A1-\uFFFF]\.)+[a-z\u00A1-\uFFFF]{2,}(?::\d{2,5})?(?:[#/?]\S*)?/gi;
+var LinkExtension = class extends MarkExtension {
+  get name() {
+    return "link";
+  }
+  /**
+   * The autoLinkRegex option with the global flag removed, ensure no "lastIndex" state is maintained over multiple matches
+   * @private
+   */
+  _autoLinkRegexNonGlobal = void 0;
+  createTags() {
+    return [ExtensionTag.Link, ExtensionTag.ExcludeInputRules];
+  }
+  createMarkSpec(extra, override) {
+    const AUTO_ATTRIBUTE = "data-link-auto";
+    const getTargetObject = (target) => {
+      const { defaultTarget, supportedTargets } = this.options;
+      const targets = defaultTarget ? [...supportedTargets, defaultTarget] : supportedTargets;
+      return target && includes(targets, target) ? { target } : void 0;
+    };
+    return {
+      inclusive: false,
+      excludes: "_",
+      ...override,
+      attrs: {
+        ...extra.defaults(),
+        href: {},
+        target: { default: this.options.defaultTarget },
+        auto: { default: false }
+      },
+      parseDOM: [
+        {
+          tag: "a[href]",
+          getAttrs: (node) => {
+            if (!isElementDomNode(node)) {
+              return false;
+            }
+            const href = node.getAttribute("href");
+            const text = node.textContent;
+            const auto = this.options.autoLink && (node.hasAttribute(AUTO_ATTRIBUTE) || href === text || href?.replace(`${this.options.defaultProtocol}//`, "") === text);
+            return {
+              ...extra.parse(node),
+              href,
+              auto,
+              ...getTargetObject(node.getAttribute("target"))
+            };
+          }
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => {
+        const { auto: _, target: __, ...rest } = omitExtraAttributes(node.attrs, extra);
+        const auto = node.attrs.auto ? { [AUTO_ATTRIBUTE]: "" } : {};
+        const rel = "noopener noreferrer nofollow";
+        const attrs = {
+          ...extra.dom(node),
+          ...rest,
+          rel,
+          ...auto,
+          ...getTargetObject(node.attrs.target)
+        };
+        return ["a", attrs, 0];
+      }
+    };
+  }
+  onCreate() {
+    const { autoLinkRegex } = this.options;
+    this._autoLinkRegexNonGlobal = new RegExp(
+      `^${autoLinkRegex.source}$`,
+      autoLinkRegex.flags.replace("g", "")
+    );
+  }
+  shortcut({ tr }) {
+    let selectedText = "";
+    let { from, to, empty, $from } = tr.selection;
+    let expandedSelection = false;
+    const mark = getMarkRange($from, this.type);
+    if (empty) {
+      const selectedWord = mark ?? getSelectedWord(tr);
+      if (!selectedWord) {
+        return false;
+      }
+      ({ text: selectedText, from, to } = selectedWord);
+      expandedSelection = true;
+    }
+    if (from === to) {
+      return false;
+    }
+    if (!expandedSelection) {
+      selectedText = tr.doc.textBetween(from, to);
+    }
+    this.options.onActivateLink(selectedText);
+    this.options.onShortcut({
+      activeLink: mark ? { attrs: mark.mark.attrs, from: mark.from, to: mark.to } : void 0,
+      selectedText,
+      from,
+      to
+    });
+    return true;
+  }
+  updateLink(attrs, range) {
+    return (props) => {
+      const { tr } = props;
+      const selectionIsValid = isTextSelection(tr.selection) && !isSelectionEmpty(tr.selection) || isAllSelection(tr.selection) || isMarkActive({ trState: tr, type: this.type });
+      if (!selectionIsValid && !range) {
+        return false;
+      }
+      tr.setMeta(this.name, { command: UPDATE_LINK, attrs, range });
+      return updateMark({ type: this.type, attrs, range })(props);
+    };
+  }
+  selectLink() {
+    return this.store.commands.selectMark.original(this.type);
+  }
+  removeLink(range) {
+    return (props) => {
+      const { tr } = props;
+      if (!isMarkActive({ trState: tr, type: this.type, ...range })) {
+        return false;
+      }
+      return removeMark({ type: this.type, expand: true, range })(props);
+    };
+  }
+  /**
+   * Create the paste rules that can transform a pasted link in the document.
+   */
+  createPasteRules() {
+    return [
+      {
+        type: "mark",
+        regexp: this.options.autoLinkRegex,
+        markType: this.type,
+        getAttributes: (url, isReplacement) => ({
+          href: this.buildHref(getMatchString(url)),
+          auto: !isReplacement
+        }),
+        transformMatch: (match) => {
+          const url = getMatchString(match);
+          if (!url) {
+            return false;
+          }
+          if (!this.isValidUrl(url)) {
+            return false;
+          }
+          return url;
+        }
+      }
+    ];
+  }
+  /**
+   * Track click events passed through to the editor.
+   */
+  createEventHandlers() {
+    return {
+      clickMark: (event, clickState) => {
+        const markRange = clickState.getMark(this.type);
+        if (!markRange) {
+          return;
+        }
+        const attrs = markRange.mark.attrs;
+        const data = { ...attrs, ...markRange };
+        if (this.options.onClick(event, data)) {
+          return true;
+        }
+        if (!this.store.view.editable) {
+          return;
+        }
+        let handled = false;
+        if (this.options.openLinkOnClick) {
+          handled = true;
+          const href = attrs.href;
+          window.open(href, "_blank");
+        }
+        if (this.options.selectTextOnClick) {
+          handled = true;
+          this.store.commands.selectText(markRange);
+        }
+        return handled;
+      }
+    };
+  }
+  createPlugin() {
+    return {
+      appendTransaction: (transactions, prevState, state) => {
+        const transactionsWithLinkMeta = transactions.filter((tr2) => !!tr2.getMeta(this.name));
+        transactionsWithLinkMeta.forEach((tr2) => {
+          const trMeta = tr2.getMeta(this.name);
+          if (trMeta.command === UPDATE_LINK) {
+            const { range, attrs } = trMeta;
+            const { selection, doc: doc2 } = state;
+            const meta = { range, selection, doc: doc2, attrs };
+            const { from, to } = range ?? selection;
+            this.options.onUpdateLink(doc2.textBetween(from, to), meta);
+          }
+        });
+        if (!this.options.autoLink) {
+          return;
+        }
+        const isUndo = undoDepth(prevState) - undoDepth(state) === 1;
+        if (isUndo) {
+          return;
+        }
+        const docChanged = transactions.some((tr2) => tr2.docChanged);
+        if (!docChanged) {
+          return;
+        }
+        const composedTransaction = composeTransactionSteps(transactions, prevState);
+        const changes = getChangedRanges(composedTransaction, [ReplaceAroundStep, ReplaceStep]);
+        const { mapping } = composedTransaction;
+        const { tr, doc } = state;
+        const { updateLink, removeLink } = this.store.chain(tr);
+        changes.forEach(({ prevFrom, prevTo, from, to }) => {
+          const onUpdateCallbacks = [];
+          const isNodeSeparated = to - from === 2;
+          const prevMarks = this.getLinkMarksInRange(prevState.doc, prevFrom, prevTo, true).filter((item) => item.mark.type === this.type).map(({ from: from2, to: to2, text }) => ({
+            mappedFrom: mapping.map(from2),
+            mappedTo: mapping.map(to2),
+            text,
+            from: from2,
+            to: to2
+          }));
+          prevMarks.forEach(
+            ({ mappedFrom: newFrom, mappedTo: newTo, from: prevMarkFrom, to: prevMarkTo }, i) => this.getLinkMarksInRange(doc, newFrom, newTo, true).filter((item) => item.mark.type === this.type).forEach((newMark) => {
+              const prevLinkText = prevState.doc.textBetween(
+                prevMarkFrom,
+                prevMarkTo,
+                void 0,
+                " "
+              );
+              const newLinkText = doc.textBetween(newMark.from, newMark.to + 1, void 0, " ").trim();
+              const wasLink = this.isValidUrl(prevLinkText);
+              const isLink = this.isValidUrl(newLinkText);
+              if (isLink) {
+                return;
+              }
+              if (wasLink) {
+                removeLink({ from: newMark.from, to: newMark.to }).tr();
+                prevMarks.splice(i, 1);
+              }
+              if (isNodeSeparated) {
+                return;
+              }
+              from === to && // Check newLinkText for a remaining valid link
+              this.findAutoLinks(newLinkText).map(
+                (link) => this.addLinkProperties({
+                  ...link,
+                  from: newFrom + link.start,
+                  to: newFrom + link.end
+                })
+              ).forEach(({ attrs, range, text }) => {
+                updateLink(attrs, range).tr();
+                onUpdateCallbacks.push({ attrs, range, text });
+              });
+            })
+          );
+          this.findTextBlocksInRange(doc, { from, to }).forEach(({ text, positionStart }) => {
+            this.findAutoLinks(text).map(
+              (link) => this.addLinkProperties({
+                ...link,
+                // Calculate link position.
+                from: positionStart + link.start + 1,
+                to: positionStart + link.end + 1
+              })
+            ).filter(({ range }) => {
+              const fromIsInRange = from >= range.from && from <= range.to;
+              const toIsInRange = to >= range.from && to <= range.to;
+              return fromIsInRange || toIsInRange || isNodeSeparated;
+            }).filter(
+              ({ range }) => this.getLinkMarksInRange(tr.doc, range.from, range.to, false).length === 0
+            ).filter(
+              ({ range: { from: from2 }, text: text2 }) => !prevMarks.some(
+                ({ text: prevMarkText, mappedFrom }) => mappedFrom === from2 && prevMarkText === text2
+              )
+            ).forEach(({ attrs, text: text2, range }) => {
+              updateLink(attrs, range).tr();
+              onUpdateCallbacks.push({ attrs, range, text: text2 });
+            });
+          });
+          window.requestAnimationFrame(() => {
+            onUpdateCallbacks.forEach(({ attrs, range, text }) => {
+              const { doc: doc2, selection } = tr;
+              this.options.onUpdateLink(text, { attrs, doc: doc2, range, selection });
+            });
+          });
+        });
+        if (tr.steps.length === 0) {
+          return;
+        }
+        return tr;
+      }
+    };
+  }
+  buildHref(url) {
+    return this.options.extractHref({
+      url,
+      defaultProtocol: this.options.defaultProtocol
+    });
+  }
+  getLinkMarksInRange(doc, from, to, isAutoLink) {
+    const linkMarks = [];
+    if (from === to) {
+      const resolveFrom = Math.max(from - 1, 0);
+      const $pos = doc.resolve(resolveFrom);
+      const range = getMarkRange($pos, this.type);
+      if (range?.mark.attrs.auto === isAutoLink) {
+        linkMarks.push(range);
+      }
+    } else {
+      doc.nodesBetween(from, to, (node, pos) => {
+        const marks = node.marks ?? [];
+        const linkMark = marks.find(
+          ({ type, attrs }) => type === this.type && attrs.auto === isAutoLink
+        );
+        if (linkMark) {
+          linkMarks.push({
+            from: pos,
+            to: pos + node.nodeSize,
+            mark: linkMark,
+            text: node.textContent
+          });
+        }
+      });
+    }
+    return linkMarks;
+  }
+  findTextBlocksInRange(node, range) {
+    const nodesWithPos = [];
+    node.nodesBetween(range.from, range.to, (node2, pos) => {
+      if (!node2.isTextblock || !node2.type.allowsMarkType(this.type)) {
+        return;
+      }
+      nodesWithPos.push({
+        node: node2,
+        pos
+      });
+    });
+    return nodesWithPos.map((textBlock) => ({
+      text: node.textBetween(
+        textBlock.pos,
+        textBlock.pos + textBlock.node.nodeSize,
+        void 0,
+        " "
+      ),
+      positionStart: textBlock.pos
+    }));
+  }
+  addLinkProperties({
+    from,
+    to,
+    href,
+    ...link
+  }) {
+    return {
+      ...link,
+      range: { from, to },
+      attrs: { href, auto: true }
+    };
+  }
+  findAutoLinks(str) {
+    if (this.options.findAutoLinks) {
+      return this.options.findAutoLinks(str, this.options.defaultProtocol);
+    }
+    const toAutoLink = [];
+    for (const match of findMatches(str, this.options.autoLinkRegex)) {
+      const text = getMatchString(match);
+      if (!text) {
+        continue;
+      }
+      const href = this.buildHref(text);
+      if (!this.isValidTLD(href) && !href.startsWith("tel:")) {
+        continue;
+      }
+      toAutoLink.push({
+        text,
+        href,
+        start: match.index,
+        end: match.index + text.length
+      });
+    }
+    return toAutoLink;
+  }
+  isValidUrl(text) {
+    if (this.options.isValidUrl) {
+      return this.options.isValidUrl(text, this.options.defaultProtocol);
+    }
+    return this.isValidTLD(this.buildHref(text)) && !!this._autoLinkRegexNonGlobal?.test(text);
+  }
+  isValidTLD(str) {
+    const { autoLinkAllowedTLDs } = this.options;
+    if (autoLinkAllowedTLDs.length === 0) {
+      return true;
+    }
+    const domain = extractDomain(str);
+    if (domain === "") {
+      return true;
+    }
+    const tld = last(domain.split("."));
+    return autoLinkAllowedTLDs.includes(tld);
+  }
+};
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.InsertLink })
+], LinkExtension.prototype, "shortcut", 1);
+__decorateClass([
+  command()
+], LinkExtension.prototype, "updateLink", 1);
+__decorateClass([
+  command()
+], LinkExtension.prototype, "selectLink", 1);
+__decorateClass([
+  command()
+], LinkExtension.prototype, "removeLink", 1);
+LinkExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      autoLink: false,
+      defaultProtocol: "",
+      selectTextOnClick: false,
+      openLinkOnClick: false,
+      autoLinkRegex: DEFAULT_AUTO_LINK_REGEX,
+      autoLinkAllowedTLDs: TOP_50_TLDS,
+      findAutoLinks: void 0,
+      isValidUrl: void 0,
+      defaultTarget: null,
+      supportedTargets: [],
+      extractHref
+    },
+    staticKeys: ["autoLinkRegex"],
+    handlerKeyOptions: { onClick: { earlyReturnValue: true } },
+    handlerKeys: ["onActivateLink", "onShortcut", "onUpdateLink", "onClick"],
+    defaultPriority: ExtensionPriority.Medium
+  })
+], LinkExtension);
+function extractHref({
+  url,
+  defaultProtocol
+}) {
+  const startsWithProtocol = /^((?:https?|ftp)?:)\/\//.test(url);
+  const isEmail = !startsWithProtocol && url.includes("@");
+  if (isEmail) {
+    return `mailto:${url}`;
+  }
+  return startsWithProtocol ? url : `${defaultProtocol}//${url}`;
+}
+export {
+  LinkExtension,
+  TOP_50_TLDS,
+  extractHref
+};

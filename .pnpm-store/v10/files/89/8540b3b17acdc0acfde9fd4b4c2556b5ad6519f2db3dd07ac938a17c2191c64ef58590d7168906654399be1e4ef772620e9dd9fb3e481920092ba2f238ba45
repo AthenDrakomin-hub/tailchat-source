@@ -1,0 +1,80 @@
+import { FindProsemirrorNodeResult, NodeWithPosition } from '@remirror/core';
+import { Positioner } from '@remirror/extension-positioner';
+import { CellSelection } from '@remirror/pm/tables';
+/**
+ * Creates a positioner for the current table node.
+ *
+ * It spans the full width and height of the table.
+ */
+export declare const tablePositioner: Positioner<FindProsemirrorNodeResult>;
+/**
+ * Creates a positioner for the current cell node.
+ *
+ * It spans the full width and height of the cell.
+ */
+export declare const activeCellPositioner: Positioner<FindProsemirrorNodeResult>;
+/**
+ * Creates a positioner for top of each column in a table
+ *
+ * It returns multiple positions, for the top side of each column in a table
+ */
+export declare const allColumnsStartPositioner: Positioner<NodeWithPosition>;
+/**
+ * Creates a positioner for left of each row in a table
+ *
+ * It returns multiple positions, for the left side of each row in a table
+ */
+export declare const allRowsStartPositioner: Positioner<NodeWithPosition>;
+export interface ActiveCellColumnPositionerData {
+    pos: number;
+    rect: DOMRect;
+}
+/**
+ * Creates a positioner for the current column in a table
+ *
+ * It spans the full width and height of the column containing the current cell
+ */
+export declare const activeCellColumnPositioner: Positioner<ActiveCellColumnPositionerData>;
+export type ActiveCellRowPositionerData = ActiveCellColumnPositionerData;
+/**
+ * Creates a positioner for the current row in a table
+ *
+ * It spans the full width and height of the row containing the current cell
+ */
+export declare const activeCellRowPositioner: Positioner<ActiveCellColumnPositionerData>;
+/**
+ * Creates a positioner for the current column in a table if the whole column is selected
+ *
+ * It spans the full width and height of a selected single column
+ */
+export declare const selectedColumnPositioner: Positioner<ActiveCellColumnPositionerData>;
+/**
+ * Creates a positioner for the current row in a table if the whole row is selected
+ *
+ * It spans the full width and height of a selected single row
+ */
+export declare const selectedRowPositioner: Positioner<ActiveCellColumnPositionerData>;
+/**
+ * Creates a positioner for the current cell selection in a table
+ *
+ * It spans the full width and height of the selected cells
+ */
+export declare const cellSelectionPositioner: Positioner<CellSelection>;
+/**
+ * Creates a positioner if the cell selection goes all the way from the top to the bottom of the table
+ *
+ * It spans the full width and height of the selected cells
+ */
+export declare const cellColumnSelectionPositioner: Positioner<CellSelection>;
+/**
+ * Creates a positioner if the cell selection goes all the way from the left to the right of the table
+ *
+ * It spans the full width and height of the selected cells
+ */
+export declare const cellRowSelectionPositioner: Positioner<CellSelection>;
+/**
+ * Creates a positioner if all the cells in a table are selected
+ *
+ * It spans the full width and height of the selected cells (the entire table)
+ */
+export declare const allCellSelectionPositioner: Positioner<CellSelection>;

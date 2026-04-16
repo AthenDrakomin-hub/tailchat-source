@@ -1,0 +1,75 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-shortcuts/src/shortcuts-extension.ts
+import { extension, PlainExtension, plainInputRule } from "@remirror/core";
+var SHORTCUTS = [
+  // Dash
+  [/--$/, "\u2014"],
+  // ellipsis
+  [/\.{3}$/, "\u2026"],
+  // leftArrow
+  [/<-$/, "\u2190"],
+  // rightArrow
+  [/->$/, "\u2192"],
+  // left/right arrow
+  // First "<-" gets replaced by left arrow; after typing ">", both get replaced by left/right arrow
+  [/←>$/, "\u2194"],
+  // copyright
+  [/\(c\)$/, "\xA9"],
+  // trademark
+  [/\(tm\)$/, "\u2122"],
+  // registeredTrademark
+  [/\(r\)$/, "\xAE"],
+  // oneHalf
+  [/1\/2$/, "\xBD"],
+  // plusMinus
+  [/\+\/-$/, "\xB1"],
+  // notEqual
+  [/!=$/, "\u2260"],
+  // laquo
+  [/<<$/, "\xAB"],
+  // raquo
+  [/>>$/, "\xBB"],
+  // superscriptTwo
+  [/\^2$/, "\xB2"],
+  // superscriptThree
+  [/\^3$/, "\xB3"],
+  // oneQuarter
+  [/1\/4$/, "\xBC"],
+  // threeQuarters
+  [/3\/4$/, "\xBE"]
+];
+var ShortcutsExtension = class extends PlainExtension {
+  get name() {
+    return "shortcuts";
+  }
+  /**
+   * Manage input rules for keyboard shortcuts
+   */
+  createInputRules() {
+    return SHORTCUTS.map(([regexp, replace]) => {
+      return plainInputRule({
+        regexp,
+        transformMatch: () => replace
+      });
+    });
+  }
+};
+ShortcutsExtension = __decorateClass([
+  extension({
+    defaultOptions: {}
+  })
+], ShortcutsExtension);
+export {
+  ShortcutsExtension
+};

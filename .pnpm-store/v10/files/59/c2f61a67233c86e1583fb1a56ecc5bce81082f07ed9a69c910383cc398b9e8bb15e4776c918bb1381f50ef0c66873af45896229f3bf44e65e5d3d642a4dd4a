@@ -1,0 +1,38 @@
+import { Context, ServiceSchema } from 'moleculer';
+import { MoleculerDB } from 'moleculer-db';
+import { MongooseDbAdapter } from '../lib/moleculer-db-adapter-mongoose';
+import type { Document, FilterQuery, Model } from 'mongoose';
+import type { ReturnModelType } from '@typegoose/typegoose';
+import type { AnyParamConstructor, BeAnObject } from '@typegoose/typegoose/lib/types';
+declare type EntityChangedType = 'created' | 'updated';
+declare type MoleculerDBMethods = MoleculerDB<any>['methods'];
+interface FindFilters<T extends Document> {
+    query?: FilterQuery<T>;
+    search?: string;
+    searchFields?: string[];
+    sort?: string | string[];
+    offset?: number;
+    limit?: number;
+}
+interface TcDbAdapterOverwrite<T extends Document, M extends Model<T>> {
+    model: M;
+    insert(entity: Partial<T>): Promise<T>;
+    find(filters: FindFilters<T>): Promise<T>;
+    findOne(query: FilterQuery<T>): Promise<T | null>;
+}
+export interface TcDbService<T extends Document = Document, M extends Model<T> = Model<T>> extends MoleculerDBMethods {
+    entityChanged(type: EntityChangedType, json: {}, ctx: Context): Promise<void>;
+    adapter: Omit<MongooseDbAdapter<T>, keyof TcDbAdapterOverwrite<T, M>> & TcDbAdapterOverwrite<T, M>;
+    /**
+     * 转换fetch出来的文档, 变成一个json
+     */
+    transformDocuments: MoleculerDB<MongooseDbAdapter<T>>['methods']['transformDocuments'];
+}
+export declare type TcDbModel = ReturnModelType<AnyParamConstructor<any>, BeAnObject>;
+/**
+ * Tc 数据库mixin
+ * @param collectionName 集合名
+ * @param loadModel 加载数据模型方式
+ */
+export declare function TcDbService(model: TcDbModel): Partial<ServiceSchema>;
+export {};

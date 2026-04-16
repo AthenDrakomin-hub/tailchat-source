@@ -1,0 +1,34 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.startDevRunner = void 0;
+const moleculer_1 = require("moleculer");
+const path_1 = __importDefault(require("path"));
+const cluster_1 = __importDefault(require("cluster"));
+const settings_1 = require("../services/lib/settings");
+const isProd = settings_1.config.env === 'production';
+/**
+ * 开始一个启动器
+ */
+function startDevRunner(options) {
+    const runner = new moleculer_1.Runner();
+    runner.flags = {
+        hot: isProd ? false : true,
+        repl: isProd ? false : true,
+        env: true,
+        config: options.config ?? path_1.default.resolve(__dirname, './moleculer.config.ts'),
+    };
+    runner.servicePaths = [
+        'services/**/*.service.ts',
+        'services/**/*.service.dev.ts',
+        'plugins/**/*.service.ts',
+        'plugins/**/*.service.dev.ts', // load plugins in dev mode
+    ];
+    if (runner.flags.instances !== undefined && cluster_1.default.isPrimary) {
+        return runner.startWorkers(runner.flags.instances);
+    }
+    return runner._run();
+}
+exports.startDevRunner = startDevRunner;

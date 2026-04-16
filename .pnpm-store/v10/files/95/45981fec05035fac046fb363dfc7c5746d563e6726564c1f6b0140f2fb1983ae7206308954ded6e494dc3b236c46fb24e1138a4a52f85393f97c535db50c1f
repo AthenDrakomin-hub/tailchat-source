@@ -1,0 +1,2 @@
+// packages/remirror__pm/src/commands.ts
+export * from "prosemirror-commands";

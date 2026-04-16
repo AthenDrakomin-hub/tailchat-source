@@ -96,13 +96,14 @@
 ### 3.5 存储与访问路径
 为避免暴露原始 MP4：
 - MP4 上传后存放于 **私有临时目录**（不走 `/static` 对象存储直链）。
-- 转码后的 HLS 输出到一个“对外可访问的目录”，例如：
-  - `server/public/streams/<streamId>/index.m3u8`
-  - `server/public/streams/<streamId>/segment_00001.ts`（或 fmp4）
-- 网关现有 `/` 静态代理已经会把 `public` 目录暴露出去（见 [gateway.service.ts](file:///workspace/server/services/core/gateway.service.ts#L314-L341)），因此 `/streams/**` 可以直接访问。
+- 转码后的 HLS 文件（m3u8 + 分片）写入对象存储 MinIO，采用固定前缀命名：
+  - `streams/<streamId>/index.m3u8`
+  - `streams/<streamId>/segment_00001.ts`
+- 网关使用 `/static/:objectName+` 代理对象存储文件（见 [gateway.service.ts](file:///workspace/server/services/core/gateway.service.ts#L272-L313)），因此播放地址形如：
+  - `{API_URL}/static/streams/<streamId>/index.m3u8`
 
 部署建议：
-- Docker/宿主机上对 `streams/` 做持久化挂载，避免容器重启丢失直播内容。
+- MinIO 本身做持久化（docker compose 已用 volume），直播内容不会因应用容器重启丢失。
 - 增加过期清理策略：例如保留 N 天或按容量阈值清理旧 stream。
 
 ### 3.6 转码策略（ffmpeg）

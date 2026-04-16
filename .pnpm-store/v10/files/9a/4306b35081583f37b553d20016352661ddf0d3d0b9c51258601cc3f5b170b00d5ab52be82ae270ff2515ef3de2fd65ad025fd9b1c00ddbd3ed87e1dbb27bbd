@@ -1,0 +1,5 @@
+import { FC } from 'react';
+import { CommandButtonProps } from './command-button';
+export interface ToggleSuperscriptButtonProps extends Omit<CommandButtonProps, 'commandName' | 'active' | 'enabled' | 'attrs' | 'onSelect'> {
+}
+export declare const ToggleSuperscriptButton: FC<ToggleSuperscriptButtonProps>;

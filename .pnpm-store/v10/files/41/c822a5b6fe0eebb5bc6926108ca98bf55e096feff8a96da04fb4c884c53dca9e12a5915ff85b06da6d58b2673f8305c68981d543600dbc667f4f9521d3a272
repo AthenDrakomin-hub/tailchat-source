@@ -1,0 +1,2 @@
+declare const TableInsertMark: () => HTMLElement[];
+export default TableInsertMark;

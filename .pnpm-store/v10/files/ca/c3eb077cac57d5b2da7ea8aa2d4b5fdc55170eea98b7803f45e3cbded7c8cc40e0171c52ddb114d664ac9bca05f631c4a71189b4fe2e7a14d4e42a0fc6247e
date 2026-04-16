@@ -1,0 +1,22 @@
+{
+    "name": "@types/generate-json-webpack-plugin",
+    "version": "0.3.8",
+    "description": "TypeScript definitions for generate-json-webpack-plugin",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/generate-json-webpack-plugin",
+    "license": "MIT",
+    "contributors": [],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/generate-json-webpack-plugin"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/webpack": "^4.41.23 || ^5"
+    },
+    "peerDependencies": {},
+    "typesPublisherContentHash": "e04f97105f587849fbe9e535822e56f34eadb61a710a6ee4fc7931f11ba32993",
+    "typeScriptVersion": "5.2"
+}

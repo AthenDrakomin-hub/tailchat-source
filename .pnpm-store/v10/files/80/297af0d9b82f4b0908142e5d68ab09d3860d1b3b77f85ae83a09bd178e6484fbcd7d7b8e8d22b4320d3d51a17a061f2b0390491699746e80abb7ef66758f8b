@@ -1,0 +1,5 @@
+import { FC } from 'react';
+export declare const ReplaceController: FC<{
+    replace: () => void;
+    replaceAll: () => void;
+}>;

@@ -1,0 +1,1 @@
+export declare const readJSONStream: <T = unknown>(filepath: string) => Promise<T>;

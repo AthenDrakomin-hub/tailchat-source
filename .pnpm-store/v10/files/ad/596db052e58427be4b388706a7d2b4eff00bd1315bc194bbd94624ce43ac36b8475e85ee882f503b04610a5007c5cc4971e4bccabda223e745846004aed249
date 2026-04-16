@@ -1,0 +1,17 @@
+import { Module } from './module';
+import { Node } from './node';
+import { ModuleData } from './types';
+export declare class ConcatenatedModule extends Module {
+    children: string[];
+    constructor(name: string, data: ModuleData, parent?: Node);
+    fillContentModules(): void;
+    addContentModule(moduleData: ModuleData): void;
+    toChartData(): {
+        concatenated: boolean;
+        modules: string[];
+        name: string;
+        value: number;
+        gzip: number;
+        brotli: number;
+    };
+}

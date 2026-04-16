@@ -1,0 +1,34 @@
+import { NodeExtension, ApplySchemaAttributes, NodeSpecOverride, NodeExtensionSpec, CommandFunction, KeyBindingProps, InputRule } from '@remirror/core';
+import { PasteRule } from '@remirror/pm/paste-rules';
+
+/**
+ * Add the blockquote block to the editor.
+ */
+declare class BlockquoteExtension extends NodeExtension {
+    get name(): "blockquote";
+    createTags(): ("formattingNode" | "block")[];
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    /**
+     * Toggle the blockquote for the current block.
+     *
+     * If none exists one will be created or the existing blockquote content will be
+     * lifted out of the blockquote node.
+     *
+     * ```ts
+     * commands.toggleBlockquote();
+     * ```
+     */
+    toggleBlockquote(): CommandFunction;
+    shortcut(props: KeyBindingProps): boolean;
+    createInputRules(): InputRule[];
+    createPasteRules(): PasteRule;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            blockquote: BlockquoteExtension;
+        }
+    }
+}
+
+export { BlockquoteExtension };

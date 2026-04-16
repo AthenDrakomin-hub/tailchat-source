@@ -1,0 +1,12 @@
+import { ResizableNodeView } from 'prosemirror-resizable-view';
+import { EditorView, NodeView, ProsemirrorNode } from '@remirror/pm';
+/**
+ * ResizableImageView is a NodeView for image. You can resize the image by
+ * dragging the handle over the image.
+ */
+export declare class ResizableImageView extends ResizableNodeView implements NodeView {
+    constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number);
+    createElement({ node }: {
+        node: ProsemirrorNode;
+    }): HTMLImageElement;
+}

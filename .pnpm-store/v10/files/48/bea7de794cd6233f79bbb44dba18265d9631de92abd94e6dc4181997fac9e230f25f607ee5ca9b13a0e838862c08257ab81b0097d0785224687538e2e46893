@@ -1,0 +1,309 @@
+import { NodeExtensionSpec, SchemaProps, NodeExtension, ApplySchemaAttributes, NodeSpecOverride, StateUpdateLifecycleProps, ProsemirrorPlugin, CreateExtensionPlugin, CommandFunction, NonChainableCommandFunction, Helper, EditorState, KeyBindingProps, OnSetOptionsProps, FindProsemirrorNodeResult, NodeWithPosition } from '@remirror/core';
+import { CreateEventHandlers } from '@remirror/extension-events';
+import { Node } from '@remirror/pm/model';
+import { Positioner } from '@remirror/extension-positioner';
+import { CellSelection } from '@remirror/pm/tables';
+
+interface TableSchemaSpec extends NodeExtensionSpec {
+    tableRole: TableRole;
+}
+interface CreateTableCommand {
+    /**
+     * Defines the number of rows to create with.
+     *
+     * @defaultValue 3
+     */
+    rowsCount?: number;
+    /**
+     * Defines the number of columns to create with.
+     *
+     * @defaultValue 3
+     */
+    columnsCount?: number;
+    /**
+     * When true the first row of the table will be a header row.
+     *
+     * @defaultValue true
+     */
+    withHeaderRow?: boolean;
+    /**
+     * Defines the content of each cell as a prosemirror node.
+     *
+     * @defaultValue undefined
+     */
+    cellContent?: Node;
+}
+interface CreateTableProps extends SchemaProps, CreateTableCommand {
+}
+declare const TABLE_ROLES: readonly ["table", "row", "cell", "header_cell"];
+type TableRole = (typeof TABLE_ROLES)[number];
+/**
+ * Returns a table node of a given size.
+ *
+ * @remarks
+ *
+ * ```ts
+ * const table = createTable({ schema: state.schema }); // 3x3 table node
+ * dispatch(tr.replaceSelectionWith(table).scrollIntoView());
+ * ```
+ */
+declare function createTable(props: CreateTableProps): Node;
+declare const createTableOptions: Remirror.CommandDecoratorOptions;
+
+interface TableResizableOptions {
+    handleWidth?: number;
+    cellMinWidth?: number;
+}
+interface TableOptions {
+    /**
+     * When `true` the table will be resizable.
+     *
+     * @defaultValue true
+     */
+    resizable?: boolean;
+    /**
+     * The options passed to the column resizing plugin
+     */
+    resizeableOptions?: TableResizableOptions;
+    /**
+     * Whether to use Tab and Shift-Tab to navigate between cells
+     *
+     * @defaultValue: false
+     */
+    tabKeyboardShortcuts?: boolean;
+}
+declare class TableExtension extends NodeExtension<TableOptions> {
+    private lastGoodState?;
+    get name(): "table";
+    createTags(): "block"[];
+    /**
+     * The last known good state that didn't need fixing. This helps make the fix
+     * command more effective.
+     */
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): TableSchemaSpec;
+    /**
+     * Create the table extensions. Set the priority to low so that they appear
+     * lower down in the node list.
+     */
+    createExtensions(): TableRowExtension[];
+    onStateUpdate(props: StateUpdateLifecycleProps): void;
+    createEventHandlers(): CreateEventHandlers;
+    /**
+     * Add the table plugins to the editor.
+     */
+    createExternalPlugins(): ProsemirrorPlugin[];
+    createPlugin(): CreateExtensionPlugin;
+    /**
+     * Create a table in the editor at the current selection point.
+     */
+    createTable(options?: CreateTableCommand): CommandFunction;
+    /**
+     * Delete the table.
+     */
+    deleteTable(): CommandFunction;
+    /**
+     * Command to add a column before the column with the selection.
+     */
+    addTableColumnBefore(): CommandFunction;
+    /**
+     * Command to add a column after the column with the selection.
+     */
+    addTableColumnAfter(): CommandFunction;
+    /**
+     * Remove selected column from the table.
+     */
+    deleteTableColumn(): CommandFunction;
+    /**
+     * Add a table row before the current selection.
+     */
+    addTableRowBefore(): CommandFunction;
+    /**
+     * Add a table row after the current selection.
+     */
+    addTableRowAfter(): CommandFunction;
+    /**
+     * Delete the table row at the current selection.
+     */
+    deleteTableRow(): CommandFunction;
+    /**
+     * Toggles between merging cells.
+     */
+    toggleTableCellMerge(): CommandFunction;
+    /**
+     * Merge the table cells.
+     */
+    mergeTableCells(): CommandFunction;
+    /**
+     * Split the merged cells into individual cells.
+     */
+    splitTableCell(): CommandFunction;
+    /**
+     * Toggles between row/column header and normal cells (Only applies to first row/column).
+     */
+    toggleTableHeader(type?: 'column' | 'row'): CommandFunction;
+    /**
+     * Toggles a column as the header column.
+     */
+    toggleTableHeaderColumn(): CommandFunction;
+    /**
+     * Toggles a row as a table header row.
+     */
+    toggleTableHeaderRow(): CommandFunction;
+    /**
+     * Toggle a cell as a table header cell.
+     */
+    toggleTableHeaderCell(): CommandFunction;
+    /**
+     * Set the attribute for a table cell.
+     */
+    setTableCellAttribute(name: string, value: unknown): CommandFunction;
+    /**
+     * Fix all tables within the document.
+     *
+     * This is a **non-chainable** command.
+     */
+    fixTables(): NonChainableCommandFunction;
+    /**
+     * Enable table usage within the editor. This depends on the browser that
+     * is being used.
+     */
+    enableTableSupport(): Helper<void>;
+    /**
+     * Determines if the first row/column is a header row/column
+     */
+    tableHasHeader(type?: 'column' | 'row', state?: EditorState): Helper<boolean>;
+    /**
+     * Update the background of one cell or multiple cells by passing a color
+     * string. You can also remove the color by passing a `null`.
+     */
+    setTableCellBackground(background: string | null): CommandFunction;
+    selectParentCell(): CommandFunction;
+    expandCellSelection(type?: 'column' | 'row' | 'all'): CommandFunction;
+    goToNextCell(props: KeyBindingProps): boolean;
+    goToPreviousCell(props: KeyBindingProps): boolean;
+    /**
+     * This managers the updates of the collaboration provider.
+     */
+    protected onSetOptions(props: OnSetOptionsProps<TableOptions>): void;
+}
+/**
+ * The extension for a table row node.
+ */
+declare class TableRowExtension extends NodeExtension {
+    get name(): "tableRow";
+    /**
+     * Automatically create the `TableCellExtension` and
+     * `TableHeaderCellExtension`. This is placed here so that this extension can
+     * be tested independently from the `TableExtension`.
+     */
+    createExtensions(): Array<TableCellExtension | TableHeaderCellExtension | TableControllerCellExtension>;
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): TableSchemaSpec;
+}
+/**
+ * The extension for a table cell node.
+ */
+declare class TableCellExtension extends NodeExtension {
+    get name(): "tableCell";
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): TableSchemaSpec;
+}
+/**
+ * The extension for the table header node.
+ */
+declare class TableHeaderCellExtension extends NodeExtension {
+    get name(): "tableHeaderCell";
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): TableSchemaSpec;
+}
+/**
+ * This is not used in the basic table extension, but is required for this React Tables extension that extends this
+ */
+declare class TableControllerCellExtension extends NodeExtension {
+    get name(): "tableControllerCell";
+    createNodeSpec(_: ApplySchemaAttributes, __: NodeSpecOverride): TableSchemaSpec;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            table: TableExtension;
+        }
+    }
+}
+
+/**
+ * Creates a positioner for the current table node.
+ *
+ * It spans the full width and height of the table.
+ */
+declare const tablePositioner: Positioner<FindProsemirrorNodeResult>;
+/**
+ * Creates a positioner for the current cell node.
+ *
+ * It spans the full width and height of the cell.
+ */
+declare const activeCellPositioner: Positioner<FindProsemirrorNodeResult>;
+/**
+ * Creates a positioner for top of each column in a table
+ *
+ * It returns multiple positions, for the top side of each column in a table
+ */
+declare const allColumnsStartPositioner: Positioner<NodeWithPosition>;
+/**
+ * Creates a positioner for left of each row in a table
+ *
+ * It returns multiple positions, for the left side of each row in a table
+ */
+declare const allRowsStartPositioner: Positioner<NodeWithPosition>;
+interface ActiveCellColumnPositionerData {
+    pos: number;
+    rect: DOMRect;
+}
+/**
+ * Creates a positioner for the current column in a table
+ *
+ * It spans the full width and height of the column containing the current cell
+ */
+declare const activeCellColumnPositioner: Positioner<ActiveCellColumnPositionerData>;
+type ActiveCellRowPositionerData = ActiveCellColumnPositionerData;
+/**
+ * Creates a positioner for the current row in a table
+ *
+ * It spans the full width and height of the row containing the current cell
+ */
+declare const activeCellRowPositioner: Positioner<ActiveCellColumnPositionerData>;
+/**
+ * Creates a positioner for the current column in a table if the whole column is selected
+ *
+ * It spans the full width and height of a selected single column
+ */
+declare const selectedColumnPositioner: Positioner<ActiveCellColumnPositionerData>;
+/**
+ * Creates a positioner for the current row in a table if the whole row is selected
+ *
+ * It spans the full width and height of a selected single row
+ */
+declare const selectedRowPositioner: Positioner<ActiveCellColumnPositionerData>;
+/**
+ * Creates a positioner for the current cell selection in a table
+ *
+ * It spans the full width and height of the selected cells
+ */
+declare const cellSelectionPositioner: Positioner<CellSelection>;
+/**
+ * Creates a positioner if the cell selection goes all the way from the top to the bottom of the table
+ *
+ * It spans the full width and height of the selected cells
+ */
+declare const cellColumnSelectionPositioner: Positioner<CellSelection>;
+/**
+ * Creates a positioner if the cell selection goes all the way from the left to the right of the table
+ *
+ * It spans the full width and height of the selected cells
+ */
+declare const cellRowSelectionPositioner: Positioner<CellSelection>;
+/**
+ * Creates a positioner if all the cells in a table are selected
+ *
+ * It spans the full width and height of the selected cells (the entire table)
+ */
+declare const allCellSelectionPositioner: Positioner<CellSelection>;
+
+export { type ActiveCellColumnPositionerData, type ActiveCellRowPositionerData, type CreateTableCommand, TableCellExtension, TableControllerCellExtension, TableExtension, TableHeaderCellExtension, type TableOptions, type TableResizableOptions, type TableRole, TableRowExtension, type TableSchemaSpec, activeCellColumnPositioner, activeCellPositioner, activeCellRowPositioner, allCellSelectionPositioner, allColumnsStartPositioner, allRowsStartPositioner, cellColumnSelectionPositioner, cellRowSelectionPositioner, cellSelectionPositioner, createTable, createTableOptions, selectedColumnPositioner, selectedRowPositioner, tablePositioner };

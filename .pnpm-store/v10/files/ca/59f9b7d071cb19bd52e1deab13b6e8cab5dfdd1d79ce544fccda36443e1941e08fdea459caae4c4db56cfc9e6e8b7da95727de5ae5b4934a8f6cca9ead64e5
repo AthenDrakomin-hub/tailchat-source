@@ -1,0 +1,106 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.mergeUrl = exports.isFullUrl = exports.getPluginName = exports.isPluginSubModule = exports.isPluginModuleEntry = exports.isPluginModuleName = exports.processModulePath = void 0;
+function trimDotOfPath(parent, self) {
+    if (!self.startsWith('.')) {
+        return self;
+    }
+    var parentList = parent.split('/');
+    var selfList = self.split('/');
+    parentList.pop();
+    var selfRet = [];
+    selfList.forEach(function (item) {
+        if (item === '..') {
+            parentList.pop();
+        }
+        if (item !== '..' && item !== '.') {
+            selfRet.push(item);
+        }
+    });
+    return parentList.concat(selfRet).join('/');
+}
+/**
+ * A function how to process module path to real path
+ */
+function processModulePath(baseModuleName, path) {
+    if (isPluginModuleName(path)) {
+        return path;
+    }
+    if (path.endsWith('.js') || path.startsWith('./')) {
+        return trimDotOfPath(!baseModuleName.endsWith('.js') ? baseModuleName + '/' : baseModuleName, !path.endsWith('.js') ? "".concat(path, ".js") : path);
+    }
+    return path;
+}
+exports.processModulePath = processModulePath;
+/**
+ * @example
+ * @plugins/any => true
+ */
+function isPluginModuleName(fullName) {
+    if (typeof fullName !== 'string') {
+        return false;
+    }
+    return fullName.startsWith('@plugins/');
+}
+exports.isPluginModuleName = isPluginModuleName;
+/**
+ * @example
+ * @plugins/any => true
+ * @plugins/any/other.js => false
+ */
+function isPluginModuleEntry(fullName) {
+    if (typeof fullName !== 'string') {
+        return false;
+    }
+    return fullName.startsWith('@plugins/') && fullName.split('/').length === 2;
+}
+exports.isPluginModuleEntry = isPluginModuleEntry;
+/**
+ * @example
+ * @plugins/any => false
+ * @plugins/any/other.js => true
+ * @plugins/any/dir/another.js => true
+ */
+function isPluginSubModule(fullName) {
+    if (typeof fullName !== 'string') {
+        return false;
+    }
+    return fullName.startsWith('@plugins/') && fullName.split('/').length > 2;
+}
+exports.isPluginSubModule = isPluginSubModule;
+/**
+ * @example
+ * @plugins/any => any
+ */
+function getPluginName(fullName) {
+    if (!isPluginModuleName(fullName)) {
+        return null;
+    }
+    var _a = fullName.split('/'), name = _a[1];
+    return name;
+}
+exports.getPluginName = getPluginName;
+/**
+ * Check is full url
+ */
+function isFullUrl(url) {
+    return url.startsWith('http:') || url.startsWith('https:');
+}
+exports.isFullUrl = isFullUrl;
+/**
+ * @example
+ * ('http://127.0.0.1:8080/plugins/core/index.js', '/plugins/core/foo.js') => 'http://127.0.0.1:8080/plugins/core/foo.js'
+ * ('http://127.0.0.1:8080/public/plugins/core/index.js', '/plugins/core/foo.js') => 'http://127.0.0.1:8080/public/plugins/core/foo.js'
+ * ('http://127.0.0.1:8080/public/core/index.js', '/plugins/core/foo.js') => 'http://127.0.0.1:8080/public/core/foo.js'
+ * ('http://127.0.0.1:8080/public/index.js', '/plugins/core/foo.js') => '/plugins/core/foo.js'
+ */
+function mergeUrl(baseUrl, appendUrl) {
+    var _a = appendUrl.split('/'), prefix = _a[1], pluginName = _a[2], rest = _a.slice(3);
+    var matchStr = "/".concat(pluginName);
+    var index = baseUrl.search(matchStr);
+    if (index === -1) {
+        return appendUrl;
+    }
+    return baseUrl.slice(0, index) + matchStr + '/' + rest.join('/');
+}
+exports.mergeUrl = mergeUrl;

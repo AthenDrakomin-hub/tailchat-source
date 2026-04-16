@@ -1,0 +1,128 @@
+import { CommandFunction, CreateExtensionPlugin, Handler, KeyBindingProps, PlainExtension, Static } from '@remirror/core';
+/**
+ * @deprecated - use `@remirror/extension-find` instead.
+ */
+export interface SearchOptions {
+    /**
+     * @defaultValue false
+     */
+    autoSelectNext?: boolean;
+    /**
+     * @defaultValue 'search'
+     */
+    searchClass?: Static<string>;
+    /**
+     * The class to apply to the currently highlighted index.
+     *
+     * @defaultValue 'highlighted-search'
+     */
+    highlightedClass?: Static<string>;
+    /**
+     * @defaultValue false
+     */
+    searching?: boolean;
+    /**
+     * @defaultValue false
+     */
+    caseSensitive?: boolean;
+    /**
+     * @defaultValue true
+     */
+    disableRegex?: boolean;
+    /**
+     * @defaultValue false
+     */
+    alwaysSearch?: boolean;
+    /**
+     * Whether to clear the search when the `Escape` key is pressed.
+     *
+     * @defaultValue true
+     */
+    clearOnEscape?: boolean;
+    /**
+     * Search handler
+     */
+    onSearch: Handler<(selectedText: string, direction: SearchDirection) => void>;
+}
+export type SearchDirection = 'next' | 'previous';
+/**
+ * This extension add search functionality to your editor.
+ *
+ * @deprecated - use `@remirror/extension-find` instead.
+ */
+export declare class SearchExtension extends PlainExtension<SearchOptions> {
+    get name(): "search";
+    private _updating;
+    private _searchTerm?;
+    private _results;
+    private _activeIndex;
+    /**
+     * This plugin is responsible for adding something decorations to the
+     */
+    createPlugin(): CreateExtensionPlugin;
+    /**
+     * Find a search term in the editor. If no search term is provided it
+     * defaults to the currently selected text.
+     */
+    search(searchTerm?: string, direction?: SearchDirection): CommandFunction;
+    /**
+     * Find the next occurrence of the search term.
+     */
+    searchNext(): CommandFunction;
+    /**
+     * Find the previous occurrence of the search term.
+     */
+    searchPrevious(): CommandFunction;
+    /**
+     * Replace the provided
+     */
+    replaceSearchResult(replacement: string, index?: number): CommandFunction;
+    /**
+     * Replaces all search results with the replacement text.
+     */
+    replaceAllSearchResults(replacement: string): CommandFunction;
+    /**
+     * Clears the current search.
+     */
+    clearSearch(): CommandFunction;
+    searchForwardShortcut(props: KeyBindingProps): boolean;
+    searchBackwardShortcut(props: KeyBindingProps): boolean;
+    escapeShortcut(_: KeyBindingProps): boolean;
+    private createSearchKeyBinding;
+    private findRegExp;
+    private getDecorations;
+    private gatherSearchResults;
+    private replace;
+    private rebaseNextResult;
+    private replaceAll;
+    private find;
+    private clear;
+    /**
+     * Dispatch an empty transaction to trigger an update of the decoration.
+     */
+    private updateView;
+    private createDecoration;
+}
+interface RotateHighlightedIndexProps {
+    /**
+     * Whether the search is moving forward or backward.
+     */
+    direction: SearchDirection;
+    /**
+     * The total number of matches
+     */
+    resultsLength: number;
+    /**
+     * The previously matched index
+     */
+    previousIndex: number;
+}
+export declare const rotateHighlightedIndex: (props: RotateHighlightedIndexProps) => number;
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            search: SearchExtension;
+        }
+    }
+}
+export {};

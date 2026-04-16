@@ -1,0 +1,62 @@
+import { ApplySchemaAttributes, CommandFunction, CreateExtensionPlugin, EditorState, Helper, MarkExtension, MarkExtensionSpec, MarkSpecOverride, PrimitiveSelection, ProsemirrorAttributes, ProsemirrorNode } from '@remirror/core';
+import type { CreateEventHandlers } from '@remirror/extension-events';
+import { EntityReferenceMetaData, EntityReferenceOptions } from './types';
+interface EntityReferenceState {
+    entityReferences: {
+        [key: string]: any;
+    };
+}
+export declare class EntityReferenceExtension extends MarkExtension<EntityReferenceOptions> {
+    get name(): string;
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    /**
+     * Track click events passed through to the editor.
+     */
+    createEventHandlers(): CreateEventHandlers;
+    /**
+     * Create the extension plugin for inserting decorations into the editor.
+     */
+    createPlugin(): CreateExtensionPlugin<EntityReferenceState>;
+    addEntityReference(id?: string, attrs?: ProsemirrorAttributes): CommandFunction;
+    removeEntityReference(entityReferenceId: string): CommandFunction;
+    /**
+     * Dispatch a transaction that selects the range of the entity reference then scrolls to it.
+     *
+     * @param entityReferenceId - The entity's reference Id.
+     *
+     * @returns True if the scrolling was applied, else it returns false
+     *
+     */
+    scrollToEntityReference(entityReferenceId: string): CommandFunction;
+    /**
+     * Get all disjoined entityReference attributes from the document.
+     */
+    getDisjoinedEntityReferences(doc: ProsemirrorNode): Helper<EntityReferenceMetaData[][]>;
+    /**
+     * Disjoined entityReferences are analog to ProseMirror's marks. When adding a mark
+     * that spans two (or more) nodes (like paragraphs), it will be stored as two
+     * (or more) marks on each node separately. The same is true for disjoined
+     * entityReferences. Therefore, a entityReference that spans multiple paragraphs is
+     * internally stored as multiple marks (all having the same entityReference ID as
+     * attribute).
+     *
+     * To get the actual entityReferences (for which each entityReference ID is unique), call
+     * `joinDisjoinedEntityReferences`.
+     */
+    getEntityReferences(state?: EditorState): Helper<EntityReferenceMetaData[]>;
+    /**
+     * @param entityReferenceId - The entity's reference Id.
+     *
+     * @returns EntityReference attributes from the editor's content, undefined if it doesn't exist.
+     *
+     */
+    getEntityReferenceById(entityReferenceId: string, state?: EditorState): Helper<EntityReferenceMetaData | undefined>;
+    /**
+     * @param pos - the position in the root document to find entityReference marks.
+     *
+     * @returns all entityReferences at a specific position in the editor.
+     *
+     */
+    getEntityReferencesAt(pos?: PrimitiveSelection, state?: EditorState): Helper<EntityReferenceMetaData[]>;
+}
+export {};

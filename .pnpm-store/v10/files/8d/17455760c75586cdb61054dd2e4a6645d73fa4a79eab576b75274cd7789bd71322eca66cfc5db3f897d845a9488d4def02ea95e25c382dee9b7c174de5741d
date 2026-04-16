@@ -1,0 +1,1 @@
+{"version":3,"file":"urlRegex.d.ts","sourceRoot":"","sources":["../../src/helper/urlRegex.ts"],"names":[],"mappings":"AAuBA,UAAU,YAAY;IACpB;;;YAGE;IACF,QAAQ,CAAC,KAAK,CAAC,EAAE,OAAO,CAAC;IAEzB;;;YAGE;IACF,QAAQ,CAAC,MAAM,CAAC,EAAE,OAAO,CAAC;CAC3B;AAED,eAAO,MAAM,eAAe,YAAa,YAAY,WAwBpD,CAAC"}

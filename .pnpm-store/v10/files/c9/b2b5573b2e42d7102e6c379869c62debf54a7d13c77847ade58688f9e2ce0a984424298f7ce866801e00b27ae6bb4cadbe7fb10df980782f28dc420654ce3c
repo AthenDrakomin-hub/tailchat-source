@@ -1,0 +1,3 @@
+import { FormikContextType } from 'formik';
+export declare type FastifyFormInstance = FormikContextType<{}>;
+export declare function useFastifyFormContext<Values>(): FormikContextType<Values>;

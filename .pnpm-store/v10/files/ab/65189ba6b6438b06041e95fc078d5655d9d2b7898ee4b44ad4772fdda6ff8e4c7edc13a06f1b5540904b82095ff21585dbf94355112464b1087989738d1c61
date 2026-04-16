@@ -1,0 +1,34 @@
+import { PerfseeReportStats } from '@perfsee/bundle-analyzer';
+import { CommonPluginOptions } from './options';
+export interface BuildUploadParams {
+    projectId: string;
+    host: string;
+    namespace: string;
+    name: string;
+    artifactName: string;
+    branch: string;
+    commitHash: string;
+    tag?: string;
+    appVersion?: string;
+    nodeVersion?: string;
+    toolkit?: string;
+}
+export declare class BuildUploadClient {
+    private readonly options;
+    private readonly outputPath;
+    private readonly appVersion;
+    constructor(options: CommonPluginOptions, outputPath: string, appVersion: string);
+    uploadBuild(stats: PerfseeReportStats): Promise<void>;
+    /**
+     * for some huge project, the stats json may be too big to be stringified(more than 500MB, which is the MAXMUM string size of v8),
+     * we choose msgpack instead of streaming json to dick so we can both save the disk size
+     * and reduce the network transfer time during uploading.
+     */
+    private writeStats;
+    private pack;
+    private uploadPack;
+    /**
+     * find the topest level of all the assets
+     */
+    private getRealOutputPath;
+}

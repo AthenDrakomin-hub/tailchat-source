@@ -1,0 +1,32 @@
+import { ApplySchemaAttributes, CommandFunction, KeyBindingProps, NodeExtension, NodeExtensionSpec, NodeSpecOverride, NodeViewMethod, Static } from '@remirror/core';
+import { InputRule } from '@remirror/pm/inputrules';
+import { ListItemExtension } from './list-item-extension';
+/**
+ * Create the node for a bullet list.
+ */
+export declare class BulletListExtension extends NodeExtension<BulletListOptions> {
+    get name(): "bulletList";
+    createTags(): ("listContainer" | "block")[];
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    createNodeViews(): NodeViewMethod | Record<string, never>;
+    createExtensions(): ListItemExtension[];
+    /**
+     * Toggle the bullet list for the current selection.
+     */
+    toggleBulletList(): CommandFunction;
+    listShortcut(props: KeyBindingProps): boolean;
+    createInputRules(): InputRule[];
+}
+export interface BulletListOptions {
+    /**
+     * Set this to true to add a spine.
+     */
+    enableSpine?: Static<boolean>;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            bulletList: BulletListExtension;
+        }
+    }
+}

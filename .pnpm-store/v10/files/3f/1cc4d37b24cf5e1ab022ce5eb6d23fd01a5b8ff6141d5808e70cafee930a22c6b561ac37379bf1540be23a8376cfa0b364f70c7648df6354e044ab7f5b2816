@@ -1,0 +1,35 @@
+/// <reference types="react" />
+/**
+ * 字段通用信息
+ */
+interface FastifyFormFieldCommon {
+    name: string;
+    label?: string;
+    defaultValue?: any;
+    [other: string]: any;
+}
+export interface FastifyFormFieldProps extends FastifyFormFieldCommon {
+    value: any;
+    error: string | undefined;
+    onChange: (val: any) => void;
+    onBlur: () => void;
+}
+/**
+ * 字段组件
+ */
+export declare type FastifyFormFieldComponent<T = Record<string, unknown>> = React.ComponentType<FastifyFormFieldProps & T>;
+/**
+ * 注册组件
+ */
+export declare function regField(type: string, component: FastifyFormFieldComponent<any>): void;
+/**
+ * 获取组件
+ */
+export declare function getField(type: string): FastifyFormFieldComponent<any> | undefined;
+/**
+ * 字段配置
+ */
+export interface FastifyFormFieldMeta extends FastifyFormFieldCommon {
+    type: string;
+}
+export {};

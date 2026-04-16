@@ -1,0 +1,10 @@
+/**
+ * Error produced when a socket request has a timeout.
+ */
+export declare class SocketTimeoutError extends Error {
+    constructor(message: string);
+}
+export declare class InitClientError extends Error {
+    name: string;
+    constructor(message?: string);
+}

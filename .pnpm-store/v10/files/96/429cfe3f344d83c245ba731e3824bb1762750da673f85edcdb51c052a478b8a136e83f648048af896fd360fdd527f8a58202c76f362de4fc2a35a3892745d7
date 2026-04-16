@@ -1,0 +1,125 @@
+import { FromToProps, ProsemirrorAttributes, Decoration, AcceptUndefined, Handler, MarkExtension, ApplySchemaAttributes, MarkSpecOverride, MarkExtensionSpec, CreateExtensionPlugin, CommandFunction, ProsemirrorNode, Helper, EditorState, PrimitiveSelection, Coords } from '@remirror/core';
+import { CreateEventHandlers } from '@remirror/extension-events';
+import { Positioner } from '@remirror/extension-positioner';
+
+interface EntityReferenceAttributes {
+    /**
+     * Unique identifier of the entity references
+     */
+    id: string;
+}
+interface EntityReferenceMetaData extends EntityReferenceAttributes, FromToProps {
+    /**
+     * Text content of the node
+     */
+    text: string;
+    /**
+     * Only present if you have configured extra attributes for the entity reference mark
+     */
+    attrs?: ProsemirrorAttributes;
+}
+interface EntityReferenceOptions {
+    /**
+     * Method to calculate styles
+     *
+     * @remarks
+     *
+     * This can be used e.g. to assign different shades of a color depending on
+     * the amount of entity references in a segment.
+     */
+    getStyle?: (entityReferences: EntityReferenceMetaData[][]) => Decoration[];
+    blockSeparator?: AcceptUndefined<string>;
+    onClickMark?: (entityReferences?: EntityReferenceMetaData[]) => void;
+    onClick?: Handler<(entityReference: EntityReferenceMetaData) => void>;
+}
+
+interface EntityReferenceState {
+    entityReferences: {
+        [key: string]: any;
+    };
+}
+declare class EntityReferenceExtension extends MarkExtension<EntityReferenceOptions> {
+    get name(): string;
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    /**
+     * Track click events passed through to the editor.
+     */
+    createEventHandlers(): CreateEventHandlers;
+    /**
+     * Create the extension plugin for inserting decorations into the editor.
+     */
+    createPlugin(): CreateExtensionPlugin<EntityReferenceState>;
+    addEntityReference(id?: string, attrs?: ProsemirrorAttributes): CommandFunction;
+    removeEntityReference(entityReferenceId: string): CommandFunction;
+    /**
+     * Dispatch a transaction that selects the range of the entity reference then scrolls to it.
+     *
+     * @param entityReferenceId - The entity's reference Id.
+     *
+     * @returns True if the scrolling was applied, else it returns false
+     *
+     */
+    scrollToEntityReference(entityReferenceId: string): CommandFunction;
+    /**
+     * Get all disjoined entityReference attributes from the document.
+     */
+    getDisjoinedEntityReferences(doc: ProsemirrorNode): Helper<EntityReferenceMetaData[][]>;
+    /**
+     * Disjoined entityReferences are analog to ProseMirror's marks. When adding a mark
+     * that spans two (or more) nodes (like paragraphs), it will be stored as two
+     * (or more) marks on each node separately. The same is true for disjoined
+     * entityReferences. Therefore, a entityReference that spans multiple paragraphs is
+     * internally stored as multiple marks (all having the same entityReference ID as
+     * attribute).
+     *
+     * To get the actual entityReferences (for which each entityReference ID is unique), call
+     * `joinDisjoinedEntityReferences`.
+     */
+    getEntityReferences(state?: EditorState): Helper<EntityReferenceMetaData[]>;
+    /**
+     * @param entityReferenceId - The entity's reference Id.
+     *
+     * @returns EntityReference attributes from the editor's content, undefined if it doesn't exist.
+     *
+     */
+    getEntityReferenceById(entityReferenceId: string, state?: EditorState): Helper<EntityReferenceMetaData | undefined>;
+    /**
+     * @param pos - the position in the root document to find entityReference marks.
+     *
+     * @returns all entityReferences at a specific position in the editor.
+     *
+     */
+    getEntityReferencesAt(pos?: PrimitiveSelection, state?: EditorState): Helper<EntityReferenceMetaData[]>;
+}
+
+/**
+ * Render a positioner which captures the selected entityReference.
+ *
+ * @remarks
+ *
+ * This extends the selection positioner. The difference is that the from and to
+ * coordinates are picked from the shortest entity reference selected.
+ */
+declare const centeredEntityReferencePositioner: Positioner<{
+    from: Coords;
+    to: Coords;
+}>;
+
+/**
+ * Helper function to extract the extreme boundaries of the passed array of highlights.
+ * minimum `from` and the maximum `to`
+ */
+declare const findMinMaxRange: (array: Array<Pick<EntityReferenceMetaData, 'from' | 'to'>>) => [number, number];
+
+type EntityReferenceMarkText = Pick<EntityReferenceMetaData, 'text'>;
+/**
+ * This helper can be used when reacting to clicks on overlapping highlights.
+ * In that case, the app should show the shortest entity because longer entities
+ * typical have other click areas.
+ *
+ * @param entityReferences
+ * @returns entity references with the shortest text
+ */
+declare const getShortestEntityReference: <T extends EntityReferenceMarkText>(entityReferences: T[]) => T | undefined;
+
+export { type EntityReferenceAttributes, EntityReferenceExtension, type EntityReferenceMetaData, centeredEntityReferencePositioner, findMinMaxRange, getShortestEntityReference };

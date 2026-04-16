@@ -1,0 +1,374 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-events/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  EventsExtension: () => EventsExtension
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-events/src/events-extension.ts
+var import_core = require("@remirror/core");
+
+// packages/remirror__extension-events/src/events-utils.ts
+function posAtDOM(view, node, offset, bias) {
+  const pos = view.docView.posFromDOM(node, offset, bias);
+  if (pos === null || pos < 0) {
+    return null;
+  }
+  return pos;
+}
+function getPositionFromEvent(view, event) {
+  const target = event.target;
+  if (target) {
+    const pos = posAtDOM(view, target, 0);
+    if (pos !== null) {
+      const $pos = view.state.doc.resolve(pos);
+      const border = $pos.node().isLeaf ? 0 : 1;
+      const inside = $pos.start() - border;
+      return { pos, inside };
+    }
+  }
+  return view.posAtCoords({ left: event.clientX, top: event.clientY }) ?? void 0;
+}
+
+// packages/remirror__extension-events/src/events-extension.ts
+var EventsExtension = class extends import_core.PlainExtension {
+  constructor() {
+    super(...arguments);
+    /**
+     * Indicates whether the user is currently interacting with the editor.
+     */
+    this.mousedown = false;
+    /**
+     * True when the mouse is within the bounds of the editor.
+     */
+    this.mouseover = false;
+    this.createMouseEventHandler = (fn) => (view, mouseEvent) => {
+      const event = mouseEvent;
+      const eventPosition = getPositionFromEvent(view, event);
+      if (!eventPosition) {
+        return false;
+      }
+      const nodes = [];
+      const marks = [];
+      const { inside, pos } = eventPosition;
+      if (inside === -1) {
+        return false;
+      }
+      const $pos = view.state.doc.resolve(pos);
+      const currentNodeDepth = $pos.depth + 1;
+      for (const index of (0, import_core.range)(currentNodeDepth, 1)) {
+        nodes.push({
+          node: index > $pos.depth && $pos.nodeAfter ? $pos.nodeAfter : $pos.node(index),
+          pos: $pos.before(index)
+        });
+      }
+      for (const { type } of $pos.marksAcross($pos) ?? []) {
+        const range2 = (0, import_core.getMarkRange)($pos, type);
+        if (range2) {
+          marks.push(range2);
+        }
+      }
+      return fn(event, {
+        view,
+        nodes,
+        marks,
+        getMark: (markType) => {
+          const type = (0, import_core.isString)(markType) ? view.state.schema.marks[markType] : markType;
+          (0, import_core.invariant)(type, {
+            code: import_core.ErrorConstant.EXTENSION,
+            message: `The mark ${markType} being checked does not exist within the editor schema.`
+          });
+          return marks.find((range2) => range2.mark.type === type);
+        },
+        getNode: (nodeType) => {
+          var _a;
+          const type = (0, import_core.isString)(nodeType) ? view.state.schema.nodes[nodeType] : nodeType;
+          (0, import_core.invariant)(type, {
+            code: import_core.ErrorConstant.EXTENSION,
+            message: "The node being checked does not exist"
+          });
+          const nodeWithPos = nodes.find(({ node }) => node.type === type);
+          if (!nodeWithPos) {
+            return;
+          }
+          return { ...nodeWithPos, isRoot: !!((_a = nodes[0]) == null ? void 0 : _a.node.eq(nodeWithPos.node)) };
+        }
+      });
+    };
+  }
+  get name() {
+    return "events";
+  }
+  /**
+   * Add a new lifecycle method which is available to all extensions for adding
+   * a click handler to the node or mark.
+   */
+  onView() {
+    var _a, _b;
+    if (
+      // managerSettings excluded this from running
+      (_a = this.store.managerSettings.exclude) == null ? void 0 : _a.clickHandler
+    ) {
+      return;
+    }
+    for (const extension2 of this.store.extensions) {
+      if (
+        // Method doesn't exist
+        !extension2.createEventHandlers || // Extension settings exclude it
+        ((_b = extension2.options.exclude) == null ? void 0 : _b.clickHandler)
+      ) {
+        continue;
+      }
+      const eventHandlers = extension2.createEventHandlers();
+      for (const [key, handler] of (0, import_core.entries)(eventHandlers)) {
+        this.addHandler(key, handler);
+      }
+    }
+  }
+  /**
+   * Create the plugin which manages all of the events being listened to within
+   * the editor.
+   */
+  createPlugin() {
+    const eventMap = /* @__PURE__ */ new WeakMap();
+    const runClickHandlerOn = (clickMark, click, view, pos, node, nodePos, event, direct) => {
+      const state = this.store.currentState;
+      const { schema, doc } = state;
+      const $pos = doc.resolve(pos);
+      const handled = eventMap.has(event);
+      const baseState = createClickMarkState({ $pos, handled, view, state });
+      let returnValue = false;
+      if (!handled) {
+        returnValue = clickMark(event, baseState) || returnValue;
+      }
+      const clickState = {
+        ...baseState,
+        pos,
+        direct,
+        nodeWithPosition: { node, pos: nodePos },
+        getNode: (nodeType) => {
+          const type = (0, import_core.isString)(nodeType) ? schema.nodes[nodeType] : nodeType;
+          (0, import_core.invariant)(type, {
+            code: import_core.ErrorConstant.EXTENSION,
+            message: "The node being checked does not exist"
+          });
+          return type === node.type ? { node, pos: nodePos } : void 0;
+        }
+      };
+      eventMap.set(event, true);
+      return click(event, clickState) || returnValue;
+    };
+    return {
+      props: {
+        handleKeyPress: (_, event) => this.options.keypress(event) || false,
+        handleKeyDown: (_, event) => this.options.keydown(event) || false,
+        handleTextInput: (_, from, to, text) => this.options.textInput({ from, to, text }) || false,
+        handleClickOn: (view, pos, node, nodePos, event, direct) => runClickHandlerOn(
+          this.options.clickMark,
+          this.options.click,
+          view,
+          pos,
+          node,
+          nodePos,
+          event,
+          direct
+        ),
+        handleDoubleClickOn: (view, pos, node, nodePos, event, direct) => runClickHandlerOn(
+          this.options.doubleClickMark,
+          this.options.doubleClick,
+          view,
+          pos,
+          node,
+          nodePos,
+          event,
+          direct
+        ),
+        handleTripleClickOn: (view, pos, node, nodePos, event, direct) => runClickHandlerOn(
+          this.options.tripleClickMark,
+          this.options.tripleClick,
+          view,
+          pos,
+          node,
+          nodePos,
+          event,
+          direct
+        ),
+        handleDOMEvents: {
+          focus: (_, event) => this.options.focus(event) || false,
+          blur: (_, event) => this.options.blur(event) || false,
+          mousedown: (_, event) => {
+            this.startMouseover();
+            return this.options.mousedown(event) || false;
+          },
+          mouseup: (_, event) => {
+            this.endMouseover();
+            return this.options.mouseup(event) || false;
+          },
+          mouseleave: (_, event) => {
+            this.mouseover = false;
+            return this.options.mouseleave(event) || false;
+          },
+          mouseenter: (_, event) => {
+            this.mouseover = true;
+            return this.options.mouseenter(event) || false;
+          },
+          keyup: (_, event) => this.options.keyup(event) || false,
+          mouseout: this.createMouseEventHandler((event, props) => {
+            const state = { ...props, hovering: false };
+            return this.options.hover(event, state) || false;
+          }),
+          mouseover: this.createMouseEventHandler((event, props) => {
+            const state = { ...props, hovering: true };
+            return this.options.hover(event, state) || false;
+          }),
+          contextmenu: this.createMouseEventHandler(
+            (event, props) => this.options.contextmenu(event, props) || false
+          ),
+          scroll: (_, event) => this.options.scroll(event) || false,
+          copy: (_, event) => this.options.copy(event) || false,
+          cut: (_, event) => this.options.cut(event) || false,
+          paste: (_, event) => this.options.paste(event) || false
+        }
+      },
+      view: (_view) => {
+        let prevEditable = _view.editable;
+        const options = this.options;
+        return {
+          update(view) {
+            const currentEditable = view.editable;
+            if (currentEditable !== prevEditable) {
+              options.editable(currentEditable);
+              prevEditable = currentEditable;
+            }
+          }
+        };
+      }
+    };
+  }
+  isInteracting() {
+    return this.mousedown && this.mouseover;
+  }
+  startMouseover() {
+    this.mouseover = true;
+    if (this.mousedown) {
+      return;
+    }
+    this.mousedown = true;
+    this.store.document.documentElement.addEventListener(
+      "mouseup",
+      () => {
+        this.endMouseover();
+      },
+      { once: true }
+    );
+  }
+  endMouseover() {
+    if (!this.mousedown) {
+      return;
+    }
+    this.mousedown = false;
+    this.store.commands.emptyUpdate();
+  }
+};
+__decorateClass([
+  (0, import_core.helper)()
+], EventsExtension.prototype, "isInteracting", 1);
+EventsExtension = __decorateClass([
+  (0, import_core.extension)({
+    handlerKeys: [
+      "blur",
+      "focus",
+      "mousedown",
+      "mouseup",
+      "mouseenter",
+      "mouseleave",
+      "textInput",
+      "keypress",
+      "keyup",
+      "keydown",
+      "click",
+      "clickMark",
+      "doubleClick",
+      "doubleClickMark",
+      "tripleClick",
+      "tripleClickMark",
+      "contextmenu",
+      "hover",
+      "scroll",
+      "copy",
+      "cut",
+      "paste",
+      "editable"
+    ],
+    handlerKeyOptions: {
+      blur: { earlyReturnValue: true },
+      focus: { earlyReturnValue: true },
+      mousedown: { earlyReturnValue: true },
+      mouseleave: { earlyReturnValue: true },
+      mouseup: { earlyReturnValue: true },
+      click: { earlyReturnValue: true },
+      doubleClick: { earlyReturnValue: true },
+      tripleClick: { earlyReturnValue: true },
+      hover: { earlyReturnValue: true },
+      contextmenu: { earlyReturnValue: true },
+      scroll: { earlyReturnValue: true },
+      copy: { earlyReturnValue: true },
+      cut: { earlyReturnValue: true },
+      paste: { earlyReturnValue: true }
+    },
+    defaultPriority: import_core.ExtensionPriority.High
+  })
+], EventsExtension);
+function createClickMarkState(props) {
+  const { handled, view, $pos, state } = props;
+  const clickState = { getMark: import_core.noop, markRanges: [], view, state };
+  if (handled) {
+    return clickState;
+  }
+  for (const { type } of $pos.marksAcross($pos) ?? []) {
+    const range2 = (0, import_core.getMarkRange)($pos, type);
+    if (range2) {
+      clickState.markRanges.push(range2);
+    }
+  }
+  clickState.getMark = (markType) => {
+    const type = (0, import_core.isString)(markType) ? state.schema.marks[markType] : markType;
+    (0, import_core.invariant)(type, {
+      code: import_core.ErrorConstant.EXTENSION,
+      message: `The mark ${markType} being checked does not exist within the editor schema.`
+    });
+    return clickState.markRanges.find((range2) => range2.mark.type === type);
+  };
+  return clickState;
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  EventsExtension
+});

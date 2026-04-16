@@ -1,0 +1,42 @@
+import { Module, ModuleLoader } from './types';
+/**
+ * Create blank ModuleLoader
+ * @returns A new ModuleLoader
+ */
+export declare function createNewModuleLoader(): ModuleLoader;
+/**
+ * Set module loader status to `loaded`
+ */
+export declare function setModuleLoaderLoaded(moduleLoader: ModuleLoader, moduleExport: Module | null): void;
+export declare function setModuleLoaderLoadError(moduleLoader: ModuleLoader): void;
+/**
+ * A function how to process module path to real path
+ */
+export declare function processModulePath(baseModuleName: string, path: string): string;
+/**
+ * @example
+ * @plugins/any => true
+ */
+export declare function isPluginModuleName(fullName: string): boolean;
+/**
+ * @example
+ * @plugins/any => true
+ * @plugins/any/other.js => false
+ */
+export declare function isPluginModuleEntry(fullName: string): boolean;
+/**
+ * @example
+ * @plugins/any => any
+ */
+export declare function getPluginName(fullName: string): string | null;
+/**
+ * Check is full url
+ */
+export declare function isFullUrl(url: string): boolean;
+/**
+ * @example
+ * ('http://127.0.0.1:8080/plugins/core/index.js', '/plugins/core/foo.js') => 'http://127.0.0.1:8080/plugins/core/foo.js'
+ * ('http://127.0.0.1:8080/public/plugins/core/index.js', '/plugins/core/foo.js') => 'http://127.0.0.1:8080/public/plugins/core/foo.js'
+ * ('http://127.0.0.1:8080/public/index.js', '/plugins/core/foo.js') => '/plugins/core/foo.js'
+ */
+export declare function mergeUrl(baseUrl: string, appendUrl: string): string;

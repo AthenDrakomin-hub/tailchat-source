@@ -1,0 +1,27 @@
+import { ApplySchemaAttributes, CommandFunction, InputRule, KeyBindingProps, MarkExtension, MarkExtensionSpec, MarkSpecOverride } from '@remirror/core';
+import { MarkPasteRule } from '@remirror/pm/paste-rules';
+/**
+ * The extension for adding strike-through marks to the editor.
+ */
+export declare class StrikeExtension extends MarkExtension {
+    get name(): "strike";
+    createTags(): ("formattingMark" | "fontStyle")[];
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    /**
+     * Toggle the strike through formatting annotation.
+     */
+    toggleStrike(): CommandFunction;
+    /**
+     * Attach the keyboard shortcut to format the text.
+     */
+    shortcut(props: KeyBindingProps): boolean;
+    createInputRules(): InputRule[];
+    createPasteRules(): MarkPasteRule[];
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            strike: StrikeExtension;
+        }
+    }
+}

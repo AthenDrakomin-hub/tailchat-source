@@ -1,0 +1,1122 @@
+const COPY_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.copy.label',
+  message: 'Copy',
+  comment: 'Label for copy command.'
+};
+const COPY_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.copy.description',
+  message: 'Copy the selected text',
+  comment: 'Description for copy command.'
+};
+const CUT_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.cut.label',
+  message: 'Cut',
+  comment: 'Label for cut command.'
+};
+const CUT_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.cut.description',
+  message: 'Cut the selected text',
+  comment: 'Description for cut command.'
+};
+const PASTE_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.paste.label',
+  message: 'Paste',
+  comment: 'Label for paste command.'
+};
+const PASTE_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.paste.description',
+  message: 'Paste content into the editor',
+  comment: 'Description for paste command.'
+};
+const SELECT_ALL_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.select-all.label',
+  message: 'Select all',
+  comment: 'Label for select all command.'
+};
+const SELECT_ALL_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.select-all.description',
+  message: 'Select all content within the editor',
+  comment: 'Description for select all command.'
+};
+
+var coreMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  COPY_DESCRIPTION: COPY_DESCRIPTION,
+  COPY_LABEL: COPY_LABEL,
+  CUT_DESCRIPTION: CUT_DESCRIPTION,
+  CUT_LABEL: CUT_LABEL,
+  PASTE_DESCRIPTION: PASTE_DESCRIPTION,
+  PASTE_LABEL: PASTE_LABEL,
+  SELECT_ALL_DESCRIPTION: SELECT_ALL_DESCRIPTION,
+  SELECT_ALL_LABEL: SELECT_ALL_LABEL
+});
+
+const ESCAPE_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.escape',
+  message: 'Enter',
+  comment: 'Label for escape key in shortcuts.'
+};
+const COMMAND_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.command',
+  message: 'Command',
+  comment: 'Label for command key in shortcuts.'
+};
+const CONTROL_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.control',
+  message: 'Control',
+  comment: 'Label for control key in shortcuts.'
+};
+const ENTER_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.enter',
+  message: 'Enter',
+  comment: 'Label for enter key in shortcuts.'
+};
+const SHIFT_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.shift',
+  message: 'Shift',
+  comment: 'Label for shift key in shortcuts.'
+};
+const ALT_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.alt',
+  message: 'Alt',
+  comment: 'Label for alt key in shortcuts.'
+};
+const CAPS_LOCK_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.capsLock',
+  message: 'Caps Lock',
+  comment: 'Label for caps lock key in shortcuts.'
+};
+const BACKSPACE_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.backspace',
+  message: 'Backspace',
+  comment: 'Label for backspace key in shortcuts.'
+};
+const TAB_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.tab',
+  message: 'Tab',
+  comment: 'Label for tab key in shortcuts.'
+};
+const SPACE_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.space',
+  message: 'Space',
+  comment: 'Label for space key in shortcuts.'
+};
+const DELETE_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.delete',
+  message: 'Delete',
+  comment: 'Label for delete key in shortcuts.'
+};
+const PAGE_UP_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.pageUp',
+  message: 'Page Up',
+  comment: 'Label for page up key in shortcuts.'
+};
+const PAGE_DOWN_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.pageDown',
+  message: 'Page Down',
+  comment: 'Label for page down key in shortcuts.'
+};
+const HOME_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.home',
+  message: 'Home',
+  comment: 'Label for home key in shortcuts.'
+};
+const END_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.end',
+  message: 'End',
+  comment: 'Label for end key in shortcuts.'
+};
+const ARROW_LEFT_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.arrowLeft',
+  message: 'Arrow Left',
+  comment: 'Label for arrow left key in shortcuts.'
+};
+const ARROW_RIGHT_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.arrowRight',
+  message: 'Arrow Right',
+  comment: 'Label for arrow right key in shortcuts.'
+};
+const ARROW_UP_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.arrowUp',
+  message: 'Arrow Up',
+  comment: 'Label for arrow up key in shortcuts.'
+};
+const ARROW_DOWN_KEY =
+/*i18n*/
+{
+  id: 'keyboard.shortcut.arrowDown',
+  message: 'Arrow Down',
+  comment: 'Label for arrowDown key in shortcuts.'
+};
+
+var coreUtilsMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  ALT_KEY: ALT_KEY,
+  ARROW_DOWN_KEY: ARROW_DOWN_KEY,
+  ARROW_LEFT_KEY: ARROW_LEFT_KEY,
+  ARROW_RIGHT_KEY: ARROW_RIGHT_KEY,
+  ARROW_UP_KEY: ARROW_UP_KEY,
+  BACKSPACE_KEY: BACKSPACE_KEY,
+  CAPS_LOCK_KEY: CAPS_LOCK_KEY,
+  COMMAND_KEY: COMMAND_KEY,
+  CONTROL_KEY: CONTROL_KEY,
+  DELETE_KEY: DELETE_KEY,
+  END_KEY: END_KEY,
+  ENTER_KEY: ENTER_KEY,
+  ESCAPE_KEY: ESCAPE_KEY,
+  HOME_KEY: HOME_KEY,
+  PAGE_DOWN_KEY: PAGE_DOWN_KEY,
+  PAGE_UP_KEY: PAGE_UP_KEY,
+  SHIFT_KEY: SHIFT_KEY,
+  SPACE_KEY: SPACE_KEY,
+  TAB_KEY: TAB_KEY
+});
+
+const ADD_ANNOTATION =
+/*i18n*/
+{
+  id: 'extension.command.add-annotation.label',
+  message: 'Add annotation',
+  comment: 'Label for adding an annotation.'
+};
+const UPDATE_ANNOTATION =
+/*i18n*/
+{
+  id: 'extension.command.update-annotation.label',
+  message: 'Update annotation',
+  comment: 'Label for updating an annotation.'
+};
+const REMOVE_ANNOTATION =
+/*i18n*/
+{
+  id: 'extension.command.remove-annotation.label',
+  message: 'Remove annotation',
+  comment: 'Label for removing an annotation.'
+};
+
+var extensionAnnotationMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  ADD_ANNOTATION: ADD_ANNOTATION,
+  REMOVE_ANNOTATION: REMOVE_ANNOTATION,
+  UPDATE_ANNOTATION: UPDATE_ANNOTATION
+});
+
+const LABEL$f =
+/*i18n*/
+{
+  id: 'extension.command.set-text-direction.label',
+  message: "{dir, select, ltr {Left-To-Right}\nrtl {Right-To-Left}\nother {Reset Direction}}",
+  comment: 'Label for setting the text direction.'
+};
+const DESCRIPTION$c =
+/*i18n*/
+{
+  id: 'extension.command.set-text-direction.description',
+  message: "{dir, select, ltr {Set the text direction from left to right}\nrtl {Set the text direction from right to left}\nother {Reset text direction}}",
+  comment: 'Description for setting the text direction.'
+};
+
+var extensionBidiMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION$c,
+  LABEL: LABEL$f
+});
+
+const LABEL$e =
+/*i18n*/
+{
+  id: 'extension.command.toggle-blockquote.label',
+  message: 'Blockquote',
+  comment: 'Label for blockquote formatting command.'
+};
+const DESCRIPTION$b =
+/*i18n*/
+{
+  id: 'extension.command.toggle-blockquote.description',
+  message: 'Add blockquote formatting to the selected text',
+  comment: 'Description for blockquote formatting command.'
+};
+
+var extensionBlockquoteMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION$b,
+  LABEL: LABEL$e
+});
+
+const LABEL$d =
+/*i18n*/
+{
+  id: 'extension.command.toggle-bold.label',
+  message: 'Bold',
+  comment: 'Label for bold formatting command.'
+};
+const DESCRIPTION$a =
+/*i18n*/
+{
+  id: 'extension.command.toggle-bold.description',
+  message: 'Add bold formatting to the selected text',
+  comment: 'Description for bold formatting command.'
+};
+
+var extensionBoldMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION$a,
+  LABEL: LABEL$d
+});
+
+const LABEL$c =
+/*i18n*/
+{
+  id: 'extension.command.toggle-callout.label',
+  message: "{type, select, info {Information Callout}\nwarning {Warning Callout}\nerror {Error Callout}\nsuccess {Success Callout}\nother {Callout}}",
+  comment: 'Label for callout command with support for callout types.'
+};
+const DESCRIPTION$9 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-callout.description',
+  message: "{type, select, info {Create an information callout block}\nwarning {Create a warning callout block}\nerror {Create an error callout block}\nsuccess {Create a success callout block}\nother {Create a callout block}}",
+  comment: 'Description of the callout command with support for callout types.'
+};
+
+var extensionCalloutMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION$9,
+  LABEL: LABEL$c
+});
+
+const LABEL$b =
+/*i18n*/
+{
+  id: 'extension.command.toggle-code-block.label',
+  message: 'Codeblock',
+  comment: 'Label for the code block command.'
+};
+const DESCRIPTION$8 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-code-block.description',
+  message: 'Add a code block',
+  comment: 'Description for the code block command.'
+};
+
+var extensionCodeBlockMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION$8,
+  LABEL: LABEL$b
+});
+
+const LABEL$a =
+/*i18n*/
+{
+  id: 'extension.command.toggle-code.label',
+  message: 'Code',
+  comment: 'Label for the inline code formatting.'
+};
+const DESCRIPTION$7 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-code.description',
+  message: 'Add inline code formatting to the selected text',
+  comment: 'Description for the inline code formatting command.'
+};
+
+var extensionCodeMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION$7,
+  LABEL: LABEL$a
+});
+
+const LABEL$9 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-columns.label',
+  message: "{count, select, 2 {Two Column Block}\n3 {Three Column Block}\n4 {Four Column Block}\nother {Multi Column Block}}",
+  comment: 'Label for columns command with support for number of columns counts.'
+};
+const DESCRIPTION$6 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-columns.description',
+  message: "{count, select, 2 {Split the block into two columns}\n3 {Split the current block into three columns}\n4 {Split the current block into four columns}\nother {Split the current block into multiple columns}}",
+  comment: 'Description of the columns command with support for number of columns counts.'
+};
+
+var extensionColumnsMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION$6,
+  LABEL: LABEL$9
+});
+
+const INSERT_EMOJI_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.insert-emoji.label',
+  message: 'Insert Emoji',
+  comment: 'Label for inserting an emoji.'
+};
+
+var extensionEmojiMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  INSERT_EMOJI_LABEL: INSERT_EMOJI_LABEL
+});
+
+const SET_LABEL$1 =
+/*i18n*/
+{
+  id: 'extension.command.set-font-size.label',
+  message: 'Font size',
+  comment: 'Label for adding a font size.'
+};
+const SET_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.set-font-size.description',
+  message: 'Set the font size for the selected text.',
+  comment: 'Description for adding a font size.'
+};
+const INCREASE_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.increase-font-size.label',
+  message: 'Increase',
+  comment: 'Label for increasing the font size.'
+};
+const INCREASE_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.increase-font-size.description',
+  message: 'Increase the font size',
+  comment: 'Description for increasing the font size.'
+};
+const DECREASE_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.decrease-font-size.label',
+  message: 'Decrease',
+  comment: 'Label for decreasing the font size.'
+};
+const DECREASE_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.decrease-font-size.description',
+  message: 'Decrease the font size.',
+  comment: 'Description for decreasing the font size.'
+};
+
+var extensionFontSizeMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DECREASE_DESCRIPTION: DECREASE_DESCRIPTION,
+  DECREASE_LABEL: DECREASE_LABEL,
+  INCREASE_DESCRIPTION: INCREASE_DESCRIPTION,
+  INCREASE_LABEL: INCREASE_LABEL,
+  SET_DESCRIPTION: SET_DESCRIPTION,
+  SET_LABEL: SET_LABEL$1
+});
+
+const LABEL$8 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-heading.label',
+  message: "{level, select, 1 {Heading 1}\n2 {Heading 2}\n3 {Heading 3}\n4 {Heading 4}\n5 {Heading 5}\n6 {Heading 6}\nother {Heading}}",
+  comment: 'Label for heading command with support for levels.'
+};
+
+var extensionHeadingMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  LABEL: LABEL$8
+});
+
+const UNDO_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.undo.label',
+  message: 'Undo',
+  comment: 'Label for undo.'
+};
+const UNDO_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.undo.description',
+  message: 'Undo the most recent action',
+  comment: 'Description for undo.'
+};
+const REDO_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.redo.label',
+  message: 'Redo',
+  comment: 'Label for redo.'
+};
+const REDO_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.redo.description',
+  message: 'Redo the most recent action',
+  comment: 'Description for redo.'
+};
+
+var extensionHistoryMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  REDO_DESCRIPTION: REDO_DESCRIPTION,
+  REDO_LABEL: REDO_LABEL,
+  UNDO_DESCRIPTION: UNDO_DESCRIPTION,
+  UNDO_LABEL: UNDO_LABEL
+});
+
+const LABEL$7 =
+/*i18n*/
+{
+  id: 'extension.command.insert-horizontal-rule.label',
+  message: 'Divider',
+  comment: 'Label for inserting a horizontal rule (divider) command.'
+};
+const DESCRIPTION$5 =
+/*i18n*/
+{
+  id: 'extension.command.insert-horizontal-rule.description',
+  message: 'Separate content with a diving horizontal line',
+  comment: 'Description for inserting a horizontal rule (divider) command.'
+};
+
+var extensionHorizontalRuleMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION$5,
+  LABEL: LABEL$7
+});
+
+const LABEL$6 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-italic.label',
+  message: 'Italic',
+  comment: 'Label for italic formatting command.'
+};
+const DESCRIPTION$4 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-italic.description',
+  message: 'Italicize the selected text',
+  comment: 'Description for italic formatting command.'
+};
+
+var extensionItalicMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION$4,
+  LABEL: LABEL$6
+});
+
+const ORDERED_LIST_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.toggle-ordered-list.label',
+  message: 'Ordered list',
+  comment: 'Label for inserting an ordered list into the editor.'
+};
+const BULLET_LIST_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.toggle-bullet-list.description',
+  message: 'Bulleted list',
+  comment: 'Description for inserting a bullet list into the editor.'
+};
+const TASK_LIST_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.toggle-task-list.description',
+  message: 'Tasked list',
+  comment: 'Description for inserting a task list into the editor.'
+};
+
+var extensionListMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  BULLET_LIST_LABEL: BULLET_LIST_LABEL,
+  ORDERED_LIST_LABEL: ORDERED_LIST_LABEL,
+  TASK_LIST_LABEL: TASK_LIST_LABEL
+});
+
+const INCREASE_INDENT_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.increase-indent.label',
+  message: 'Increase indentation',
+  comment: 'Label for increasing the indentation level.'
+};
+const DECREASE_INDENT_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.decrease-indent.label',
+  message: 'Decrease indentation',
+  comment: 'Label for decreasing the indentation level of the current node block.'
+};
+const CENTER_ALIGN_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.center-align.label',
+  message: 'Center align',
+  comment: 'Center align the text in the current node.'
+};
+const JUSTIFY_ALIGN_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.justify-align.label',
+  message: 'Justify',
+  comment: 'Justify the alignment of the selected nodes.'
+};
+const RIGHT_ALIGN_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.right-align.label',
+  message: 'Right align',
+  comment: 'Right align the selected nodes.'
+};
+const LEFT_ALIGN_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.left-align.label',
+  message: 'Left align',
+  comment: 'Left align the selected nodes.'
+};
+
+var extensionNodeFormattingMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  CENTER_ALIGN_LABEL: CENTER_ALIGN_LABEL,
+  DECREASE_INDENT_LABEL: DECREASE_INDENT_LABEL,
+  INCREASE_INDENT_LABEL: INCREASE_INDENT_LABEL,
+  JUSTIFY_ALIGN_LABEL: JUSTIFY_ALIGN_LABEL,
+  LEFT_ALIGN_LABEL: LEFT_ALIGN_LABEL,
+  RIGHT_ALIGN_LABEL: RIGHT_ALIGN_LABEL
+});
+
+const INSERT_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.insert-paragraph.label',
+  message: 'Insert Paragraph',
+  comment: 'Label for inserting a paragraph.'
+};
+const INSERT_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.insert-paragraph.description',
+  message: 'Insert a new paragraph',
+  comment: 'Description for inserting a paragraph.'
+};
+const CONVERT_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.convert-paragraph.label',
+  message: 'Convert Paragraph',
+  comment: 'Label for converting the current node into a paragraph.'
+};
+const CONVERT_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.convert-paragraph.description',
+  message: 'Convert current block into a paragraph block.',
+  comment: 'Description for converting a paragraph.'
+};
+
+var extensionParagraphMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  CONVERT_DESCRIPTION: CONVERT_DESCRIPTION,
+  CONVERT_LABEL: CONVERT_LABEL,
+  INSERT_DESCRIPTION: INSERT_DESCRIPTION,
+  INSERT_LABEL: INSERT_LABEL
+});
+
+const LABEL$5 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-strike.label',
+  message: 'Strikethrough',
+  comment: 'Label for strike formatting command.'
+};
+const DESCRIPTION$3 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-strike.description',
+  message: 'Strikethrough the selected text',
+  comment: 'Description for strike formatting command.'
+};
+
+var extensionStrikeMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION$3,
+  LABEL: LABEL$5
+});
+
+const LABEL$4 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-subscript.label',
+  message: 'Subscript',
+  comment: 'Label for toggling a subscript.'
+};
+
+var extensionSubMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  LABEL: LABEL$4
+});
+
+const LABEL$3 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-superscript.label',
+  message: 'Superscript',
+  comment: 'Label for toggling a superscript.'
+};
+
+var extensionSupMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  LABEL: LABEL$3
+});
+
+const CREATE_COMMAND_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.create-table.label',
+  message: 'Create table',
+  comment: 'Label for creating a table'
+};
+const CREATE_COMMAND_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.create-table.description',
+  message: 'Create a table with set number of rows and columns.',
+  comment: 'Description for creating a table'
+};
+
+/**
+ * Takes a `{ count: number }` value to denote the number of columns.
+ */
+const COLUMN_COUNT =
+/*i18n*/
+{
+  id: 'extension.table.column_count',
+  message: '{count, plural, one {# column} other {# columns}}',
+  comment: 'The number of columns'
+};
+
+/**
+ * Takes a `{ count: number }` value to denote the number of rows.
+ */
+const ROW_COUNT =
+/*i18n*/
+{
+  id: 'extension.table.row_count',
+  message: '{count, plural, one {# row} other {# rows}}',
+  comment: 'The number of rows'
+};
+
+var extensionTablesMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  COLUMN_COUNT: COLUMN_COUNT,
+  CREATE_COMMAND_DESCRIPTION: CREATE_COMMAND_DESCRIPTION,
+  CREATE_COMMAND_LABEL: CREATE_COMMAND_LABEL,
+  ROW_COUNT: ROW_COUNT
+});
+
+const TOGGLE_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.toggle-upper-case.label',
+  message: "{case, select, upper {Uppercase}\nlower {Lowercase}\ncapitalize {Sentence case}\nsmallCaps {Small caps}\nother {Text case}}",
+  comment: 'Label for toggling between upper and lower case.'
+};
+const SET_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.set-casing.label',
+  message: 'Set text case',
+  comment: 'Label for setting the case.'
+};
+
+var extensionTextCaseMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  SET_LABEL: SET_LABEL,
+  TOGGLE_LABEL: TOGGLE_LABEL
+});
+
+const SET_COLOR_LABEL =
+/*i18n*/
+{
+  id: 'extension.command.set-text-color.label',
+  message: 'Text color',
+  comment: 'Label for color formatting command.'
+};
+const SET_COLOR_DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.set-text-color.description',
+  message: 'Set the text color for the selected text.',
+  comment: 'Description for color formatting command.'
+};
+const TRANSPARENT =
+/*i18n*/
+{
+  id: 'ui.text-color.transparent',
+  message: 'Transparent',
+  comment: 'Transparent color label.'
+};
+const WHITE =
+/*i18n*/
+{
+  id: 'ui.text-color.white',
+  message: 'White',
+  comment: 'White color.'
+};
+const BLACK =
+/*i18n*/
+{
+  id: 'ui.text-color.black',
+  message: 'Black',
+  comment: 'Black color.'
+};
+const GRAY =
+/*i18n*/
+{
+  id: 'ui.text-color.gray',
+  message: "Gray",
+  comment: 'Gray color.'
+};
+const GRAY_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.gray.hue',
+  message: "Gray {hue}",
+  comment: 'Gray color hues.'
+};
+const RED =
+/*i18n*/
+{
+  id: 'ui.text-color.red',
+  message: "Red",
+  comment: 'Red color.'
+};
+const RED_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.red.hue',
+  message: "Red {hue}",
+  comment: 'Red color hues.'
+};
+const PINK =
+/*i18n*/
+{
+  id: 'ui.text-color.pink',
+  message: "Pink",
+  comment: 'Pink color.'
+};
+const PINK_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.pink.hue',
+  message: "Pink {hue}",
+  comment: 'Pink color hues.'
+};
+const GRAPE =
+/*i18n*/
+{
+  id: 'ui.text-color.grape',
+  message: "Grape",
+  comment: 'Grape color.'
+};
+const GRAPE_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.grape.hue',
+  message: "Grape {hue}",
+  comment: 'Grape color hues.'
+};
+const VIOLET =
+/*i18n*/
+{
+  id: 'ui.text-color.violet',
+  message: "Violet",
+  comment: 'Violet color.'
+};
+const VIOLET_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.violet.hue',
+  message: "Violet {hue}",
+  comment: 'Violet color hues.'
+};
+const INDIGO =
+/*i18n*/
+{
+  id: 'ui.text-color.indigo',
+  message: "Indigo",
+  comment: 'Indigo color.'
+};
+const INDIGO_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.indigo.hue',
+  message: "Indigo {hue}",
+  comment: 'Indigo color hues.'
+};
+const BLUE =
+/*i18n*/
+{
+  id: 'ui.text-color.blue',
+  message: "Blue",
+  comment: 'Blue color.'
+};
+const BLUE_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.blue.hue',
+  message: "Blue {hue}",
+  comment: 'Blue color hues.'
+};
+const CYAN =
+/*i18n*/
+{
+  id: 'ui.text-color.cyan',
+  message: "Cyan",
+  comment: 'Cyan color.'
+};
+const CYAN_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.cyan.hue',
+  message: "Cyan {hue}",
+  comment: 'Cyan color hues.'
+};
+const TEAL =
+/*i18n*/
+{
+  id: 'ui.text-color.teal',
+  message: "Teal",
+  comment: 'Teal color.'
+};
+const TEAL_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.teal.hue',
+  message: "Teal {hue}",
+  comment: 'Teal color hues.'
+};
+const GREEN =
+/*i18n*/
+{
+  id: 'ui.text-color.green',
+  message: "Green",
+  comment: 'Green color.'
+};
+const GREEN_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.green.hue',
+  message: "Green {hue}",
+  comment: 'Green color hues.'
+};
+const LIME =
+/*i18n*/
+{
+  id: 'ui.text-color.lime',
+  message: "Lime",
+  comment: 'Lime color.'
+};
+const LIME_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.lime.hue',
+  message: "Lime {hue}",
+  comment: 'Lime color hues.'
+};
+const YELLOW =
+/*i18n*/
+{
+  id: 'ui.text-color.yellow',
+  message: "Yellow",
+  comment: 'Yellow color.'
+};
+const YELLOW_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.yellow.hue',
+  message: "Yellow {hue}",
+  comment: 'Yellow color hues.'
+};
+const ORANGE =
+/*i18n*/
+{
+  id: 'ui.text-color.orange',
+  message: "Orange",
+  comment: 'Orange color.'
+};
+const ORANGE_HUE =
+/*i18n*/
+{
+  id: 'ui.text-color.orange.hue',
+  message: "Orange {hue}",
+  comment: 'Orange color hues.'
+};
+
+var extensionTextColorMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  BLACK: BLACK,
+  BLUE: BLUE,
+  BLUE_HUE: BLUE_HUE,
+  CYAN: CYAN,
+  CYAN_HUE: CYAN_HUE,
+  GRAPE: GRAPE,
+  GRAPE_HUE: GRAPE_HUE,
+  GRAY: GRAY,
+  GRAY_HUE: GRAY_HUE,
+  GREEN: GREEN,
+  GREEN_HUE: GREEN_HUE,
+  INDIGO: INDIGO,
+  INDIGO_HUE: INDIGO_HUE,
+  LIME: LIME,
+  LIME_HUE: LIME_HUE,
+  ORANGE: ORANGE,
+  ORANGE_HUE: ORANGE_HUE,
+  PINK: PINK,
+  PINK_HUE: PINK_HUE,
+  RED: RED,
+  RED_HUE: RED_HUE,
+  SET_COLOR_DESCRIPTION: SET_COLOR_DESCRIPTION,
+  SET_COLOR_LABEL: SET_COLOR_LABEL,
+  TEAL: TEAL,
+  TEAL_HUE: TEAL_HUE,
+  TRANSPARENT: TRANSPARENT,
+  VIOLET: VIOLET,
+  VIOLET_HUE: VIOLET_HUE,
+  WHITE: WHITE,
+  YELLOW: YELLOW,
+  YELLOW_HUE: YELLOW_HUE
+});
+
+const LABEL$2 =
+/*i18n*/
+{
+  id: 'extension.command.set-text-highlight.label',
+  message: 'Text highlight',
+  comment: 'Label for adding a text highlight.'
+};
+const DESCRIPTION$2 =
+/*i18n*/
+{
+  id: 'extension.command.set-text-highlight.description',
+  message: 'Set the text highlight color for the selected text.',
+  comment: 'Description for adding a text highlight.'
+};
+
+var extensionTextHighlightMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION$2,
+  LABEL: LABEL$2
+});
+
+const LABEL$1 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-underline.label',
+  message: 'Underline',
+  comment: 'Label for underline formatting command.'
+};
+const DESCRIPTION$1 =
+/*i18n*/
+{
+  id: 'extension.command.toggle-underline.description',
+  message: 'Underline the selected text',
+  comment: 'Description for underline formatting command.'
+};
+
+var extensionUnderlineMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION$1,
+  LABEL: LABEL$1
+});
+
+const LABEL =
+/*i18n*/
+{
+  id: 'extension.command.toggle-whitespace.label',
+  message: 'Toggle Whitespace',
+  comment: 'Label for displaying whitespace characters.'
+};
+const DESCRIPTION =
+/*i18n*/
+{
+  id: 'extension.command.toggle-whitespace.description',
+  message: 'Show hidden whitespace characters in your editor.',
+  comment: 'Description for displaying whitespace characters.'
+};
+
+var extensionWhitespaceMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  DESCRIPTION: DESCRIPTION,
+  LABEL: LABEL
+});
+
+const NO_ITEMS_AVAILABLE =
+/*i18n*/
+{
+  id: 'react-components.mention-atom-component.zero-items',
+  message: 'No items available',
+  comment: 'Shown when no popup items are available'
+};
+
+var reactComponentsMessages = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  NO_ITEMS_AVAILABLE: NO_ITEMS_AVAILABLE
+});
+
+export { coreMessages as CoreMessages, coreUtilsMessages as CoreUtilsMessages, extensionAnnotationMessages as ExtensionAnnotationMessages, extensionBidiMessages as ExtensionBidiMessages, extensionBlockquoteMessages as ExtensionBlockquoteMessages, extensionBoldMessages as ExtensionBoldMessages, extensionCalloutMessages as ExtensionCalloutMessages, extensionCodeBlockMessages as ExtensionCodeBlockMessages, extensionCodeMessages as ExtensionCodeMessages, extensionColumnsMessages as ExtensionColumnsMessages, extensionEmojiMessages as ExtensionEmojiMessages, extensionFontSizeMessages as ExtensionFontSizeMessages, extensionHeadingMessages as ExtensionHeadingMessages, extensionHistoryMessages as ExtensionHistoryMessages, extensionHorizontalRuleMessages as ExtensionHorizontalRuleMessages, extensionItalicMessages as ExtensionItalicMessages, extensionListMessages as ExtensionListMessages, extensionNodeFormattingMessages as ExtensionNodeFormattingMessages, extensionParagraphMessages as ExtensionParagraphMessages, extensionStrikeMessages as ExtensionStrikeMessages, extensionSubMessages as ExtensionSubMessages, extensionSupMessages as ExtensionSupMessages, extensionTablesMessages as ExtensionTablesMessages, extensionTextCaseMessages as ExtensionTextCaseMessages, extensionTextColorMessages as ExtensionTextColorMessages, extensionTextHighlightMessages as ExtensionTextHighlightMessages, extensionUnderlineMessages as ExtensionUnderlineMessages, extensionWhitespaceMessages as ExtensionWhitespaceMessages, reactComponentsMessages as ReactComponentMessages };

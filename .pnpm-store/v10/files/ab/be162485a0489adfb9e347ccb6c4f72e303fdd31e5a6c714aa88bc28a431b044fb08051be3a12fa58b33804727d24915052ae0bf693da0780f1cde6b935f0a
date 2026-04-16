@@ -1,0 +1,10 @@
+import { ProsemirrorNode } from '@remirror/pm';
+import type { NodeView } from '@remirror/pm/view';
+type UpdateElement = (node: ProsemirrorNode, dom: HTMLElement) => void;
+export declare function createCustomMarkListItemNodeView({ node, mark, updateDOM, updateMark, }: {
+    node: ProsemirrorNode;
+    mark: HTMLElement;
+    updateDOM: UpdateElement;
+    updateMark: UpdateElement;
+}): NodeView;
+export {};

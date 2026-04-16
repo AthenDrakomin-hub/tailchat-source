@@ -1,0 +1,66 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getRemoveScriptDomOnLoaded = exports.getFallbackPluginUrl = exports.callModuleLoadError = exports.callPluginLoadError = exports.getPluginUrlPrefix = exports.getPluginList = exports.applyConfig = void 0;
+var _plugins = {};
+var _pluginUrlPrefix = '/plugins/';
+var _pluginUrlBuilder = function (pluginName) {
+    return "/plugins/".concat(pluginName, "/index.js");
+};
+var _onPluginLoadError = function (error) {
+    console.error('[MiniStar] Plugin Loaded Error', error);
+};
+var _removeScriptDomOnLoaded = true;
+function applyConfig(config) {
+    if (typeof config.pluginUrlPrefix === 'string') {
+        _pluginUrlPrefix = config.pluginUrlPrefix;
+    }
+    if (typeof config.pluginUrlBuilder === 'function') {
+        _pluginUrlBuilder = config.pluginUrlBuilder;
+    }
+    if (typeof config.onPluginLoadError === 'function') {
+        _onPluginLoadError = config.onPluginLoadError;
+    }
+    if (typeof config.removeScriptDomOnLoaded === 'boolean') {
+        _removeScriptDomOnLoaded = config.removeScriptDomOnLoaded;
+    }
+}
+exports.applyConfig = applyConfig;
+/**
+ * get all pluginList
+ */
+function getPluginList() {
+    return _plugins;
+}
+exports.getPluginList = getPluginList;
+/**
+ * get all pluginUrlPrefix
+ */
+function getPluginUrlPrefix() {
+    return _pluginUrlPrefix;
+}
+exports.getPluginUrlPrefix = getPluginUrlPrefix;
+function callPluginLoadError(error) {
+    _onPluginLoadError(error);
+}
+exports.callPluginLoadError = callPluginLoadError;
+function callModuleLoadError(error) {
+    // reuse same callback
+    _onPluginLoadError({
+        pluginName: error.moduleName,
+        detail: error.detail,
+    });
+}
+exports.callModuleLoadError = callModuleLoadError;
+/**
+ * Get plugin url builder
+ * @default
+ * (pluginName) => `/plugins/${pluginName}/index.js`
+ */
+function getFallbackPluginUrl(pluginName) {
+    return _pluginUrlBuilder(pluginName);
+}
+exports.getFallbackPluginUrl = getFallbackPluginUrl;
+function getRemoveScriptDomOnLoaded() {
+    return _removeScriptDomOnLoaded;
+}
+exports.getRemoveScriptDomOnLoaded = getRemoveScriptDomOnLoaded;

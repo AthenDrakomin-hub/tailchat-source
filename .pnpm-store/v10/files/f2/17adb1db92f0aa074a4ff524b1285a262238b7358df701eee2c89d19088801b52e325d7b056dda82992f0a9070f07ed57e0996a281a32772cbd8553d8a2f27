@@ -1,0 +1,205 @@
+"use strict";
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-mention-atom/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  MentionAtomExtension: () => MentionAtomExtension
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-mention-atom/src/mention-atom-extension.ts
+var import_core = require("@remirror/core");
+var import_suggest = require("@remirror/pm/suggest");
+var import_theme = require("@remirror/theme");
+var MentionAtomExtension = class extends import_core.NodeExtension {
+  get name() {
+    return "mentionAtom";
+  }
+  createTags() {
+    return [import_core.ExtensionTag.InlineNode, import_core.ExtensionTag.Behavior];
+  }
+  createNodeSpec(extra, override) {
+    const dataAttributeId = "data-mention-atom-id";
+    const dataAttributeName = "data-mention-atom-name";
+    return {
+      inline: true,
+      marks: "",
+      selectable: this.options.selectable,
+      draggable: this.options.draggable,
+      atom: true,
+      ...override,
+      attrs: {
+        ...extra.defaults(),
+        id: {},
+        label: {},
+        name: {}
+      },
+      parseDOM: [
+        ...this.options.matchers.map((matcher) => ({
+          tag: `${matcher.mentionTag ?? this.options.mentionTag}[${dataAttributeId}]`,
+          getAttrs: (node) => {
+            if (!(0, import_core.isElementDomNode)(node)) {
+              return false;
+            }
+            const id = node.getAttribute(dataAttributeId);
+            const name = node.getAttribute(dataAttributeName);
+            const label = node.textContent;
+            return { ...extra.parse(node), id, label, name };
+          }
+        })),
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => {
+        const { label, id, name } = (0, import_core.omitExtraAttributes)(
+          node.attrs,
+          extra
+        );
+        const matcher = this.options.matchers.find((matcher2) => matcher2.name === name);
+        const mentionClassName = matcher ? matcher.mentionClassName ?? DEFAULT_MATCHER.mentionClassName : DEFAULT_MATCHER.mentionClassName;
+        const attrs = {
+          ...extra.dom(node),
+          class: name ? `${mentionClassName} ${mentionClassName}-${(0, import_core.kebabCase)(name)}` : mentionClassName,
+          [dataAttributeId]: id,
+          [dataAttributeName]: name
+        };
+        return [matcher?.mentionTag ?? this.options.mentionTag, attrs, label];
+      }
+    };
+  }
+  createMentionAtom(details, attrs) {
+    const { name, range } = details;
+    const validNameExists = this.options.matchers.some((matcher) => name === matcher.name);
+    (0, import_core.invariant)(validNameExists, {
+      code: import_core.ErrorConstant.EXTENSION,
+      message: `Invalid name '${name}' provided when creating a mention. Please ensure you only use names that were configured on the matchers when creating the \`MentionAtomExtension\`.`
+    });
+    const { appendText, replacementType, ...rest } = attrs;
+    const { from, to } = {
+      from: range.from,
+      to: replacementType === "partial" ? range.cursor : range.to
+    };
+    return (0, import_core.replaceText)({
+      type: this.type,
+      appendText: getAppendText(appendText, this.options.appendText),
+      attrs: { name, ...rest },
+      selection: { from, to }
+    });
+  }
+  /**
+   * Track click events passed through to the editor.
+   */
+  createEventHandlers() {
+    return {
+      click: (event, clickState) => {
+        if (!clickState.direct) {
+          return;
+        }
+        const nodeWithPosition = clickState.getNode(this.type);
+        if (!nodeWithPosition) {
+          return;
+        }
+        return this.options.onClick(event, nodeWithPosition);
+      }
+    };
+  }
+  createSuggesters() {
+    const options = (0, import_core.pick)(this.options, [
+      "invalidMarks",
+      "invalidNodes",
+      "isValidPosition",
+      "validMarks",
+      "validNodes",
+      "suggestTag",
+      "disableDecorations",
+      "appendText"
+    ]);
+    return this.options.matchers.map((matcher) => ({
+      ...DEFAULT_MATCHER,
+      ...options,
+      ...matcher,
+      onChange: (props) => {
+        const { name, range } = props;
+        const { createMentionAtom } = this.store.commands;
+        function command2(attrs) {
+          createMentionAtom({ name, range }, attrs);
+        }
+        this.options.onChange(props, command2);
+      }
+    }));
+  }
+};
+__decorateClass([
+  (0, import_core.command)()
+], MentionAtomExtension.prototype, "createMentionAtom", 1);
+MentionAtomExtension = __decorateClass([
+  (0, import_core.extension)({
+    defaultOptions: {
+      selectable: true,
+      draggable: false,
+      mentionTag: "span",
+      matchers: [],
+      appendText: " ",
+      suggestTag: "span",
+      disableDecorations: false,
+      invalidMarks: [],
+      invalidNodes: [],
+      isValidPosition: () => true,
+      validMarks: null,
+      validNodes: null
+    },
+    handlerKeyOptions: { onClick: { earlyReturnValue: true } },
+    handlerKeys: ["onChange", "onClick"],
+    staticKeys: ["selectable", "draggable", "mentionTag", "matchers"]
+  })
+], MentionAtomExtension);
+var DEFAULT_MATCHER = {
+  ...(0, import_core.pick)(import_suggest.DEFAULT_SUGGESTER, [
+    "startOfLine",
+    "supportedCharacters",
+    "validPrefixCharacters",
+    "invalidPrefixCharacters"
+  ]),
+  appendText: "",
+  matchOffset: 1,
+  suggestClassName: import_theme.ExtensionMentionAtomTheme.SUGGEST_ATOM,
+  mentionClassName: import_theme.ExtensionMentionAtomTheme.MENTION_ATOM
+};
+function getAppendText(preferred, fallback) {
+  if ((0, import_core.isString)(preferred)) {
+    return preferred;
+  }
+  if ((0, import_core.isString)(fallback)) {
+    return fallback;
+  }
+  return DEFAULT_MATCHER.appendText;
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  MentionAtomExtension
+});

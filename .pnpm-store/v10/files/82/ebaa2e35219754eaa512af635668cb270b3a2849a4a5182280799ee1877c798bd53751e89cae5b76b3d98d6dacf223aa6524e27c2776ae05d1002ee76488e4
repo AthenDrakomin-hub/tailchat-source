@@ -1,0 +1,130 @@
+import { Static, FromToProps, ProsemirrorNode, PlainExtension, EditorState, ApplyStateLifecycleProps, OnSetOptionsProps, CommandFunction, Helper } from '@remirror/core';
+import { DecorationSet } from '@remirror/pm/view';
+
+interface WhitespaceOptions extends WhitespaceDecoratorSettings {
+    /**
+     * The initial whitespace visibility.
+     *
+     * @defaultValue false
+     */
+    initialVisibility?: Static<boolean>;
+    /**
+     * The list of default decorators that are used.
+     */
+    decorators?: Array<DefaultDecorator | WhitespaceDecorator>;
+}
+/**
+ * The built in whitespace decorations.
+ */
+type DefaultDecorator = 'hardBreak' | 'paragraph' | 'space';
+interface WhitespaceDecoratorSettings {
+    /**
+     * The nodes that are interpreted as break nodes.
+     *
+     * @defaultValue ['hardBreak']
+     */
+    breakNodes?: string[];
+    /**
+     * The nodes that are interpreted as paragraph nodes.
+     *
+     * @defaultValue ['paragraph']
+     */
+    paragraphNodes?: string[];
+    /**
+     * The text which should be interpreted as space characters.
+     *
+     * @defaultValue [' ']
+     */
+    spaceCharacters?: string[];
+}
+/**
+ * The whitespace decorator function
+ */
+type WhitespaceDecorator = (details: WhitespaceRange) => DecorationSet;
+interface WhitespaceRange extends FromToProps {
+    doc: ProsemirrorNode;
+    decorationSet: DecorationSet;
+}
+
+/**
+ * @module
+ *
+ * The whitespace extension which adds support for displaying whitespace
+ * characters in the editor.
+ *
+ * This is heavily inspired by
+ * [`prosemirror-invisibles`](https://github.com/guardian/prosemirror-invisibles].
+ */
+
+/**
+ * Manage whitespace characters within your editor.
+ *
+ * This adds decorators to the editor to represent the whitespace characters and
+ * can be useful for increasing the accessibility of your editor.
+ */
+declare class WhitespaceExtension extends PlainExtension<WhitespaceOptions> {
+    private active;
+    /**
+     * Set this to true to force updates to the decorationSet even if the editor
+     * doc hasn't been changed. This is set to true when running commands.
+     */
+    private forcedUpdate;
+    /**
+     * The white space decorations to be applied.
+     */
+    private decorationSet;
+    /**
+     * The decorator methods which are used to produce the whitespace characters
+     * in for the provided ranges.
+     */
+    private decorators;
+    get name(): "whitespace";
+    onCreate(): void;
+    /**
+     * Create the initial decoration state.
+     */
+    onInitState(state: EditorState): void;
+    /**
+     * Update the whitespace decorations for each state update.
+     */
+    onApplyState(props: ApplyStateLifecycleProps): void;
+    createDecorations(): DecorationSet;
+    /**
+     * When the decorators are updated we should update trigger an update to the
+     * editor state.
+     */
+    protected onSetOptions(props: OnSetOptionsProps<WhitespaceOptions>): void;
+    /**
+     * Generate the whitespace decorations for the full .
+     */
+    private createFullDecorationSet;
+    /**
+     * Create the decorators array.
+     */
+    private updateDecorators;
+    /**
+     * Toggle the visibility of whitespace characters.
+     */
+    toggleWhitespace(): CommandFunction;
+    /**
+     * Force the white space characters to be shown.
+     */
+    showWhitespace(): CommandFunction;
+    /**
+     * Force the white space characters to be shown.
+     */
+    hideWhitespace(): CommandFunction;
+    /**
+     * Determine if whitespace characters are currently shown.
+     */
+    isWhitespaceVisible(): Helper<boolean>;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            whitespace: WhitespaceExtension;
+        }
+    }
+}
+
+export { WhitespaceExtension };

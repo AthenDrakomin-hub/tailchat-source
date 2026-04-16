@@ -1,0 +1,27 @@
+{
+    "name": "@types/react-canvas-draw",
+    "version": "1.2.4",
+    "description": "TypeScript definitions for react-canvas-draw",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react-canvas-draw",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Kamil Socha",
+            "githubUsername": "ksocha",
+            "url": "https://github.com/ksocha"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/react-canvas-draw"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/react": "*"
+    },
+    "typesPublisherContentHash": "0b12091293b1f0ef2a38224b3ff648324cbcd8a1a7c83264de643ff8d2de3990",
+    "typeScriptVersion": "4.8"
+}

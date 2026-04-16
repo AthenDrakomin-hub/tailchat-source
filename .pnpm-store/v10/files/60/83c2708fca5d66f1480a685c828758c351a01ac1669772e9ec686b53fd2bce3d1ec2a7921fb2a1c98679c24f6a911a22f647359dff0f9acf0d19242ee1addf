@@ -1,0 +1,20 @@
+import type { Module, ModuleLoader } from './types';
+export interface LoadedModuleMap {
+    [key: string]: ModuleLoader;
+}
+/**
+ * get all loaded modules
+ */
+export declare function getLoadedModules(): LoadedModuleMap;
+export declare function requirePlugin(deps: string[], onSuccess: (...args: Module[]) => void, onError: (err: Error) => void): void;
+export declare function definePlugin(name: string, deps: string[], callback: (...args: any[]) => Module): Promise<Module> | undefined;
+/**
+ * Register Dependency from node_module.
+ * make sure declare it in `externalDeps`
+ */
+export declare function regDependency(name: string, fn: () => Promise<Module>): void;
+/**
+ * Register Shared Module from capital.
+ * Its will auto try to add @capital before module name(if you not declare it).
+ */
+export declare function regSharedModule(name: string, fn: () => Promise<Module>): void;

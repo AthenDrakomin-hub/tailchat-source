@@ -1,0 +1,23 @@
+import { MetricTypes } from '../constants';
+import { compareMetrics } from '../report/compare-metrics';
+import { SECTION_WEBPACK_STATS, SECTION_WEBPACK_SIZES, SECTION_WEBPACK_ASSETS, SECTION_WEBPACK_MODULES, SECTION_WEBPACK_PACKAGES, SECTIONS, } from './constants';
+import { selectors, getModulesDuplicateSizeMetrics, getModulesTotalSizeMetrics } from './selectors';
+const compareStats = (jobs, rowTransformers) => compareMetrics(jobs, selectors.stats, undefined, rowTransformers);
+const compareSizes = (jobs, rowTransformers) => compareMetrics(jobs, selectors.sizes, undefined, rowTransformers);
+const compareAssets = (jobs, rowTransformers) => compareMetrics(jobs, selectors.assets, MetricTypes.FileSize, rowTransformers);
+const compareModules = (jobs, rowTransformers) => compareMetrics(jobs, selectors.modules, MetricTypes.FileSize, rowTransformers);
+export const compareModuleDuplicateSize = (jobs, rowTransformers) => compareMetrics(jobs, getModulesDuplicateSizeMetrics, MetricTypes.FileSize, rowTransformers);
+export const compareModuleTotalSize = (jobs, rowTransformers) => compareMetrics(jobs, getModulesTotalSizeMetrics, MetricTypes.FileSize, rowTransformers);
+const comparePackages = (jobs, rowTransformers) => compareMetrics(jobs, selectors.packages, MetricTypes.FileSize, rowTransformers);
+export const compareBySection = {
+    [SECTION_WEBPACK_STATS]: compareStats,
+    [SECTION_WEBPACK_SIZES]: compareSizes,
+    [SECTION_WEBPACK_ASSETS]: compareAssets,
+    [SECTION_WEBPACK_MODULES]: compareModules,
+    [SECTION_WEBPACK_PACKAGES]: comparePackages,
+};
+export const compare = (jobs) => SECTIONS.reduce((agg, sectionId) => ({
+    ...agg,
+    [sectionId]: compareBySection[sectionId](jobs),
+}), {});
+//# sourceMappingURL=compare.js.map

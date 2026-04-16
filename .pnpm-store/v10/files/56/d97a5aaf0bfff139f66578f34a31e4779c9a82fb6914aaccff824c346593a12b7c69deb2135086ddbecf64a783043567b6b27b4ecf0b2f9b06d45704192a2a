@@ -1,0 +1,16 @@
+import { MenuItemProps } from '@mui/material';
+import { FC, ReactNode } from 'react';
+import { CoreIcon } from '@remirror/core';
+import { UseCommandOptionValuesParams } from '../use-command-option-values';
+export interface CommandMenuItemProps extends MenuItemProps, Omit<UseCommandOptionValuesParams, 'active' | 'attrs'> {
+    active?: UseCommandOptionValuesParams['active'];
+    commandName: string;
+    displayShortcut?: boolean;
+    onSelect: () => void;
+    icon?: CoreIcon | JSX.Element | null;
+    attrs?: UseCommandOptionValuesParams['attrs'];
+    label?: NonNullable<ReactNode>;
+    description?: NonNullable<ReactNode>;
+    displayDescription?: boolean;
+}
+export declare const CommandMenuItem: FC<CommandMenuItemProps>;

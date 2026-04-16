@@ -1,0 +1,87 @@
+import { CommandFunction, IdentifierSchemaAttributes, KeyBindingProps, PlainExtension } from '@remirror/core';
+import { NodeFormattingOptions, NodeTextAlignment } from './node-formatting-utils';
+/**
+ * Support consistent formatting of nodes within your editor.
+ */
+export declare class NodeFormattingExtension extends PlainExtension<NodeFormattingOptions> {
+    get name(): "nodeFormatting";
+    /**
+     * Set up the extra attributes which are applied to the formattable node
+     * blocks.
+     */
+    createSchemaAttributes(): IdentifierSchemaAttributes[];
+    setLineHeight(lineHeight: number): CommandFunction;
+    /**
+     * Set the text alignment for the selected nodes.
+     */
+    setTextAlignment(alignment: NodeTextAlignment): CommandFunction;
+    /**
+     * Set the indent level for the selected nodes.
+     */
+    setIndent(level: number | '+1' | '-1'): CommandFunction;
+    /**
+     * Center the text within current block node.
+     */
+    centerAlign(): CommandFunction;
+    /**
+     * Justify the text within the current block node.
+     */
+    justifyAlign(): CommandFunction;
+    /**
+     * Left align the text within the current block node.
+     */
+    leftAlign(): CommandFunction;
+    /**
+     * Right align the text within the current block node.
+     */
+    rightAlign(): CommandFunction;
+    /**
+     * Increase the indentation level of the current block node, if applicable.
+     */
+    increaseIndent(): CommandFunction;
+    /**
+     * Decrease the indentation of the current block node.
+     */
+    decreaseIndent(): CommandFunction;
+    centerAlignShortcut(props: KeyBindingProps): boolean;
+    justifyAlignShortcut(props: KeyBindingProps): boolean;
+    leftAlignShortcut(props: KeyBindingProps): boolean;
+    rightAlignShortcut(props: KeyBindingProps): boolean;
+    increaseIndentShortcut(props: KeyBindingProps): boolean;
+    decreaseIndentShortcut(props: KeyBindingProps): boolean;
+    /**
+     * Add an indentation attribute to the formattable node blocks.
+     */
+    private nodeIndent;
+    /**
+     * Add the `nodeTextAlignment` attribute to the formattable block nodes.
+     */
+    private nodeTextAlignment;
+    /**
+     * Add a `line height` attribute to all the formattable block nodes selected.
+     */
+    private nodeLineHeight;
+    private setNodeAttribute;
+}
+declare global {
+    namespace Remirror {
+        interface Attributes {
+            /**
+             * The indentation level for the formattable node.
+             */
+            nodeIndent?: number;
+            /**
+             * Set the text alignment fpr the formattable node.
+             */
+            nodeTextAlignment?: NodeTextAlignment;
+            /**
+             * A ratio with a minimum value of `1` (100%) for the line height of a
+             * formattable node.
+             */
+            nodeLineHeight?: number;
+        }
+        interface AllExtensions {
+            nodeFormatting: NodeFormattingExtension;
+        }
+    }
+}

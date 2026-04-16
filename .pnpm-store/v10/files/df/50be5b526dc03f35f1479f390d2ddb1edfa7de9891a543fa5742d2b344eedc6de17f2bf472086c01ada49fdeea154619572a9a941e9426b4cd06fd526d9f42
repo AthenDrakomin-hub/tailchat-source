@@ -1,0 +1,15 @@
+import { setLogLevel as setClientSdkLogLevel } from 'livekit-client';
+import loglevel from 'loglevel';
+export declare const log: loglevel.Logger;
+type LogLevel = Parameters<typeof setClientSdkLogLevel>[0];
+type SetLogLevelOptions = {
+    liveKitClientLogLevel?: LogLevel;
+};
+/**
+ * Set the log level for both the `@livekit/components-react` package and the `@livekit-client` package.
+ * To set the `@livekit-client` log independently, use the `liveKitClientLogLevel` prop on the `options` object.
+ * @public
+ */
+export declare function setLogLevel(level: LogLevel, options?: SetLogLevelOptions): void;
+export {};
+//# sourceMappingURL=logger.d.ts.map

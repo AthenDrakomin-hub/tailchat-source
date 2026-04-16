@@ -1,0 +1,9 @@
+/**
+ * @module
+ *
+ * Provides the main method used to convert markdown to html.
+ */
+/**
+ * Converts the provided markdown to HTML.
+ */
+export declare function markdownToHtml(markdown: string, sanitizer?: (html: string) => string): string;

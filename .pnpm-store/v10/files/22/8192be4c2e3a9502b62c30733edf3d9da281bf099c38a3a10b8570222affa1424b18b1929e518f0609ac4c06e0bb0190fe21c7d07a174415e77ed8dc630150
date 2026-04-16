@@ -1,0 +1,134 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// packages/remirror__preset-wysiwyg/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  wysiwygPreset: () => wysiwygPreset
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__preset-wysiwyg/src/wysiwyg-preset.ts
+var import_extension_bidi = require("@remirror/extension-bidi");
+var import_extension_blockquote = require("@remirror/extension-blockquote");
+var import_extension_bold = require("@remirror/extension-bold");
+var import_extension_code = require("@remirror/extension-code");
+var import_extension_code_block = require("@remirror/extension-code-block");
+var import_extension_drop_cursor = require("@remirror/extension-drop-cursor");
+var import_extension_embed = require("@remirror/extension-embed");
+var import_extension_gap_cursor = require("@remirror/extension-gap-cursor");
+var import_extension_hard_break = require("@remirror/extension-hard-break");
+var import_extension_heading = require("@remirror/extension-heading");
+var import_extension_horizontal_rule = require("@remirror/extension-horizontal-rule");
+var import_extension_image = require("@remirror/extension-image");
+var import_extension_italic = require("@remirror/extension-italic");
+var import_extension_link = require("@remirror/extension-link");
+var import_extension_list = require("@remirror/extension-list");
+var import_extension_search = require("@remirror/extension-search");
+var import_extension_shortcuts = require("@remirror/extension-shortcuts");
+var import_extension_strike = require("@remirror/extension-strike");
+var import_extension_trailing_node = require("@remirror/extension-trailing-node");
+var import_extension_underline = require("@remirror/extension-underline");
+var DEFAULT_OPTIONS = {
+  ...import_extension_bidi.BidiExtension.defaultOptions,
+  ...import_extension_bold.BoldExtension.defaultOptions,
+  ...import_extension_code_block.CodeBlockExtension.defaultOptions,
+  ...import_extension_drop_cursor.DropCursorExtension.defaultOptions,
+  ...import_extension_search.SearchExtension.defaultOptions,
+  ...import_extension_trailing_node.TrailingNodeExtension.defaultOptions,
+  ...import_extension_heading.HeadingExtension.defaultOptions
+};
+function wysiwygPreset(options = {}) {
+  options = { ...DEFAULT_OPTIONS, ...options };
+  const gapCursorExtension = new import_extension_gap_cursor.GapCursorExtension();
+  const hardBreakExtension = new import_extension_hard_break.HardBreakExtension();
+  const horizontalRuleExtension = new import_extension_horizontal_rule.HorizontalRuleExtension();
+  const imageExtension = new import_extension_image.ImageExtension();
+  const italicExtension = new import_extension_italic.ItalicExtension();
+  const strikeExtension = new import_extension_strike.StrikeExtension();
+  const underlineExtension = new import_extension_underline.UnderlineExtension();
+  const blockquoteExtension = new import_extension_blockquote.BlockquoteExtension();
+  const codeExtension = new import_extension_code.CodeExtension();
+  const iframeExtension = new import_extension_embed.IframeExtension();
+  const bulletListExtension = new import_extension_list.BulletListExtension();
+  const orderedListExtension = new import_extension_list.OrderedListExtension();
+  const taskListExtension = new import_extension_list.TaskListExtension({});
+  const shortcutsExtension = new import_extension_shortcuts.ShortcutsExtension();
+  const { selectTextOnClick } = options;
+  const linkExtension = new import_extension_link.LinkExtension({ autoLink: true, selectTextOnClick });
+  const { autoUpdate, defaultDirection, excludeNodes } = options;
+  const bidiExtension = new import_extension_bidi.BidiExtension({ autoUpdate, defaultDirection, excludeNodes });
+  const { weight } = options;
+  const boldExtension = new import_extension_bold.BoldExtension({ weight });
+  const { defaultLanguage, formatter, toggleName, syntaxTheme, supportedLanguages } = options;
+  const codeBlockExtension = new import_extension_code_block.CodeBlockExtension({
+    defaultLanguage,
+    formatter,
+    toggleName,
+    syntaxTheme,
+    supportedLanguages
+  });
+  const { color, width } = options;
+  const dropCursorExtension = new import_extension_drop_cursor.DropCursorExtension({
+    color,
+    width
+  });
+  const { defaultLevel, levels } = options;
+  const headingExtension = new import_extension_heading.HeadingExtension({ defaultLevel, levels });
+  const { alwaysSearch } = options;
+  const searchExtension = new import_extension_search.SearchExtension({
+    alwaysSearch
+  });
+  const { disableTags, ignoredNodes, nodeName } = options;
+  const trailingNodeExtension = new import_extension_trailing_node.TrailingNodeExtension({
+    disableTags,
+    ignoredNodes,
+    nodeName
+  });
+  return [
+    // Plain
+    bidiExtension,
+    dropCursorExtension,
+    gapCursorExtension,
+    searchExtension,
+    shortcutsExtension,
+    trailingNodeExtension,
+    // Nodes
+    hardBreakExtension,
+    imageExtension,
+    horizontalRuleExtension,
+    blockquoteExtension,
+    codeBlockExtension,
+    headingExtension,
+    iframeExtension,
+    bulletListExtension,
+    orderedListExtension,
+    taskListExtension,
+    // Marks
+    boldExtension,
+    codeExtension,
+    strikeExtension,
+    italicExtension,
+    linkExtension,
+    underlineExtension
+  ];
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  wysiwygPreset
+});

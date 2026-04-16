@@ -1,0 +1,141 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-history/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  HistoryExtension: () => HistoryExtension
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-history/src/history-extension.ts
+var import_core = require("@remirror/core");
+var import_messages = require("@remirror/messages");
+var import_history = require("@remirror/pm/history");
+var HistoryExtension = class extends import_core.PlainExtension {
+  constructor() {
+    super(...arguments);
+    /**
+     * Wraps the history method to inject state from the getState or getDispatch
+     * method.
+     *
+     * @param method - the method to wrap
+     */
+    this.wrapMethod = (method, callback) => {
+      return ({ state, dispatch, view }) => {
+        const { getState, getDispatch } = this.options;
+        const wrappedState = (0, import_core.isFunction)(getState) ? getState() : state;
+        const wrappedDispatch = (0, import_core.isFunction)(getDispatch) && dispatch ? getDispatch() : dispatch;
+        const success = method(wrappedState, wrappedDispatch, view);
+        callback == null ? void 0 : callback(success);
+        return success;
+      };
+    };
+  }
+  get name() {
+    return "history";
+  }
+  /**
+   * Adds the default key mappings for undo and redo.
+   */
+  createKeymap() {
+    return {
+      "Mod-y": !import_core.environment.isMac ? this.wrapMethod(import_history.redo, this.options.onRedo) : () => false,
+      "Mod-z": this.wrapMethod(import_history.undo, this.options.onUndo),
+      "Shift-Mod-z": this.wrapMethod(import_history.redo, this.options.onRedo)
+    };
+  }
+  undoShortcut(props) {
+    return this.wrapMethod(import_history.undo, this.options.onUndo)(props);
+  }
+  redoShortcut(props) {
+    return this.wrapMethod(import_history.redo, this.options.onRedo)(props);
+  }
+  /**
+   * Bring the `prosemirror-history` plugin with options set on this extension.
+   */
+  createExternalPlugins() {
+    const { depth, newGroupDelay } = this.options;
+    return [(0, import_history.history)({ depth, newGroupDelay })];
+  }
+  undo() {
+    return (0, import_core.nonChainable)(this.wrapMethod(import_history.undo, this.options.onUndo));
+  }
+  redo() {
+    return (0, import_core.nonChainable)(this.wrapMethod(import_history.redo, this.options.onRedo));
+  }
+  undoDepth(state = this.store.getState()) {
+    return (0, import_history.undoDepth)(state);
+  }
+  redoDepth(state = this.store.getState()) {
+    return (0, import_history.redoDepth)(state);
+  }
+};
+__decorateClass([
+  (0, import_core.keyBinding)({ shortcut: import_core.NamedShortcut.Undo, command: "undo" })
+], HistoryExtension.prototype, "undoShortcut", 1);
+__decorateClass([
+  (0, import_core.keyBinding)({ shortcut: import_core.NamedShortcut.Redo, command: "redo" })
+], HistoryExtension.prototype, "redoShortcut", 1);
+__decorateClass([
+  (0, import_core.command)({
+    disableChaining: true,
+    description: ({ t }) => t(import_messages.ExtensionHistoryMessages.UNDO_DESCRIPTION),
+    label: ({ t }) => t(import_messages.ExtensionHistoryMessages.UNDO_LABEL),
+    icon: "arrowGoBackFill"
+  })
+], HistoryExtension.prototype, "undo", 1);
+__decorateClass([
+  (0, import_core.command)({
+    disableChaining: true,
+    description: ({ t }) => t(import_messages.ExtensionHistoryMessages.REDO_DESCRIPTION),
+    label: ({ t }) => t(import_messages.ExtensionHistoryMessages.REDO_LABEL),
+    icon: "arrowGoForwardFill"
+  })
+], HistoryExtension.prototype, "redo", 1);
+__decorateClass([
+  (0, import_core.helper)()
+], HistoryExtension.prototype, "undoDepth", 1);
+__decorateClass([
+  (0, import_core.helper)()
+], HistoryExtension.prototype, "redoDepth", 1);
+HistoryExtension = __decorateClass([
+  (0, import_core.extension)({
+    defaultOptions: {
+      depth: 100,
+      newGroupDelay: 500,
+      getDispatch: void 0,
+      getState: void 0
+    },
+    staticKeys: ["depth", "newGroupDelay"],
+    handlerKeys: ["onUndo", "onRedo"]
+  })
+], HistoryExtension);
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  HistoryExtension
+});

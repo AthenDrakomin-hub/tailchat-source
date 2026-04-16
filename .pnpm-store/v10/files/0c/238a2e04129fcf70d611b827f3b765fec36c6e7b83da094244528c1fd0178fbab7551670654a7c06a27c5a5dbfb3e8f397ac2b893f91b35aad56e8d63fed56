@@ -1,0 +1,88 @@
+import { AnyExtension, CommandFunction, CommandFunctionProps, NodeType } from '@remirror/core';
+import { NodeRange, ResolvedPos } from '@remirror/pm/model';
+import { Selection, Transaction } from '@remirror/pm/state';
+/**
+ * Toggles a list.
+ *
+ * @remarks
+ *
+ * When the provided list wrapper is inactive (e.g. ul) then wrap the list with
+ * this type. When it is active then remove the selected line from the list.
+ *
+ * @param listType - the list node type
+ * @param itemType - the list item node type
+ */
+export declare function toggleList(listType: NodeType, itemType: NodeType): CommandFunction;
+/**
+ * Build a command that splits a non-empty textblock at the top level
+ * of a list item by also splitting that list item.
+ */
+export declare function splitListItem(listItemTypeOrName: string | NodeType, ignoreAttrs?: string[]): CommandFunction;
+/**
+ * Create a command to sink the list item around the selection down into an
+ * inner list. Use this function if you get multiple list item nodes in your
+ * schema.
+ *
+ * @deprecated use `indentList` instead.
+ */
+export declare function sharedSinkListItem(allExtensions: AnyExtension[]): CommandFunction;
+/**
+ * Create a command to lift the list item around the selection up intoa wrapping
+ * list. Use this function if you get multiple list item nodes in your schema.
+ *
+ * @deprecated use `dedentList` instead.
+ */
+export declare function sharedLiftListItem(allExtensions: AnyExtension[]): CommandFunction;
+/**
+ * Wraps existed list items to a new type of list, which only containes these list items.
+ *
+ * @remarks
+ *
+ * @example
+ *
+ * Here is some pseudo-code to show the purpose of this function:
+ *
+ * before:
+ *
+ * ```html
+ *  <ul>
+ *    <li>item A</li>
+ *    <li>item B<!-- cursor_start --></li>
+ *    <li>item C<!-- cursor_end --></li>
+ *    <li>item D</li>
+ *  </ul>
+ * ```
+ *
+ * after:
+ *
+ * ```html
+ *  <ul>
+ *    <li>item A</li>
+ *  </ul>
+ *  <ol>
+ *    <li>item B<!-- cursor_start --></li>
+ *    <li>item C<!-- cursor_end --></li>
+ *  </ol>
+ *  <ul>
+ *    <li>item D</li>
+ *  </ul>
+ * ```
+ *
+ * @alpha
+ */
+export declare function wrapSelectedItems({ listType, itemType, tr, }: {
+    listType: NodeType;
+    itemType: NodeType;
+    tr: Transaction;
+}): boolean;
+export declare function maybeJoinList(tr: Transaction, $pos?: ResolvedPos): boolean;
+/**
+ * Build a command to lift the content inside a list item around the selection
+ * out of list
+ */
+export declare function liftListItemOutOfList(itemType: NodeType): CommandFunction;
+/**
+ * Returns a range that include all selected list items.
+ */
+export declare function calculateItemRange(selection: Selection): NodeRange | null | undefined;
+export declare function listBackspace({ view }: CommandFunctionProps): boolean;

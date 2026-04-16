@@ -1,0 +1,43 @@
+import { DispatchFunction, EditorState, ProsemirrorNode } from '@remirror/core';
+import { Transaction } from '@remirror/pm/state';
+import { TableMap } from '@remirror/pm/tables';
+/**
+ * Add a column at the given position in a table.
+ *
+ * Taken from https://github.com/ProseMirror/prosemirror-tables/blob/v1.1.1/src/commands.js#L39
+ * Use the next column instead of the previous column as the reference, so that the controller
+ * cell will not be duplicated.
+ */
+export declare function addColumn(tr: Transaction, { map, tableStart, table }: {
+    map: TableMap;
+    tableStart: number;
+    table: ProsemirrorNode;
+}, col: number): Transaction;
+/**
+ * Command to add a column before the column with the selection.
+ */
+export declare function addColumnBefore(state: EditorState, dispatch: DispatchFunction | undefined): boolean;
+/**
+ * Command to add a column after the column with the selection.
+ */
+export declare function addColumnAfter(state: EditorState, dispatch: DispatchFunction | undefined): boolean;
+/**
+ * Add a row at the given position in a table.
+ *
+ * Taken from https://github.com/ProseMirror/prosemirror-tables/blob/v1.1.1/src/commands.js#L127
+ * Use the next row instead of the previous row as the reference, so that the controller
+ * cell will not be duplicated.
+ */
+export declare function addRow(tr: Transaction, { map, tableStart, table }: {
+    map: TableMap;
+    tableStart: number;
+    table: ProsemirrorNode;
+}, row: number): Transaction;
+/**
+ * Add a table row before the selection.
+ */
+export declare function addRowBefore(state: EditorState, dispatch: DispatchFunction | undefined): boolean;
+/**
+ * Add a table row after the selection.
+ */
+export declare function addRowAfter(state: EditorState, dispatch: DispatchFunction | undefined): boolean;

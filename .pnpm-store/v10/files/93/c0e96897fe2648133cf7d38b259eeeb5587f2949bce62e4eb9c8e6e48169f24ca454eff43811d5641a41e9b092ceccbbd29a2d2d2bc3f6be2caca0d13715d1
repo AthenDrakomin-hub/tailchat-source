@@ -1,0 +1,73 @@
+{
+  "name": "@remirror/react",
+  "version": "2.0.35",
+  "description": "Hooks and components for consuming `remirror` with your fave framework `React`.",
+  "homepage": "https://github.com/remirror/remirror/tree/HEAD/packages/remirror__react",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remirror/remirror.git",
+    "directory": "packages/remirror__react"
+  },
+  "license": "MIT",
+  "contributors": [
+    "Ifiok Jr. <ifiokotung@gmail.com>"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/remirror-react.d.ts",
+      "import": "./dist/remirror-react.js",
+      "require": "./dist/remirror-react.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/remirror-react.cjs",
+  "module": "./dist/remirror-react.js",
+  "types": "./dist/remirror-react.d.ts",
+  "files": [
+    "dist",
+    "dist-types"
+  ],
+  "dependencies": {
+    "@babel/runtime": "^7.22.3",
+    "@remirror/extension-placeholder": "^2.0.14",
+    "@remirror/extension-positioner": "^2.1.8",
+    "@remirror/extension-react-component": "^2.0.13",
+    "@remirror/extension-react-tables": "^2.2.18",
+    "@remirror/preset-react": "^2.0.14",
+    "@remirror/react-components": "^2.1.17",
+    "@remirror/react-core": "^2.0.21",
+    "@remirror/react-hooks": "^2.0.25",
+    "@remirror/react-renderer": "^2.0.13",
+    "@remirror/react-utils": "^2.0.7"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "peerDependencies": {
+    "@types/react": "^16.14.0 || ^17 || ^18",
+    "@types/react-dom": "^16.9.0 || ^17 || ^18",
+    "react": "^16.14.0 || ^17 || ^18",
+    "react-dom": "^16.14.0 || ^17 || ^18"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "preconstruct": {
+    "entrypoints": [
+      "index.ts"
+    ]
+  }
+}

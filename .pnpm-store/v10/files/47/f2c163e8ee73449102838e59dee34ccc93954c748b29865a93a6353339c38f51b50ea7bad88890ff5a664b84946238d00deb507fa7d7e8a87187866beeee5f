@@ -1,0 +1,75 @@
+import { CommandFunction, CreateExtensionPlugin, Helper, PlainExtension } from '@remirror/core';
+import { DecorationAttrs } from '@remirror/pm/view';
+import { FindAndReplaceAllProps, FindAndReplaceProps, FindProps, FindResult } from './find-types';
+export interface FindOptions {
+    /**
+     * The inline decoraton to apply to all search results.
+     *
+     * @defaultValue '{style: "background-color: yellow;"}'
+     */
+    decoration?: DecorationAttrs;
+    /**
+     * The inline decoraton to apply to the active search result (if any).
+     *
+     * @defaultValue '{style: "background-color: orange;"}'
+     */
+    activeDecoration?: DecorationAttrs;
+    /**
+     * When the search is active, whether to do a search on every document change.
+     *
+     * @defaultValue false
+     */
+    alwaysFind?: boolean;
+}
+/**
+ * This extension add find and replace functionality to your editor.
+ */
+export declare class FindExtension extends PlainExtension<FindOptions> {
+    get name(): "find";
+    private _updating;
+    private _query;
+    private _caseSensitive;
+    private _ranges;
+    private _activeIndex?;
+    /**
+     * Find and highlight the search result in the editor.
+     */
+    find({ query, activeIndex, caseSensitive }: FindProps): CommandFunction;
+    /**
+     * Stop find and remove all highlight.
+     */
+    stopFind(): CommandFunction;
+    /**
+     * Find and replace one search result.
+     */
+    findAndReplace({ query, caseSensitive, replacement, index, }: FindAndReplaceProps): CommandFunction;
+    /**
+     * Find and replace all search results.
+     */
+    findAndReplaceAll({ query, caseSensitive, replacement, }: FindAndReplaceAllProps): CommandFunction;
+    /**
+     * Find and highlight the search result in the editor. Returns search results.
+     */
+    findRanges(options: FindProps): Helper<FindResult>;
+    /**
+     * This plugin is responsible for do the searching and updating the
+     * decorations.
+     */
+    createPlugin(): CreateExtensionPlugin;
+    private setProps;
+    private gatherFindResults;
+    private normalizeActiveIndex;
+    private createDecorationSet;
+    /**
+     * Dispatch an empty transaction to trigger an update of the decoration.
+     */
+    private updateView;
+    private scrollToActiveResult;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            find: FindExtension;
+        }
+    }
+}

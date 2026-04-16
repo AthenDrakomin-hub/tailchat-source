@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getFormContainer = exports.regFormContainer = void 0;
+var FastifyFormContainer;
+function regFormContainer(component) {
+    FastifyFormContainer = component;
+}
+exports.regFormContainer = regFormContainer;
+function getFormContainer() {
+    return FastifyFormContainer;
+}
+exports.getFormContainer = getFormContainer;

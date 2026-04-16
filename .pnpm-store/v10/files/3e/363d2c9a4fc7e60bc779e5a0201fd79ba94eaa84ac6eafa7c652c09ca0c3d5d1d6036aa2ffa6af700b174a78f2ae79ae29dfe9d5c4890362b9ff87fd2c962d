@@ -1,0 +1,14 @@
+import { ProsemirrorNode, ResolvedPos } from '@remirror/pm';
+import { Plugin, PluginKey } from '@remirror/pm/state';
+import { TableView } from './views/table-view';
+export declare function pointsAtCell($pos: ResolvedPos): false | null | ProsemirrorNode;
+export declare function setAttr<T extends any>(attrs: Record<string, T>, name: string, value: T): Record<string, T>;
+export declare const key: PluginKey<any>;
+export declare function columnResizing({ handleWidth, cellMinWidth, View, lastColumnResizable, firstResizableColumn, }?: {
+    handleWidth?: number | undefined;
+    cellMinWidth?: number | undefined;
+    View?: typeof TableView | undefined;
+    lastColumnResizable?: boolean | undefined;
+    firstResizableColumn?: number | undefined;
+}): Plugin<any>;
+export declare function domCellAround(target: EventTarget | null): HTMLElement | null;

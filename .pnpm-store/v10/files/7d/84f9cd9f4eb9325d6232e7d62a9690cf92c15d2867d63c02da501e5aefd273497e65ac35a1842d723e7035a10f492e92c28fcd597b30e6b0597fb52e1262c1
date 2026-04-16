@@ -1,0 +1,108 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// packages/remirror__dom/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  createDomEditor: () => createDomEditor,
+  createDomManager: () => createDomManager
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__dom/src/dom.ts
+var import_core2 = require("@remirror/core");
+var import_preset_core = require("@remirror/preset-core");
+
+// packages/remirror__dom/src/dom-framework.ts
+var import_core = require("@remirror/core");
+var import_view = require("@remirror/pm/view");
+var DomFramework = class extends import_core.Framework {
+  get name() {
+    return "dom";
+  }
+  /**
+   * Create the prosemirror `[[EditorView`]].
+   */
+  createView(state, element) {
+    return new import_view.EditorView(element ?? null, {
+      state,
+      dispatchTransaction: this.dispatchTransaction,
+      attributes: () => this.getAttributes(),
+      editable: () => {
+        return this.props.editable ?? true;
+      },
+      plugins: []
+    });
+  }
+  /**
+   * This method should be called when the framework is first created.
+   */
+  onFirstRender() {
+    if (!this.firstRender) {
+      return;
+    }
+    this.onChange();
+    this.addFocusListeners();
+  }
+  /**
+   * Responsible for managing state updates.
+   */
+  updateState({ state, ...rest }) {
+    const { tr, transactions, triggerChange = true } = rest;
+    if (!tr && !transactions) {
+      state = state.apply(state.tr.setMeta(import_core.STATE_OVERRIDE, {}));
+    }
+    this.view.updateState(state);
+    if (triggerChange && (transactions == null ? void 0 : transactions.length) !== 0) {
+      this.onChange({ state, tr });
+    }
+    this.manager.onStateUpdate({ previousState: this.previousState, state, tr, transactions });
+  }
+  get frameworkOutput() {
+    return {
+      ...this.baseOutput,
+      destroy: () => this.destroy()
+    };
+  }
+};
+
+// packages/remirror__dom/src/dom.ts
+function createDomManager(extensions, options) {
+  return (0, import_preset_core.createCoreManager)(extensions, options);
+}
+function createDomEditor(props) {
+  const { manager, element } = props;
+  const fallback = manager.createEmptyDoc();
+  const [initialContent, initialSelection] = (0, import_core2.isArray)(props.initialContent) ? props.initialContent : [props.initialContent ?? fallback];
+  const initialEditorState = manager.createState({
+    content: initialContent,
+    selection: initialSelection
+  });
+  const framework = new DomFramework({
+    getProps: () => props,
+    initialEditorState,
+    element
+  });
+  framework.onFirstRender();
+  return framework.frameworkOutput;
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  createDomEditor,
+  createDomManager
+});

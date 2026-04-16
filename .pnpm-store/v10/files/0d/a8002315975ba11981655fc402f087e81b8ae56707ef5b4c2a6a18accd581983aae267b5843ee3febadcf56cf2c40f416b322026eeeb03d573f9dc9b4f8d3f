@@ -1,0 +1,2 @@
+// packages/remirror__pm/src/view.ts
+export * from "prosemirror-view";

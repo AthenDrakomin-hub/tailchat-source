@@ -1,0 +1,24 @@
+import { FindProsemirrorNodeResult, ProsemirrorPlugin } from '@remirror/core';
+import { PluginKey, Transaction } from '@remirror/pm/state';
+import { InsertButtonAttrs } from './components/table-insert-button';
+export declare function getTableStyle(attrs: ControllerStateValues): string;
+declare const key: PluginKey<ControllerState>;
+export { key as tableControllerPluginKey };
+export declare function createTableControllerPlugin(): ProsemirrorPlugin<ControllerState>;
+interface ControllerStateValues {
+    tableNodeResult: FindProsemirrorNodeResult | null | undefined;
+    preselectTable: boolean;
+    preselectColumn: number;
+    preselectRow: number;
+    predelete: boolean;
+    insertButtonAttrs: InsertButtonAttrs | null;
+}
+type ControllerStateProps = Omit<Partial<ControllerStateValues>, 'tableNodeResult'>;
+declare class ControllerState {
+    action: ControllerStateProps;
+    values: ControllerStateValues;
+    constructor(action: ControllerStateProps);
+    apply(tr: Transaction): ControllerState;
+}
+export declare function setControllerPluginMeta(tr: Transaction, props: ControllerStateProps): Transaction;
+export declare function resetControllerPluginMeta(tr: Transaction): Transaction;

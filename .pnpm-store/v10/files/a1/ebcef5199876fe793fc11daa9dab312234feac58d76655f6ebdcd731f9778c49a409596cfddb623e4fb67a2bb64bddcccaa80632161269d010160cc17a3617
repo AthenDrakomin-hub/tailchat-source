@@ -1,0 +1,21 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getField = exports.regField = void 0;
+var CustomField_1 = require("./CustomField");
+var fieldMap = new Map();
+/**
+ * 注册组件
+ */
+function regField(type, component) {
+    fieldMap.set(type, component);
+}
+exports.regField = regField;
+/**
+ * 获取组件
+ */
+function getField(type) {
+    return fieldMap.get(type);
+}
+exports.getField = getField;
+// 内建字段
+regField('custom', CustomField_1.CustomField);

@@ -1,0 +1,54 @@
+import { PerfseeReportStats, ID, ModuleReasonType } from '../stats';
+import { Asset as AcquiredAsset, Chunk as AcquiredChunk, BasePackage, PackageAppendix, BundleAuditResult, Size } from '../types';
+export * from '../types';
+export declare enum LogLevel {
+    verbose = 0,
+    info = 1,
+    warn = 2,
+    error = 3
+}
+export declare type Logger = {
+    [Key in keyof typeof LogLevel]: Key extends number ? never : (message: string, data?: any) => void;
+};
+export interface PackageMeta {
+    name: string;
+    path: string;
+}
+export declare type Asset = AcquiredAsset & {
+    modules: Module[];
+    content?: string;
+    intermediate?: boolean;
+    sourcemap?: boolean;
+};
+export declare type Chunk = Omit<AcquiredChunk, 'assetRefs'> & {
+    id: ID;
+    children: ID[];
+    modules: Module[];
+    assets: Asset[];
+    names: string[];
+    reason: string;
+};
+declare type AcquiredPackage = BasePackage & PackageAppendix;
+export declare type Issuer = PackageMeta & {
+    type: ModuleReasonType;
+};
+export declare type Package = Omit<AcquiredPackage, 'assetRefs' | 'issuerRefs'> & {
+    issuers: Issuer[];
+    assets: Asset[];
+    ignored: boolean;
+};
+export declare type Module = Package & {
+    id: ID;
+    concatenating: Module[];
+    realPath: string;
+};
+export declare type AuditParam = {
+    assets: Asset[];
+    chunks: Chunk[];
+    packages: Package[];
+    size: Size;
+    stats: PerfseeReportStats;
+};
+export declare type Audit = {
+    (param: Readonly<AuditParam>): BundleAuditResult | BundleAuditResult[];
+};

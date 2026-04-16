@@ -1,0 +1,96 @@
+// packages/remirror__extension-code-block/src/formatter.ts
+import babelPlugin from "prettier/parser-babel";
+import graphqlPlugin from "prettier/parser-graphql";
+import htmlPlugin from "prettier/parser-html";
+import markdownPlugin from "prettier/parser-markdown";
+import cssPlugin from "prettier/parser-postcss";
+import typescriptPlugin from "prettier/parser-typescript";
+import yamlPlugin from "prettier/parser-yaml";
+import { default as Prettier } from "prettier/standalone";
+var plugins = [
+  babelPlugin,
+  htmlPlugin,
+  typescriptPlugin,
+  markdownPlugin,
+  graphqlPlugin,
+  cssPlugin,
+  yamlPlugin
+];
+var options = {
+  bracketSpacing: true,
+  arrowParens: "always",
+  jsxSingleQuote: true,
+  singleQuote: true,
+  semi: true
+};
+function formatCode({ parser, source, cursorOffset }) {
+  return Prettier.formatWithCursor(source, {
+    ...options,
+    cursorOffset,
+    plugins,
+    parser
+  });
+}
+function offsetIncrement(source, initialCursor, formatted, endCursor, replacementPairs) {
+  const beforeCursorSource = source.slice(initialCursor - 1, initialCursor);
+  const afterCursorFormatted = formatted.slice(endCursor, endCursor + 1);
+  for (const [invalid, replacement] of replacementPairs) {
+    if (beforeCursorSource === invalid && afterCursorFormatted === replacement) {
+      return 1;
+    }
+  }
+  return 0;
+}
+function formatter(props) {
+  const { cursorOffset, language, source } = props;
+  const fn = (result, pairs = [
+    ['"', "'"],
+    ["'", '"']
+  ]) => {
+    const increment = offsetIncrement(
+      source,
+      cursorOffset,
+      result.formatted,
+      result.cursorOffset,
+      pairs
+    );
+    return { ...result, cursorOffset: result.cursorOffset + increment };
+  };
+  try {
+    switch (language) {
+      case "typescript":
+      case "ts":
+      case "tsx":
+        return fn(formatCode({ source, cursorOffset, parser: "typescript" }));
+      case "javascript":
+      case "jsx":
+      case "js":
+        return fn(formatCode({ source, cursorOffset, parser: "babel-flow" }));
+      case "markdown":
+      case "md":
+        return fn(formatCode({ source, cursorOffset, parser: "markdown" }));
+      case "mdx":
+        return fn(formatCode({ source, cursorOffset, parser: "mdx" }));
+      case "yml":
+      case "yaml":
+        return fn(formatCode({ source, cursorOffset, parser: "yaml" }));
+      case "html":
+        return fn(formatCode({ source, cursorOffset, parser: "html" }));
+      case "css":
+        return fn(formatCode({ source, cursorOffset, parser: "css" }));
+      case "less":
+        return fn(formatCode({ source, cursorOffset, parser: "less" }));
+      case "json":
+        return fn(formatCode({ source, cursorOffset, parser: "json" }));
+      case "json5":
+        return fn(formatCode({ source, cursorOffset, parser: "json5" }));
+      default:
+        return;
+    }
+  } catch {
+    return;
+  }
+}
+export {
+  formatter
+};

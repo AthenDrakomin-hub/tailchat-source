@@ -1,0 +1,19 @@
+import { ProsemirrorAttributes, Static } from '@remirror/core';
+export declare const toggleTextCaseOptions: Remirror.CommandDecoratorOptions;
+export declare const TEXT_CASE_ATTRIBUTE = "data-text-case";
+export declare function isValidCasing(value: unknown): value is Exclude<Casing, 'none'>;
+export interface TextCaseOptions {
+    /**
+     * The default casing to toggle between.
+     *
+     * @defaultValue 'none'
+     */
+    defaultCasing?: Static<Casing>;
+}
+export type Casing = 'none' | 'uppercase' | 'lowercase' | 'capitalize' | 'small-caps';
+export type TextCaseAttributes = ProsemirrorAttributes<{
+    /**
+     * The active text case for the
+     */
+    casing: Casing | null | undefined;
+}>;

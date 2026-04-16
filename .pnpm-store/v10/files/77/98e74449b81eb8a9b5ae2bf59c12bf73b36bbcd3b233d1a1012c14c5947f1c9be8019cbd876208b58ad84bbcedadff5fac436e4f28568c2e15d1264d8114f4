@@ -1,0 +1,6 @@
+import { BoxProps } from '@mui/material';
+import { FC, ReactNode } from 'react';
+export interface CommandButtonGroupProps extends Omit<BoxProps, 'children'> {
+    children: ReactNode | ReactNode[];
+}
+export declare const CommandButtonGroup: FC<CommandButtonGroupProps>;

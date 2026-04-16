@@ -1,0 +1,90 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.BundleStatsWebpackPlugin = void 0;
+var _path = _interopRequireDefault(require("path"));
+var _webpack = _interopRequireDefault(require("webpack"));
+var _lodash = require("lodash");
+var _cliUtils = require("@bundle-stats/cli-utils");
+var _pluginWebpackValidate = _interopRequireDefault(require("@bundle-stats/plugin-webpack-validate"));
+var CONFIG = _interopRequireWildcard(require("./config"));
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+const DEFAULT_OPTIONS = {
+  stats: {
+    assets: true,
+    chunks: true,
+    modules: true,
+    hash: true,
+    builtAt: true
+  }
+};
+const PLUGIN_NAME = 'BundleStats';
+const isWebpack5 = parseInt(_webpack.default.version, 10) === 5;
+class BundleStatsWebpackPlugin {
+  constructor(options) {
+    this.options = options;
+  }
+  apply(compiler) {
+    const {
+      stats,
+      ...options
+    } = (0, _lodash.merge)({}, DEFAULT_OPTIONS, this.options);
+    if (isWebpack5) {
+      compiler.hooks.thisCompilation.tap(PLUGIN_NAME, compilation => {
+        compilation.hooks.processAssets.tapPromise({
+          name: PLUGIN_NAME,
+          stage: _webpack.default.Compilation.PROCESS_ASSETS_STAGE_REPORT
+        }, async () => {
+          const outputPath = compilation?.options?.output?.path;
+          const compilationStats = compilation.getStats().toJson(stats);
+          const logger = compilation.getInfrastructureLogger ? compilation.getInfrastructureLogger(PLUGIN_NAME) : console;
+          const invalid = (0, _pluginWebpackValidate.default)(compilationStats);
+          if (invalid) {
+            logger.warn([invalid, CONFIG.OPTIONS_URL].join('\n'));
+          }
+          const newAssets = await (0, _cliUtils.generateReports)(compilationStats, {
+            ...options,
+            baselineFilepath: options.baselineFilepath && _path.default.join(outputPath, options.baselineFilepath)
+          }, {
+            outputPath,
+            logger
+          });
+          Object.entries(newAssets).forEach(([filename, report]) => {
+            compilation.emitAsset(filename, new _webpack.default.sources.RawSource(report.source), {
+              development: true
+            });
+          });
+        });
+      });
+      return;
+    }
+    compiler.hooks.emit.tapAsync(PLUGIN_NAME, async (compilation, callback) => {
+      const outputPath = compilation?.options?.output?.path;
+      const compilationStats = compilation.getStats().toJson(stats);
+      const logger = compilation.getInfrastructureLogger ? compilation.getInfrastructureLogger(PLUGIN_NAME) : console;
+      const invalid = (0, _pluginWebpackValidate.default)(compilationStats);
+      if (invalid) {
+        logger.warn([invalid, CONFIG.OPTIONS_URL].join('\n'));
+      }
+      const newAssets = await (0, _cliUtils.generateReports)(compilationStats, {
+        ...options,
+        baselineFilepath: options.baselineFilepath && _path.default.join(outputPath, options.baselineFilepath)
+      }, {
+        outputPath,
+        logger
+      });
+      Object.entries(newAssets).forEach(([filename, report]) => {
+        // eslint-disable-next-line no-param-reassign
+        compilation.assets[filename] = {
+          size: () => 0,
+          source: () => report.source
+        };
+      });
+      callback();
+    });
+  }
+}
+exports.BundleStatsWebpackPlugin = BundleStatsWebpackPlugin;

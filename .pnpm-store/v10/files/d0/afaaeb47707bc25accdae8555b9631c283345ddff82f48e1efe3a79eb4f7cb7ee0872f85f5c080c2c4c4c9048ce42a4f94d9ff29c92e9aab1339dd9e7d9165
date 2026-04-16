@@ -1,0 +1,9 @@
+import { ProsemirrorNode } from '@remirror/pm';
+import { Selection } from '@remirror/pm/state';
+import { CellSelection } from '@remirror/pm/tables';
+import { Transform } from '@remirror/pm/transform';
+type Attrs = Record<string, any>;
+export declare function setNodeAttrs<T extends Transform>(tr: T, pos: number, attrs: Attrs, node?: ProsemirrorNode | null | undefined): T;
+export declare function selectionToCellSelection(selection: Selection): CellSelection;
+export declare function cellSelectionToSelection(selection: CellSelection): Selection;
+export {};

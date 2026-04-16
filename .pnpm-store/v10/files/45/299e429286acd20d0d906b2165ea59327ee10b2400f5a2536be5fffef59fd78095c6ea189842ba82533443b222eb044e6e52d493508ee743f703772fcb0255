@@ -1,0 +1,16 @@
+import type { Harker } from 'hark';
+import type { Volume } from '../types';
+import { EventEmitter } from 'eventemitter-strict';
+interface VolumeWatcherEventMap {
+    volumeChange: ({ volume, scaledVolume }: Volume) => void;
+}
+export declare class VolumeWatcher extends EventEmitter<VolumeWatcherEventMap> {
+    private hark;
+    private lastVolume;
+    private lastScaledVolume;
+    constructor({ hark }: {
+        hark: Harker;
+    });
+    private handleHark;
+}
+export {};

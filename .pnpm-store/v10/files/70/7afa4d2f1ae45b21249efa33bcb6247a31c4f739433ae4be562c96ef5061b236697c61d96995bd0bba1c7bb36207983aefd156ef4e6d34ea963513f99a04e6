@@ -1,0 +1,36 @@
+interface EventEmitterOptions {
+    once?: boolean;
+}
+declare type EventEmitterBaseEventMap = Record<string, any>;
+/**
+ * A EventEmitter work like node/event
+ */
+export declare class EventEmitter<E extends EventEmitterBaseEventMap> {
+    static onceSymbol: symbol;
+    private listeners;
+    /**
+     * Send Event to all listener
+     * @param eventName Event Name
+     * @param args arguments
+     */
+    emit<K extends keyof E>(eventName: K, ...args: Parameters<E[K]>): this;
+    /**
+     * Add event listener
+     * @param eventName Event Name
+     * @param callback Event Callback
+     */
+    on<K extends keyof E>(eventName: K, callback: E[K], options?: EventEmitterOptions): this;
+    /**
+     * Remove event listener
+     * @param eventName Event Name
+     * @param callback Event Callback
+     */
+    off<K extends keyof E>(eventName: K, callback: E[K]): this;
+    /**
+     * Like on but just run once
+     * @param eventName Event Name
+     * @param callback Event Callback
+     */
+    once<K extends keyof E>(eventName: K, callback: E[K]): this;
+}
+export {};

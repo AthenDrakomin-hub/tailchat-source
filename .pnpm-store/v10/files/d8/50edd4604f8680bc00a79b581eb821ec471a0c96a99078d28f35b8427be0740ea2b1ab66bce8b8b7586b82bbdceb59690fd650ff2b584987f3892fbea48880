@@ -1,0 +1,37 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getBaselineRelativePath = exports.getBaselinePath = exports.BASELINE_STATS_BASE = exports.BASELINE_STATS_DIR = void 0;
+exports.readBaseline = readBaseline;
+exports.writeBaseline = writeBaseline;
+const path_1 = __importDefault(require("path"));
+const promises_1 = __importDefault(require("fs/promises"));
+const find_cache_dir_1 = __importDefault(require("find-cache-dir"));
+exports.BASELINE_STATS_DIR = (0, find_cache_dir_1.default)({ name: 'bundle-stats' }) || path_1.default.join(process.cwd(), './node_modules/.cache');
+exports.BASELINE_STATS_BASE = 'baseline.json';
+const getBaselinePath = (outputPath = process.cwd(), outputDir = '', filepath = '') => {
+    if (!filepath) {
+        return path_1.default.join(exports.BASELINE_STATS_DIR, exports.BASELINE_STATS_BASE);
+    }
+    if (path_1.default.isAbsolute(filepath)) {
+        return filepath;
+    }
+    return path_1.default.join(outputPath, outputDir, filepath);
+};
+exports.getBaselinePath = getBaselinePath;
+const getBaselineRelativePath = (outputPath = process.cwd(), outputDir = '', filepath = '') => {
+    const absoluteFilepath = (0, exports.getBaselinePath)(outputPath, outputDir, filepath);
+    return path_1.default.relative(outputPath, absoluteFilepath);
+};
+exports.getBaselineRelativePath = getBaselineRelativePath;
+async function readBaseline(baselineFilepath) {
+    const file = await promises_1.default.readFile(baselineFilepath, 'utf-8');
+    return JSON.parse(file);
+}
+async function writeBaseline(data, baselineFilepath) {
+    await promises_1.default.mkdir(path_1.default.dirname(baselineFilepath), { recursive: true });
+    return promises_1.default.writeFile(baselineFilepath, JSON.stringify(data), {});
+}
+//# sourceMappingURL=baseline.js.map

@@ -1,0 +1,29 @@
+import { ApplySchemaAttributes, CommandFunction, NodeExtension, NodeExtensionSpec, NodeSpecOverride, NodeViewMethod, PrioritizedKeyBindings } from '@remirror/core';
+import type { CodeMirrorExtensionAttributes, CodeMirrorExtensionOptions } from './codemirror-types';
+export declare class CodeMirrorExtension extends NodeExtension<CodeMirrorExtensionOptions> {
+    get name(): "codeMirror";
+    readonly tags: ("code" | "block")[];
+    init(): void;
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    createNodeViews(): NodeViewMethod;
+    createKeymap(): PrioritizedKeyBindings;
+    /**
+     * Creates a CodeMirror block at the current position.
+     *
+     * ```ts
+     * commands.createCodeMirror({ language: 'js' });
+     * ```
+     */
+    createCodeMirror(attributes: CodeMirrorExtensionAttributes): CommandFunction;
+    /**
+     * Update the code block at the current position. Primarily this is used
+     * to change the language.
+     *
+     * ```ts
+     * if (commands.updateCodeMirror.isEnabled()) {
+     *   commands.updateCodeMirror({ language: 'markdown' });
+     * }
+     * ```
+     */
+    updateCodeMirror(attributes: CodeMirrorExtensionAttributes): CommandFunction;
+}

@@ -1,0 +1,59 @@
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VolumeWatcher = void 0;
+var eventemitter_strict_1 = require("eventemitter-strict");
+var VolumeWatcher = /** @class */ (function (_super) {
+    __extends(VolumeWatcher, _super);
+    function VolumeWatcher(_a) {
+        var hark = _a.hark;
+        var _this = _super.call(this) || this;
+        _this.lastVolume = -100;
+        _this.lastScaledVolume = 0;
+        _this.emit('volumeChange', {
+            volume: _this.lastVolume,
+            scaledVolume: _this.lastScaledVolume,
+        });
+        _this.hark = hark;
+        _this.handleHark();
+        return _this;
+    }
+    VolumeWatcher.prototype.handleHark = function () {
+        var _this = this;
+        this.hark.on('volume_change', function (volume) {
+            var newVolume = Math.round(volume);
+            if (Math.abs(newVolume - _this.lastVolume) > 0.5) {
+                if (newVolume < _this.lastVolume) {
+                    newVolume = Math.round(_this.lastVolume -
+                        Math.pow((newVolume - _this.lastVolume) / (100 + _this.lastVolume), 2) *
+                            10);
+                }
+                _this.lastVolume = newVolume;
+                var lastScaledVolume = Math.round(((newVolume - -60) * -100) / -60 / 10);
+                if (lastScaledVolume < 0)
+                    lastScaledVolume = 0;
+                _this.lastScaledVolume = lastScaledVolume;
+                _this.emit('volumeChange', {
+                    volume: newVolume,
+                    scaledVolume: _this.lastScaledVolume,
+                });
+            }
+        });
+    };
+    return VolumeWatcher;
+}(eventemitter_strict_1.EventEmitter));
+exports.VolumeWatcher = VolumeWatcher;

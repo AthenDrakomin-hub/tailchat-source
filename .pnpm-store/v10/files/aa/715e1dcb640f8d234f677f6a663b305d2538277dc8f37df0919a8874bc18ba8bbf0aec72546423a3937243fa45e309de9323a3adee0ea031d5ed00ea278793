@@ -1,0 +1,37 @@
+import React from 'react';
+import { TableCellMenuProps } from './table-cell-menu';
+import { TableDeleteRowColumnButtonProps } from './table-delete-row-column-button';
+import { TableDeleteButtonProps } from './table-delete-table-button';
+export interface TableComponentsProps {
+    /**
+     * Whether to use `TableCellMenu`.
+     *
+     * @defaultValue true
+     */
+    enableTableCellMenu?: boolean;
+    /**
+     * The props that will passed to `TableCellMenu`
+     */
+    tableCellMenuProps?: TableCellMenuProps;
+    /**
+     * Whether to use `TableDeleteRowColumnButton`.
+     *
+     * @defaultValue true
+     */
+    enableTableDeleteRowColumnButton?: boolean;
+    /**
+     * The props that will passed to `TableDeleteRowColumnButton`
+     */
+    tableDeleteRowColumnButtonProps?: TableDeleteRowColumnButtonProps;
+    /**
+     * Whether to use `TableDeleteButton`.
+     *
+     * @defaultValue true
+     */
+    enableTableDeleteButton?: boolean;
+    /**
+     * The props that will passed to `TableDeleteButton`
+     */
+    tableDeleteButtonProps?: TableDeleteButtonProps;
+}
+export declare const TableComponents: React.FC<TableComponentsProps>;

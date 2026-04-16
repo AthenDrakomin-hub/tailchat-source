@@ -1,0 +1,16 @@
+import { CreateExtensionPlugin, KeyBindings, PlainExtension } from '@remirror/core';
+/**
+ * Provides some shared thing used by both `listItem` and `taskListItem`
+ */
+export declare class ListItemSharedExtension extends PlainExtension {
+    get name(): "listItemShared";
+    createKeymap(): KeyBindings;
+    createPlugin(): CreateExtensionPlugin;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            listItemShared: ListItemSharedExtension;
+        }
+    }
+}

@@ -1,0 +1,2 @@
+// packages/remirror__pm/src/model.ts
+export * from "prosemirror-model";

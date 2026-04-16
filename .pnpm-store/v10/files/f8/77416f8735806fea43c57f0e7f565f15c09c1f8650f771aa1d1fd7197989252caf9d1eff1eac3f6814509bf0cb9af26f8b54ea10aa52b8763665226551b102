@@ -1,0 +1,8 @@
+import type { RollupOptions } from 'rollup';
+declare type RequiredPick<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+export declare type PluginContext = {
+    pluginPackageJsonPath: string;
+    packageConfig: any;
+};
+export declare function buildRollupOptions(context: PluginContext): RequiredPick<RollupOptions, 'input' | 'output' | 'plugins' | 'external'>;
+export {};

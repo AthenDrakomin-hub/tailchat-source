@@ -1,0 +1,90 @@
+import { ApplySchemaAttributes, CommandFunction, IdentifierSchemaAttributes, LiteralUnion, NodeExtension, NodeExtensionSpec, NodeSpecOverride, PrimitiveSelection, ProsemirrorAttributes, Static } from '@remirror/core';
+export declare const toggleColumnsOptions: Remirror.CommandDecoratorOptions;
+export declare const DEFAULT_COLUMN_ATTRIBUTES: Required<BaseColumnAttributes>;
+export interface ColumnsOptions {
+    /**
+     * The default columns to use for created columns.
+     *
+     * @defaultValue `DEFAULT_COLUMN_ATTRIBUTES`
+     */
+    defaults?: Static<Required<BaseColumnAttributes>>;
+}
+export interface BaseColumnAttributes {
+    /**
+     * Specifies the number of columns an element should be divided into.
+     *
+     * @defaultValue 2
+     */
+    count?: number;
+    /**
+     * Specifies how to fill columns.
+     *
+     * @defaultValue 'auto'
+     */
+    fill?: 'balance' | 'auto';
+    /**
+     * Specifies the gap between the columns.
+     *
+     * @defaultValue 'inherit'
+     */
+    gap?: string;
+    /**
+     * Specifies the color of the rule between columns.
+     *
+     * @defaultValue 'transparent'
+     */
+    ruleColor?: string;
+    /**
+     * Specifies the style of the rule between columns.
+     *
+     * @defaultValue 'none'
+     */
+    ruleStyle?: 'none' | 'hidden' | 'dotted' | 'dashed' | 'solid' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset';
+    /**
+     * Specifies the width of the rule between columns.
+     *
+     * @defaultValue 'inherit'
+     */
+    ruleWidth?: LiteralUnion<'medium' | 'thin' | 'thick', string>;
+    /**
+     * Specifies a suggested, optimal width for the columns.
+     *
+     * @defaultValue 'inherit'
+     */
+    width?: string;
+}
+export type ColumnAttributes = ProsemirrorAttributes<BaseColumnAttributes>;
+/**
+ * Add column support to the nodes in your editor.
+ */
+export declare class ColumnsExtension extends NodeExtension<ColumnsOptions> {
+    get name(): "columns";
+    createTags(): "block"[];
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    /**
+     * Add a column span attribute to all block nodes within the editor.
+     */
+    createSchemaAttributes(): IdentifierSchemaAttributes[];
+    /**
+     * Toggle a column wrap around the content.
+     */
+    toggleColumns(attrs?: ColumnAttributes, options?: ToggleColumnsOptions): CommandFunction;
+}
+interface ToggleColumnsOptions {
+    selection?: PrimitiveSelection;
+}
+declare global {
+    namespace Remirror {
+        interface Attributes {
+            /**
+             * The number of columns that a node should span across. This only comes
+             * into effect if the block node is within a column node.
+             */
+            columnSpan?: 'none' | 'all';
+        }
+        interface AllExtensions {
+            columns: ColumnsExtension;
+        }
+    }
+}
+export {};

@@ -1,0 +1,61 @@
+import { Static, ProsemirrorAttributes, NodeExtension, ApplySchemaAttributes, NodeSpecOverride, NodeExtensionSpec, NodeViewMethod, PrioritizedKeyBindings, CommandFunction } from '@remirror/core';
+import CodeMirror from 'codemirror';
+
+interface CodeMirrorExtensionOptions {
+    /**
+     * Configuration for the inner CodeMirror editor.
+     *
+     * @defaultValue undefined
+     */
+    defaultCodeMirrorConfig?: CodeMirror.EditorConfiguration | null;
+    /**
+     * The instance of codemirror to use.
+     */
+    CodeMirror?: Static<typeof CodeMirror>;
+}
+interface CodeMirrorExtensionAttributes extends ProsemirrorAttributes {
+    /**
+     * Configuration for the inner CodeMirror editor.
+     *
+     * @defaultValue undefined
+     */
+    codeMirrorConfig?: CodeMirror.EditorConfiguration;
+    /**
+     * A string to represent the language, which will be passed into CodeMirror's
+     * `findModeByName` function. Note that you can also specify the
+     * language by editing `codeMirrorConfig.mode` directly.
+     *
+     * @defaultValue undefined
+     */
+    language?: string;
+}
+
+declare class CodeMirrorExtension extends NodeExtension<CodeMirrorExtensionOptions> {
+    get name(): "codeMirror";
+    readonly tags: ("code" | "block")[];
+    init(): void;
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    createNodeViews(): NodeViewMethod;
+    createKeymap(): PrioritizedKeyBindings;
+    /**
+     * Creates a CodeMirror block at the current position.
+     *
+     * ```ts
+     * commands.createCodeMirror({ language: 'js' });
+     * ```
+     */
+    createCodeMirror(attributes: CodeMirrorExtensionAttributes): CommandFunction;
+    /**
+     * Update the code block at the current position. Primarily this is used
+     * to change the language.
+     *
+     * ```ts
+     * if (commands.updateCodeMirror.isEnabled()) {
+     *   commands.updateCodeMirror({ language: 'markdown' });
+     * }
+     * ```
+     */
+    updateCodeMirror(attributes: CodeMirrorExtensionAttributes): CommandFunction;
+}
+
+export { CodeMirrorExtension, type CodeMirrorExtensionAttributes, type CodeMirrorExtensionOptions };

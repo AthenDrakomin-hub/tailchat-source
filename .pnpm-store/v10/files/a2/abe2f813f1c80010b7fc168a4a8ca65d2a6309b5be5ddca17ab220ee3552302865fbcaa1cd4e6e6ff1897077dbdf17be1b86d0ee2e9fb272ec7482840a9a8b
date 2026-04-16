@@ -1,0 +1,8 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useFastifyFormContext = void 0;
+var formik_1 = require("formik");
+function useFastifyFormContext() {
+    return (0, formik_1.useFormikContext)();
+}
+exports.useFastifyFormContext = useFastifyFormContext;

@@ -1,0 +1,5 @@
+export declare function getPluginDirContainerPath(): string;
+/**
+ * Find plugin dir names
+ */
+export declare function getPluginDirs(): string[];

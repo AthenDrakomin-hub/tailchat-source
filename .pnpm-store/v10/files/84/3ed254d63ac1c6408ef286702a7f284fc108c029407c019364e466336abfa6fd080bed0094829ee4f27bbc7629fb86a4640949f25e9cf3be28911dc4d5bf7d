@@ -1,0 +1,26 @@
+import { ApplySchemaAttributes, CommandFunction, KeyBindingProps, MarkExtension, MarkExtensionSpec, MarkSpecOverride, PrimitiveSelection } from '@remirror/core';
+/**
+ * Add underline formatting support to the editor.
+ */
+export declare class UnderlineExtension extends MarkExtension {
+    get name(): "underline";
+    createTags(): ("formattingMark" | "fontStyle")[];
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    /**
+     * Toggle the underline formatting of the selected text.
+     *
+     * This command is provided by the `UnderlineExtension`.
+     */
+    toggleUnderline(selection?: PrimitiveSelection): CommandFunction;
+    /**
+     * Attach the keyboard shortcut for formatting the text.
+     */
+    shortcut(props: KeyBindingProps): boolean;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            underline: UnderlineExtension;
+        }
+    }
+}

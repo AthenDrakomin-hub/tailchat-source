@@ -1,0 +1,5 @@
+import { FC } from 'react';
+import { CommandButtonProps } from './command-button';
+export interface ToggleBulletListButtonProps extends Omit<CommandButtonProps, 'commandName' | 'active' | 'enabled' | 'attrs' | 'onSelect'> {
+}
+export declare const ToggleBulletListButton: FC<ToggleBulletListButtonProps>;

@@ -1,0 +1,66 @@
+/**
+ * Reference: https://prosemirror.net/examples/codemirror/
+ */
+import type { EditorView, NodeView, ProsemirrorNode } from '@remirror/pm';
+import { Selection } from '@remirror/pm/state';
+import ref from './codemirror-ref';
+export declare class CodeMirrorNodeView implements NodeView {
+    #private;
+    /**
+     * The dom element which wraps the CodeMirror editor element. This is directly
+     * controlled by ProseMirror.
+     */
+    dom: HTMLElement;
+    constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number, config?: CodeMirror.EditorConfiguration);
+    /**
+     * Create the event listeners for managing updates from CodeMirror.
+     */
+    private setupCodeMirrorHandlers;
+    /**
+     * When the code editor is focused, we can keep the selection of the outer
+     * editor synchronized with the inner one, so that any commands executed on
+     * the outer editor see an accurate selection.
+     */
+    forwardSelection(): void;
+    /**
+     * This helper function translates from a CodeMirror selection to a
+     * ProseMirror selection. Because CodeMirror uses a line/column based indexing
+     * system, `indexFromPos` is used to convert to an actual character index.
+     */
+    asProseMirrorSelection(doc: ProsemirrorNode): Selection;
+    /**
+     * Selections are also synchronized the other way, from ProseMirror to
+     * CodeMirror, using the view's `setSelection` method.
+     */
+    setSelection(anchor: number, head: number): void;
+    /**
+     * When the actual content of the code editor is changed, the event handler
+     * registered in the node view's constructor calls this method. It'll compare
+     * the code block node's current value to the value in the editor, and
+     * dispatch a transaction if there is a difference.
+     */
+    valueChanged(): void;
+    /**
+     * A somewhat tricky aspect of nesting editor like this is handling cursor
+     * motion across the edges of the inner editor. This node view will have to
+     * take care of allowing the user to move the selection out of the code
+     * editor. For that purpose, it binds the arrow keys to handlers that check if
+     * further motion would ‘escape’ the editor, and if so, return the selection
+     * and focus to the outer editor.
+     *
+     * The keymap also binds keys for undo and redo, which the outer editor will
+     * handle, and for ctrl-enter, which, in ProseMirror's base keymap, creates a
+     * new paragraph after a code block.
+     */
+    codeMirrorKeymap(): CodeMirror.KeyMap;
+    maybeEscape(unit: 'line' | 'char', dir: 1 | -1): null | typeof ref.CodeMirror.Pass;
+    /**
+     * When an update comes in from the editor, for example because of an undo
+     * action, we kind of have to do the inverse of what `valueChanged` did—check
+     * for text changes, and if present, propagate them from the outer to the
+     * inner editor.
+     */
+    update(node: ProsemirrorNode): boolean;
+    selectNode(): void;
+    stopEvent(): boolean;
+}

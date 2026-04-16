@@ -1,0 +1,29 @@
+import React, { MouseEventHandler } from 'react';
+import type { UsePositionerReturn } from '@remirror/react-hooks';
+export interface TableDeleteInnerButtonProps {
+    /**
+     * The position of the button
+     */
+    position: UsePositionerReturn;
+    /**
+     * The action when the button is pressed.
+     */
+    onClick: MouseEventHandler;
+    /**
+     * The action when the mouse is pressed on the button.
+     */
+    onMouseDown: MouseEventHandler;
+    /**
+     * The action when the mouse is over the button.
+     */
+    onMouseEnter: MouseEventHandler;
+    /**
+     * The action when the mouse level the button.
+     */
+    onMouseLeave: MouseEventHandler;
+}
+export declare const TableDeleteInnerButton: React.FC<TableDeleteInnerButtonProps>;
+export interface TableDeleteButtonProps {
+    Component?: React.ComponentType<TableDeleteInnerButtonProps>;
+}
+export declare const TableDeleteButton: React.FC<TableDeleteButtonProps>;

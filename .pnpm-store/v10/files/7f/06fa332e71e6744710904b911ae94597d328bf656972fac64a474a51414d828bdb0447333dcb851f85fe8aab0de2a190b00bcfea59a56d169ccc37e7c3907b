@@ -1,0 +1,57 @@
+import { QueryParamConfig } from 'serialize-query-params';
+import { COMPONENT } from '../config/component-links';
+export type ComponentLinkFilters = Record<string, boolean | string>;
+export interface ComponentLinkParams {
+    search?: string;
+    entryId?: string;
+    metric?: string;
+    filters?: ComponentLinkFilters;
+    sortBy?: string;
+    direction?: string;
+}
+export interface ComponentLink {
+    title: string;
+    section: string;
+    params?: {
+        [key: string]: ComponentLinkParams;
+    };
+}
+export declare const getAssetFileTypeFilters: (value?: boolean) => ComponentLinkFilters;
+export declare const getAssetEntryTypeFilters: (value?: boolean) => ComponentLinkFilters;
+export declare const getModuleSourceTypeFilters: (value?: boolean) => ComponentLinkFilters;
+export declare const getModuleChunkFilters: (chunkIds: Array<string>, value: boolean) => ComponentLinkFilters;
+export declare const getModuleFileTypeFilters: (value?: boolean) => ComponentLinkFilters;
+export declare const TOTALS: ComponentLink;
+export declare const BUNDLE_ASSETS_INITIAL_JS: ComponentLink;
+export declare const BUNDLE_ASSETS_INITIAL_CSS: ComponentLink;
+export declare const BUNDLE_ASSETS_CACHE_INVALIDATION: ComponentLink;
+export declare const BUNDLE_ASSETS_COUNT: ComponentLink;
+export declare const BUNDLE_ASSETS_CHUNK_COUNT: ComponentLink;
+export declare const getBundleAsset: (entryId: string) => ComponentLink;
+export declare const getBundleAssetsByEntryType: (assetType: "entry" | "initial" | "chunk") => ComponentLink;
+export declare const getBundleAssetsFileTypeComponentLink: (fileType: string, label?: string) => ComponentLink;
+export declare const getBundleAssetsByChunk: (chunkIds: Array<string>, chunkId: string) => ComponentLink;
+export declare const BUNDLE_MODULES: ComponentLink;
+export declare const BUNDLE_MODULES_DUPLICATE: ComponentLink;
+export declare const getBundleModulesBySearch: (search: string) => ComponentLink;
+export declare const getBundleModulesByChunk: (chunkIds: Array<string>, chunkId: string, fileType?: string) => ComponentLink;
+export declare const getBundleModulesByFileTpe: (fileType: string, fileTypeLabel?: string) => ComponentLink;
+export declare const getBundleModulesBySource: (thirdParty: boolean, label?: string) => ComponentLink;
+export declare const BUNDLE_PACKAGES_COUNT: ComponentLink;
+export declare const BUNDLE_PACKAGES_CHANGED: ComponentLink;
+export declare const BUNDLE_PACKAGES_DUPLICATE: ComponentLink;
+export declare const BUNDLE_PACKAGES_DUPLICATE_CHANGED: ComponentLink;
+export declare const getBundlePackagesByNameComponentLink: (search: string) => ComponentLink;
+export declare const ComponentStateParam: QueryParamConfig<any, any>;
+export declare const COMPONENT_STATE_META: {
+    readonly [COMPONENT.BUNDLE_ASSETS]: QueryParamConfig<any, any>;
+    readonly [COMPONENT.BUNDLE_MODULES]: QueryParamConfig<any, any>;
+    readonly [COMPONENT.BUNDLE_PACKAGES]: QueryParamConfig<any, any>;
+};
+type ComponentStateQueryStringParams = Record<string, ComponentLinkParams>;
+export declare const getComponentStateQueryString: (params?: ComponentStateQueryStringParams) => string;
+export declare const getComponentStateData: (queryString: string) => ComponentStateQueryStringParams;
+export declare const METRIC_COMPONENT_LINKS: Map<string, {
+    link: ComponentLink;
+}>;
+export {};

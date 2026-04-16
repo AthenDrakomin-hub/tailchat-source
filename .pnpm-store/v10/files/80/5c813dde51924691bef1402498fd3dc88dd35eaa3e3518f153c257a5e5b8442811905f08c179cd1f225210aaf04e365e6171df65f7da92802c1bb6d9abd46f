@@ -1,0 +1,2 @@
+import { AppGachaPool, OfficialGachaPool } from '../types';
+export declare function poolStructureConverter(data: OfficialGachaPool): AppGachaPool;

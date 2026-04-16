@@ -1,0 +1,72 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createGetMetricType = createGetMetricType;
+exports.getGlobalMetricType = getGlobalMetricType;
+exports.getMetricRunInfo = getMetricRunInfo;
+const get_1 = __importDefault(require("lodash/get"));
+const constants_1 = require("../constants");
+const config_1 = require("../config");
+const metrics_1 = require("../webpack/metrics");
+const metrics_2 = require("../lighthouse/metrics");
+const metrics_3 = require("../browsertime/metrics");
+const format_1 = require("./format");
+const delta_1 = require("./delta");
+function createGetMetricType(metrics) {
+    return function getMetricType(key, type) {
+        const metric = (0, get_1.default)(metrics, key);
+        if (metric?.type) {
+            return {
+                ...config_1.METRIC_TYPE_CONFIGS[metric.type],
+                ...metric,
+            };
+        }
+        const resolvedType = type || constants_1.MetricTypes.Numeric;
+        return {
+            ...config_1.METRIC_TYPE_CONFIGS[resolvedType],
+            type: resolvedType,
+            label: key,
+        };
+    };
+}
+function getGlobalMetricType(key, type) {
+    const getMetricType = createGetMetricType({
+        webpack: metrics_1.metrics,
+        lighthouse: metrics_2.metrics,
+        browsertime: metrics_3.metrics,
+    });
+    return getMetricType(key, type);
+}
+function getMetricRunInfo(metricType, current, baseline) {
+    const { formatter, biggerIsBetter } = metricType;
+    const runInfo = {
+        value: current,
+        displayValue: formatter(current),
+    };
+    if (typeof baseline === 'undefined') {
+        return runInfo;
+    }
+    const { delta, deltaPercentage } = (0, delta_1.getDelta)({ value: baseline }, { value: current });
+    let regression;
+    if (biggerIsBetter === null) {
+        regression = null;
+    }
+    else if ((biggerIsBetter === true && delta > 0) || (biggerIsBetter === false && delta < 0)) {
+        regression = false;
+    }
+    else if ((biggerIsBetter === false && delta > 0) || (biggerIsBetter === true && delta < 0)) {
+        regression = true;
+    }
+    return {
+        ...runInfo,
+        delta,
+        deltaPercentage,
+        displayDelta: (0, delta_1.formatDelta)(delta, formatter),
+        displayDeltaPercentage: (0, delta_1.formatDelta)(deltaPercentage, format_1.formatPercentage),
+        deltaType: (0, delta_1.getDeltaType)(deltaPercentage, biggerIsBetter),
+        ...(typeof regression !== 'undefined' && { regression }),
+    };
+}
+//# sourceMappingURL=metrics.js.map

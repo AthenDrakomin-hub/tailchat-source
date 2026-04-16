@@ -1,0 +1,3 @@
+import type { RtpCapabilities, RtpEncodingParameters } from 'mediasoup-client/lib/RtpParameters';
+import type { SimulcastProfile } from '../types';
+export declare const getEncodings: (rtpCapabilities: RtpCapabilities, simulcastProfiles: Record<string, SimulcastProfile[]>, width: number | undefined, height: number | undefined, screenSharing?: boolean) => RtpEncodingParameters[];

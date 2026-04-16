@@ -1,0 +1,125 @@
+"use strict";
+/*
+Copyright 2022 ByteDance and/or its affiliates.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PerfseePlugin = void 0;
+const tslib_1 = require("tslib");
+const path_1 = require("path");
+const chalk_1 = tslib_1.__importDefault(require("chalk"));
+const bundle_analyzer_1 = require("@perfsee/bundle-analyzer");
+const plugin_utils_1 = require("@perfsee/plugin-utils");
+let version = 'unknown';
+try {
+    version = require('../package.json').version;
+}
+catch (e) {
+    console.error('Read self version failed', e);
+}
+const webpackStatsToJsonOptions = {
+    hash: true,
+    publicPath: true,
+    assets: true,
+    chunks: true,
+    chunkModules: true,
+    chunkGroups: false,
+    chunkOrigins: false,
+    depth: false,
+    modules: false,
+    source: false,
+    timings: false,
+    warnings: false,
+    errors: false,
+    performance: false,
+    timing: false,
+};
+class PerfseePlugin {
+    constructor(options = {}) {
+        this.modules = new Map();
+        this.apply = (compiler) => {
+            // we do not analyze programs for `node` or in development mode which is meanless
+            if (!this.isTargetWeb(compiler.options) || compiler.options.mode === 'development') {
+                return;
+            }
+            compiler.hooks.beforeRun.tap(PerfseePlugin.PluginName, (compiler) => {
+                this.setOutputPath(compiler.outputPath);
+            });
+            try {
+                compiler.resolverFactory.hooks.resolver.for('normal').tap(PerfseePlugin.PluginName, (resolver) => {
+                    try {
+                        resolver.hooks.result.tap(PerfseePlugin.PluginName, (request) => {
+                            (0, plugin_utils_1.catchModuleVersionFromRequest)(request, this.modules, process.cwd(), plugin_utils_1.BUILD_ENV.pwd);
+                        });
+                    }
+                    catch (e) {
+                        console.error('failed when applying module version catcher: ', e);
+                    }
+                });
+            }
+            catch (e) {
+                console.error('failed when applying module version catcher: ', e);
+            }
+            compiler.hooks.emit.tap(PerfseePlugin.PluginName, this.handleEmit);
+            compiler.hooks.afterEmit.tapPromise(PerfseePlugin.PluginName, this.afterEmit);
+        };
+        this.handleEmit = (compilation) => {
+            if (!this.outputPath) {
+                return;
+            }
+            try {
+                this.setStats(compilation.getStats());
+            }
+            catch (e) {
+                console.error(chalk_1.default.red(`Parse webpack stats failed, due to: ${e.message}`));
+            }
+        };
+        this.afterEmit = async () => {
+            if (!this.outputPath) {
+                return;
+            }
+            await this.reportStats();
+        };
+        this.options = (0, plugin_utils_1.initOptions)(options);
+    }
+    // @internal
+    isTargetWeb(options) {
+        const targetSetting = options.target;
+        const targets = typeof targetSetting === 'string' ? [targetSetting] : Array.isArray(targetSetting) ? targetSetting : undefined;
+        return !targets || targets.includes('web');
+    }
+    // @internal
+    setOutputPath(outputPath) {
+        this.outputPath = outputPath.endsWith(path_1.sep) ? outputPath : outputPath + path_1.sep;
+        return this;
+    }
+    // @internal
+    setStats(stats) {
+        this.stats = stats.toJson(webpackStatsToJsonOptions);
+        this.stats.packageVersions = (0, plugin_utils_1.getAllPackagesVersions)(plugin_utils_1.BUILD_ENV.pwd, this.modules);
+        this.stats.repoPath = plugin_utils_1.BUILD_ENV.pwd;
+        this.stats.buildPath = process.cwd();
+        this.stats.buildTool = bundle_analyzer_1.BundleToolkit.Webpack;
+        return this;
+    }
+    // @internal
+    async reportStats() {
+        const client = new plugin_utils_1.BuildUploadClient(this.options, this.outputPath, version);
+        await client.uploadBuild(this.stats);
+        await (0, plugin_utils_1.generateReports)(this.stats, this.outputPath, this.options);
+    }
+}
+exports.PerfseePlugin = PerfseePlugin;
+PerfseePlugin.PluginName = 'perfsee-plugin';
+//# sourceMappingURL=index.js.map

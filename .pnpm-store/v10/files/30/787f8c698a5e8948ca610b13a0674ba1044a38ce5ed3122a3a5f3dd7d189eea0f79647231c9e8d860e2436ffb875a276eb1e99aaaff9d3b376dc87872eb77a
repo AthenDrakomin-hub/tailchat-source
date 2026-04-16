@@ -1,0 +1,990 @@
+"use strict";
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-tables/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  TableCellExtension: () => TableCellExtension,
+  TableControllerCellExtension: () => TableControllerCellExtension,
+  TableExtension: () => TableExtension,
+  TableHeaderCellExtension: () => TableHeaderCellExtension,
+  TableRowExtension: () => TableRowExtension,
+  activeCellColumnPositioner: () => activeCellColumnPositioner,
+  activeCellPositioner: () => activeCellPositioner,
+  activeCellRowPositioner: () => activeCellRowPositioner,
+  allCellSelectionPositioner: () => allCellSelectionPositioner,
+  allColumnsStartPositioner: () => allColumnsStartPositioner,
+  allRowsStartPositioner: () => allRowsStartPositioner,
+  cellColumnSelectionPositioner: () => cellColumnSelectionPositioner,
+  cellRowSelectionPositioner: () => cellRowSelectionPositioner,
+  cellSelectionPositioner: () => cellSelectionPositioner,
+  createTable: () => createTable,
+  createTableOptions: () => createTableOptions,
+  selectedColumnPositioner: () => selectedColumnPositioner,
+  selectedRowPositioner: () => selectedRowPositioner,
+  tablePositioner: () => tablePositioner
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-tables/src/table-extensions.ts
+var import_core2 = require("@remirror/core");
+var import_state = require("@remirror/pm/state");
+var import_tables = require("@remirror/pm/tables");
+
+// packages/remirror__extension-tables/src/table-utils.ts
+var import_core = require("@remirror/core");
+var import_messages = require("@remirror/messages");
+function getCellAttrs(dom) {
+  const widthAttr = dom.getAttribute("data-colwidth");
+  const widths = widthAttr && /^\d+(,\d+)*$/.test(widthAttr) ? widthAttr.split(",").map((s) => Number(s)) : null;
+  const colspan = Number(dom.getAttribute("colspan") ?? 1);
+  const backgroundColor = dom.getAttribute("data-background-color");
+  return {
+    colspan,
+    rowspan: Number(dom.getAttribute("rowspan") ?? 1),
+    colwidth: widths && widths.length === colspan ? widths : null,
+    background: backgroundColor || dom.style.backgroundColor || null
+  };
+}
+function setCellAttrs(node) {
+  const attrs = {};
+  if (node.attrs.colspan !== 1) {
+    attrs.colspan = node.attrs.colspan;
+  }
+  if (node.attrs.rowspan !== 1) {
+    attrs.rowspan = node.attrs.rowspan;
+  }
+  if (node.attrs.colwidth) {
+    attrs["data-colwidth"] = node.attrs.colwidth.join(",");
+  }
+  if (node.attrs.background) {
+    attrs.style = `${node.attrs.style ?? ""}background-color: ${node.attrs.background};`;
+    attrs["data-background-color"] = node.attrs.background;
+  }
+  return attrs;
+}
+function createTableNodeSchema(extra, override) {
+  const cellAttrs = {
+    ...extra.defaults(),
+    colspan: { default: 1 },
+    rowspan: { default: 1 },
+    colwidth: { default: null },
+    background: { default: null }
+  };
+  return {
+    table: {
+      isolating: true,
+      ...override,
+      attrs: extra.defaults(),
+      content: "tableRow+",
+      tableRole: "table",
+      parseDOM: [{ tag: "table", getAttrs: extra.parse }, ...override.parseDOM ?? []],
+      toDOM(node) {
+        return ["table", extra.dom(node), ["tbody", 0]];
+      }
+    },
+    tableRow: {
+      ...override,
+      attrs: extra.defaults(),
+      content: "(tableCell | tableHeaderCell)*",
+      tableRole: "row",
+      parseDOM: [{ tag: "tr", getAttrs: extra.parse }, ...override.parseDOM ?? []],
+      toDOM(node) {
+        return ["tr", extra.dom(node), 0];
+      }
+    },
+    tableCell: {
+      isolating: true,
+      content: `${import_core.ExtensionTag.Block}+`,
+      ...override,
+      attrs: cellAttrs,
+      tableRole: "cell",
+      parseDOM: [
+        {
+          tag: "td",
+          getAttrs: (dom) => ({ ...extra.parse(dom), ...getCellAttrs(dom) })
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM(node) {
+        return ["td", { ...extra.dom(node), ...setCellAttrs(node) }, 0];
+      }
+    },
+    tableHeaderCell: {
+      isolating: true,
+      content: `${import_core.ExtensionTag.Block}+`,
+      ...override,
+      attrs: cellAttrs,
+      tableRole: "header_cell",
+      parseDOM: [
+        {
+          tag: "th",
+          getAttrs: (dom) => ({ ...extra.parse(dom), ...getCellAttrs(dom) })
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM(node) {
+        return ["th", { ...extra.dom(node), ...setCellAttrs(node) }, 0];
+      }
+    }
+  };
+}
+var TABLE_ROLES = ["table", "row", "cell", "header_cell"];
+function tableNodeTypes(schema) {
+  if (schema.cached.tableNodeTypes) {
+    return schema.cached.tableNodeTypes;
+  }
+  const roles = (0, import_core.object)();
+  schema.cached.tableNodeTypes = roles;
+  for (const nodeType of (0, import_core.values)(schema.nodes)) {
+    if ((0, import_core.includes)(TABLE_ROLES, nodeType.spec.tableRole)) {
+      roles[nodeType.spec.tableRole] = nodeType;
+    }
+  }
+  return roles;
+}
+function createCell(props) {
+  const { content, type } = props;
+  if (content) {
+    return type.createChecked(null, content);
+  }
+  return type.createAndFill();
+}
+function createTable(props) {
+  const { schema, cellContent, columnsCount = 3, rowsCount = 3, withHeaderRow = true } = props;
+  const {
+    cell: tableCell,
+    header_cell: tableHeaderCell,
+    row: tableRow,
+    table
+  } = tableNodeTypes(schema);
+  (0, import_core.invariant)(tableCell && tableHeaderCell && tableRow && table, {
+    code: import_core.ErrorConstant.EXTENSION,
+    message: "Table Extension unable to locate required nodes."
+  });
+  const cells = [];
+  const headerCells = [];
+  for (let ii = 0; ii < columnsCount; ii++) {
+    cells.push(createCell({ type: tableCell, content: cellContent }));
+    if (withHeaderRow) {
+      headerCells.push(
+        createCell({ type: tableHeaderCell, content: cellContent })
+      );
+    }
+  }
+  const rows = [];
+  for (let ii = 0; ii < rowsCount; ii++) {
+    const rowNodes = withHeaderRow && ii === 0 ? headerCells : cells;
+    rows.push(tableRow.createChecked(null, rowNodes));
+  }
+  return table.createChecked(null, rows);
+}
+function findTable(selection) {
+  return (0, import_core.findParentNodeOfType)({ selection, types: "table" });
+}
+function findCellClosestToPos(selection) {
+  return (0, import_core.findParentNodeOfType)({ selection, types: ["tableHeaderCell", "tableCell"] });
+}
+var { CREATE_COMMAND_DESCRIPTION, CREATE_COMMAND_LABEL } = import_messages.ExtensionTablesMessages;
+var createTableOptions = {
+  icon: "table2",
+  description: ({ t }) => t(CREATE_COMMAND_DESCRIPTION),
+  label: ({ t }) => t(CREATE_COMMAND_LABEL)
+};
+
+// packages/remirror__extension-tables/src/table-extensions.ts
+var tablesEnabled = false;
+var TableExtension = class extends import_core2.NodeExtension {
+  lastGoodState = void 0;
+  get name() {
+    return "table";
+  }
+  createTags() {
+    return [import_core2.ExtensionTag.Block];
+  }
+  /**
+   * The last known good state that didn't need fixing. This helps make the fix
+   * command more effective.
+   */
+  createNodeSpec(extra, override) {
+    return createTableNodeSchema(extra, override).table;
+  }
+  /**
+   * Create the table extensions. Set the priority to low so that they appear
+   * lower down in the node list.
+   */
+  createExtensions() {
+    return [new TableRowExtension({ priority: import_core2.ExtensionPriority.Low })];
+  }
+  onStateUpdate(props) {
+    const { tr, state } = props;
+    if (tr?.getMeta(import_tables.fixTablesKey)?.fixTables) {
+      this.lastGoodState = state;
+    }
+  }
+  createEventHandlers() {
+    return {
+      editable: () => {
+        this.store.updateExtensionPlugins(this);
+      }
+    };
+  }
+  /**
+   * Add the table plugins to the editor.
+   */
+  createExternalPlugins() {
+    const plugins = [];
+    if (this.store.isMounted() && this.store.helpers.isViewEditable() === false) {
+      return plugins;
+    }
+    const { resizable, resizeableOptions } = this.options;
+    if (resizable) {
+      plugins.push((0, import_tables.columnResizing)(resizeableOptions));
+    }
+    plugins.push((0, import_tables.tableEditing)());
+    return plugins;
+  }
+  createPlugin() {
+    const { resizable, resizeableOptions } = this.options;
+    if (!resizable) {
+      return {};
+    }
+    if (!this.store.isMounted() || this.store.helpers.isViewEditable()) {
+      return {};
+    }
+    const { cellMinWidth = 25 } = resizeableOptions;
+    return {
+      props: {
+        nodeViews: {
+          table(node, view, getPos) {
+            const dom = view.nodeDOM(getPos());
+            if ((0, import_core2.isElementDomNode)(dom) && dom.tagName === "TABLE") {
+              (0, import_tables.updateColumnsOnResize)(
+                node,
+                dom.firstChild,
+                dom,
+                cellMinWidth
+              );
+            }
+            return new import_tables.TableView(node, cellMinWidth);
+          }
+        }
+      }
+    };
+  }
+  createTable(options = {}) {
+    return (props) => {
+      const { tr, dispatch, state } = props;
+      if (!tr.selection.empty) {
+        return false;
+      }
+      const offset = tr.selection.anchor + 1;
+      const nodes = createTable({ schema: state.schema, ...options });
+      dispatch?.(
+        tr.replaceSelectionWith(nodes).scrollIntoView().setSelection(import_state.TextSelection.near(tr.doc.resolve(offset)))
+      );
+      return true;
+    };
+  }
+  deleteTable() {
+    return (0, import_core2.convertCommand)(import_tables.deleteTable);
+  }
+  addTableColumnBefore() {
+    return (0, import_core2.convertCommand)(import_tables.addColumnBefore);
+  }
+  addTableColumnAfter() {
+    return (0, import_core2.convertCommand)(import_tables.addColumnAfter);
+  }
+  deleteTableColumn() {
+    return (0, import_core2.convertCommand)(import_tables.deleteColumn);
+  }
+  addTableRowBefore() {
+    return (0, import_core2.convertCommand)(import_tables.addRowBefore);
+  }
+  addTableRowAfter() {
+    return (0, import_core2.convertCommand)(import_tables.addRowAfter);
+  }
+  deleteTableRow() {
+    return (0, import_core2.convertCommand)(import_tables.deleteRow);
+  }
+  toggleTableCellMerge() {
+    return toggleMergeCellCommand;
+  }
+  mergeTableCells() {
+    return (0, import_core2.convertCommand)(import_tables.mergeCells);
+  }
+  splitTableCell() {
+    return (0, import_core2.convertCommand)(import_tables.splitCell);
+  }
+  toggleTableHeader(type = "row") {
+    return (0, import_core2.convertCommand)((0, import_tables.toggleHeader)(type));
+  }
+  toggleTableHeaderColumn() {
+    return (0, import_core2.convertCommand)(import_tables.toggleHeaderColumn);
+  }
+  toggleTableHeaderRow() {
+    return (0, import_core2.convertCommand)(import_tables.toggleHeaderRow);
+  }
+  toggleTableHeaderCell() {
+    return (0, import_core2.convertCommand)(import_tables.toggleHeaderCell);
+  }
+  setTableCellAttribute(name, value) {
+    return (0, import_core2.convertCommand)((0, import_tables.setCellAttr)(name, value));
+  }
+  fixTables() {
+    return (0, import_core2.nonChainable)(fixTablesCommand(this.lastGoodState));
+  }
+  enableTableSupport() {
+    if (!tablesEnabled) {
+      document.execCommand("enableObjectResizing", false, "false");
+      document.execCommand("enableInlineTableEditing", false, "false");
+      tablesEnabled = true;
+    }
+  }
+  tableHasHeader(type = "row", state = this.store.getState()) {
+    const { selection } = state;
+    const table = (0, import_core2.findParentNodeOfType)({ selection, types: "table" });
+    if (!table) {
+      return false;
+    }
+    const { node } = table;
+    const map = import_tables.TableMap.get(node);
+    const isHeaderFunc = type === "column" ? import_tables.columnIsHeader : import_tables.rowIsHeader;
+    return isHeaderFunc(map, node, 0);
+  }
+  setTableCellBackground(background) {
+    return (props) => {
+      let { tr } = props;
+      const { dispatch } = props;
+      const { selection } = tr;
+      if (selection instanceof import_tables.CellSelection) {
+        selection.forEachCell((cellNode, pos) => {
+          tr = tr.setNodeMarkup(pos, void 0, { ...cellNode.attrs, background });
+        });
+        dispatch?.(tr);
+        return true;
+      }
+      const found = (0, import_core2.findParentNodeOfType)({ selection, types: ["tableCell", "tableHeaderCell"] });
+      if (found) {
+        dispatch?.(tr.setNodeMarkup(found.pos, void 0, { ...found.node.attrs, background }));
+        return true;
+      }
+      return false;
+    };
+  }
+  selectParentCell() {
+    return ({ dispatch, tr }) => {
+      const cell = findCellClosestToPos(tr.selection.$from);
+      if (!cell) {
+        return false;
+      }
+      dispatch?.(tr.setSelection(import_tables.CellSelection.create(tr.doc, cell.pos)));
+      return true;
+    };
+  }
+  expandCellSelection(type = "all") {
+    return ({ dispatch, tr }) => {
+      if (!(0, import_tables.isCellSelection)(tr.selection)) {
+        return false;
+      }
+      if (type !== "row") {
+        const { $anchorCell, $headCell } = tr.selection;
+        tr.setSelection(import_tables.CellSelection.colSelection($anchorCell, $headCell));
+      }
+      if (type !== "column") {
+        const { $anchorCell, $headCell } = tr.selection;
+        tr.setSelection(import_tables.CellSelection.rowSelection($anchorCell, $headCell));
+      }
+      dispatch?.(tr);
+      return true;
+    };
+  }
+  goToNextCell(props) {
+    return (0, import_core2.convertCommand)((0, import_tables.goToNextCell)(1))(props);
+  }
+  goToPreviousCell(props) {
+    return (0, import_core2.convertCommand)((0, import_tables.goToNextCell)(-1))(props);
+  }
+  /**
+   * This managers the updates of the collaboration provider.
+   */
+  onSetOptions(props) {
+    const { changes } = props;
+    if (changes.resizable.changed) {
+      this.store.updateExtensionPlugins(this);
+    }
+  }
+};
+__decorateClass([
+  (0, import_core2.command)(createTableOptions)
+], TableExtension.prototype, "createTable", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "deleteTable", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "addTableColumnBefore", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "addTableColumnAfter", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "deleteTableColumn", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "addTableRowBefore", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "addTableRowAfter", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "deleteTableRow", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "toggleTableCellMerge", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "mergeTableCells", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "splitTableCell", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "toggleTableHeader", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "toggleTableHeaderColumn", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "toggleTableHeaderRow", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "toggleTableHeaderCell", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "setTableCellAttribute", 1);
+__decorateClass([
+  (0, import_core2.command)({ disableChaining: true })
+], TableExtension.prototype, "fixTables", 1);
+__decorateClass([
+  (0, import_core2.helper)()
+], TableExtension.prototype, "enableTableSupport", 1);
+__decorateClass([
+  (0, import_core2.helper)()
+], TableExtension.prototype, "tableHasHeader", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "setTableCellBackground", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "selectParentCell", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], TableExtension.prototype, "expandCellSelection", 1);
+__decorateClass([
+  (0, import_core2.keyBinding)({
+    shortcut: "Tab",
+    isActive: (options) => options.tabKeyboardShortcuts
+  })
+], TableExtension.prototype, "goToNextCell", 1);
+__decorateClass([
+  (0, import_core2.keyBinding)({
+    shortcut: "Shift-Tab",
+    isActive: (options) => options.tabKeyboardShortcuts
+  })
+], TableExtension.prototype, "goToPreviousCell", 1);
+TableExtension = __decorateClass([
+  (0, import_core2.extension)({
+    defaultOptions: {
+      resizable: true,
+      resizeableOptions: {},
+      tabKeyboardShortcuts: false
+    },
+    defaultPriority: import_core2.ExtensionPriority.Default
+  })
+], TableExtension);
+var TableRowExtension = class extends import_core2.NodeExtension {
+  get name() {
+    return "tableRow";
+  }
+  /**
+   * Automatically create the `TableCellExtension` and
+   * `TableHeaderCellExtension`. This is placed here so that this extension can
+   * be tested independently from the `TableExtension`.
+   */
+  createExtensions() {
+    return [
+      new TableCellExtension({ priority: import_core2.ExtensionPriority.Low }),
+      new TableHeaderCellExtension({ priority: import_core2.ExtensionPriority.Low })
+    ];
+  }
+  createNodeSpec(extra, override) {
+    return createTableNodeSchema(extra, override).tableRow;
+  }
+};
+TableRowExtension = __decorateClass([
+  (0, import_core2.extension)({ defaultPriority: import_core2.ExtensionPriority.Low })
+], TableRowExtension);
+var TableCellExtension = class extends import_core2.NodeExtension {
+  get name() {
+    return "tableCell";
+  }
+  createNodeSpec(extra, override) {
+    return createTableNodeSchema(extra, override).tableCell;
+  }
+};
+TableCellExtension = __decorateClass([
+  (0, import_core2.extension)({ defaultPriority: import_core2.ExtensionPriority.Low })
+], TableCellExtension);
+var TableHeaderCellExtension = class extends import_core2.NodeExtension {
+  get name() {
+    return "tableHeaderCell";
+  }
+  createNodeSpec(extra, override) {
+    return createTableNodeSchema(extra, override).tableHeaderCell;
+  }
+};
+TableHeaderCellExtension = __decorateClass([
+  (0, import_core2.extension)({ defaultPriority: import_core2.ExtensionPriority.Low })
+], TableHeaderCellExtension);
+var TableControllerCellExtension = class extends import_core2.NodeExtension {
+  get name() {
+    return "tableControllerCell";
+  }
+  createNodeSpec(_, __) {
+    return {
+      tableRole: "header_cell"
+    };
+  }
+};
+TableControllerCellExtension = __decorateClass([
+  (0, import_core2.extension)({ defaultPriority: import_core2.ExtensionPriority.Low })
+], TableControllerCellExtension);
+function fixTablesCommand(lastGoodState) {
+  return ({ state, dispatch }) => {
+    const tr = (0, import_tables.fixTables)(state, lastGoodState);
+    if (!tr) {
+      return false;
+    }
+    if (dispatch) {
+      dispatch(tr);
+    }
+    return true;
+  };
+}
+function toggleMergeCellCommand({ state, dispatch }) {
+  if ((0, import_tables.mergeCells)(state, dispatch)) {
+    return false;
+  }
+  return (0, import_tables.splitCell)(state, dispatch);
+}
+
+// packages/remirror__extension-tables/src/table-positioners.ts
+var import_core3 = require("@remirror/core");
+var import_extension_positioner = require("@remirror/extension-positioner");
+var import_tables2 = require("@remirror/pm/tables");
+function getCellsInColumn(selection, columnIndex) {
+  const table = findTable(selection);
+  if (!table) {
+    return;
+  }
+  const map = import_tables2.TableMap.get(table.node);
+  if (columnIndex > 0 || columnIndex > map.width - 1) {
+    return;
+  }
+  const cells = map.cellsInRect({
+    left: columnIndex,
+    right: columnIndex + 1,
+    top: 0,
+    bottom: map.height
+  });
+  const columnNodes = [];
+  cells.forEach((nodePos) => {
+    columnNodes.push({
+      node: table.node.nodeAt(nodePos),
+      pos: table.start + nodePos
+    });
+  });
+  return columnNodes;
+}
+function getCellsInRow(selection, rowIndex) {
+  const table = findTable(selection);
+  if (!table) {
+    return;
+  }
+  const map = import_tables2.TableMap.get(table.node);
+  if (rowIndex > 0 || rowIndex > map.width - 1) {
+    return;
+  }
+  const cells = map.cellsInRect({
+    left: 0,
+    right: map.width,
+    top: rowIndex,
+    bottom: rowIndex + 1
+  });
+  const columnNodes = [];
+  cells.forEach((nodePos) => {
+    columnNodes.push({
+      node: table.node.nodeAt(nodePos),
+      pos: table.start + nodePos
+    });
+  });
+  return columnNodes;
+}
+var tablePositioner = import_extension_positioner.Positioner.create({
+  hasChanged: import_extension_positioner.hasStateChanged,
+  getActive(props) {
+    const { selection } = props.state;
+    const table = findTable(selection);
+    if (!table) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    return [table];
+  },
+  getPosition(props) {
+    const { view, data: table } = props;
+    const node = view.nodeDOM(table.pos);
+    if (!(0, import_core3.isElementDomNode)(node)) {
+      return import_extension_positioner.defaultAbsolutePosition;
+    }
+    const rect = node.getBoundingClientRect();
+    const editorRect = view.dom.getBoundingClientRect();
+    const height = rect.height;
+    const width = rect.width;
+    const left = view.dom.scrollLeft + rect.left - editorRect.left - 1;
+    const top = view.dom.scrollTop + rect.top - editorRect.top - 1;
+    return {
+      x: left,
+      y: top,
+      height,
+      width,
+      rect,
+      visible: (0, import_extension_positioner.isPositionVisible)(rect, view.dom)
+    };
+  }
+});
+var activeCellPositioner = tablePositioner.clone(() => ({
+  getActive(props) {
+    const { selection } = props.state;
+    const cell = findCellClosestToPos(selection);
+    if (!cell) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    return [cell];
+  }
+}));
+var allColumnsStartPositioner = import_extension_positioner.Positioner.create({
+  hasChanged: import_extension_positioner.hasStateChanged,
+  getActive(props) {
+    const { selection } = props.state;
+    const table = findTable(selection);
+    if (!table) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const cells = getCellsInRow(selection, 0) ?? [];
+    if (cells.length === 0) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    return cells;
+  },
+  getID(data) {
+    return `${data.pos}`;
+  },
+  getPosition(props) {
+    const { view, data: cell } = props;
+    const node = view.nodeDOM(cell.pos);
+    if (!(0, import_core3.isElementDomNode)(node)) {
+      return import_extension_positioner.defaultAbsolutePosition;
+    }
+    const rect = node.getBoundingClientRect();
+    const editorRect = view.dom.getBoundingClientRect();
+    const width = rect.width;
+    const left = view.dom.scrollLeft + rect.left - editorRect.left - 1;
+    const top = view.dom.scrollTop + rect.top - editorRect.top - 1;
+    const columnTopRect = new DOMRect(rect.x - 1, rect.y - 1, width, 1);
+    return {
+      x: left,
+      y: top,
+      width,
+      height: 1,
+      rect: columnTopRect,
+      visible: (0, import_extension_positioner.isPositionVisible)(columnTopRect, view.dom)
+    };
+  }
+});
+var allRowsStartPositioner = allColumnsStartPositioner.clone(() => ({
+  /**
+   * This is only active for empty top level nodes. The data is the cursor start
+   * and end position.
+   */
+  getActive(props) {
+    const { selection } = props.state;
+    const table = findTable(selection);
+    if (!table) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const cells = getCellsInColumn(selection, 0) ?? [];
+    if (cells.length === 0) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    return cells;
+  },
+  getPosition(props) {
+    const { view, data: cell } = props;
+    const node = view.nodeDOM(cell.pos);
+    if (!(0, import_core3.isElementDomNode)(node)) {
+      return import_extension_positioner.defaultAbsolutePosition;
+    }
+    const rect = node.getBoundingClientRect();
+    const editorRect = view.dom.getBoundingClientRect();
+    const height = rect.height;
+    const left = view.dom.scrollLeft + rect.left - editorRect.left - 1;
+    const top = view.dom.scrollTop + rect.top - editorRect.top - 1;
+    const rowLeftRect = new DOMRect(rect.x - 1, rect.y - 1, 1, height);
+    return {
+      x: left,
+      y: top,
+      width: 1,
+      height,
+      rect: rowLeftRect,
+      visible: (0, import_extension_positioner.isPositionVisible)(rowLeftRect, view.dom)
+    };
+  }
+}));
+var activeCellColumnPositioner = import_extension_positioner.Positioner.create({
+  hasChanged: import_extension_positioner.hasStateChanged,
+  getActive(props) {
+    const { state, view } = props;
+    const { selection } = state;
+    const table = findTable(selection);
+    if (!table) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const cell = findCellClosestToPos(selection);
+    if (!cell) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const { pos } = cell;
+    const tableNode = view.nodeDOM(table.pos);
+    const node = view.nodeDOM(pos);
+    if (!(0, import_core3.isElementDomNode)(tableNode) || !(0, import_core3.isElementDomNode)(node)) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const tableRect = tableNode.getBoundingClientRect();
+    const rect = node.getBoundingClientRect();
+    return [
+      {
+        pos,
+        rect: new DOMRect(rect.x, tableRect.y, rect.width, tableRect.height)
+      }
+    ];
+  },
+  getID({ pos }) {
+    return `${pos}`;
+  },
+  getPosition(props) {
+    const {
+      view,
+      data: { rect }
+    } = props;
+    const editorRect = view.dom.getBoundingClientRect();
+    const height = rect.height;
+    const width = rect.width;
+    const left = view.dom.scrollLeft + rect.left - editorRect.left - 1;
+    const top = view.dom.scrollTop + rect.top - editorRect.top - 1;
+    return {
+      x: left,
+      y: top,
+      width,
+      height,
+      rect,
+      visible: (0, import_extension_positioner.isPositionVisible)(rect, view.dom)
+    };
+  }
+});
+var activeCellRowPositioner = activeCellColumnPositioner.clone(() => ({
+  getActive(props) {
+    const { state, view } = props;
+    const { selection } = state;
+    const table = findTable(selection);
+    if (!table) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const cell = findCellClosestToPos(selection);
+    if (!cell) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const { pos } = cell;
+    const tableNode = view.nodeDOM(table.pos);
+    const node = view.nodeDOM(pos);
+    if (!(0, import_core3.isElementDomNode)(tableNode) || !(0, import_core3.isElementDomNode)(node)) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const tableRect = tableNode.getBoundingClientRect();
+    const rect = node.getBoundingClientRect();
+    return [
+      {
+        pos,
+        rect: new DOMRect(tableRect.x, rect.y, tableRect.width, rect.height)
+      }
+    ];
+  }
+}));
+var selectedColumnPositioner = activeCellColumnPositioner.clone(({ getActive }) => ({
+  getActive(props) {
+    const [data] = getActive(props);
+    if (!data) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const { selection } = props.state;
+    if (!(0, import_tables2.isCellSelection)(selection) || !selection.isColSelection()) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const table = findTable(selection);
+    if (!table) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const { node, start } = table;
+    const { $anchorCell, $headCell } = selection;
+    const map = import_tables2.TableMap.get(node);
+    const rect = map.rectBetween($anchorCell.pos - start, $headCell.pos - start);
+    if (rect.right - rect.left !== 1) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    return [data];
+  }
+}));
+var selectedRowPositioner = activeCellRowPositioner.clone(({ getActive }) => ({
+  getActive(props) {
+    const [data] = getActive(props);
+    if (!data) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const { selection } = props.state;
+    if (!(0, import_tables2.isCellSelection)(selection) || !selection.isRowSelection()) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const table = findTable(selection);
+    if (!table) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    const { node, start } = table;
+    const { $anchorCell, $headCell } = selection;
+    const map = import_tables2.TableMap.get(node);
+    const rect = map.rectBetween($anchorCell.pos - start, $headCell.pos - start);
+    if (rect.bottom - rect.top !== 1) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    return [data];
+  }
+}));
+var cellSelectionPositioner = import_extension_positioner.Positioner.create({
+  hasChanged: import_extension_positioner.hasStateChanged,
+  getActive(props) {
+    const { selection } = props.state;
+    if (!(0, import_tables2.isCellSelection)(selection)) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    return [selection];
+  },
+  getPosition(props) {
+    const { view, data: selection } = props;
+    const { $headCell, $anchorCell } = selection;
+    const headNode = view.nodeDOM($headCell.pos);
+    const anchorNode = view.nodeDOM($anchorCell.pos);
+    if (!(0, import_core3.isElementDomNode)(headNode) || !(0, import_core3.isElementDomNode)(anchorNode)) {
+      return import_extension_positioner.defaultAbsolutePosition;
+    }
+    const rect = (0, import_core3.mergeDOMRects)(
+      headNode.getBoundingClientRect(),
+      anchorNode.getBoundingClientRect()
+    );
+    const editorRect = view.dom.getBoundingClientRect();
+    const height = rect.height;
+    const width = rect.width;
+    const left = view.dom.scrollLeft + rect.left - editorRect.left - 1;
+    const top = view.dom.scrollTop + rect.top - editorRect.top - 1;
+    return {
+      x: left,
+      y: top,
+      width,
+      height,
+      rect,
+      visible: (0, import_extension_positioner.isPositionVisible)(rect, view.dom)
+    };
+  }
+});
+var cellColumnSelectionPositioner = cellSelectionPositioner.clone(({ getActive }) => ({
+  getActive(props) {
+    const [selection] = getActive(props);
+    if (!selection?.isColSelection()) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    return [selection];
+  }
+}));
+var cellRowSelectionPositioner = cellSelectionPositioner.clone(({ getActive }) => ({
+  getActive(props) {
+    const [selection] = getActive(props);
+    if (!selection?.isRowSelection()) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    return [selection];
+  }
+}));
+var allCellSelectionPositioner = cellSelectionPositioner.clone(({ getActive }) => ({
+  getActive(props) {
+    const [selection] = getActive(props);
+    if (!selection?.isColSelection() || !selection.isRowSelection()) {
+      return import_extension_positioner.Positioner.EMPTY;
+    }
+    return [selection];
+  }
+}));
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  TableCellExtension,
+  TableControllerCellExtension,
+  TableExtension,
+  TableHeaderCellExtension,
+  TableRowExtension,
+  activeCellColumnPositioner,
+  activeCellPositioner,
+  activeCellRowPositioner,
+  allCellSelectionPositioner,
+  allColumnsStartPositioner,
+  allRowsStartPositioner,
+  cellColumnSelectionPositioner,
+  cellRowSelectionPositioner,
+  cellSelectionPositioner,
+  createTable,
+  createTableOptions,
+  selectedColumnPositioner,
+  selectedRowPositioner,
+  tablePositioner
+});

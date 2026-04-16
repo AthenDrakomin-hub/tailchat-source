@@ -1,0 +1,9 @@
+import { FC } from 'react';
+export declare const FindController: FC<{
+    findPrev: () => void;
+    findNext: () => void;
+    stopFind: () => void;
+    caseSensitive: boolean;
+    toggleCaseSensitive: () => void;
+    onDismiss?: () => void;
+}>;

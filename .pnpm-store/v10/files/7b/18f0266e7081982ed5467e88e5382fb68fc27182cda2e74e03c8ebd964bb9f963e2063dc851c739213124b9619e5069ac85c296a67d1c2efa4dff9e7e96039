@@ -1,0 +1,23 @@
+import { ApplySchemaAttributes, CommandFunction, KeyBindingProps, NodeExtension, NodeExtensionSpec, NodeSpecOverride } from '@remirror/core';
+import { TaskListItemExtension } from './task-list-item-extension';
+/**
+ * Create the node for a task list.
+ */
+export declare class TaskListExtension extends NodeExtension {
+    get name(): "taskList";
+    createTags(): ("listContainer" | "block")[];
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    createExtensions(): TaskListItemExtension[];
+    /**
+     * Toggle the task list for the current selection.
+     */
+    toggleTaskList(): CommandFunction;
+    listShortcut(props: KeyBindingProps): boolean;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            taskList: TaskListExtension;
+        }
+    }
+}

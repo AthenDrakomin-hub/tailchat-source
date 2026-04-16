@@ -1,0 +1,65 @@
+{
+  "name": "@lingui/core",
+  "version": "4.14.1",
+  "sideEffects": false,
+  "description": "I18n tools for javascript",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "author": {
+    "name": "Tomáš Ehrlich",
+    "email": "tomas.ehrlich@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "i18n",
+    "i10n",
+    "i9n",
+    "internationalization",
+    "localization",
+    "translation",
+    "multilingual"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "stub": "unbuild --stub"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lingui/js-lingui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lingui/js-lingui/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "dist/"
+  ],
+  "dependencies": {
+    "@babel/runtime": "^7.20.13",
+    "@lingui/message-utils": "4.14.1",
+    "unraw": "^3.0.0"
+  },
+  "devDependencies": {
+    "@lingui/jest-mocks": "*",
+    "unbuild": "2.0.0"
+  },
+  "gitHead": "8cfcc7d66d6474262b2825e47a034a527f185a30"
+}

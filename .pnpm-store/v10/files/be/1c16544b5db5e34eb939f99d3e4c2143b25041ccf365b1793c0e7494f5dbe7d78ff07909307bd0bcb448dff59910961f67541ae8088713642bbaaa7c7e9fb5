@@ -1,0 +1,5 @@
+import { FC } from 'react';
+export interface FindReplaceComponentProps {
+    onDismiss?: () => void;
+}
+export declare const FindReplaceComponent: FC<FindReplaceComponentProps>;

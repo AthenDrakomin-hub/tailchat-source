@@ -1,0 +1,30 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getOfficialGachaPool = exports.getGachaData = exports.getGachaIndex = void 0;
+const tslib_1 = require("tslib");
+const axios_1 = tslib_1.__importDefault(require("axios"));
+const API_ENDPOINT = 'https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01';
+async function getGachaIndex() {
+    const { data } = await axios_1.default.get(`${API_ENDPOINT}/gacha/list.json`);
+    if (data.retcode !== 0 || !data.data)
+        throw { code: data.retcode, ...data };
+    return data?.data?.list;
+}
+exports.getGachaIndex = getGachaIndex;
+async function getGachaData(id) {
+    return (await axios_1.default.get(`${API_ENDPOINT}/${id}/zh-cn.json`)).data;
+}
+exports.getGachaData = getGachaData;
+async function getOfficialGachaPool(type) {
+    const list = await getGachaIndex();
+    const poolData = list.filter((i) => i.gacha_type === type);
+    if (poolData.length < 1)
+        return null;
+    const id = poolData[0].gacha_id;
+    const pool = await getGachaData(id);
+    pool.begin_time = poolData[0].begin_time;
+    pool.end_time = poolData[0].end_time;
+    return pool;
+}
+exports.getOfficialGachaPool = getOfficialGachaPool;
+//# sourceMappingURL=getGachaData.js.map

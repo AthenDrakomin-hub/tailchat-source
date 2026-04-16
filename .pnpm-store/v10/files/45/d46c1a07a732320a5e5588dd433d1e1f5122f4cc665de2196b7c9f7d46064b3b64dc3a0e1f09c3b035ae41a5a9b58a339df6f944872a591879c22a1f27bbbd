@@ -1,0 +1,296 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-markdown/src/markdown-extension.ts
+import {
+  command,
+  extension,
+  ExtensionTag,
+  helper,
+  PlainExtension
+} from "@remirror/core";
+import { DOMSerializer } from "@remirror/pm/model";
+
+// packages/remirror__extension-markdown/src/html-to-markdown.ts
+import _TurndownService from "turndown";
+import { defaultImport, ErrorConstant, invariant, isElementDomNode } from "@remirror/core";
+var TurndownService = defaultImport(_TurndownService);
+function htmlToMarkdown(html) {
+  return turndownService.turndown(html);
+}
+function isHeadingRow(tableRow) {
+  const parentNode = tableRow.parentNode;
+  if (!isElementDomNode(parentNode)) {
+    return false;
+  }
+  if (parentNode.nodeName === "THEAD") {
+    return true;
+  }
+  if (parentNode.nodeName !== "TABLE" && !isFirstTbody(parentNode)) {
+    return false;
+  }
+  const childNodes = [...tableRow.childNodes];
+  return childNodes.every((n) => n.nodeName === "TH") && childNodes.some((n) => !!n.textContent);
+}
+function isControllerHeadingCell(cell2) {
+  return isElementDomNode(cell2) && cell2.matches("th[data-controller-cell]");
+}
+function isControllerHeadingRow(tableRow) {
+  const parentNode = tableRow.parentNode;
+  if (!isElementDomNode(parentNode)) {
+    return false;
+  }
+  if (parentNode.nodeName !== "TABLE" && !isFirstTbody(parentNode)) {
+    return false;
+  }
+  const childNodes = [...tableRow.childNodes];
+  return childNodes.every((n) => isControllerHeadingCell(n));
+}
+function isFirstTbody(element) {
+  if (element.nodeName !== "TBODY") {
+    return false;
+  }
+  const previousSibling = element.previousSibling;
+  if (!previousSibling) {
+    return true;
+  }
+  return isElementDomNode(previousSibling) && previousSibling.nodeName === "THEAD" && !previousSibling.textContent?.trim();
+}
+function isNestedTable(element) {
+  const currentTable = element.closest("table");
+  if (!currentTable) {
+    return false;
+  }
+  const { parentNode } = currentTable;
+  if (!parentNode) {
+    return true;
+  }
+  return !!parentNode.closest("table");
+}
+function cell(content, node) {
+  const childNodes = [];
+  for (const n of node.parentNode?.childNodes ?? []) {
+    if (isControllerHeadingCell(n)) {
+      continue;
+    }
+    childNodes.push(n);
+  }
+  const index = childNodes.indexOf(node);
+  const prefix = index === 0 ? "| " : " ";
+  return `${prefix + content.trim()} |`;
+}
+var turndownService = new TurndownService({ codeBlockStyle: "fenced", headingStyle: "atx" }).addRule("taskListItems", {
+  filter: (node) => node.nodeName === "LI" && node.hasAttribute("data-task-list-item"),
+  replacement: (content, node) => {
+    const isChecked = node.hasAttribute("data-checked");
+    return `- ${isChecked ? "[x]" : "[ ]"} ${content.trimStart()}`;
+  }
+}).addRule("tableCell", {
+  filter: ["th", "td"],
+  replacement: (content, node) => {
+    if (isControllerHeadingCell(node)) {
+      return "";
+    }
+    return cell(content, node);
+  }
+}).addRule("tableRow", {
+  filter: "tr",
+  replacement: (content, node) => {
+    let borderCells = "";
+    const alignMap = { left: ":--", right: "--:", center: ":-:" };
+    const childNodes = [...node.childNodes].filter((n) => !isControllerHeadingCell(n));
+    if (isHeadingRow(node)) {
+      for (const childNode of childNodes) {
+        if (!isElementDomNode(childNode)) {
+          continue;
+        }
+        let border = "---";
+        const align = (childNode.getAttribute("align") ?? "").toLowerCase();
+        if (align) {
+          border = alignMap[align] || border;
+        }
+        borderCells += cell(border, childNode);
+      }
+    }
+    return `
+${content}${borderCells ? `
+${borderCells}` : ""}`;
+  }
+}).addRule("table", {
+  // Only convert tables with a heading row. Tables with no heading row are kept
+  // using `keep` (see below).
+  filter: (node) => {
+    if (node.nodeName !== "TABLE") {
+      return false;
+    }
+    if (isNestedTable(node)) {
+      return false;
+    }
+    const rows = [...node.rows].filter(
+      (r) => (
+        // Remove controller rows
+        !isControllerHeadingRow(r)
+      )
+    );
+    return isHeadingRow(rows[0]);
+  },
+  replacement: (content) => {
+    content = content.replace("\n\n", "\n");
+    return `
+
+${content}
+
+`;
+  }
+}).addRule("tableSection", {
+  filter: ["thead", "tbody", "tfoot"],
+  replacement: function(content) {
+    return content;
+  }
+}).keep(
+  (node) => node.nodeName === "TABLE" && !isHeadingRow(node.rows[0])
+).keep((node) => node.nodeName === "TABLE" && isNestedTable(node)).addRule("strikethrough", {
+  filter: ["del", "s", "strike"],
+  replacement: function(content) {
+    return `~${content}~`;
+  }
+}).addRule("fencedCodeBlock", {
+  filter: (node, options) => !!(options.codeBlockStyle === "fenced" && node.nodeName === "PRE" && node.firstChild && node.firstChild.nodeName === "CODE"),
+  replacement: (_, node, options) => {
+    invariant(isElementDomNode(node.firstChild), {
+      code: ErrorConstant.EXTENSION,
+      message: `Invalid node \`${node.firstChild?.nodeName}\` encountered for codeblock when converting html to markdown.`
+    });
+    const className = node.firstChild.getAttribute("class") ?? "";
+    const language = className.match(/(?:lang|language)-(\S+)/)?.[1] ?? node.firstChild.getAttribute("data-code-block-language") ?? "";
+    return `
+
+${options.fence}${language}
+${node.firstChild.textContent}
+${options.fence}
+
+`;
+  }
+});
+
+// packages/remirror__extension-markdown/src/markdown-to-html.ts
+import { marked } from "marked";
+marked.use({
+  renderer: {
+    list(body, isOrdered, start) {
+      if (isOrdered) {
+        const startAttr = start !== 1 ? `start="${start}"` : "";
+        return `<ol ${startAttr}>
+${body}</ol>
+`;
+      }
+      const taskListAttr = body.startsWith("<li data-task-list-item ") ? "data-task-list" : "";
+      return `<ul ${taskListAttr}>
+${body}</ul>
+`;
+    },
+    listitem(text, isTask, isChecked) {
+      if (!isTask) {
+        return `<li>${text}</li>
+`;
+      }
+      const checkedAttr = isChecked ? "data-checked" : "";
+      return `<li data-task-list-item ${checkedAttr}>${text}</li>
+`;
+    }
+  }
+});
+function markdownToHtml(markdown, sanitizer) {
+  const html = marked(markdown, { gfm: true, smartLists: true, xhtml: true });
+  if (sanitizer) {
+    return sanitizer(html);
+  }
+  return html;
+}
+
+// packages/remirror__extension-markdown/src/markdown-extension.ts
+var MarkdownExtension = class extends PlainExtension {
+  get name() {
+    return "markdown";
+  }
+  /**
+   * Add the `markdown` string handler and `getMarkdown` state helper method.
+   */
+  onCreate() {
+    this.store.setStringHandler("markdown", this.markdownToProsemirrorNode.bind(this));
+  }
+  createPlugin() {
+    const clipboardTextSerializer = this.options.copyAsMarkdown ? (slice) => {
+      const wrapper = document.createElement("div");
+      const serializer = DOMSerializer.fromSchema(this.store.schema);
+      wrapper.append(serializer.serializeFragment(slice.content));
+      return this.options.htmlToMarkdown(wrapper.innerHTML);
+    } : void 0;
+    return {
+      props: {
+        clipboardTextSerializer
+      }
+    };
+  }
+  markdownToProsemirrorNode(options) {
+    return this.store.stringHandlers.html({
+      ...options,
+      content: this.options.markdownToHtml(options.content, this.options.htmlSanitizer)
+    });
+  }
+  insertMarkdown(markdown, options) {
+    return (props) => {
+      const { state } = props;
+      let html = this.options.markdownToHtml(markdown, this.options.htmlSanitizer);
+      html = !options?.alwaysWrapInBlock && html.startsWith("<p><") && html.endsWith("</p>\n") ? html.slice(3, -5) : `<div>${html}</div>`;
+      const fragment = this.store.stringHandlers.html({
+        content: html,
+        schema: state.schema,
+        fragment: true
+      });
+      return this.store.commands.insertNode.original(fragment, {
+        ...options,
+        replaceEmptyParentBlock: true
+      })(props);
+    };
+  }
+  getMarkdown(state) {
+    return this.options.htmlToMarkdown(this.store.helpers.getHTML(state));
+  }
+  toggleBoldMarkdown() {
+    return (_) => false;
+  }
+};
+__decorateClass([
+  command()
+], MarkdownExtension.prototype, "insertMarkdown", 1);
+__decorateClass([
+  helper()
+], MarkdownExtension.prototype, "getMarkdown", 1);
+__decorateClass([
+  command()
+], MarkdownExtension.prototype, "toggleBoldMarkdown", 1);
+MarkdownExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      htmlToMarkdown,
+      markdownToHtml,
+      htmlSanitizer: void 0,
+      activeNodes: [ExtensionTag.Code],
+      copyAsMarkdown: false
+    },
+    staticKeys: ["htmlToMarkdown", "markdownToHtml", "htmlSanitizer"]
+  })
+], MarkdownExtension);
+export {
+  MarkdownExtension
+};

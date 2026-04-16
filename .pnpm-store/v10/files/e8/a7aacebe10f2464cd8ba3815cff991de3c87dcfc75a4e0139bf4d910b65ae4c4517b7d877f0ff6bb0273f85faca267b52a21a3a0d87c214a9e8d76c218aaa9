@@ -1,0 +1,137 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-heading/src/heading-extension.ts
+import {
+  command,
+  CommandsExtension,
+  extension,
+  ExtensionTag,
+  NamedShortcut as NamedShortcut2,
+  NodeExtension,
+  object,
+  setBlockType,
+  toggleBlockItem
+} from "@remirror/core";
+import { textblockTypeInputRule } from "@remirror/pm/inputrules";
+
+// packages/remirror__extension-heading/src/heading-constants.ts
+import { NamedShortcut } from "@remirror/core";
+import { ExtensionHeadingMessages } from "@remirror/messages";
+var { LABEL } = ExtensionHeadingMessages;
+var toggleHeadingOptions = {
+  icon: ({ attrs }) => `h${attrs?.level ?? "1"}`,
+  label: ({ t, attrs }) => t({
+    ...LABEL,
+    values: {
+      level: attrs?.level
+    }
+  })
+};
+var shortcuts = [
+  NamedShortcut.H1,
+  NamedShortcut.H2,
+  NamedShortcut.H3,
+  NamedShortcut.H4,
+  NamedShortcut.H5,
+  NamedShortcut.H6
+];
+
+// packages/remirror__extension-heading/src/heading-extension.ts
+var HeadingExtension = class extends NodeExtension {
+  get name() {
+    return "heading";
+  }
+  createTags() {
+    return [ExtensionTag.Block, ExtensionTag.TextBlock, ExtensionTag.FormattingNode];
+  }
+  createNodeSpec(extra, override) {
+    return {
+      content: "inline*",
+      defining: true,
+      draggable: false,
+      ...override,
+      attrs: {
+        ...extra.defaults(),
+        level: {
+          default: this.options.defaultLevel
+        }
+      },
+      parseDOM: [
+        ...this.options.levels.map((level) => ({
+          tag: `h${level}`,
+          getAttrs: (element) => ({ ...extra.parse(element), level })
+        })),
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => {
+        if (!this.options.levels.includes(node.attrs.level)) {
+          return [`h${this.options.defaultLevel}`, extra.dom(node), 0];
+        }
+        return [`h${node.attrs.level}`, extra.dom(node), 0];
+      }
+    };
+  }
+  toggleHeading(attrs = {}) {
+    return toggleBlockItem({
+      type: this.type,
+      toggleType: "paragraph",
+      attrs
+    });
+  }
+  /**
+   * Dynamically create the shortcuts for the heading extension.
+   */
+  createKeymap(fn) {
+    const commandsExtension = this.store.getExtension(CommandsExtension);
+    const keys = object();
+    const attrShortcuts = [];
+    for (const level of this.options.levels) {
+      const shortcut = shortcuts[level - 1] ?? NamedShortcut2.H1;
+      keys[shortcut] = setBlockType(this.type, { level });
+      attrShortcuts.push({ attrs: { level }, shortcut: fn(shortcut)[0] });
+    }
+    commandsExtension.updateDecorated("toggleHeading", { shortcut: attrShortcuts });
+    return keys;
+  }
+  createInputRules() {
+    return this.options.levels.map(
+      (level) => textblockTypeInputRule(new RegExp(`^(#{1,${level}})\\s$`), this.type, () => ({
+        level
+      }))
+    );
+  }
+  createPasteRules() {
+    return this.options.levels.map((level) => ({
+      type: "node",
+      nodeType: this.type,
+      regexp: new RegExp(`^#{${level}}\\s([\\s\\w]+)$`),
+      getAttributes: () => ({ level }),
+      startOfTextBlock: true
+    }));
+  }
+};
+__decorateClass([
+  command(toggleHeadingOptions)
+], HeadingExtension.prototype, "toggleHeading", 1);
+HeadingExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      levels: [1, 2, 3, 4, 5, 6],
+      defaultLevel: 1
+    },
+    staticKeys: ["defaultLevel", "levels"]
+  })
+], HeadingExtension);
+export {
+  HeadingExtension
+};

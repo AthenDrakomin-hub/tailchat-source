@@ -1,0 +1,7 @@
+import { FC } from 'react';
+import { CodeBlockAttributes } from '@remirror/extension-code-block';
+import { CommandButtonProps } from './command-button';
+export interface ToggleCodeBlockButtonProps extends Omit<CommandButtonProps, 'commandName' | 'active' | 'enabled' | 'attrs' | 'onSelect'> {
+    attrs?: Partial<CodeBlockAttributes>;
+}
+export declare const ToggleCodeBlockButton: FC<ToggleCodeBlockButtonProps>;

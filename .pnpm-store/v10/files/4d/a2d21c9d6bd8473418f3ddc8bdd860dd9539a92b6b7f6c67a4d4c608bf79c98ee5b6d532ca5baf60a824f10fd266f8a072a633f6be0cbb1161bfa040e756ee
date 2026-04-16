@@ -1,0 +1,30 @@
+export declare enum GitHost {
+    Github = "Github",
+    Gitlab = "Gitlab"
+}
+export interface IGitHost {
+    path: string;
+    repoUrl: () => string;
+    commitUrl: (hash: string) => string;
+    branchUrl: (branch: string) => string;
+    tagUrl: (tag: string) => string;
+    diffUrl: (hash: string, baseHash: string) => string;
+}
+export declare const hostDomains: {
+    Github: string;
+    Gitlab: string;
+};
+export declare class CommonGitHost implements IGitHost {
+    path: string;
+    constructor(project: {
+        host: GitHost;
+        namespace: string;
+        name: string;
+    });
+    repoUrl(): string;
+    commitUrl(hash: string): string;
+    branchUrl(branch: string): string;
+    tagUrl(tag: string): string;
+    diffUrl(from: string, to: string): string;
+}
+export declare function gitHostFromDomain(domainOrHost: string): GitHost | undefined;

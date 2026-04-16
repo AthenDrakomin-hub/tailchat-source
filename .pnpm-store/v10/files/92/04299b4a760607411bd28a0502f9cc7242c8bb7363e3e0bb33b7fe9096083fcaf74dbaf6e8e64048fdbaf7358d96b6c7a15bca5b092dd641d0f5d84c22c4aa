@@ -1,0 +1,24 @@
+{
+    "name": "@types/direction",
+    "version": "1.0.0",
+    "description": "TypeScript definitions for direction",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Andrey Romanov",
+            "url": "https://github.com/andrew--r",
+            "githubUsername": "andrew--r"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/direction"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "084b880e078e5363f4449944bbf0a92d3d38ab15b4d3f86ea39b0e0122a060a8",
+    "typeScriptVersion": "2.8"
+}

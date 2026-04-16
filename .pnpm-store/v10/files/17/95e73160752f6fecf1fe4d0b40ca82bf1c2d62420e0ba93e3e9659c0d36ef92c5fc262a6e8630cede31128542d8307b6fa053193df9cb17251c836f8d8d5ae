@@ -1,0 +1,41 @@
+import { NodeExtension, ApplySchemaAttributes, NodeSpecOverride, NodeExtensionSpec, CommandFunction, InputRule } from '@remirror/core';
+
+interface HorizontalRuleOptions {
+    /**
+     * The name of the node to insert after inserting a horizontalRule.
+     *
+     * Set to false to prevent adding a node afterwards.
+     *
+     * @defaultValue 'paragraph'
+     */
+    insertionNode?: string | false;
+}
+/**
+ * Adds a horizontal line to the editor.
+ */
+declare class HorizontalRuleExtension extends NodeExtension<HorizontalRuleOptions> {
+    get name(): "horizontalRule";
+    createTags(): "block"[];
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    /**
+     * Inserts a horizontal line into the editor.
+     */
+    insertHorizontalRule(): CommandFunction;
+    createInputRules(): InputRule[];
+    /**
+     * Updates the transaction after a `horizontalRule` has been inserted to make
+     * sure the currently selected node isn't a Horizontal Rule.
+     *
+     * This should only be called for empty selections.
+     */
+    private updateFromNodeSelection;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            horizontalRule: HorizontalRuleExtension;
+        }
+    }
+}
+
+export { HorizontalRuleExtension, HorizontalRuleOptions };

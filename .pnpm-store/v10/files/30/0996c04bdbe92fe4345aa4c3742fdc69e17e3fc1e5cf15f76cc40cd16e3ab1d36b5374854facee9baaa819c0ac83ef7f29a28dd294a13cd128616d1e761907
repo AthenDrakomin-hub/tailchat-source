@@ -1,0 +1,36 @@
+export declare const config: {
+    port: number;
+    secret: string;
+    env: string;
+    /**
+     * 是否打开socket admin ui
+     */
+    enableSocketAdmin: boolean;
+    redisUrl: string;
+    mongoUrl: string;
+    storage: {
+        type: string;
+        minioUrl: string;
+        user: string;
+        pass: string;
+        bucketName: string;
+        /**
+         * 文件上传限制
+         * 单位byte
+         * 默认 1m
+         */
+        limit: number;
+    };
+    apiUrl: string;
+    staticUrl: string;
+    enableOpenapi: boolean;
+    smtp: {
+        senderName: string;
+        connectionUrl: string;
+    };
+};
+export declare const builtinAuthWhitelist: string[];
+/**
+ * 构建上传地址
+ */
+export declare function buildUploadUrl(objectName: string): string;

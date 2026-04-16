@@ -1,0 +1,289 @@
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  castFilter: () => castFilter,
+  convertId: () => convertId,
+  default: () => raExpressMongoose,
+  filterGetList: () => filterGetList,
+  filterReadOnly: () => filterReadOnly,
+  parseQuery: () => parseQuery,
+  statusMessages: () => statusMessages_default,
+  virtualId: () => virtualId
+});
+module.exports = __toCommonJS(src_exports);
+var import_express = require("express");
+
+// src/statusMessages.ts
+function reject(res, status, reason) {
+  return res.status(status).json({ message: reason ?? "Invalid request" });
+}
+function error(res, status, e, message) {
+  if (process.env.NODE_ENV !== "production") {
+    return res.status(status).json({ message, error: e.message });
+  }
+}
+var statusMessages_default = { reject, error };
+
+// src/utils/castFilter.ts
+var import_escape_string_regexp = __toESM(require("escape-string-regexp"));
+function castFilter(obj, model, allowedRegexes = []) {
+  const { path } = model.schema;
+  Object.keys(obj).forEach((key) => {
+    try {
+      obj[key] = path(key).cast(obj[key], null, null);
+    } catch (e) {
+    }
+    if (allowedRegexes.includes(key) && typeof obj[key] === "string") {
+      obj[key] = new RegExp((0, import_escape_string_regexp.default)(obj[key]));
+    }
+  });
+  return obj;
+}
+
+// src/utils/convertId.ts
+function convertId(obj) {
+  if (obj.id) {
+    const newObject = {
+      _id: obj.id,
+      ...obj
+    };
+    delete newObject.id;
+    return newObject;
+  } else {
+    return obj;
+  }
+}
+
+// src/utils/filterGetList.ts
+var filterGetListParams = [
+  "_sort",
+  "_order",
+  "_start",
+  "_end"
+];
+function filterGetList(obj) {
+  const filtered = {};
+  Object.entries(obj).forEach(([index, value]) => {
+    if (!filterGetListParams.includes(index))
+      filtered[index] = value;
+  });
+  return filtered;
+}
+
+// src/utils/filterReadOnly.ts
+function filterReadOnly(obj, readOnlyFields) {
+  if (!readOnlyFields)
+    return obj;
+  readOnlyFields.forEach((v) => {
+    delete obj[v];
+  });
+  return obj;
+}
+
+// src/utils/parseQuery.ts
+function parseQuery(result, model, allowedRegexes, fields) {
+  if (!fields)
+    return result;
+  if (result.q) {
+    if (!Array.isArray(result.$or))
+      result.$or = [];
+    fields.forEach((field) => {
+      const newFilter = { [field]: result.q };
+      result.$or.push(castFilter(newFilter, model, allowedRegexes));
+    });
+    delete result.q;
+  }
+  return result;
+}
+
+// src/utils/virtualId.ts
+function virtualId(el) {
+  if (Array.isArray(el)) {
+    return el.map((e) => {
+      return {
+        id: e._id,
+        ...e,
+        _id: void 0
+      };
+    });
+  }
+  return { id: el._id, ...el, _id: void 0 };
+}
+
+// src/index.ts
+function raExpressMongoose(model, options) {
+  const {
+    q,
+    allowedRegexFields = [],
+    readOnlyFields,
+    inputTransformer = (input) => input,
+    listQuery,
+    extraSelects,
+    maxRows = 100,
+    capabilities,
+    aclName,
+    router = (0, import_express.Router)(),
+    ACLMiddleware
+  } = options ?? {};
+  const {
+    list: canList = true,
+    get: canGet = true,
+    create: canCreate = true,
+    update: canUpdate = true,
+    delete: canDelete = true
+  } = capabilities ?? {};
+  if (canList)
+    router.get(
+      "/",
+      aclName && ACLMiddleware ? ACLMiddleware(`${aclName}.list`) : (req, res, next) => next(),
+      async (req, res) => {
+        let query = model.find({
+          ...listQuery,
+          ...parseQuery(
+            castFilter(
+              convertId(filterGetList(req.query)),
+              model,
+              allowedRegexFields
+            ),
+            model,
+            allowedRegexFields,
+            q
+          )
+        });
+        if (req.query._sort && req.query._order)
+          query = query.sort({
+            [typeof req.query._sort === "string" ? req.query._sort === "id" ? "_id" : req.query._sort : "_id"]: req.query._order === "ASC" ? 1 : -1
+          });
+        if (req.query._start)
+          query = query.skip(
+            parseInt(
+              typeof req.query._start === "string" ? req.query._start : "0"
+            )
+          );
+        if (req.query._end)
+          query = query.limit(
+            Math.min(
+              parseInt(
+                typeof req.query._end === "string" ? req.query._end : "0"
+              ) - (req.query._start ? parseInt(
+                typeof req.query._start === "string" ? req.query._start : "0"
+              ) : 0),
+              maxRows
+            )
+          );
+        else
+          query = query.limit(maxRows);
+        if (extraSelects)
+          query = query.select(extraSelects);
+        res.set(
+          "X-Total-Count",
+          (await model.countDocuments({
+            ...listQuery,
+            ...parseQuery(
+              castFilter(
+                convertId(filterGetList(req.query)),
+                model,
+                allowedRegexFields
+              ),
+              model,
+              allowedRegexFields,
+              q
+            )
+          })).toString()
+        );
+        return res.json(
+          virtualId(await query.lean())
+        );
+      }
+    );
+  if (canGet)
+    router.get(
+      "/:id",
+      aclName && ACLMiddleware ? ACLMiddleware(`${aclName}.list`) : (req, res, next) => next(),
+      async (req, res) => {
+        await model.findById(req.params.id).select(extraSelects).lean().then((result) => res.json(virtualId(result))).catch((e) => {
+          return statusMessages_default.error(res, 400, e);
+        });
+      }
+    );
+  if (canCreate)
+    router.post(
+      "/",
+      aclName && ACLMiddleware ? ACLMiddleware(`${aclName}.create`) : (req, res, next) => next(),
+      async (req, res) => {
+        const result = convertId(
+          await inputTransformer(filterReadOnly(req.body, readOnlyFields))
+        );
+        const newData = {
+          ...result
+        };
+        const newEntry = new model(newData);
+        await newEntry.save().then((result2) => res.json(virtualId(result2))).catch((e) => {
+          return statusMessages_default.error(res, 400, e, "Bad request");
+        });
+      }
+    );
+  if (canUpdate)
+    router.put(
+      "/:id",
+      aclName && ACLMiddleware ? ACLMiddleware(`${aclName}.edit`) : (req, res, next) => next(),
+      async (req, res) => {
+        const updateData = {
+          ...await convertId(
+            await inputTransformer(filterReadOnly(req.body, readOnlyFields))
+          )
+        };
+        await model.findOneAndUpdate({ _id: req.params.id }, updateData, {
+          new: true,
+          runValidators: true
+        }).lean().then((result) => res.json(virtualId(result))).catch((e) => {
+          return statusMessages_default.error(res, 400, e, "Bad request");
+        });
+      }
+    );
+  if (canDelete)
+    router.delete(
+      "/:id",
+      aclName && ACLMiddleware ? ACLMiddleware(`${aclName}.delete`) : (req, res, next) => next(),
+      async (req, res) => {
+        await model.findOneAndDelete({ _id: req.params.id }).then((result) => res.json(virtualId(result))).catch((e) => {
+          return statusMessages_default.error(res, 404, e, "Element does not exist");
+        });
+      }
+    );
+  return router;
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  castFilter,
+  convertId,
+  filterGetList,
+  filterReadOnly,
+  parseQuery,
+  statusMessages,
+  virtualId
+});

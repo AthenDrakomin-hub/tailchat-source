@@ -1,0 +1,33 @@
+import { EditorState, NodeExtension, NodeType, Transaction } from '@remirror/core';
+import { DecorationSet } from '@remirror/pm/view';
+import type { CodeBlockOptions } from './code-block-types';
+export declare class CodeBlockState {
+    #private;
+    /**
+     * The set of cached decorations to minimize dom updates
+     */
+    decorationSet: DecorationSet;
+    constructor(type: NodeType, extension: NodeExtension<CodeBlockOptions>);
+    /**
+     * Creates the initial set of decorations
+     */
+    init(state: EditorState): this;
+    /**
+     * Recreate all the decorations again for all the provided blocks.
+     */
+    private refreshDecorationSet;
+    /**
+     * Apply the state and update decorations when a change has happened in the
+     * editor.
+     */
+    apply(tr: Transaction, _: EditorState): this;
+    /**
+     * Removes all decorations which relate to the changed block node before creating new decorations
+     * and adding them to the decorationSet.
+     */
+    private updateDecorationSet;
+    /**
+     * Flags that a deletion has just occurred.
+     */
+    setDeleted(deleted: boolean): void;
+}

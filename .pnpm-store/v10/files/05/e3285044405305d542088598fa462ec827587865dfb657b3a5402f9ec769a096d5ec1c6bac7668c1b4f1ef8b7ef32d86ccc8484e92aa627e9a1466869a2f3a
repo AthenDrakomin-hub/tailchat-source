@@ -1,0 +1,7 @@
+import { FC } from 'react';
+export declare const FindInput: FC<{
+    query: string;
+    setQuery: (query: string) => void;
+    total: number;
+    activeIndex?: number | null;
+}>;

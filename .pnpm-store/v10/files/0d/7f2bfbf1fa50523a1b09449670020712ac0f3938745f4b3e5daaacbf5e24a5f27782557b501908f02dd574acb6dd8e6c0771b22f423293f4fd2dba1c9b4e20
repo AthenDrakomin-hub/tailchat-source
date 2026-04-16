@@ -1,0 +1,25 @@
+import { formatNumber, formatDuration, formatFileSize, formatPercentage } from '../utils/format';
+import { MetricTypes } from '../constants';
+export const METRIC_TYPE_CONFIGS = {
+    [MetricTypes.Numeric]: {
+        biggerIsBetter: false,
+        formatter: formatNumber,
+    },
+    [MetricTypes.Score]: {
+        biggerIsBetter: true,
+        formatter: formatNumber,
+    },
+    [MetricTypes.Duration]: {
+        biggerIsBetter: false,
+        formatter: formatDuration,
+    },
+    [MetricTypes.FileSize]: {
+        biggerIsBetter: false,
+        formatter: formatFileSize,
+    },
+    [MetricTypes.Percentage]: {
+        biggerIsBetter: true,
+        formatter: formatPercentage,
+    },
+};
+//# sourceMappingURL=metric-types.js.map

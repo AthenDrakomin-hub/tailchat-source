@@ -1,0 +1,7 @@
+export declare const getCurrentCommit: () => Promise<string | undefined>;
+export declare const getProjectInfoFromGit: () => Promise<{
+    branch: string;
+    host: string;
+    namespace: string;
+    name: string;
+} | null>;

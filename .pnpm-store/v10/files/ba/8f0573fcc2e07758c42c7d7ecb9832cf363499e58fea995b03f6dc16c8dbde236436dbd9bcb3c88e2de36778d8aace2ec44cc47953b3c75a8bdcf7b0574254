@@ -1,0 +1,64 @@
+import get from 'lodash/get';
+import { MetricTypes, } from '../constants';
+import { METRIC_TYPE_CONFIGS } from '../config';
+import { metrics as webpackMetricTypes } from '../webpack/metrics';
+import { metrics as lighthouseMetricTypes } from '../lighthouse/metrics';
+import { metrics as browsertimeMeticTypes } from '../browsertime/metrics';
+import { formatPercentage } from './format';
+import { formatDelta, getDelta, getDeltaType } from './delta';
+export function createGetMetricType(metrics) {
+    return function getMetricType(key, type) {
+        const metric = get(metrics, key);
+        if (metric === null || metric === void 0 ? void 0 : metric.type) {
+            return {
+                ...METRIC_TYPE_CONFIGS[metric.type],
+                ...metric,
+            };
+        }
+        const resolvedType = type || MetricTypes.Numeric;
+        return {
+            ...METRIC_TYPE_CONFIGS[resolvedType],
+            type: resolvedType,
+            label: key,
+        };
+    };
+}
+export function getGlobalMetricType(key, type) {
+    const getMetricType = createGetMetricType({
+        webpack: webpackMetricTypes,
+        lighthouse: lighthouseMetricTypes,
+        browsertime: browsertimeMeticTypes,
+    });
+    return getMetricType(key, type);
+}
+export function getMetricRunInfo(metricType, current, baseline) {
+    const { formatter, biggerIsBetter } = metricType;
+    const runInfo = {
+        value: current,
+        displayValue: formatter(current),
+    };
+    if (typeof baseline === 'undefined') {
+        return runInfo;
+    }
+    const { delta, deltaPercentage } = getDelta({ value: baseline }, { value: current });
+    let regression;
+    if (biggerIsBetter === null) {
+        regression = null;
+    }
+    else if ((biggerIsBetter === true && delta > 0) || (biggerIsBetter === false && delta < 0)) {
+        regression = false;
+    }
+    else if ((biggerIsBetter === false && delta > 0) || (biggerIsBetter === true && delta < 0)) {
+        regression = true;
+    }
+    return {
+        ...runInfo,
+        delta,
+        deltaPercentage,
+        displayDelta: formatDelta(delta, formatter),
+        displayDeltaPercentage: formatDelta(deltaPercentage, formatPercentage),
+        deltaType: getDeltaType(deltaPercentage, biggerIsBetter),
+        ...(typeof regression !== 'undefined' && { regression }),
+    };
+}
+//# sourceMappingURL=metrics.js.map

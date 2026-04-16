@@ -1,0 +1,198 @@
+"use strict";
+/*
+Copyright 2022 ByteDance and/or its affiliates.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BuildUploadClient = void 0;
+const tslib_1 = require("tslib");
+const fs_1 = require("fs");
+const os_1 = require("os");
+const path_1 = require("path");
+const stream_1 = require("stream");
+const zlib_1 = require("zlib");
+const msgpack_1 = require("@msgpack/msgpack");
+const chalk_1 = tslib_1.__importDefault(require("chalk"));
+const node_fetch_1 = tslib_1.__importDefault(require("node-fetch"));
+const tar_1 = require("tar");
+const uuid_1 = require("uuid");
+const utils_1 = require("@perfsee/utils");
+const build_env_1 = require("./build-env");
+function encodeStatsJson(stats) {
+    const extensionCodec = new msgpack_1.ExtensionCodec();
+    const filteredFields = [
+        'identifier',
+        'issuerPath',
+        'issuer',
+        'moduleIdentifier',
+        'parents',
+        'siblings',
+        'origins',
+        'module',
+    ];
+    extensionCodec.register({
+        type: 0,
+        encode: (object) => {
+            if (object instanceof Object && !(object instanceof Array)) {
+                for (const field of filteredFields) {
+                    delete object[field];
+                }
+            }
+            return null;
+        },
+        decode: () => null,
+    });
+    const encoded = (0, msgpack_1.encode)(stats, { extensionCodec });
+    return Buffer.from(encoded, encoded.byteOffset, encoded.byteLength);
+}
+class BuildUploadClient {
+    constructor(options, outputPath, appVersion) {
+        this.options = options;
+        this.outputPath = outputPath;
+        this.appVersion = appVersion;
+    }
+    async uploadBuild(stats) {
+        if (!build_env_1.BUILD_ENV.upload) {
+            console.info(chalk_1.default.yellow('[perfsee] found no upload flag, skip uploading build.'));
+            return;
+        }
+        if (!this.options.project) {
+            console.info(chalk_1.default.yellow('[perfsee] no project id provided, skip uploading build.'));
+        }
+        try {
+            // firstly write stats json down to disk in output path.
+            const statsPath = await this.writeStats(stats);
+            // then pack the assets in output path
+            const packPath = await this.pack(statsPath, stats);
+            // then upload the pack to platform
+            await this.uploadPack(packPath);
+            if (!process.env.KEEP_STATS) {
+                (0, fs_1.unlinkSync)(statsPath);
+            }
+        }
+        catch (e) {
+            console.error(chalk_1.default.red('[perfsee] Failed to upload build'));
+            console.error(chalk_1.default.red(String(e)));
+        }
+    }
+    /**
+     * for some huge project, the stats json may be too big to be stringified(more than 500MB, which is the MAXMUM string size of v8),
+     * we choose msgpack instead of streaming json to dick so we can both save the disk size
+     * and reduce the network transfer time during uploading.
+     */
+    async writeStats(stats) {
+        const statsFile = (0, path_1.join)(this.outputPath, `webpack-stats-${(0, uuid_1.v4)()}.mp.gz`);
+        return new Promise((resolve, reject) => {
+            const source$ = new stream_1.PassThrough();
+            (0, stream_1.pipeline)(source$, (0, zlib_1.createGzip)(), (0, fs_1.createWriteStream)(statsFile), (err) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(statsFile);
+                }
+            });
+            source$.end(encodeStatsJson(stats));
+        });
+    }
+    async pack(statsPath, stats) {
+        return new Promise((resolve, reject) => {
+            const packPath = `${(0, os_1.tmpdir)()}/build-${(0, uuid_1.v4)()}.tar`;
+            const includedAssets = new Set([statsPath]);
+            stats.assets?.forEach((a) => {
+                const asset = (0, path_1.join)(this.outputPath, a.name);
+                includedAssets.add(asset);
+                if (/\.m?js$/i.test(asset) || /\.css$/i.test(asset)) {
+                    includedAssets.add(`${asset}.map`);
+                }
+            });
+            const realOutputPath = this.getRealOutputPath(this.outputPath, stats);
+            (0, tar_1.create)({
+                cwd: realOutputPath,
+                filter: (path) => {
+                    path = (0, path_1.join)(realOutputPath, path);
+                    if ((0, fs_1.statSync)(path).isDirectory()) {
+                        return true;
+                    }
+                    // ignore media files to reduce artifact size
+                    return includedAssets.has(path) && !/\.(mp4|webm|mkv|flv|avi|wmv)$/i.test(path);
+                },
+            }, ['./'])
+                .pipe((0, fs_1.createWriteStream)(packPath))
+                .on('finish', () => {
+                resolve(packPath);
+            })
+                .on('error', (err) => {
+                reject(err);
+            });
+        });
+    }
+    async uploadPack(packPath) {
+        const git = await build_env_1.BUILD_ENV.git;
+        if (!git.host) {
+            console.error(chalk_1.default.red('[perfsee] Did not find relative codebase host for current project.'));
+            return;
+        }
+        const params = {
+            ...git,
+            projectId: this.options.project,
+            commitHash: git.commit,
+            artifactName: this.options.artifactName ?? 'test',
+            nodeVersion: process.version,
+            appVersion: this.appVersion,
+            toolkit: this.options.toolkit ?? 'webpack',
+        };
+        const stream = (0, fs_1.createReadStream)(packPath);
+        console.info(chalk_1.default.green('[perfsee] start uploading build'), {
+            size: utils_1.PrettyBytes.stringify((0, fs_1.statSync)(packPath).size),
+            params,
+        });
+        const query = Object.keys(params)
+            .map((key) => {
+            return `${key}=${params[key] ? encodeURIComponent(params[key]) : ''}`;
+        })
+            .join('&');
+        const res = await (0, node_fetch_1.default)(`${build_env_1.BUILD_ENV.platform}/api/v1/artifacts?${query}`, {
+            method: 'POST',
+            body: stream,
+            headers: {
+                authorization: `Bearer ${this.options.token}`,
+                'content-type': 'application/octet-stream',
+            },
+        });
+        if (res.ok) {
+            const { url } = await res.json();
+            console.info(chalk_1.default.green(`[perfsee] uploading succeed! The analyze result would be available at ${url} soon!`));
+        }
+        else {
+            throw new Error(`[perfsee] uploading failed! ${res.statusText}. Response: ${await res.text()}`);
+        }
+    }
+    /**
+     * find the topest level of all the assets
+     */
+    getRealOutputPath(outputPath, stats) {
+        // may put asset outsize output path
+        const maxParentAccess = stats.assets?.reduce((max, asset) => {
+            // normal assets
+            if (!asset.name.startsWith('..')) {
+                return max;
+            }
+            return Math.max(asset.name.split(/[\\/]/).filter((part) => part === '..').length, max);
+        }, 0);
+        return maxParentAccess ? (0, path_1.join)(outputPath, '../'.repeat(maxParentAccess)) : outputPath;
+    }
+}
+exports.BuildUploadClient = BuildUploadClient;
+//# sourceMappingURL=build-upload-client.js.map

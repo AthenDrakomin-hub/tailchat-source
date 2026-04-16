@@ -1,0 +1,37 @@
+import { Inspector } from './Inspector';
+import { compressToSr } from './utils';
+var timer = null;
+var currentInspector = null;
+/**
+ * Start bind dom
+ */
+export function start() {
+    document.body.addEventListener('click', function (e) {
+        if (e.altKey) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (currentInspector) {
+                currentInspector.close();
+                currentInspector = null;
+            }
+            var inspector = new Inspector(e.target);
+            inspector.renderHTML();
+            currentInspector = inspector;
+        }
+    }, true);
+    var observer = new MutationObserver(function () {
+        if (timer) {
+            clearTimeout(timer);
+        }
+        timer = window.setTimeout(function () {
+            document
+                .querySelectorAll('[data-source]')
+                .forEach(function (node) { return compressToSr(node); });
+        }, 400);
+    });
+    observer.observe(document.body, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+    });
+}

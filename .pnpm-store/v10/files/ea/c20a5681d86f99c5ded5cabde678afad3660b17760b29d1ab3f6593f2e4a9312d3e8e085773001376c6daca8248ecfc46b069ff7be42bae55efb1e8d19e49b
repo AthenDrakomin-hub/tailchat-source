@@ -1,0 +1,15 @@
+# Installation
+> `npm install --save @types/dts-generator`
+
+# Summary
+This package contains type definitions for dts-generator (https://github.com/SitePen/dts-generator#readme).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/dts-generator.
+
+### Additional Details
+ * Last updated: Mon, 06 Nov 2023 22:41:05 GMT
+ * Dependencies: [@types/bluebird](https://npmjs.com/package/@types/bluebird), [typescript](https://npmjs.com/package/typescript)
+
+# Credits
+These definitions were written by [Matt Traynham](https://github.com/mtraynham).

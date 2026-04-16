@@ -1,0 +1,38 @@
+var sourceMap = {};
+var sourceMapReverse = {};
+var cursor = 0;
+/**
+ * Transform full source ref to sr
+ */
+export function compressToSr(node) {
+    if (!(node instanceof HTMLElement)) {
+        return;
+    }
+    if (!node.dataset.source) {
+        return;
+    }
+    var source = node.dataset.source;
+    if (!sourceMap[source]) {
+        cursor++;
+        var hash = cursor.toString(36);
+        sourceMap[source] = hash;
+        sourceMapReverse[hash] = source;
+    }
+    var id = sourceMap[source];
+    node.removeAttribute('data-source');
+    node.setAttribute('data-sr', "".concat(id));
+}
+/**
+ * Transform sr to file URI
+ */
+export function srToURI(sr) {
+    var source = sourceMapReverse[sr];
+    if (!source) {
+        return '(unknown)';
+    }
+    if (source.includes('://')) {
+        return source;
+    }
+    // Default use vscode schema
+    return 'vscode://file/' + sourceMapReverse[sr];
+}

@@ -1,0 +1,4 @@
+import { BundleToolkit, PerfseeReportStats } from '../../stats';
+export declare const assetModulesParser: {
+    [T in BundleToolkit]: (contnet: string, path: string, stats: PerfseeReportStats) => Map</* module id */ /* module id */ string | number, /* content or length */ /* content or length */ string | number>;
+};

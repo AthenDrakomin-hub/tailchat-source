@@ -1,0 +1,5 @@
+import React from 'react';
+import type { FastifyFormFieldComponent, FastifyFormFieldProps } from './field';
+export declare const CustomField: FastifyFormFieldComponent<{
+    render: (props: FastifyFormFieldProps) => React.ReactNode;
+}>;

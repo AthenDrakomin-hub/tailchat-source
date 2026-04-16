@@ -1,0 +1,25 @@
+{
+    "name": "@types/string.prototype.matchall",
+    "version": "4.0.4",
+    "description": "TypeScript definitions for string.prototype.matchall",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/string.prototype.matchall",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Piotr Błażejewicz",
+            "githubUsername": "peterblazejewicz",
+            "url": "https://github.com/peterblazejewicz"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/string.prototype.matchall"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "17b701230e1a47e3b7a4c3ba3c5d264b03b8b432652ce5b0f0cd6b39257c6ec8",
+    "typeScriptVersion": "5.4"
+}

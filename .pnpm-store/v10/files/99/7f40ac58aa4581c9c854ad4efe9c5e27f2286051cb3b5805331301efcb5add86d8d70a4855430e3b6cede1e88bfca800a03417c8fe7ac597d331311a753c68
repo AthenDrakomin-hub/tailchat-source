@@ -1,0 +1,460 @@
+"use strict";
+/*
+Copyright 2022 ByteDance and/or its affiliates.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StatsParser = void 0;
+const fs_1 = require("fs");
+const path_1 = require("path");
+const lodash_1 = require("lodash");
+const bundle_extractor_1 = require("../bundle-extractor");
+const module_1 = require("../module");
+const stats_1 = require("../stats");
+const utils_1 = require("../utils");
+const asset_parser_1 = require("./asset-parser");
+const audit_1 = require("./audit");
+const tree_1 = require("./tree");
+const types_1 = require("./types");
+const defaultLogger = (0, utils_1.getConsoleLogger)();
+class StatsParser {
+    constructor(stats, assetsPath, logger) {
+        this.stats = stats;
+        this.assetsPath = assetsPath;
+        this.logger = logger;
+        this.assetsMap = new Map();
+        this.packageVersionMap = new Map();
+        this.chunksMap = new Map();
+        this.modulesMap = new Map();
+        this.entryPointsMap = new Map();
+        this.packagePathRefMap = new Map();
+        this.getIssuers = (m, meta) => {
+            const { path } = meta;
+            return (0, lodash_1.chain)(m.reasons)
+                .filter((reason) => !!reason.moduleName)
+                .map((reason) => {
+                const meta = this.getPackageMeta(reason.moduleName);
+                if (!meta) {
+                    return;
+                }
+                return {
+                    name: meta.name,
+                    path: meta.path,
+                    type: reason.type,
+                };
+            })
+                .filter((value) => !!value && value.path !== path)
+                .uniqBy('path')
+                .value();
+        };
+    }
+    static FromStatsFile(statsFilePath, logger = defaultLogger) {
+        let stats;
+        try {
+            stats = (0, bundle_extractor_1.readStatsFile)(statsFilePath);
+        }
+        catch (e) {
+            throw new Error(`Failed to read and parse webpack stats.\nInternal Error: ${e.message}`);
+        }
+        return new StatsParser(stats, (0, path_1.parse)(statsFilePath).dir, logger);
+    }
+    static FromStats(stats, assetsPath, logger = defaultLogger) {
+        return new StatsParser(stats, assetsPath, logger);
+    }
+    async parse() {
+        this.logger.info('Start parsing stats file.');
+        if (!this.stats.entrypoints || !this.stats.assets || typeof this.stats.publicPath === 'undefined') {
+            throw new Error('No entrypoints or built assets found in webpack stats.');
+        }
+        this.packageVersionMap = new Map(this.stats.packageVersions?.map(({ name, version }) => [name, version]));
+        await this.parseAssets();
+        this.parseChunks();
+        this.parseEntryPoints();
+        const bundleContent = this.parseBundleContent();
+        this.logger.info('Finish parsing stats file.');
+        return {
+            report: this.serializeResult(),
+            moduleTree: bundleContent,
+        };
+    }
+    serializeResult() {
+        const entryPoints = Array.from(this.entryPointsMap.values());
+        return {
+            score: (0, audit_1.calcBundleScore)(entryPoints),
+            entryPoints,
+            assets: Array.from(this.assetsMap.values()).map(({ modules, content, sourcemap, ...properties }) => {
+                const packages = new Map();
+                modules.forEach(({ ref, size, path, concatenating }) => {
+                    if (!ref) {
+                        return;
+                    }
+                    packages.set(ref, (0, utils_1.addSize)(size, packages.get(ref) ?? (0, utils_1.getDefaultSize)()));
+                    if (concatenating.length) {
+                        concatenating.forEach((child) => {
+                            if (child.path !== path) {
+                                packages.set(child.ref, (0, utils_1.addSize)(child.size, packages.get(child.ref) ?? (0, utils_1.getDefaultSize)()));
+                            }
+                        });
+                    }
+                });
+                return {
+                    ...properties,
+                    packageRefs: Array.from(packages)
+                        .map(([ref, size]) => ({
+                        ref,
+                        size,
+                    }))
+                        .sort((a, b) => b.size.raw - a.size.raw),
+                };
+            }),
+            chunks: Array.from(this.chunksMap.values()).map(({ id, modules, assets, children, names, reason, ...chunk }) => ({
+                ...chunk,
+                assetRefs: (0, utils_1.mapRefs)(assets),
+            })),
+            packages: Array.from(this.packagePathRefMap.values()),
+        };
+    }
+    parseEntryPoints() {
+        this.logger.info('Start parsing entry points');
+        const refMappedAssets = new Map(Array.from(this.assetsMap).map(([, asset]) => [asset.ref, asset]));
+        Object.entries(this.stats.entrypoints).forEach(([name, entrypoint]) => {
+            this.logger.verbose(`entry: '${name}'`);
+            const chunks = (0, lodash_1.uniqBy)(this.flatChunks(entrypoint.chunks), 'ref');
+            const assets = (0, lodash_1.uniq)(chunks.map((chunk) => (0, utils_1.mapRefs)(chunk.assets)).flat()).map((ref) => refMappedAssets.get(ref));
+            const packages = this.reduceModules(chunks);
+            const initialChunks = chunks.filter((chunk) => !chunk.async);
+            const assetSizeReducer = (acc, asset) => (asset.intermediate ? acc : (0, utils_1.addSize)(acc, asset.size));
+            const size = assets.reduce(assetSizeReducer, (0, utils_1.getDefaultSize)());
+            const initialSize = (0, lodash_1.uniq)(initialChunks.flatMap((chunk) => chunk.assets).filter((asset) => (0, utils_1.isInitialFileType)(asset.type))).reduce(assetSizeReducer, (0, utils_1.getDefaultSize)());
+            const audits = (0, audit_1.audit)({
+                chunks: chunks.map((chunk) => ({
+                    ...chunk,
+                    assets: chunk.assets.filter((asset) => !asset.intermediate),
+                })),
+                assets: assets.filter((asset) => !asset.intermediate),
+                packages,
+                size,
+                stats: this.stats,
+            }, this.logger);
+            this.entryPointsMap.set(name, {
+                // get nextjs entry name
+                // https://github.com/vercel/next.js/blob/3dec50001e/packages/next/build/entries.ts#L107
+                name: name.replace(/(.*)\/pages\/(.+)$/, '$2'),
+                size,
+                initialSize,
+                assetRefs: (0, utils_1.mapRefs)(assets),
+                chunkRefs: (0, utils_1.mapRefs)(chunks),
+                initialChunkRefs: (0, utils_1.mapRefs)(initialChunks),
+                packageAppendixes: packages.map(({ ref, issuers, assets, size, notes }) => ({
+                    ref,
+                    size,
+                    issuerRefs: issuers
+                        .map((issuer) => this.packagePathRefMap.get(issuer.path)?.ref)
+                        .filter(utils_1.isNotNil),
+                    assetRefs: (0, utils_1.mapRefs)(assets),
+                    notes,
+                })),
+                audits,
+                score: (0, audit_1.calcEntryPointScore)(audits),
+            });
+        });
+    }
+    async parseAssets() {
+        if (!this.stats.assets) {
+            return;
+        }
+        this.logger.info('Start parsing assets.');
+        try {
+            let ref = 1;
+            const assets = [];
+            const { buildTool } = this.stats;
+            for (const outputAsset of this.stats.assets) {
+                // @ts-expect-error
+                const { name, size: parsedSize, intermediate, path, chunks } = outputAsset;
+                const realName = name.replace(/(\?.*)?(#.*)?$/, '');
+                const type = (0, utils_1.detectFileType)(realName);
+                if ((type === types_1.AssetTypeEnum.Js && !chunks.length) || /\.(map|license\.txt)$/i.test(realName)) {
+                    continue;
+                }
+                const modules = [];
+                const filepath = (0, path_1.join)(this.assetsPath, realName);
+                const asset = {
+                    ref,
+                    size: { raw: parsedSize, gzip: parsedSize, brotli: parsedSize },
+                    name,
+                    type,
+                    modules,
+                    intermediate,
+                    sourcemap: (0, fs_1.existsSync)(filepath + '.map'),
+                    packageRefs: [],
+                };
+                if ((0, fs_1.existsSync)(filepath) && (0, utils_1.isStringContentType)(type)) {
+                    const content = (0, fs_1.readFileSync)(filepath, 'utf-8');
+                    asset.content = content;
+                    asset.size = await (0, utils_1.calcStringCompressedSize)(content);
+                    if (type === types_1.AssetTypeEnum.Js) {
+                        try {
+                            const assetModules = asset_parser_1.assetModulesParser[buildTool ?? stats_1.BundleToolkit.Webpack](content, path, this.stats);
+                            for (const [id, moduleContentOrLength] of assetModules) {
+                                const stringifiedId = String(id);
+                                const moduleSize = typeof moduleContentOrLength === 'number'
+                                    ? { raw: moduleContentOrLength, gzip: 0, brotli: 0 }
+                                    : await (0, utils_1.calcStringCompressedSize)(moduleContentOrLength);
+                                if (!this.modulesMap.has(stringifiedId)) {
+                                    const m = { id, size: moduleSize, assets: [asset], concatenating: [] };
+                                    this.modulesMap.set(stringifiedId, m);
+                                }
+                                else {
+                                    // some module maybe duplicated in more then 1 chunks,
+                                    // controlled by `minChunks`
+                                    const existedModule = this.modulesMap.get(stringifiedId);
+                                    existedModule.assets.push(asset);
+                                }
+                                modules.push(this.modulesMap.get(stringifiedId));
+                            }
+                        }
+                        catch (e) {
+                            this.logger.error(`Failed to parse modules of asset '${name}'`);
+                            this.logger.error(e);
+                        }
+                    }
+                }
+                assets.push(asset);
+                ref++;
+                this.logger.verbose(`Asset parsed '${name}'`);
+            }
+            this.assetsMap = new Map(assets.map((asset) => [asset.name, asset]));
+            this.logger.info('Assets parsing finished');
+        }
+        catch (e) {
+            throw new Error(`Failed to parse assets.\nInternal Error: ${e.message}`);
+        }
+    }
+    parseChunks() {
+        this.logger.info('Start parsing chunks');
+        const htmls = Array.from(this.assetsMap.values()).filter((asset) => asset.type === types_1.AssetTypeEnum.Html);
+        let moduleRef = 1;
+        const chunks = this.stats.chunks.map(({ id, initial, names, entry, reason, files, children, modules: chunkModules }, i) => {
+            const chunkAssetsMap = new Map();
+            files.forEach((file) => {
+                const asset = this.assetsMap.get(file);
+                if (asset) {
+                    chunkAssetsMap.set(file, asset);
+                }
+            });
+            const parseModules = (rawModules = [], concatenatedWith = '') => {
+                return rawModules
+                    .map((fnModule) => {
+                    const m = (0, utils_1.isNotNil)(fnModule.id)
+                        ? this.modulesMap.get(String(fnModule.id))
+                        : // concatenated module
+                            {
+                                id: null,
+                                size: (0, utils_1.getDefaultSize)(),
+                                assets: [],
+                                concatenating: [],
+                            };
+                    if (!m) {
+                        return;
+                    }
+                    const meta = this.getPackageMeta(fnModule.name);
+                    if (!meta) {
+                        return;
+                    }
+                    m.name = meta.name;
+                    m.path = meta.path;
+                    m.issuers = this.getIssuers(fnModule, meta);
+                    m.ignored = fnModule.name.endsWith('(ignored)');
+                    m.version = this.packageVersionMap.get(m.path);
+                    m.realPath = fnModule.name;
+                    if (this.packagePathRefMap.has(m.path)) {
+                        m.ref = this.packagePathRefMap.get(m.path).ref;
+                    }
+                    else {
+                        m.ref = moduleRef;
+                        this.packagePathRefMap.set(m.path, { ...meta, ref: moduleRef, version: m.version });
+                        moduleRef++;
+                    }
+                    // has concatenated modules
+                    if (fnModule.modules?.length) {
+                        m.concatenating = (0, lodash_1.uniqBy)(parseModules(fnModule.modules, meta.path), 'realPath');
+                    }
+                    if (concatenatedWith && concatenatedWith !== meta.path && this.packagePathRefMap.has(concatenatedWith)) {
+                        m.notes = [{ type: 'concat', targetRef: this.packagePathRefMap.get(concatenatedWith).ref }];
+                    }
+                    if (fnModule.assets?.length) {
+                        fnModule.assets.forEach((file) => {
+                            const asset = this.assetsMap.get(file);
+                            if (asset) {
+                                chunkAssetsMap.set(file, asset);
+                            }
+                        });
+                    }
+                    return m;
+                })
+                    .filter(utils_1.isNotNil);
+            };
+            const modules = parseModules(chunkModules?.filter(utils_1.isNotNil)).filter(utils_1.isNotNil);
+            // edge case: html webpack plugin's output won't be tracked in chunks reference
+            // if initial chunk's assets exists in html's script tags, treat it as entry html.
+            if (initial) {
+                htmls.forEach((html) => {
+                    if (html.content) {
+                        const scripts = (0, utils_1.getHtmlScripts)(html.content);
+                        if (scripts.some((script) => chunkAssetsMap.has(script.replace(this.stats.publicPath, '')))) {
+                            chunkAssetsMap.set(html.name, html);
+                        }
+                    }
+                });
+            }
+            this.logger.verbose(`Chunk parsed: '${id}'`);
+            return {
+                id,
+                ref: i + 1,
+                entry,
+                async: !initial,
+                names,
+                reason,
+                assets: Array.from(chunkAssetsMap.values()),
+                children,
+                modules,
+            };
+        });
+        this.chunksMap = new Map(chunks.map((chunk) => [chunk.id, chunk]));
+        this.logger.info(`Chunks parsing finished. Found total ${this.chunksMap.size} chunks`);
+    }
+    reduceModules(chunks) {
+        const packagesMap = new Map();
+        const ids = chunks.flatMap(({ modules }) => modules.map((m) => m.id));
+        const existingPackages = new Set();
+        for (const id of ids) {
+            const m = this.modulesMap.get(String(id));
+            if (m?.size.raw) {
+                const existedPkg = packagesMap.get(m.path);
+                if (existedPkg) {
+                    existedPkg.size = (0, utils_1.addSize)(existedPkg.size, m.size);
+                    for (const issuer of m.issuers) {
+                        existedPkg.issuers.push(issuer);
+                    }
+                    for (const asset of m.assets) {
+                        existedPkg.assets.push(asset);
+                    }
+                }
+                else {
+                    existingPackages.add(m.path);
+                    packagesMap.set(m.path, {
+                        ...(0, lodash_1.omit)(m, 'id', 'realPath'),
+                        // clone issuers and assets for later push
+                        issuers: m.issuers.concat(),
+                        assets: m.assets.concat(),
+                    });
+                }
+                m.concatenating.forEach((child) => {
+                    if (child.path === m.path) {
+                        return;
+                    }
+                    const existedPkg = packagesMap.get(child.path);
+                    if (existedPkg) {
+                        existedPkg.notes = [...(existedPkg.notes ?? []), ...(child.notes ?? [])];
+                    }
+                    else {
+                        existingPackages.add(child.path);
+                        packagesMap.set(child.path, {
+                            ...(0, lodash_1.omit)(child, 'id', 'realPath'),
+                            // clone issuers and assets for later push
+                            issuers: child.issuers.concat(),
+                            assets: child.assets.concat(),
+                        });
+                    }
+                });
+            }
+        }
+        const result = [];
+        for (const pkg of packagesMap.values()) {
+            if (!existingPackages.has(pkg.path)) {
+                continue;
+            }
+            pkg.assets = (0, lodash_1.uniqBy)(pkg.assets, 'ref');
+            pkg.issuers = (0, lodash_1.uniqBy)(pkg.issuers.filter((issuer) => existingPackages.has(issuer.path)), 'path');
+            pkg.notes = (0, lodash_1.uniqBy)(pkg.notes, 'targetRef');
+            result.push(pkg);
+        }
+        return result;
+    }
+    flatChunks(chunks, existed = new Set()) {
+        return chunks
+            .filter((id) => !existed.has(id))
+            .map((id) => {
+            existed.add(id);
+            const chunk = this.chunksMap.get(id);
+            if (chunk) {
+                return [chunk, ...this.flatChunks(chunk.children, existed)].filter(utils_1.isNotNil);
+            }
+            return [];
+        })
+            .flat();
+    }
+    getPackageMeta(name) {
+        return (0, module_1.getPackageMeta)(name, this.stats.repoPath ?? '/', this.stats.buildPath ?? '/');
+    }
+    parseBundleContent() {
+        this.logger.info('Start parsing bundle content.');
+        try {
+            const assetRefEntryPointsMap = new Map();
+            for (const entryPoint of this.entryPointsMap.values()) {
+                for (const assetRef of entryPoint.assetRefs) {
+                    const e = assetRefEntryPointsMap.get(assetRef);
+                    if (e) {
+                        e.push(entryPoint.name);
+                    }
+                    else {
+                        assetRefEntryPointsMap.set(assetRef, [entryPoint.name]);
+                    }
+                }
+            }
+            const res = [];
+            for (const [key, asset] of this.assetsMap) {
+                if (asset.type !== types_1.AssetTypeEnum.Js || asset.intermediate) {
+                    continue;
+                }
+                const root = new tree_1.Folder('.');
+                const { modules } = asset;
+                modules.forEach((module) => {
+                    if (!module.realPath) {
+                        return;
+                    }
+                    root.addModule(module);
+                });
+                root.mergeNestedFolders();
+                const entryPoints = assetRefEntryPointsMap.get(asset.ref);
+                res.push({
+                    name: key,
+                    value: asset.size.raw,
+                    gzip: asset.size.gzip,
+                    brotli: asset.size.brotli,
+                    children: Object.values(root.children).map((child) => child.toChartData()),
+                    entryPoints,
+                });
+            }
+            this.logger.info('Bundle content parsing finished.');
+            return res;
+        }
+        catch (e) {
+            this.logger.error('Bundle content parsing failed.', e);
+            return [];
+        }
+    }
+}
+exports.StatsParser = StatsParser;
+//# sourceMappingURL=index.js.map

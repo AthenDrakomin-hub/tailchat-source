@@ -1,0 +1,29 @@
+import type { AnyExtension, BuiltinPreset } from '@remirror/core';
+import { RemirrorManager } from '@remirror/core';
+import { CorePreset, CreateCoreManagerOptions } from '@remirror/preset-core';
+import { DomFrameworkOutput, DomFrameworkProps } from './dom-framework';
+/**
+ * Create an editor manager. It comes with the `CorePreset` already available.
+ */
+export declare function createDomManager<Extension extends AnyExtension>(extensions: Extension[] | (() => Extension[]), options?: CreateCoreManagerOptions): RemirrorManager<CorePreset | BuiltinPreset | Extension>;
+/**
+ * Create the `remirror` editor for the DOM environment.
+ *
+ * ```ts
+ * // Get the element to append the editor to.
+ * const element = document.querySelector('#editor');
+ *
+ * // Create the manager.
+ * const manager = createDomManager(() => [], {});
+ *
+ * // Create the dom editor.
+ * const editor = createDomEditor({ element, manager });
+ *
+ * // Focus at the end of the editor.
+ * editor.focus('end');
+ *
+ * // Insert some text.
+ * editor.commands.insertText('Hello Friend!');
+ * ```
+ */
+export declare function createDomEditor<Extension extends AnyExtension>(props: DomFrameworkProps<Extension>): DomFrameworkOutput<Extension>;

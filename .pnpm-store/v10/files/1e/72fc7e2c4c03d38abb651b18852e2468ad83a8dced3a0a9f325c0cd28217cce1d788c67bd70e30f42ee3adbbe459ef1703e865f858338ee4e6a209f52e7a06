@@ -1,0 +1,128 @@
+"use strict";
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __reExport = (target, mod, secondTarget) => (__copyProps(target, mod, "default"), secondTarget && __copyProps(secondTarget, mod, "default"));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// packages/remirror/src/extensions.ts
+var extensions_exports = {};
+module.exports = __toCommonJS(extensions_exports);
+__reExport(extensions_exports, require("@remirror/extension-annotation"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-bidi"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-blockquote"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-bold"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-callout"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-code"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-code-block"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-codemirror5"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-collaboration"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-columns"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-diff"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-doc"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-drop-cursor"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-embed"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-emoji"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-entity-reference"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-epic-mode"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-events"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-font-family"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-font-size"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-gap-cursor"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-hard-break"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-heading"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-history"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-horizontal-rule"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-image"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-italic"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-link"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-list"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-markdown"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-mention"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-mention-atom"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-node-formatting"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-paragraph"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-placeholder"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-positioner"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-search"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-shortcuts"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-strike"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-sub"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-sup"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-tables"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-text"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-text-case"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-text-color"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-text-highlight"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-trailing-node"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-underline"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-whitespace"), module.exports);
+__reExport(extensions_exports, require("@remirror/extension-yjs"), module.exports);
+__reExport(extensions_exports, require("@remirror/preset-core"), module.exports);
+__reExport(extensions_exports, require("@remirror/preset-formatting"), module.exports);
+__reExport(extensions_exports, require("@remirror/preset-wysiwyg"), module.exports);
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  ...require("@remirror/extension-annotation"),
+  ...require("@remirror/extension-bidi"),
+  ...require("@remirror/extension-blockquote"),
+  ...require("@remirror/extension-bold"),
+  ...require("@remirror/extension-callout"),
+  ...require("@remirror/extension-code"),
+  ...require("@remirror/extension-code-block"),
+  ...require("@remirror/extension-codemirror5"),
+  ...require("@remirror/extension-collaboration"),
+  ...require("@remirror/extension-columns"),
+  ...require("@remirror/extension-diff"),
+  ...require("@remirror/extension-doc"),
+  ...require("@remirror/extension-drop-cursor"),
+  ...require("@remirror/extension-embed"),
+  ...require("@remirror/extension-emoji"),
+  ...require("@remirror/extension-entity-reference"),
+  ...require("@remirror/extension-epic-mode"),
+  ...require("@remirror/extension-events"),
+  ...require("@remirror/extension-font-family"),
+  ...require("@remirror/extension-font-size"),
+  ...require("@remirror/extension-gap-cursor"),
+  ...require("@remirror/extension-hard-break"),
+  ...require("@remirror/extension-heading"),
+  ...require("@remirror/extension-history"),
+  ...require("@remirror/extension-horizontal-rule"),
+  ...require("@remirror/extension-image"),
+  ...require("@remirror/extension-italic"),
+  ...require("@remirror/extension-link"),
+  ...require("@remirror/extension-list"),
+  ...require("@remirror/extension-markdown"),
+  ...require("@remirror/extension-mention"),
+  ...require("@remirror/extension-mention-atom"),
+  ...require("@remirror/extension-node-formatting"),
+  ...require("@remirror/extension-paragraph"),
+  ...require("@remirror/extension-placeholder"),
+  ...require("@remirror/extension-positioner"),
+  ...require("@remirror/extension-search"),
+  ...require("@remirror/extension-shortcuts"),
+  ...require("@remirror/extension-strike"),
+  ...require("@remirror/extension-sub"),
+  ...require("@remirror/extension-sup"),
+  ...require("@remirror/extension-tables"),
+  ...require("@remirror/extension-text"),
+  ...require("@remirror/extension-text-case"),
+  ...require("@remirror/extension-text-color"),
+  ...require("@remirror/extension-text-highlight"),
+  ...require("@remirror/extension-trailing-node"),
+  ...require("@remirror/extension-underline"),
+  ...require("@remirror/extension-whitespace"),
+  ...require("@remirror/extension-yjs"),
+  ...require("@remirror/preset-core"),
+  ...require("@remirror/preset-formatting"),
+  ...require("@remirror/preset-wysiwyg")
+});

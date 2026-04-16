@@ -1,0 +1,7 @@
+import { EditorView } from '@remirror/pm';
+import { FindTable } from '../utils/types';
+declare const TableInsertButtonTrigger: ({ view, findTable, }: {
+    view: EditorView;
+    findTable: FindTable;
+}) => HTMLElement[];
+export default TableInsertButtonTrigger;

@@ -1,0 +1,29 @@
+import { PerfseeReportStats } from '../stats';
+import { Logger, BundleResult, ModuleTreeNode } from './types';
+export declare class StatsParser {
+    private readonly stats;
+    private readonly assetsPath;
+    private readonly logger;
+    static FromStatsFile(statsFilePath: string, logger?: Logger): StatsParser;
+    static FromStats(stats: PerfseeReportStats, assetsPath: string, logger?: Logger): StatsParser;
+    private assetsMap;
+    private packageVersionMap;
+    private chunksMap;
+    private readonly modulesMap;
+    private readonly entryPointsMap;
+    private readonly packagePathRefMap;
+    private constructor();
+    parse(): Promise<{
+        report: BundleResult;
+        moduleTree: ModuleTreeNode[];
+    }>;
+    private serializeResult;
+    private parseEntryPoints;
+    private parseAssets;
+    private readonly getIssuers;
+    private parseChunks;
+    private reduceModules;
+    private flatChunks;
+    private getPackageMeta;
+    private parseBundleContent;
+}

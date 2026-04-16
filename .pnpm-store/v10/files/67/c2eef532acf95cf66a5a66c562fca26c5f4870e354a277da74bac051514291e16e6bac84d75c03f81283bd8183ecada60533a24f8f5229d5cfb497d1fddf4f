@@ -1,0 +1,221 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-font-size/src/font-size-extension.ts
+import round from "round";
+import {
+  clamp,
+  command,
+  convertPixelsToDomUnit,
+  extension,
+  ExtensionPriority,
+  ExtensionTag,
+  getFontSize,
+  getMarkRanges,
+  getTextSelection,
+  helper,
+  isElementDomNode,
+  isFunction,
+  isString,
+  joinStyles,
+  keyBinding,
+  MarkExtension,
+  NamedShortcut,
+  omitExtraAttributes,
+  parseSizeUnit
+} from "@remirror/core";
+
+// packages/remirror__extension-font-size/src/font-size-utils.ts
+import { ExtensionFontSizeMessages as Messages } from "@remirror/messages";
+var setFontSizeOptions = {
+  icon: "fontSize",
+  description: ({ t }) => t(Messages.SET_DESCRIPTION),
+  label: ({ t }) => t(Messages.SET_LABEL)
+};
+var increaseFontSizeOptions = {
+  icon: "addLine",
+  description: ({ t }) => t(Messages.INCREASE_DESCRIPTION),
+  label: ({ t }) => t(Messages.INCREASE_LABEL)
+};
+var decreaseFontSizeOptions = {
+  icon: "subtractLine",
+  description: ({ t }) => t(Messages.DECREASE_DESCRIPTION),
+  label: ({ t }) => t(Messages.DECREASE_LABEL)
+};
+var FONT_SIZE_ATTRIBUTE = "data-font-size-mark";
+
+// packages/remirror__extension-font-size/src/font-size-extension.ts
+var FontSizeExtension = class extends MarkExtension {
+  get name() {
+    return "fontSize";
+  }
+  createTags() {
+    return [ExtensionTag.FormattingMark, ExtensionTag.FontStyle];
+  }
+  createMarkSpec(extra, override) {
+    return {
+      ...override,
+      attrs: {
+        ...extra.defaults(),
+        size: { default: this.options.defaultSize }
+      },
+      parseDOM: [
+        {
+          tag: `span[${FONT_SIZE_ATTRIBUTE}]`,
+          getAttrs: (dom) => {
+            if (!isElementDomNode(dom)) {
+              return null;
+            }
+            let size = dom.getAttribute(FONT_SIZE_ATTRIBUTE);
+            if (!size) {
+              return null;
+            }
+            size = `${convertPixelsToDomUnit(size, this.options.unit, dom)}${this.options.unit}`;
+            return { ...extra.parse(dom), size };
+          }
+        },
+        {
+          // Get the color from the css style property. This is useful for pasted content.
+          style: "font-size",
+          priority: ExtensionPriority.Low,
+          getAttrs: (size) => {
+            if (!isString(size)) {
+              return null;
+            }
+            size = this.getFontSize(size);
+            return { size };
+          }
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (mark) => {
+        const { size, ...other } = omitExtraAttributes(mark.attrs, extra);
+        const extraAttrs = extra.dom(mark);
+        let style = extraAttrs.style;
+        let fontSize;
+        if (size) {
+          style = joinStyles({ fontSize: this.getFontSize(size) }, style);
+        }
+        return ["span", { ...other, ...extraAttrs, style, [FONT_SIZE_ATTRIBUTE]: fontSize }, 0];
+      }
+    };
+  }
+  getFontSize(size) {
+    const { unit, roundingMultiple, max, min, defaultSize } = this.options;
+    const fontSize = convertPixelsToDomUnit(size, unit, this.store.view?.dom);
+    if (Number.isNaN(fontSize)) {
+      return defaultSize || "1rem";
+    }
+    const value = clamp({
+      value: round(fontSize, roundingMultiple),
+      max,
+      min
+    });
+    return `${value}${unit}`;
+  }
+  setFontSize(size, options) {
+    return this.store.commands.applyMark.original(
+      this.type,
+      // Store always as string. This removes the need to treat string vs number when using the value
+      { size: String(size) },
+      options?.selection
+    );
+  }
+  increaseFontSize(options) {
+    const { increment } = this.options;
+    return (props) => {
+      const [parsedFontSize] = this.getFontSizeForSelection(options?.selection);
+      let [size] = parsedFontSize;
+      size += isFunction(increment) ? increment(parsedFontSize, 1) : increment;
+      return this.setFontSize(size, options)(props);
+    };
+  }
+  decreaseFontSize(options) {
+    const { increment } = this.options;
+    return (props) => {
+      const [parsedFontSize] = this.getFontSizeForSelection(options?.selection);
+      let [size] = parsedFontSize;
+      size -= isFunction(increment) ? increment(parsedFontSize, -1) : increment;
+      return this.setFontSize(size, options)(props);
+    };
+  }
+  removeFontSize(options) {
+    return this.store.commands.removeMark.original({ type: this.type, expand: false, ...options });
+  }
+  increaseFontSizeShortcut(props) {
+    return this.increaseFontSize()(props);
+  }
+  decreaseFontSizeShortcut(props) {
+    return this.decreaseFontSize()(props);
+  }
+  getFontSizeForSelection(position) {
+    const state = this.store.getState();
+    const selection = getTextSelection(position ?? state.selection, state.doc);
+    const [range, ...rest] = getMarkRanges(selection, this.type);
+    if (range) {
+      return [
+        parseSizeUnit(range.mark.attrs.size),
+        ...rest.map((range2) => parseSizeUnit(range2.mark.attrs.size))
+      ];
+    }
+    const { defaultSize, unit } = this.options;
+    const parsedSize = [convertPixelsToDomUnit(defaultSize, unit), unit];
+    return [parsedSize];
+  }
+  getFontSizeFromDom(position) {
+    const state = this.store.getState();
+    const selection = getTextSelection(position ?? state.selection, state.doc);
+    const nodeAtPos = this.store.view.domAtPos(selection.from);
+    const element = isElementDomNode(nodeAtPos.node) ? nodeAtPos.node : this.store.view.dom;
+    return parseSizeUnit(getFontSize(element));
+  }
+};
+__decorateClass([
+  command(setFontSizeOptions)
+], FontSizeExtension.prototype, "setFontSize", 1);
+__decorateClass([
+  command(increaseFontSizeOptions)
+], FontSizeExtension.prototype, "increaseFontSize", 1);
+__decorateClass([
+  command(decreaseFontSizeOptions)
+], FontSizeExtension.prototype, "decreaseFontSize", 1);
+__decorateClass([
+  command()
+], FontSizeExtension.prototype, "removeFontSize", 1);
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.IncreaseFontSize, command: "increaseFontSize" })
+], FontSizeExtension.prototype, "increaseFontSizeShortcut", 1);
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.IncreaseFontSize, command: "decreaseFontSize" })
+], FontSizeExtension.prototype, "decreaseFontSizeShortcut", 1);
+__decorateClass([
+  helper()
+], FontSizeExtension.prototype, "getFontSizeForSelection", 1);
+__decorateClass([
+  helper()
+], FontSizeExtension.prototype, "getFontSizeFromDom", 1);
+FontSizeExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      defaultSize: "",
+      unit: "pt",
+      increment: 1,
+      max: 100,
+      min: 1,
+      roundingMultiple: 0.5
+    },
+    staticKeys: ["defaultSize"]
+  })
+], FontSizeExtension);
+export {
+  FontSizeExtension
+};

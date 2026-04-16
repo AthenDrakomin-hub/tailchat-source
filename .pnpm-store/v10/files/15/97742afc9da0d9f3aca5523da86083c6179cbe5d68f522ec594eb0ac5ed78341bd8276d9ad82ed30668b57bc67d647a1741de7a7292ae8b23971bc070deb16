@@ -1,0 +1,70 @@
+/**
+ * @name GenshinGachaKit
+ * @desc
+ *
+ * @author 机智的小鱼君 <dragon-fish@qq.com>
+ * @license Aoache-2.0
+ */
+import { AppCounter, AppGachaPool, SpecialRoll, AppWishResult, OfficialGachaType, AppGachaItem } from './types';
+export * from './types';
+export * as util from './util';
+export declare class GenshinGachaKit {
+    _counter: AppCounter;
+    _gachaPool: AppGachaPool;
+    _result: AppWishResult;
+    constructor(gachaPool: AppGachaPool);
+    /**
+     * @method setGachaPool 配置卡池信息
+     * @param {AppGachaPool} gachaPool 卡池信息
+     * @return {this}
+     */
+    setGachaPool(gachaPool: AppGachaPool): this;
+    setOfficialGachaPool(type: keyof OfficialGachaType): Promise<this>;
+    setCounter(name: keyof AppCounter | AppCounter, value?: any): this;
+    increaseCounter(name: keyof AppCounter, increase?: number): this;
+    clearCounter(): this;
+    /**
+     * @method getCounter 获取指定计数器记录，若未指定则以键值对返回全部计数器记录
+     * @param name
+     * total {number} 总抽取数;
+     * ensureSSR {0 | 1} 是否位于“大保底”状态;
+     * lastUpSSR {number} 距离上一次 UP 5 星已过去多少抽;
+     * lastUpSR {number} 距离上一次 UP 4 星已过去多少抽;
+     * lastSSR {number} 距离上一次 5 星已过去多少抽;
+     * lastSR {number} 距离上一次 4 星已过去多少抽;
+     * upSSR {number[]} 每次获取 UP 5 星的间隔;
+     * upSR {number[]} 每次获取 UP 4 星的间隔;
+     * ssr {number[]} 每次获取 5 星的间隔;
+     * sr {number[]} 每次获取 4 星的间隔;
+     * @return {number | number[] | AppCounter}
+     */
+    getCounter(name?: keyof AppCounter): number | number[] | AppCounter;
+    setResult(type: keyof AppWishResult | AppWishResult, value?: AppGachaItem[]): this;
+    increaseResult(type: keyof AppWishResult, item: AppGachaItem): this;
+    clearResult(): this;
+    /**
+     *
+     * @param type
+     * @returns
+     */
+    getResult(type?: keyof AppWishResult): AppWishResult | AppGachaItem[];
+    /**
+     * @function specialRoll
+     * @param {number} count
+     * @return {0|1|2} 分别代表失败、抽中、抽中 UP
+     */
+    _generateRoll({ lastCount, baseChance, upChance, softEnsure, turningPoint, hardEnsure }: SpecialRoll): 0 | 1 | 2;
+    rollSSR(ensure: boolean): 0 | 1 | 2;
+    rollSR(): 0 | 1 | 2;
+    /**
+     * @method singleWish 进行单次抽取并获取结果
+     * @return {AppGachaItem} 抽取结果
+     */
+    singleWish(): AppGachaItem;
+    /**
+     * @method multiWish 进行多次抽取并获取结果集合
+     * @param count 抽取的次数
+     * @return {AppGachaItem[]} 结果集合
+     */
+    multiWish(count: number): AppGachaItem[];
+}

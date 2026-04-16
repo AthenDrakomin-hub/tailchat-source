@@ -1,0 +1,549 @@
+import { StringKey, GetHandler, FocusType, KeyBindingNames, LiteralUnion, KeyBindingCommandFunction, ExtensionPriority, KeyBindings, Replace, Except } from '@remirror/core';
+import { EventsOptions, HoverEventHandler } from '@remirror/extension-events';
+import { FlatEmoji, EmojiSuggestHandlerProps, EmojiSuggestHandlerCommand } from '@remirror/extension-emoji';
+import { MultishiftPropGetters, MultishiftHelpers, MultishiftState } from 'multishift';
+import { HistoryOptions } from '@remirror/extension-history';
+import { MentionExtensionAttributes } from '@remirror/extension-mention';
+import { SuggestChangeHandlerProps, ChangeReason, ExitReason, Suggester, SuggestState } from '@remirror/pm/suggest';
+import { MentionAtomNodeAttributes } from '@remirror/extension-mention-atom';
+export { MentionAtomNodeAttributes } from '@remirror/extension-mention-atom';
+import { RefCallback } from 'react';
+import { PositionerPosition, PositionerParam, StringPositioner, Positioner, CallbackPositioner } from '@remirror/extension-positioner';
+
+interface IndexFromArrowPressProps {
+    /**
+     * Depending on the application the arrow key pressed could be an up or down
+     * arrow and it's up to you to translate that to next and previous.
+     *
+     * Down should be considered next.
+     */
+    direction: 'next' | 'previous';
+    /**
+     * The total number of matches
+     */
+    matchLength: number;
+    /**
+     * The previously matched index
+     */
+    previousIndex: number;
+}
+/**
+ * Get the next index from an arrow key press.
+ */
+declare function indexFromArrowPress({ direction, matchLength, previousIndex, }: IndexFromArrowPressProps): number;
+
+/**
+ * A hook for subscribing to events from the editor.
+ */
+declare function useEditorEvent<Key extends StringKey<GetHandler<EventsOptions>>>(event: Key, handler: NonNullable<GetHandler<EventsOptions>[Key]>): void;
+
+interface UseEditorFocusProps {
+    /**
+     * The elements that can be focused without setting `isFocused` to false.
+     */
+    ignoredElements?: Array<Element | null>;
+    /**
+     * Set this to true if you want to also update the focus value when the user
+     * focuses on other windows or tabs (outside of the current DOM).
+     *
+     * @defaultValue false
+     */
+    blurOnInactive?: boolean;
+}
+/**
+ * Keep track of the editor focus.
+ *
+ * Returns a focused value which is updated whenever the editor focus changes.
+ *
+ * When `true`, the editor is focused when `false` the editor is not focused.
+ */
+declare function useEditorFocus(props?: UseEditorFocusProps): [isFocused: boolean, focus: (position?: FocusType) => void];
+
+/**
+ * @module
+ *
+ * Create menu navigation handlers when showing popup menus inside the editor.
+ */
+
+interface MenuNavigationProps<Item = any> extends MenuNavigationOptions {
+    /**
+     * The items that will be rendered as part of the dropdown menu.
+     *
+     * When the items are an empty array then nothing will be shown.
+     */
+    items: Item[];
+    /**
+     * Set to `true` when the menu should be visible.
+     */
+    isOpen: boolean;
+    /**
+     * Called when submitting the inline menu via the keyboard.
+     *
+     * Currently the hardcoded submit key is `Enter`
+     *
+     * Return `true` to indicate the event was handled or false to indicated that
+     * nothing has been done.
+     */
+    onSubmit: (item: Item, type: 'click' | 'keyPress') => boolean;
+    /**
+     * Called when dismissing the inline menu.
+     *
+     * Currently `Tab` and `Escape` dismiss the menu.
+     *
+     * Return `true` to indicate the event was handled or false to indicated that
+     * nothing has been done.
+     */
+    onDismiss: () => boolean;
+}
+interface MenuNavigationOptions {
+    /**
+     * The direction of the arrow key press.
+     *
+     * @defaultValue 'vertical';
+     */
+    direction?: MenuDirection;
+    /**
+     * Keys that can submit the selection.
+     *
+     * @defaultValue ['Enter']
+     */
+    submitKeys?: KeyBindingNames[];
+    /**
+     * Keys that can dismiss the menu.
+     *
+     * @defaultValue ['Escape', 'Tab', 'Shift-Tab']
+     */
+    dismissKeys?: KeyBindingNames[];
+    /**
+     * When true, refocus the editor when a click is made.
+     *
+     * @defaultValue true
+     */
+    focusOnClick?: boolean;
+}
+type MenuDirection = 'horizontal' | 'vertical';
+interface UseMenuNavigationReturn<Item = any> extends Pick<MultishiftPropGetters<Item>, 'getMenuProps' | 'getItemProps'>, Pick<MultishiftHelpers<Item>, 'itemIsSelected' | 'indexIsSelected' | 'indexIsHovered' | 'itemIsHovered'>, Pick<MultishiftState<Item>, 'hoveredIndex'> {
+    /**
+     * The selected index.
+     */
+    index: number;
+    setIndex: (index: number) => void;
+}
+/**
+ * This hook provides the primitives for rendering a dropdown menu within
+ */
+declare function useMenuNavigation<Item = any>(props: MenuNavigationProps): UseMenuNavigationReturn<Item>;
+
+interface FlatEmojiWithUrl extends FlatEmoji {
+    /**
+     * The svg url for CDN access.
+     */
+    url: string;
+}
+interface EmojiState extends Pick<EmojiSuggestHandlerProps, 'range' | 'query' | 'exit'> {
+    /**
+     * The list of emoji generated by the query.
+     *
+     * @defaultValue []
+     */
+    list: FlatEmojiWithUrl[];
+    /**
+     * The command to run to replace the query with the request emoji.
+     *
+     * @defaultValue undefined
+     */
+    apply: EmojiSuggestHandlerCommand;
+}
+interface UseEmojiProps extends MenuNavigationOptions {
+}
+interface UseEmojiReturn extends UseMenuNavigationReturn<FlatEmojiWithUrl> {
+    /**
+     * The state of the current query, only available when active.
+     */
+    state: EmojiState | null;
+}
+/**
+ * This hook provides the state for setting up an emoji state change handler. It
+ * applies the keybindings and the required change handlers.
+ */
+declare function useEmoji(props?: UseEmojiProps): UseEmojiReturn;
+
+/**
+ * A hook which is called every time an undo or redo event is triggered from
+ * within the ProseMirror history extension.
+ *
+ * @remarks
+ *
+ * `handler` should be a memoized function.
+ */
+declare function useHistory<Key extends StringKey<GetHandler<HistoryOptions>>>(event: Key, handler: NonNullable<GetHandler<HistoryOptions>[Key]>): void;
+
+/**
+ * A hook which listens to hover events.
+ *
+ * Provide a memoized handler which is provided with the nodes which were
+ * directly touched by the `hover: true` or `hover: false` event.
+ */
+declare function useHover(handler: HoverEventHandler): void;
+
+/**
+ * Add custom keyboard bindings to the editor instance.
+ *
+ * @remarks
+ *
+ * ```tsx
+ * import { useCallback } from 'react';
+ * import { BoldExtension } from 'remirror/extensions';
+ * import { Remirror, useHelpers, useKeymap, useRemirror, useRemirrorContext } from '@remirror/react';
+ *
+ * const hooks = [
+ *   () => {
+ *     const active = useActive();
+ *     const { insertText } = useCommands();
+ *     const boldActive = active.bold();
+ *     const handler = useCallback(() => {
+ *       if (!boldActive) {
+ *         return false;
+ *       }
+ *
+ *       // Prevent the keypress from using the default action.
+ *       return insertText.original('\n\nWoah there!')(props);
+ *     }, [boldActive, insertText]);
+ *
+ *     useKeymap('Shift-Enter', handler); // Add the handler to the keypress pattern.
+ *   },
+ * ];
+ *
+ * const Editor = () => {
+ *   const { manager } = useRemirror({ extensions: () => [new BoldExtension()] });
+ *
+ *   return <Remirror manager={manager} hooks={hooks} />;
+ * };
+ * ```
+ */
+declare function useKeymap(name: LiteralUnion<KeyBindingNames, string>, handler: KeyBindingCommandFunction, priority?: ExtensionPriority): void;
+
+/**
+ * Add custom keyboard bindings to the editor instance.
+ *
+ * @remarks
+ *
+ * ```tsx
+ * import { Remirror, useRemirror, useRemirrorContext, useKeymaps  } from '@remirror/react';
+ *
+ * const Editor = () => {
+ *   const { manager } = useRemirror({ extensions: () => [] });
+ *
+ *   return (
+ *     <Remirror manager={manager}>
+ *       <EditorBindings />
+ *     </Remirror>
+ *   );
+ * };
+ *
+ * const EditorBindings = () => {
+ *   const { getRootProps } = useRemirrorContext({ autoUpdate: true });
+ *
+ *   useKeymaps({
+ *     Enter: () => {
+ *       // Prevent the tne enter key from being pressed.
+ *       return true;
+ *     }
+ *   });
+ *
+ *   return <div {...getRootProps()} />;
+ * };
+ * ```
+ */
+declare function useKeymaps(bindings: KeyBindings, priority?: ExtensionPriority): void;
+
+interface MentionState<Data extends MentionExtensionAttributes = MentionExtensionAttributes> extends Pick<SuggestChangeHandlerProps, 'name' | 'query' | 'text' | 'range'> {
+    /**
+     * This command when the mention is active.
+     */
+    command: (item: Data) => void;
+    /**
+     * The reason for the change.
+     */
+    reason: ChangeReason;
+}
+interface UseMentionReturn<Data extends MentionExtensionAttributes = MentionExtensionAttributes> extends UseMenuNavigationReturn<Data> {
+    state: MentionState<Data> | null;
+}
+/**
+ * A hook that provides the state for social mentions that responds to
+ * keybindings and key-presses from the user.
+ *
+ * This is used by the `SocialMentionDropdown` component and can be used by you
+ * for a customized component.
+ *
+ * The only prop required is the list of data in order to support keybinding and
+ * properly selecting the index for you. The data must have a `label` and `id`
+ * key. The label is the text that should be shown inside the mention and the
+ * `id` is whatever unique identifier that can be used.
+ *
+ * You can also add other supported attributes which will be added to the
+ * mention node, like `href` and whatever you decide.
+ *
+ * @param list - the list of data from which an index can be calculated. Must
+ * include at least an `id` and a `label`.
+ */
+declare function useMention<Data extends MentionExtensionAttributes = MentionExtensionAttributes>(props: UseMentionProps<Data>): UseMentionReturn<Data>;
+interface UseMentionProps<Data extends MentionExtensionAttributes = MentionExtensionAttributes> extends MenuNavigationOptions {
+    /**
+     * The list of data from which an index can be calculated. Must include at
+     * least an `id` and a `label`.
+     */
+    items: Data[];
+    /**
+     * This method is called when a user induced exit happens before a mention has
+     * been created. It receives the state, and gives the consumer of this hook
+     * the opportunity to manually create their own mention
+     *
+     * Leave this undefined to ignore exits.
+     *
+     * To enable automatic exit handling. The following will automatically set the
+     * id to be the query and the label to be the full matching text. Extra attrs
+     * like `href` can be added by you to the attrs object parameter.
+     *
+     * ```ts
+     * const mentionState = useMention({ items, onExit(_, command) => command(), });
+     * ```
+     */
+    onExit?: UseMentionExitHandler<Data>;
+    /**
+     * Whether matches should be permanently ignored when the user presses escape.
+     *
+     * @defaultValue true
+     */
+    ignoreMatchesOnDismiss?: boolean;
+}
+type UseMentionExitHandler<Data extends MentionExtensionAttributes = MentionExtensionAttributes> = (props: OnExitProps<Data>, command: (attrs?: Partial<Data>) => void) => void;
+type OnExitProps<Data extends MentionExtensionAttributes = MentionExtensionAttributes> = Replace<Omit<MentionState<Data>, 'command'>, {
+    reason: ExitReason;
+}>;
+
+interface MentionAtomState<Data extends MentionAtomNodeAttributes = MentionAtomNodeAttributes> extends Pick<SuggestChangeHandlerProps, 'name' | 'query' | 'text' | 'range'> {
+    /**
+     * The reason for the change.
+     */
+    reason: ChangeReason;
+    /**
+     * A command that will update the current matching region with the provided
+     * attributes. To see what can be accomplished please inspect the type of the attrs which should be passed through.
+     */
+    command: (attrs: Data) => void;
+}
+interface UseMentionAtomReturn<Data extends MentionAtomNodeAttributes = MentionAtomNodeAttributes> extends UseMenuNavigationReturn<Data> {
+    state: MentionAtomState<Data> | null;
+}
+/**
+ * A hook that provides the state for social mention atoms that responds to
+ * keybindings and key-presses from the user.
+ *
+ * The difference between this and the `useMention` is that `useMention` creates
+ * editable mentions that can be changed over an over again. This creates atom
+ * mention which are inserted into the editor as non editable nodes. Backspacing
+ * into this node will delete the whole mention.
+ *
+ * In order to properly support keybindings you will need to provide a list of
+ * data that is to be shown to the user. This allows for the user to press the
+ * arrow up and arrow down key.
+ *
+ * You can also add other supported attributes which will be added to the
+ * mention node, like `href` and whatever you decide upon.
+ *
+ * @param props - the props that can be passed through to the mention atom.
+ */
+declare function useMentionAtom<Data extends MentionAtomNodeAttributes = MentionAtomNodeAttributes>(props: UseMentionAtomProps<Data>): UseMentionAtomReturn<Data>;
+interface UseMentionAtomProps<Data extends MentionAtomNodeAttributes = MentionAtomNodeAttributes> extends MenuNavigationOptions, Pick<MentionAtomNodeAttributes, 'replacementType'> {
+    /**
+     * The list of data from which an index can be calculated. Must include at
+     * least an `id` and a `label`.
+     */
+    items: Data[];
+    /**
+     * Whether matches should be permanently ignored when the user dismisses the
+     * mention suggestion.
+     *
+     * @defaultValue true
+     */
+    ignoreMatchesOnDismiss?: boolean;
+}
+
+interface UseMultiPositionerReturn<Data = any> extends PositionerPosition {
+    /**
+     * This ref must be applied to the component that is being positioned in order
+     * to correctly obtain the position data.
+     */
+    ref: RefCallback<HTMLElement>;
+    /**
+     * The element that the ref has found.
+     */
+    element?: HTMLElement;
+    /**
+     * A key to uniquely identify this positioner. This can be applied to the
+     * react element.
+     */
+    key: string;
+    /**
+     * Metadata associated with the position
+     */
+    data: Data;
+}
+/**
+ * A positioner for your editor. This returns an array of active positions and
+ * is useful for tracking the positions of multiple items in the editor.
+ *
+ * ```ts
+ * import { Positioner } from 'remirror/extensions';
+ * import { useMultiPositioner } from '@remirror/react';
+ *
+ * const positioner = Positioner.create({
+ *   ...config, // custom config
+ * })
+ *
+ * const MenuComponent: FC = () => {
+ *   const positions = usePositioner(positioner, []);
+ *
+ *   return (
+ *     <>
+ *       {
+ *         positions.map(({ ref, bottom, left, key }) => (
+ *           <div style={{ bottom, left }} ref={ref} key={key}>
+ *             <MenuIcon {...options} />
+ *           </div>
+ *         )
+ *       }
+ *     </>
+ *   )
+ * };
+ * ```
+ *
+ * @param positioner - the positioner which will be used
+ * @param deps - an array of dependencies which will cause the hook to rerender
+ * with an updated positioner. This is the only way to update the positioner.
+ */
+declare function useMultiPositioner<Data = any>(positioner: PositionerParam, deps: unknown[]): Array<UseMultiPositionerReturn<Data>>;
+
+interface UsePositionerReturnActive<Data = any> extends UseMultiPositionerReturn<Data> {
+    /**
+     * When `true`, the position is active and the positioner will be displayed.
+     */
+    active: true;
+}
+interface UsePositionerReturnInactive<Data = any> extends Omit<UseMultiPositionerReturn<Data>, 'ref' | 'data'> {
+    /**
+     * When `true`, the position is active and the positioner will be displayed.
+     */
+    active: false;
+    /**
+     * When active is `true` this will contain a ref that must be applied to the component that is
+     * being positioned in order to correctly obtain the position data.
+     * When active is `false` this will be undefined.
+     */
+    ref: undefined;
+    /**
+     * When active is `true` this will contain metadata associated with the position.
+     * When active is `false` this we be an empty object.
+     */
+    data: Record<string, never>;
+}
+type UsePositionerReturn<Data = any> = UsePositionerReturnActive<Data> | UsePositionerReturnInactive<Data>;
+/**
+ * A hook for creating a positioner with the `PositionerExtension`. When an
+ * active position exists for the provided positioner it will return an object
+ * with the `ref`, `top`, `left`, `bottom`, `right` properties.
+ *
+ * @param isActive - Set this to a boolean to override whether the positioner is
+ * active. `true` leaves the behaviour unchanged.
+ *
+ * In a recent update, the positioner is now automatically memoized for you.
+ *
+ *
+ * @remarks
+ *
+ * Must apply the ref to the component when called.
+ *
+ * ```ts
+ * import { usePositioner } from '@remirror/react';
+ *
+ * const MenuComponent: FC = () => {
+ *   const positions = usePositioner('bubble');
+ *
+ *   return (
+ *     <div style={{ bottom, left }} ref={ref}>
+ *       <MenuIcon {...options} />
+ *     </div>
+ *   );
+ * }
+ *
+ * const Wrapper = () => (
+ *   <Remirror extensions={[]}>
+ *     <MenuComponent />
+ *   </Remirror>
+ * )
+ * ```
+ *
+ * @param positioner - the positioner to use which can be a string or a
+ * `Positioner` instance.
+ * @param activeOrDeps - the dependency array which will cause the positioner to
+ * be updated when changed or a boolean value when the positioner is a string
+ * which can be used to override whether the positioner is active.
+ */
+declare function usePositioner<Data = any>(positioner: StringPositioner, isActive?: boolean): UsePositionerReturn<Data>;
+declare function usePositioner<Data = any>(positioner: Positioner | CallbackPositioner, deps: unknown[]): UsePositionerReturn<Data>;
+
+/**
+ * This hook allows you to dynamically create a suggester which can respond to
+ * user input of activation characters or regex patterns.
+ *
+ * By adding a suggester it is possible to keep track of what the user has
+ * typed and receive meaningful information in return.
+ *
+ * This includes
+ *
+ * - The range of the matching text
+ * - The matching text value
+ * - The query value, which excludes the matching character (or character regex).
+ * - The matching capture groups [FULL_MATCH, MATCHING_CHARACTER, CUSTOM_GROUPS]
+ *
+ * The return value has two keys, `exit` and `change` which can both be
+ * `undefined`. The reason for including both the `exit` and `change` return
+ * values is that it's possible for both to occur at the the same time during a
+ * **jump** from one [[`Suggester`]] _match_ to another suggester match.
+ *
+ * The cursor has exited and entered (changed) at the same time.
+ */
+declare function useSuggest(props: UseSuggesterProps): UseSuggestReturn;
+/**
+ * @deprecated - use `useSuggest`
+ */
+declare const useSuggester: typeof useSuggest;
+interface UseSuggesterProps extends Except<Suggester, 'onChange'> {
+    /**
+     * Set to `true` to ignore changes which are purely caused by focus events.
+     *
+     * TODO - NOT YET IMPLEMENTED
+     */
+    ignoreFocus?: boolean;
+}
+type SuggestStateMethods = Pick<SuggestState, 'addIgnored' | 'clearIgnored' | 'removeIgnored' | 'ignoreNextExit' | 'setMarkRemoved'>;
+interface ExitReasonProps {
+    /**
+     * The reason for the exit. More details can be found in the [[`ExitReason`]] docs.
+     */
+    reason: ExitReason;
+}
+interface ChangeReasonProps {
+    /**
+     * The reason for the change. More details can be found in the [[`ChangeReason`]] docs.
+     */
+    reason: ChangeReason;
+}
+interface UseSuggestReturn extends SuggestStateMethods {
+    change: (Pick<SuggestChangeHandlerProps, 'text' | 'query' | 'range' | 'match'> & ChangeReasonProps) | undefined;
+    exit: (Pick<SuggestChangeHandlerProps, 'text' | 'query' | 'range' | 'match'> & ExitReasonProps) | undefined;
+}
+
+export { EmojiState, FlatEmojiWithUrl, MentionAtomState, MentionState, MenuDirection, MenuNavigationOptions, UseEditorFocusProps, UseEmojiProps, UseEmojiReturn, UseMentionAtomProps, UseMentionAtomReturn, UseMentionExitHandler, UseMentionProps, UseMentionReturn, UseMenuNavigationReturn, UseMultiPositionerReturn, UsePositionerReturn, UseSuggestReturn, UseSuggesterProps, indexFromArrowPress, useEditorEvent, useEditorFocus, useEmoji, useHistory, useHover, useKeymap, useKeymaps, useMention, useMentionAtom, useMenuNavigation, useMultiPositioner, usePositioner, useSuggest, useSuggester };

@@ -1,0 +1,9 @@
+import { FindProsemirrorNodeResult } from '@remirror/core';
+import { Positioner } from '@remirror/extension-positioner';
+/**
+ * Creates a positioner for the current table cell node which will show the
+ * cell menu.
+ *
+ * It spans the full width and height of the table cell node.
+ */
+export declare const menuCellPositioner: Positioner<FindProsemirrorNodeResult>;

@@ -1,0 +1,151 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-doc/src/doc-extension.ts
+import {
+  command,
+  entries,
+  extension,
+  ExtensionPriority,
+  helper,
+  isDefaultDocNode,
+  isPlainObject,
+  NodeExtension,
+  object
+} from "@remirror/core";
+import { Step, StepResult } from "@remirror/pm/transform";
+var DocExtension = class extends NodeExtension {
+  get name() {
+    return "doc";
+  }
+  /**
+   * Create the node spec for the `doc` the content that you've provided.
+   */
+  createNodeSpec(_, override) {
+    const { docAttributes, content } = this.options;
+    const attrs = object();
+    if (isPlainObject(docAttributes)) {
+      for (const [key, value] of entries(docAttributes)) {
+        attrs[key] = { default: value };
+      }
+    } else {
+      for (const key of docAttributes) {
+        attrs[key] = { default: null };
+      }
+    }
+    return {
+      attrs,
+      content,
+      ...override
+    };
+  }
+  setDocAttributes(attrs) {
+    return ({ tr, dispatch }) => {
+      if (dispatch) {
+        for (const [key, value] of Object.entries(attrs)) {
+          tr.step(new SetDocAttributeStep(key, value));
+        }
+        dispatch(tr);
+      }
+      return true;
+    };
+  }
+  isDefaultDocNode({
+    state = this.store.getState(),
+    options
+  } = {}) {
+    return isDefaultDocNode(state.doc, options);
+  }
+};
+__decorateClass([
+  command()
+], DocExtension.prototype, "setDocAttributes", 1);
+__decorateClass([
+  helper()
+], DocExtension.prototype, "isDefaultDocNode", 1);
+DocExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      content: "block+",
+      docAttributes: []
+    },
+    defaultPriority: ExtensionPriority.Medium,
+    staticKeys: ["content", "docAttributes"],
+    disableExtraAttributes: true
+  })
+], DocExtension);
+var STEP_TYPE = "SetDocAttribute";
+var REVERT_STEP_TYPE = "RevertSetDocAttribute";
+var SetDocAttributeStep = class _SetDocAttributeStep extends Step {
+  static fromJSON(_, json) {
+    return new _SetDocAttributeStep(json.key, json.value, json.stepType);
+  }
+  /**
+   * The attribute key.
+   */
+  key;
+  /**
+   * A custom name for the step type.
+   *
+   * @defaultValue 'SetDocAttribute'
+   */
+  stepType;
+  /**
+   * The value to be added.
+   */
+  value;
+  /**
+   * The previous value.
+   */
+  previous;
+  constructor(key, value, stepType = STEP_TYPE) {
+    super();
+    this.stepType = stepType;
+    this.key = key;
+    this.value = value;
+  }
+  apply(doc) {
+    this.previous = doc.attrs[this.key];
+    const attrs = {
+      ...doc.attrs,
+      [this.key]: this.value
+    };
+    return StepResult.ok(doc.type.create(attrs, doc.content, doc.marks));
+  }
+  invert() {
+    return new _SetDocAttributeStep(this.key, this.previous, REVERT_STEP_TYPE);
+  }
+  /**
+   * The position never changes so `map` should return the current step.
+   */
+  map() {
+    return this;
+  }
+  toJSON() {
+    return {
+      stepType: this.stepType,
+      key: this.key,
+      value: this.value
+    };
+  }
+};
+try {
+  Step.jsonID(STEP_TYPE, SetDocAttributeStep);
+  Step.jsonID(REVERT_STEP_TYPE, SetDocAttributeStep);
+} catch (error) {
+  if (!error.message.startsWith(`Duplicate use of step JSON ID`)) {
+    throw error;
+  }
+}
+export {
+  DocExtension
+};

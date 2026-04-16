@@ -1,0 +1,4 @@
+import { MetricRunInfo, MetricRunInfoBaseline, Metric, MetricTypes, MetricTypeConfig } from '../constants';
+export declare function createGetMetricType(metrics: Record<string, unknown>): (key: string, type?: MetricTypes) => Metric;
+export declare function getGlobalMetricType(key: string, type?: MetricTypes): Metric;
+export declare function getMetricRunInfo(metricType: MetricTypeConfig, current: number, baseline?: number): MetricRunInfo | MetricRunInfoBaseline;

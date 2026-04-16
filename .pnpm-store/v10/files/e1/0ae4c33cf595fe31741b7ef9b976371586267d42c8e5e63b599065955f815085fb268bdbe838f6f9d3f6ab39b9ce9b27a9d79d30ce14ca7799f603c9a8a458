@@ -1,0 +1,3 @@
+import { RollupWatcher } from 'rollup';
+export declare function buildPlugin(pluginPackageJsonPath: string): Promise<void>;
+export declare function watchPlugin(pluginPackageJsonPath: string): RollupWatcher;

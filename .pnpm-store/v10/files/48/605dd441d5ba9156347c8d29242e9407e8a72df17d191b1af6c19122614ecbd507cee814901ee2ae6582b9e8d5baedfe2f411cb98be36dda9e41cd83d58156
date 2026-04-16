@@ -1,0 +1,34 @@
+import { AnyExtension, EditorState, Framework, FrameworkOutput, FrameworkProps, UpdateStateProps } from '@remirror/core';
+import { EditorView } from '@remirror/pm/view';
+export interface DomFrameworkOutput<Extension extends AnyExtension> extends FrameworkOutput<Extension> {
+    /**
+     * Call this method when cleaning up the DOM. It is called for you if you call
+     * `manager.destroy()`.
+     */
+    destroy: () => void;
+}
+export interface DomFrameworkProps<Extension extends AnyExtension> extends FrameworkProps<Extension> {
+    /**
+     * Provide a container element. Which the editor will be appended to.
+     */
+    element: Element;
+}
+/**
+ * The Framework implementation when interacting with the DOM.
+ */
+export declare class DomFramework<Extension extends AnyExtension> extends Framework<Extension, DomFrameworkProps<Extension>, DomFrameworkOutput<Extension>> {
+    get name(): "dom";
+    /**
+     * Create the prosemirror `[[EditorView`]].
+     */
+    protected createView(state: EditorState, element?: Element): EditorView;
+    /**
+     * This method should be called when the framework is first created.
+     */
+    onFirstRender(): void;
+    /**
+     * Responsible for managing state updates.
+     */
+    protected updateState({ state, ...rest }: UpdateStateProps): void;
+    get frameworkOutput(): DomFrameworkOutput<Extension>;
+}

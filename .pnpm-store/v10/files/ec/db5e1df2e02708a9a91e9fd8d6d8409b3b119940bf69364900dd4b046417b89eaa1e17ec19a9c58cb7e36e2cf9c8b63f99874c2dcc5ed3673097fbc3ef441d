@@ -1,0 +1,126 @@
+"use strict";
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.buildRollupOptions = void 0;
+var path_1 = __importDefault(require("path"));
+var plugin_node_resolve_1 = __importDefault(require("@rollup/plugin-node-resolve"));
+var plugin_commonjs_1 = __importDefault(require("@rollup/plugin-commonjs"));
+var config_1 = require("./config");
+var utils_1 = require("./utils");
+var rollup_plugin_styles_1 = __importDefault(require("rollup-plugin-styles"));
+var plugin_url_1 = __importDefault(require("@rollup/plugin-url"));
+var rollup_plugin_esbuild_1 = __importDefault(require("rollup-plugin-esbuild"));
+var plugin_json_1 = __importDefault(require("@rollup/plugin-json"));
+function buildRollupOptions(context) {
+    var pluginPackageJsonPath = context.pluginPackageJsonPath, packageConfig = context.packageConfig;
+    var scope = config_1.config.scope;
+    var name = packageConfig.name.replace("@".concat(scope, "/"), '');
+    var main = packageConfig.main;
+    var prefixDepsMatch = __spreadArray(__spreadArray([], (0, utils_1.getPluginDirs)().map(function (x) { return "@plugins/".concat(x); }), true), [
+        '@capital/', // builtin dependencies prefix
+    ], false);
+    var exactDepsMatch = __spreadArray([], config_1.config.externalDeps, true);
+    var customPluginContext = {
+        pluginName: name,
+    };
+    var customRollupPlugins = [];
+    if (Array.isArray(config_1.config.rollupPlugins)) {
+        customRollupPlugins = config_1.config.rollupPlugins;
+    }
+    else if (typeof config_1.config.rollupPlugins === 'function') {
+        customRollupPlugins = config_1.config.rollupPlugins(customPluginContext);
+    }
+    var plugins = __spreadArray(__spreadArray([
+        (0, rollup_plugin_esbuild_1.default)({
+            // https://www.npmjs.com/package/rollup-plugin-esbuild
+            // All options are optional
+            include: /\.[jt]sx?$/,
+            exclude: /node_modules/,
+            sourceMap: true,
+            minify: process.env.NODE_ENV === 'production',
+            tsconfig: path_1.default.resolve(path_1.default.dirname(pluginPackageJsonPath), './tsconfig.json'),
+        }),
+        (0, rollup_plugin_styles_1.default)(),
+        (0, plugin_url_1.default)(),
+        (0, plugin_json_1.default)()
+    ], customRollupPlugins, true), [
+        (0, plugin_node_resolve_1.default)({ browser: true }),
+        (0, plugin_commonjs_1.default)(),
+        replaceId(),
+    ], false);
+    if (typeof config_1.config.buildRollupPlugins === 'function') {
+        plugins = config_1.config.buildRollupPlugins(plugins, customPluginContext);
+    }
+    function getFileNameWithoutExt(filepath) {
+        return path_1.default.basename(filepath).split('.')[0];
+    }
+    /**
+     * reset AMD id to uniq with `pluginName/fileName`
+     */
+    function replaceId() {
+        return {
+            name: 'replace',
+            generateBundle: function (options, bundle) {
+                Object.values(bundle).forEach(function (item) {
+                    if ('code' in item) {
+                        // Process OutputChunk
+                        item.code = item.code.replace(/definePlugin\(['|"]([^'"]+)['|"],/, function (match, p1) {
+                            var moduleId = p1;
+                            if (getFileNameWithoutExt(main) ===
+                                getFileNameWithoutExt(item.fileName)) {
+                                moduleId = "@plugins/".concat(name);
+                            }
+                            else if (!p1.endsWith('.js')) {
+                                // TODO: Need to optimize
+                                moduleId += '.js';
+                            }
+                            return "definePlugin('".concat(moduleId, "',");
+                        });
+                    }
+                });
+            },
+        };
+    }
+    return {
+        input: path_1.default.resolve(path_1.default.dirname(pluginPackageJsonPath), main),
+        output: {
+            dir: path_1.default.resolve(config_1.config.outDir, './plugins', name),
+            format: 'amd',
+            amd: {
+                autoId: true,
+                basePath: "@plugins/".concat(name),
+                define: 'definePlugin',
+            },
+            sourcemap: true,
+        },
+        plugins: plugins,
+        external: function (id) {
+            for (var _i = 0, prefixDepsMatch_1 = prefixDepsMatch; _i < prefixDepsMatch_1.length; _i++) {
+                var dep = prefixDepsMatch_1[_i];
+                if (id.startsWith(dep)) {
+                    return true;
+                }
+            }
+            for (var _a = 0, exactDepsMatch_1 = exactDepsMatch; _a < exactDepsMatch_1.length; _a++) {
+                var dep = exactDepsMatch_1[_a];
+                if (id === dep) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        preserveEntrySignatures: 'strict',
+    };
+}
+exports.buildRollupOptions = buildRollupOptions;

@@ -1,0 +1,11 @@
+import React from 'react';
+export interface TableCellMenuComponentProps {
+    popupOpen: boolean;
+    setPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+type TableCellMenuComponent = React.ComponentType<TableCellMenuComponentProps>;
+export interface TableCellMenuProps {
+    Component?: TableCellMenuComponent;
+}
+declare const TableCellMenu: React.FC<TableCellMenuProps>;
+export { TableCellMenu };

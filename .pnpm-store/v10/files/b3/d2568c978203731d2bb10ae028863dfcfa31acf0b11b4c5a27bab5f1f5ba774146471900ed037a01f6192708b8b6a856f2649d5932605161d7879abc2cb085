@@ -1,0 +1,145 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-collaboration/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  CollaborationExtension: () => CollaborationExtension
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-collaboration/src/collaboration-extension.ts
+var import_core = require("@remirror/core");
+var import_collab = require("@remirror/pm/collab");
+var import_transform = require("@remirror/pm/transform");
+var CollaborationExtension = class extends import_core.PlainExtension {
+  get name() {
+    return "collaboration";
+  }
+  get debounceGetSendableSteps() {
+    if (!this._debounceGetSendableSteps) {
+      this._debounceGetSendableSteps = (0, import_core.debounce)(
+        this.options.debounceMs,
+        this.getSendableSteps.bind(this)
+      );
+    }
+    return this._debounceGetSendableSteps;
+  }
+  sendCollaborationUpdate(attributes) {
+    return ({ state, dispatch }) => {
+      (0, import_core.invariant)(isValidCollaborationAttributes(attributes), {
+        message: "Invalid attributes passed to the collaboration command."
+      });
+      const { version, steps } = attributes;
+      if ((0, import_collab.getVersion)(state) > version) {
+        return false;
+      }
+      if (dispatch) {
+        dispatch(
+          (0, import_collab.receiveTransaction)(
+            state,
+            steps.map((item) => import_transform.Step.fromJSON(this.store.schema, item)),
+            steps.map((item) => item.clientID)
+          )
+        );
+      }
+      return true;
+    };
+  }
+  cancelSendableSteps() {
+    return () => {
+      var _a;
+      (_a = this.debounceGetSendableSteps) == null ? void 0 : _a.cancel();
+      return true;
+    };
+  }
+  flushSendableSteps() {
+    return ({ state }) => {
+      var _a;
+      (_a = this.debounceGetSendableSteps) == null ? void 0 : _a.cancel();
+      this.getSendableSteps(state);
+      return true;
+    };
+  }
+  createExternalPlugins() {
+    const { version, clientID } = this.options;
+    const plugin = (0, import_collab.collab)({
+      version,
+      clientID
+    });
+    return [plugin];
+  }
+  onStateUpdate(props) {
+    var _a;
+    (_a = this.debounceGetSendableSteps) == null ? void 0 : _a.call(this, props.state);
+  }
+  onDestroy() {
+    this.store.commands.flushSendableSteps();
+  }
+  /**
+   * This passes the sendable steps into the `onSendableReceived` handler defined in the
+   * options when there is something to send.
+   */
+  getSendableSteps(state) {
+    const sendable = (0, import_collab.sendableSteps)(state);
+    if (sendable) {
+      const jsonSendable = {
+        version: sendable.version,
+        steps: sendable.steps.map((step) => step.toJSON()),
+        clientID: sendable.clientID
+      };
+      this.options.onSendableReceived({ sendable, jsonSendable });
+    }
+  }
+};
+__decorateClass([
+  (0, import_core.command)()
+], CollaborationExtension.prototype, "sendCollaborationUpdate", 1);
+__decorateClass([
+  (0, import_core.command)()
+], CollaborationExtension.prototype, "cancelSendableSteps", 1);
+__decorateClass([
+  (0, import_core.command)()
+], CollaborationExtension.prototype, "flushSendableSteps", 1);
+CollaborationExtension = __decorateClass([
+  (0, import_core.extension)({
+    defaultOptions: {
+      version: 0,
+      clientID: (0, import_core.uniqueId)(),
+      debounceMs: 250
+    },
+    staticKeys: ["version", "clientID", "debounceMs"],
+    handlerKeys: ["onSendableReceived"]
+  })
+], CollaborationExtension);
+var isValidCollaborationAttributes = (attributes) => {
+  return !(!attributes || !(0, import_core.isArray)(attributes.steps) || !(0, import_core.isNumber)(attributes.version));
+};
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  CollaborationExtension
+});

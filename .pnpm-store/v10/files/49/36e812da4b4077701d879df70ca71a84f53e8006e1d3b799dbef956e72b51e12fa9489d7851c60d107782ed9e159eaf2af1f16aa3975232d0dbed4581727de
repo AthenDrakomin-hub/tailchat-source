@@ -1,0 +1,324 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-markdown/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  MarkdownExtension: () => MarkdownExtension
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-markdown/src/markdown-extension.ts
+var import_core2 = require("@remirror/core");
+var import_model = require("@remirror/pm/model");
+
+// packages/remirror__extension-markdown/src/html-to-markdown.ts
+var import_turndown = __toESM(require("turndown"), 1);
+var import_core = require("@remirror/core");
+var TurndownService = (0, import_core.defaultImport)(import_turndown.default);
+function htmlToMarkdown(html) {
+  return turndownService.turndown(html);
+}
+function isHeadingRow(tableRow) {
+  const parentNode = tableRow.parentNode;
+  if (!(0, import_core.isElementDomNode)(parentNode)) {
+    return false;
+  }
+  if (parentNode.nodeName === "THEAD") {
+    return true;
+  }
+  if (parentNode.nodeName !== "TABLE" && !isFirstTbody(parentNode)) {
+    return false;
+  }
+  const childNodes = [...tableRow.childNodes];
+  return childNodes.every((n) => n.nodeName === "TH") && childNodes.some((n) => !!n.textContent);
+}
+function isControllerHeadingCell(cell2) {
+  return (0, import_core.isElementDomNode)(cell2) && cell2.matches("th[data-controller-cell]");
+}
+function isControllerHeadingRow(tableRow) {
+  const parentNode = tableRow.parentNode;
+  if (!(0, import_core.isElementDomNode)(parentNode)) {
+    return false;
+  }
+  if (parentNode.nodeName !== "TABLE" && !isFirstTbody(parentNode)) {
+    return false;
+  }
+  const childNodes = [...tableRow.childNodes];
+  return childNodes.every((n) => isControllerHeadingCell(n));
+}
+function isFirstTbody(element) {
+  if (element.nodeName !== "TBODY") {
+    return false;
+  }
+  const previousSibling = element.previousSibling;
+  if (!previousSibling) {
+    return true;
+  }
+  return (0, import_core.isElementDomNode)(previousSibling) && previousSibling.nodeName === "THEAD" && !previousSibling.textContent?.trim();
+}
+function isNestedTable(element) {
+  const currentTable = element.closest("table");
+  if (!currentTable) {
+    return false;
+  }
+  const { parentNode } = currentTable;
+  if (!parentNode) {
+    return true;
+  }
+  return !!parentNode.closest("table");
+}
+function cell(content, node) {
+  const childNodes = [];
+  for (const n of node.parentNode?.childNodes ?? []) {
+    if (isControllerHeadingCell(n)) {
+      continue;
+    }
+    childNodes.push(n);
+  }
+  const index = childNodes.indexOf(node);
+  const prefix = index === 0 ? "| " : " ";
+  return `${prefix + content.trim()} |`;
+}
+var turndownService = new TurndownService({ codeBlockStyle: "fenced", headingStyle: "atx" }).addRule("taskListItems", {
+  filter: (node) => node.nodeName === "LI" && node.hasAttribute("data-task-list-item"),
+  replacement: (content, node) => {
+    const isChecked = node.hasAttribute("data-checked");
+    return `- ${isChecked ? "[x]" : "[ ]"} ${content.trimStart()}`;
+  }
+}).addRule("tableCell", {
+  filter: ["th", "td"],
+  replacement: (content, node) => {
+    if (isControllerHeadingCell(node)) {
+      return "";
+    }
+    return cell(content, node);
+  }
+}).addRule("tableRow", {
+  filter: "tr",
+  replacement: (content, node) => {
+    let borderCells = "";
+    const alignMap = { left: ":--", right: "--:", center: ":-:" };
+    const childNodes = [...node.childNodes].filter((n) => !isControllerHeadingCell(n));
+    if (isHeadingRow(node)) {
+      for (const childNode of childNodes) {
+        if (!(0, import_core.isElementDomNode)(childNode)) {
+          continue;
+        }
+        let border = "---";
+        const align = (childNode.getAttribute("align") ?? "").toLowerCase();
+        if (align) {
+          border = alignMap[align] || border;
+        }
+        borderCells += cell(border, childNode);
+      }
+    }
+    return `
+${content}${borderCells ? `
+${borderCells}` : ""}`;
+  }
+}).addRule("table", {
+  // Only convert tables with a heading row. Tables with no heading row are kept
+  // using `keep` (see below).
+  filter: (node) => {
+    if (node.nodeName !== "TABLE") {
+      return false;
+    }
+    if (isNestedTable(node)) {
+      return false;
+    }
+    const rows = [...node.rows].filter(
+      (r) => (
+        // Remove controller rows
+        !isControllerHeadingRow(r)
+      )
+    );
+    return isHeadingRow(rows[0]);
+  },
+  replacement: (content) => {
+    content = content.replace("\n\n", "\n");
+    return `
+
+${content}
+
+`;
+  }
+}).addRule("tableSection", {
+  filter: ["thead", "tbody", "tfoot"],
+  replacement: function(content) {
+    return content;
+  }
+}).keep(
+  (node) => node.nodeName === "TABLE" && !isHeadingRow(node.rows[0])
+).keep((node) => node.nodeName === "TABLE" && isNestedTable(node)).addRule("strikethrough", {
+  filter: ["del", "s", "strike"],
+  replacement: function(content) {
+    return `~${content}~`;
+  }
+}).addRule("fencedCodeBlock", {
+  filter: (node, options) => !!(options.codeBlockStyle === "fenced" && node.nodeName === "PRE" && node.firstChild && node.firstChild.nodeName === "CODE"),
+  replacement: (_, node, options) => {
+    (0, import_core.invariant)((0, import_core.isElementDomNode)(node.firstChild), {
+      code: import_core.ErrorConstant.EXTENSION,
+      message: `Invalid node \`${node.firstChild?.nodeName}\` encountered for codeblock when converting html to markdown.`
+    });
+    const className = node.firstChild.getAttribute("class") ?? "";
+    const language = className.match(/(?:lang|language)-(\S+)/)?.[1] ?? node.firstChild.getAttribute("data-code-block-language") ?? "";
+    return `
+
+${options.fence}${language}
+${node.firstChild.textContent}
+${options.fence}
+
+`;
+  }
+});
+
+// packages/remirror__extension-markdown/src/markdown-to-html.ts
+var import_marked = require("marked");
+import_marked.marked.use({
+  renderer: {
+    list(body, isOrdered, start) {
+      if (isOrdered) {
+        const startAttr = start !== 1 ? `start="${start}"` : "";
+        return `<ol ${startAttr}>
+${body}</ol>
+`;
+      }
+      const taskListAttr = body.startsWith("<li data-task-list-item ") ? "data-task-list" : "";
+      return `<ul ${taskListAttr}>
+${body}</ul>
+`;
+    },
+    listitem(text, isTask, isChecked) {
+      if (!isTask) {
+        return `<li>${text}</li>
+`;
+      }
+      const checkedAttr = isChecked ? "data-checked" : "";
+      return `<li data-task-list-item ${checkedAttr}>${text}</li>
+`;
+    }
+  }
+});
+function markdownToHtml(markdown, sanitizer) {
+  const html = (0, import_marked.marked)(markdown, { gfm: true, smartLists: true, xhtml: true });
+  if (sanitizer) {
+    return sanitizer(html);
+  }
+  return html;
+}
+
+// packages/remirror__extension-markdown/src/markdown-extension.ts
+var MarkdownExtension = class extends import_core2.PlainExtension {
+  get name() {
+    return "markdown";
+  }
+  /**
+   * Add the `markdown` string handler and `getMarkdown` state helper method.
+   */
+  onCreate() {
+    this.store.setStringHandler("markdown", this.markdownToProsemirrorNode.bind(this));
+  }
+  createPlugin() {
+    const clipboardTextSerializer = this.options.copyAsMarkdown ? (slice) => {
+      const wrapper = document.createElement("div");
+      const serializer = import_model.DOMSerializer.fromSchema(this.store.schema);
+      wrapper.append(serializer.serializeFragment(slice.content));
+      return this.options.htmlToMarkdown(wrapper.innerHTML);
+    } : void 0;
+    return {
+      props: {
+        clipboardTextSerializer
+      }
+    };
+  }
+  markdownToProsemirrorNode(options) {
+    return this.store.stringHandlers.html({
+      ...options,
+      content: this.options.markdownToHtml(options.content, this.options.htmlSanitizer)
+    });
+  }
+  insertMarkdown(markdown, options) {
+    return (props) => {
+      const { state } = props;
+      let html = this.options.markdownToHtml(markdown, this.options.htmlSanitizer);
+      html = !options?.alwaysWrapInBlock && html.startsWith("<p><") && html.endsWith("</p>\n") ? html.slice(3, -5) : `<div>${html}</div>`;
+      const fragment = this.store.stringHandlers.html({
+        content: html,
+        schema: state.schema,
+        fragment: true
+      });
+      return this.store.commands.insertNode.original(fragment, {
+        ...options,
+        replaceEmptyParentBlock: true
+      })(props);
+    };
+  }
+  getMarkdown(state) {
+    return this.options.htmlToMarkdown(this.store.helpers.getHTML(state));
+  }
+  toggleBoldMarkdown() {
+    return (_) => false;
+  }
+};
+__decorateClass([
+  (0, import_core2.command)()
+], MarkdownExtension.prototype, "insertMarkdown", 1);
+__decorateClass([
+  (0, import_core2.helper)()
+], MarkdownExtension.prototype, "getMarkdown", 1);
+__decorateClass([
+  (0, import_core2.command)()
+], MarkdownExtension.prototype, "toggleBoldMarkdown", 1);
+MarkdownExtension = __decorateClass([
+  (0, import_core2.extension)({
+    defaultOptions: {
+      htmlToMarkdown,
+      markdownToHtml,
+      htmlSanitizer: void 0,
+      activeNodes: [import_core2.ExtensionTag.Code],
+      copyAsMarkdown: false
+    },
+    staticKeys: ["htmlToMarkdown", "markdownToHtml", "htmlSanitizer"]
+  })
+], MarkdownExtension);
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  MarkdownExtension
+});

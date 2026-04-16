@@ -1,0 +1,74 @@
+import { ApplySchemaAttributes, CommandFunction, CreateExtensionPlugin, EditorView, NodeSpecOverride, NodeViewMethod, ProsemirrorPlugin } from '@remirror/core';
+import type { CreateTableCommand, TableSchemaSpec } from '@remirror/extension-tables';
+import { TableCellExtension as BaseTableCellExtension, TableControllerCellExtension as BaseTableControllerCellExtension, TableExtension as BaseTableExtension, TableHeaderCellExtension as BaseTableHeaderCellExtension, TableRowExtension as BaseTableRowExtension } from '@remirror/extension-tables';
+import { InsertButtonAttrs } from './components/table-insert-button';
+export type ReactTableNodeAttrs<T extends Record<string, any> = Record<never, never>> = T & {
+    isControllersInjected: boolean;
+    insertButtonAttrs: InsertButtonAttrs | null;
+};
+export declare class TableExtension extends BaseTableExtension {
+    get name(): "table";
+    createNodeViews(): NodeViewMethod;
+    /**
+     * Add the table plugins to the editor.
+     */
+    createExternalPlugins(): ProsemirrorPlugin[];
+    createNodeSpec(extra: ApplySchemaAttributes): TableSchemaSpec;
+    /**
+     * Create the table extensions. Set the priority to low so that they appear
+     * lower down in the node list.
+     */
+    createExtensions(): TableRowExtension[];
+    onView(view: EditorView): void;
+    /**
+     * Create a table in the editor at the current selection point.
+     */
+    createTable(options?: CreateTableCommand): CommandFunction;
+    /**
+     * Command to add a column before the column with the selection.
+     */
+    addTableColumnBefore(): CommandFunction;
+    /**
+     * Command to add a column after the column with the selection.
+     */
+    addTableColumnAfter(): CommandFunction;
+    /**
+     * Add a table row before the current selection.
+     */
+    addTableRowBefore(): CommandFunction;
+    /**
+     * Add a table row after the current selection.
+     */
+    addTableRowAfter(): CommandFunction;
+    createPlugin(): CreateExtensionPlugin;
+}
+export declare class TableRowExtension extends BaseTableRowExtension {
+    get name(): "tableRow";
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): TableSchemaSpec;
+    /**
+     * Automatically create the `TableCellExtension`,`TableHeaderCellExtension`
+     * and `TableControllerCellExtension`. This is placed here so that this
+     * extension can be tested independently from the `TableExtension`.
+     */
+    createExtensions(): (TableCellExtension | TableControllerCellExtension | TableHeaderCellExtension)[];
+}
+export declare class TableHeaderCellExtension extends BaseTableHeaderCellExtension {
+    get name(): "tableHeaderCell";
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): TableSchemaSpec;
+}
+export declare class TableCellExtension extends BaseTableCellExtension {
+    get name(): "tableCell";
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): TableSchemaSpec;
+}
+export interface ReactTableControllerCellAttrs {
+    colspan: number;
+    rowspan: number;
+    colwidth: null | number;
+    background: null | string;
+}
+export declare class TableControllerCellExtension extends BaseTableControllerCellExtension {
+    createNodeSpec(extra: ApplySchemaAttributes): TableSchemaSpec;
+    createNodeViews(): NodeViewMethod;
+    createExtensions(): never[];
+    createPlugin(): CreateExtensionPlugin;
+}

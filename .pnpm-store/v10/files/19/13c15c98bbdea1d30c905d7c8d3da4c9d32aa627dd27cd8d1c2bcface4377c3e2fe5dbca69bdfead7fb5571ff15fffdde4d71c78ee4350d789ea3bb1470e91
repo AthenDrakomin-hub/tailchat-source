@@ -1,0 +1,45 @@
+import type { VIDEO_CONSTRAINS } from '../consts';
+import type { SimulcastProfile } from '../types';
+export interface TailchatMeetingClientSettings {
+    resolution: keyof typeof VIDEO_CONSTRAINS;
+    aspectRatio: number;
+    /**
+     * 视频帧率
+     */
+    frameRate: number;
+    /**
+     * 是否开启联播
+     */
+    simulcast: boolean;
+    simulcastProfiles: Record<string, SimulcastProfile[]>;
+    /**
+     * 自动增益控制
+     */
+    autoGainControl: boolean;
+    /**
+     * 回声消除
+     */
+    echoCancellation: boolean;
+    /**
+     * 噪音抑制
+     */
+    noiseSuppression: boolean;
+    /**
+     * 音频采样率
+     */
+    sampleRate: 48000 | 44100;
+    /**
+     * 音频频道数
+     */
+    channelCount: number;
+    /**
+     * 采样大小
+     */
+    sampleSize: number;
+    opusStereo: boolean;
+    opusDtx: boolean;
+    opusFec: boolean;
+    opusPtime: number;
+    opusMaxPlaybackRate: number;
+}
+export declare const defaultSettings: TailchatMeetingClientSettings;

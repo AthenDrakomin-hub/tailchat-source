@@ -1,0 +1,223 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-yjs/src/yjs-extension.ts
+import {
+  defaultCursorBuilder,
+  defaultDeleteFilter,
+  defaultSelectionBuilder,
+  redo,
+  undo,
+  yCursorPlugin,
+  ySyncPlugin,
+  ySyncPluginKey,
+  yUndoPlugin,
+  yUndoPluginKey
+} from "y-prosemirror";
+import { UndoManager } from "yjs";
+import {
+  command,
+  convertCommand,
+  ErrorConstant,
+  extension,
+  ExtensionPriority,
+  invariant,
+  isEmptyObject,
+  isFunction,
+  keyBinding,
+  NamedShortcut,
+  nonChainable,
+  PlainExtension
+} from "@remirror/core";
+import { ExtensionHistoryMessages as Messages } from "@remirror/messages";
+var YjsExtension = class extends PlainExtension {
+  get name() {
+    return "yjs";
+  }
+  _provider;
+  /**
+   * The provider that is being used for the editor.
+   */
+  get provider() {
+    const { getProvider } = this.options;
+    return this._provider ??= getLazyValue(getProvider);
+  }
+  getBinding() {
+    const state = this.store.getState();
+    const { binding } = ySyncPluginKey.getState(state);
+    return binding;
+  }
+  /**
+   * Create the yjs plugins.
+   */
+  createExternalPlugins() {
+    const {
+      syncPluginOptions,
+      cursorBuilder,
+      getSelection,
+      cursorStateField,
+      disableUndo,
+      protectedNodes,
+      trackedOrigins,
+      selectionBuilder
+    } = this.options;
+    const yDoc = this.provider.doc;
+    const type = yDoc.getXmlFragment("prosemirror");
+    const plugins = [
+      ySyncPlugin(type, syncPluginOptions),
+      yCursorPlugin(
+        this.provider.awareness,
+        { cursorBuilder, getSelection, selectionBuilder },
+        cursorStateField
+      )
+    ];
+    if (!disableUndo) {
+      const undoManager = new UndoManager(type, {
+        trackedOrigins: /* @__PURE__ */ new Set([ySyncPluginKey, ...trackedOrigins]),
+        deleteFilter: (item) => defaultDeleteFilter(item, protectedNodes)
+      });
+      plugins.push(yUndoPlugin({ undoManager }));
+    }
+    return plugins;
+  }
+  /**
+   * This managers the updates of the collaboration provider.
+   */
+  onSetOptions(props) {
+    const { changes, pickChanged } = props;
+    const changedPluginOptions = pickChanged([
+      "cursorBuilder",
+      "cursorStateField",
+      "getProvider",
+      "getSelection",
+      "syncPluginOptions"
+    ]);
+    if (changes.getProvider.changed) {
+      this._provider = void 0;
+      const previousProvider = getLazyValue(changes.getProvider.previousValue);
+      if (changes.destroyProvider.changed) {
+        changes.destroyProvider.previousValue?.(previousProvider);
+      } else {
+        this.options.destroyProvider(previousProvider);
+      }
+    }
+    if (!isEmptyObject(changedPluginOptions)) {
+      this.store.updateExtensionPlugins(this);
+    }
+  }
+  /**
+   * Remove the provider from the manager.
+   */
+  onDestroy() {
+    if (!this._provider) {
+      return;
+    }
+    this.options.destroyProvider(this._provider);
+    this._provider = void 0;
+  }
+  yUndo() {
+    return nonChainable((props) => {
+      if (this.options.disableUndo) {
+        return false;
+      }
+      const { state, dispatch } = props;
+      const undoManager = yUndoPluginKey.getState(state).undoManager;
+      if (undoManager.undoStack.length === 0) {
+        return false;
+      }
+      if (!dispatch) {
+        return true;
+      }
+      return convertCommand(undo)(props);
+    });
+  }
+  yRedo() {
+    return nonChainable((props) => {
+      if (this.options.disableUndo) {
+        return false;
+      }
+      const { state, dispatch } = props;
+      const undoManager = yUndoPluginKey.getState(state).undoManager;
+      if (undoManager.redoStack.length === 0) {
+        return false;
+      }
+      if (!dispatch) {
+        return true;
+      }
+      return convertCommand(redo)(props);
+    });
+  }
+  undoShortcut(props) {
+    return this.yUndo()(props);
+  }
+  redoShortcut(props) {
+    return this.yRedo()(props);
+  }
+};
+__decorateClass([
+  command({
+    disableChaining: true,
+    description: ({ t }) => t(Messages.UNDO_DESCRIPTION),
+    label: ({ t }) => t(Messages.UNDO_LABEL),
+    icon: "arrowGoBackFill"
+  })
+], YjsExtension.prototype, "yUndo", 1);
+__decorateClass([
+  command({
+    disableChaining: true,
+    description: ({ t }) => t(Messages.REDO_DESCRIPTION),
+    label: ({ t }) => t(Messages.REDO_LABEL),
+    icon: "arrowGoForwardFill"
+  })
+], YjsExtension.prototype, "yRedo", 1);
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.Undo, command: "yUndo" })
+], YjsExtension.prototype, "undoShortcut", 1);
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.Redo, command: "yRedo" })
+], YjsExtension.prototype, "redoShortcut", 1);
+YjsExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      getProvider: () => {
+        invariant(false, {
+          code: ErrorConstant.EXTENSION,
+          message: "You must provide a YJS Provider to the `YjsExtension`."
+        });
+      },
+      destroyProvider: defaultDestroyProvider,
+      syncPluginOptions: void 0,
+      cursorBuilder: defaultCursorBuilder,
+      selectionBuilder: defaultSelectionBuilder,
+      cursorStateField: "cursor",
+      getSelection: (state) => state.selection,
+      disableUndo: false,
+      protectedNodes: new Set("paragraph"),
+      trackedOrigins: []
+    },
+    staticKeys: ["disableUndo", "protectedNodes", "trackedOrigins"],
+    defaultPriority: ExtensionPriority.High
+  })
+], YjsExtension);
+function defaultDestroyProvider(provider) {
+  const { doc } = provider;
+  provider.disconnect();
+  provider.destroy();
+  doc.destroy();
+}
+function getLazyValue(lazyValue) {
+  return isFunction(lazyValue) ? lazyValue() : lazyValue;
+}
+export {
+  YjsExtension,
+  defaultDestroyProvider
+};

@@ -1,0 +1,15 @@
+import { ToggleButtonProps } from '@mui/material';
+import { FC, ReactNode } from 'react';
+import { CoreIcon } from '@remirror/core';
+import { UseCommandOptionValuesParams } from '../use-command-option-values';
+export interface CommandButtonProps extends Omit<ToggleButtonProps, 'value' | 'aria-label'>, Omit<UseCommandOptionValuesParams, 'active' | 'attrs'> {
+    active?: UseCommandOptionValuesParams['active'];
+    'aria-label'?: string;
+    label?: NonNullable<ReactNode>;
+    commandName: string;
+    displayShortcut?: boolean;
+    onSelect: () => void;
+    icon?: CoreIcon | JSX.Element;
+    attrs?: UseCommandOptionValuesParams['attrs'];
+}
+export declare const CommandButton: FC<CommandButtonProps>;

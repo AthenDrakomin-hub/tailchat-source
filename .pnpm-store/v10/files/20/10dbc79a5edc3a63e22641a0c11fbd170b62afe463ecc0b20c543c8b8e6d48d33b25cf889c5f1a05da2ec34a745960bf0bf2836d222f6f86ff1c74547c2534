@@ -1,0 +1,285 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.regSharedModule = exports.regDependency = exports.definePlugin = exports.requirePlugin = exports.getLoadedModules = void 0;
+var config_1 = require("./config");
+var utils_1 = require("./utils");
+var loadedModules = {};
+if (process.env.NODE_ENV === 'development') {
+    // Just for debug.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    window.loadedModules = loadedModules;
+}
+/**
+ * get all loaded modules
+ */
+function getLoadedModules() {
+    return loadedModules;
+}
+exports.getLoadedModules = getLoadedModules;
+function generateModuleName(scriptUrl) {
+    var pluginList = config_1.getPluginList();
+    var searchedPlugin = Object.entries(pluginList).find(function (_a) {
+        var value = _a[1];
+        return value.url === scriptUrl;
+    });
+    if (searchedPlugin === undefined) {
+        // Cannot find Plugin
+        return scriptUrl;
+    }
+    else {
+        return searchedPlugin[1].name;
+    }
+}
+function loadPluginByUrl(url) {
+    return new Promise(function (resolve, reject) {
+        var scriptDom = document.createElement('script');
+        scriptDom.src = url;
+        scriptDom.onload = function (e) {
+            resolve(e);
+        };
+        scriptDom.onerror = function (e) {
+            reject(e);
+        };
+        document.body.appendChild(scriptDom);
+    });
+}
+/**
+ * Load Dependency Module
+ */
+function loadDependency(dep) {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function () {
+        var moduleName, pluginName, pluginModule_1, pluginInfo;
+        return __generator(this, function (_c) {
+            moduleName = generateModuleName(dep);
+            pluginName = utils_1.getPluginName(moduleName);
+            if (dep.startsWith('@plugins/')) {
+                dep = dep.replace('@plugins/', config_1.getPluginUrlPrefix());
+            }
+            if (moduleName in loadedModules) {
+                pluginModule_1 = loadedModules[moduleName];
+                if (pluginModule_1.status === 'init') {
+                    pluginModule_1.status = 'loading';
+                    return [2 /*return*/, new Promise(function (resolve, reject) {
+                            pluginModule_1.resolves.push(resolve);
+                            if (typeof pluginModule_1.entryFn !== 'function') {
+                                reject('Load dependencies error, this should have a valid ');
+                                return null;
+                            }
+                            pluginModule_1.entryFn();
+                        })];
+                }
+                else if (pluginModule_1.status === 'loading' ||
+                    pluginModule_1.status === 'new') {
+                    return [2 /*return*/, new Promise(function (resolve) {
+                            pluginModule_1.resolves.push(resolve);
+                        })];
+                }
+                else if (pluginModule_1.status === 'loaded') {
+                    return [2 /*return*/, Promise.resolve(pluginModule_1.ins)];
+                }
+            }
+            else {
+                // Not exist
+                loadedModules[moduleName] = utils_1.createNewModuleLoader();
+                pluginInfo = typeof pluginName === 'string' ? config_1.getPluginList()[pluginName] : null;
+                if (utils_1.isPluginModuleEntry(moduleName)) {
+                    // Is Plugin Entry
+                    if (pluginInfo === null) {
+                        console.error("[" + moduleName + "] Looks like not a valid module name.");
+                        return [2 /*return*/];
+                    }
+                    /**
+                     * Try to load plugin:
+                     * 1. try to get plugin url in plugin list.
+                     * 2. if url not define or this plugin is implicit dependency
+                     *  (require by other plugin but not define in main repo)
+                     *  get fallback plugin url with function.
+                     */
+                    dep = (_a = pluginInfo.url) !== null && _a !== void 0 ? _a : config_1.getFallbackPluginUrl(pluginInfo.name);
+                }
+                else {
+                    // is async module
+                    if (!dep.endsWith('.js') && !dep.startsWith('./')) {
+                        console.error("[" + dep + "] Looks like is builtin module, and its cannot load as remote script.");
+                        return [2 /*return*/];
+                    }
+                    if (pluginInfo && utils_1.isFullUrl((_b = pluginInfo.url) !== null && _b !== void 0 ? _b : '')) {
+                        dep = utils_1.mergeUrl(pluginInfo.url, dep);
+                    }
+                }
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        loadPluginByUrl(dep)
+                            .then(function () {
+                            var pluginModule = loadedModules[moduleName];
+                            pluginModule.status = 'loading';
+                            if (typeof pluginModule.entryFn !== 'function') {
+                                pluginModule.resolves.push(resolve);
+                                utils_1.setModuleLoaderLoaded(pluginModule, null);
+                                return;
+                            }
+                            pluginModule.resolves.push(resolve);
+                            pluginModule.entryFn();
+                        })
+                            .catch(function (err) {
+                            reject(err);
+                        });
+                    })];
+            }
+            return [2 /*return*/];
+        });
+    });
+}
+function requirePlugin(deps, onSuccess, onError) {
+    var allPromises = Promise.all(deps
+        .map(function (dep) {
+        return loadDependency(dep);
+    })
+        .filter(Boolean));
+    allPromises
+        .then(function (args) { return onSuccess.apply(void 0, args); })
+        .catch(function (err) {
+        console.error(err);
+        onError(err);
+    });
+}
+exports.requirePlugin = requirePlugin;
+function definePlugin(name, deps, callback) {
+    var moduleName = name;
+    if (arguments.length === 2) {
+        // AMD No Deps case
+        callback = deps;
+        deps = [];
+    }
+    if (!loadedModules[moduleName]) {
+        loadedModules[moduleName] = {
+            resolves: [],
+        };
+    }
+    loadedModules[moduleName].status = 'init';
+    loadedModules[moduleName].entryFn = function () {
+        var convertedDeps = deps.map(function (module) { return utils_1.processModulePath(name, module); });
+        var requireIndex = deps.findIndex(function (x) { return x === 'require'; });
+        var exportsIndex = deps.findIndex(function (x) { return x === 'exports'; });
+        var requiredDeps = convertedDeps.filter(function (x) { return x !== 'require' && x !== 'exports'; });
+        requirePlugin(requiredDeps, function () {
+            var callbackArgs = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                callbackArgs[_i] = arguments[_i];
+            }
+            var exports = {};
+            // Replace require
+            if (requireIndex !== -1) {
+                callbackArgs.splice(requireIndex, 0, function (deps, callback) {
+                    var convertedDeps = deps.map(function (module) {
+                        return utils_1.processModulePath(name, module);
+                    });
+                    requirePlugin(convertedDeps, callback, function (err) {
+                        return config_1.callModuleLoadError({
+                            moduleName: moduleName,
+                            detail: err,
+                        });
+                    });
+                });
+            }
+            // Replace exports
+            if (exportsIndex !== -1) {
+                callbackArgs.splice(exportsIndex, 0, exports);
+            }
+            try {
+                var ret = callback.apply(void 0, callbackArgs);
+                if (exportsIndex === -1 && ret) {
+                    exports = ret;
+                }
+                utils_1.setModuleLoaderLoaded(loadedModules[name], exports);
+            }
+            catch (e) {
+                config_1.callModuleLoadError({
+                    moduleName: name,
+                    detail: new Error(e),
+                });
+                utils_1.setModuleLoaderLoadError(loadedModules[name]);
+            }
+        }, function (err) {
+            config_1.callModuleLoadError({
+                moduleName: moduleName,
+                detail: err,
+            });
+        });
+    };
+}
+exports.definePlugin = definePlugin;
+/**
+ * Register Dependency from capital
+ */
+function regDependency(name, fn) {
+    if (loadedModules[name]) {
+        console.warn('[ministar] dup reg', name);
+    }
+    loadedModules[name] = {
+        status: 'init',
+        ins: null,
+        resolves: [],
+        entryFn: function () {
+            fn().then(function (module) {
+                loadedModules[name].status = 'loaded';
+                loadedModules[name].ins = module;
+                loadedModules[name].resolves.forEach(function (resolve) {
+                    resolve(module);
+                });
+                loadedModules[name].resolves = [];
+            });
+        },
+    };
+}
+exports.regDependency = regDependency;
+/**
+ * Register Shared Module from capital.
+ * Its will auto try to add @capital before module name.
+ */
+function regSharedModule(name, fn) {
+    if (!name.startsWith('@capital') &&
+        !name.startsWith('@') &&
+        !name.startsWith('/')) {
+        // Auto Prefix
+        name = "@capital/" + name;
+    }
+    regDependency(name, fn);
+}
+exports.regSharedModule = regSharedModule;

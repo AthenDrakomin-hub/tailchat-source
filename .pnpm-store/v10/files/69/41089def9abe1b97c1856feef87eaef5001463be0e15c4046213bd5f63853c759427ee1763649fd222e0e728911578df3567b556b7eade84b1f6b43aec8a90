@@ -1,0 +1,45 @@
+import { ApplySchemaAttributes, CommandFunction, KeyBindings, NodeExtension, NodeExtensionSpec, NodeSpecOverride, NodeViewMethod, ProsemirrorAttributes } from '@remirror/core';
+import { InputRule } from '@remirror/pm/inputrules';
+import { ResolvedPos } from '@remirror/pm/model';
+import { ListItemSharedExtension } from './list-item-shared-extension';
+/**
+ * Creates the node for a task list item.
+ */
+export declare class TaskListItemExtension extends NodeExtension {
+    get name(): "taskListItem";
+    createTags(): "listItemNode"[];
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    createNodeViews(): NodeViewMethod | Record<string, never>;
+    createKeymap(): KeyBindings;
+    createExtensions(): ListItemSharedExtension[];
+    /**
+     * Toggles the current checkbox state and transform a normal list item into a
+     * checkbox list item when necessary.
+     *
+     * @param checked - the `checked` attribute. If it's a boolean value, then it
+     * will be set as an attribute. If it's undefined, then the `checked` attribuate
+     * will be toggled.
+     *
+     * @param selection - a resolved position within the task list item you want to
+     * toggle. It it's not passed, the lower bound of the current selection's will
+     * be used.
+     */
+    toggleCheckboxChecked(props?: {
+        checked?: boolean;
+        $pos?: ResolvedPos;
+    } | boolean): CommandFunction;
+    createInputRules(): InputRule[];
+}
+export type TaskListItemAttributes = ProsemirrorAttributes<{
+    /**
+     * @defaultValue false
+     */
+    checked: boolean;
+}>;
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            taskListItem: TaskListItemExtension;
+        }
+    }
+}

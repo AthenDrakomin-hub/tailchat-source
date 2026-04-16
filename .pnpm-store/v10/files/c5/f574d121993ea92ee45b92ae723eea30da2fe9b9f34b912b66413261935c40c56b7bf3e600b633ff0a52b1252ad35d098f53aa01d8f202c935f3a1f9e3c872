@@ -1,0 +1,9 @@
+import { NamedShortcut } from '@remirror/core';
+/**
+ * Command options for the heading.
+ */
+export declare const toggleHeadingOptions: Remirror.CommandDecoratorOptions;
+/**
+ * The named shortcuts for the default 6 levels of commands.
+ */
+export declare const shortcuts: NamedShortcut[];

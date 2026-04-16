@@ -1,0 +1,16 @@
+import { Annotation } from '.';
+import { AnnotationStore, MapLike, OmitText, OmitTextAndPosition, TransformedAnnotation } from './annotation-types';
+export declare class MapLikeAnnotationStore<Type extends Annotation> implements AnnotationStore<Type> {
+    protected readonly map: MapLike<string, TransformedAnnotation<OmitText<Type>>>;
+    private readonly positionToStored;
+    private readonly positionFromStored;
+    /**
+     * @param map a custom map-like object for storing internal annotations
+     */
+    constructor(map?: MapLike<string, TransformedAnnotation<OmitText<Type>>>, positionToStored?: (pos: number) => any, positionFromStored?: (storedPos: any) => number | null);
+    addAnnotation({ from, to, ...annotation }: OmitText<Type>): void;
+    updateAnnotation(id: string, data: OmitTextAndPosition<Type>): void;
+    removeAnnotations(ids: string[]): void;
+    setAnnotations(annotations: Array<OmitText<Type>>): void;
+    formatAnnotations(): Array<OmitText<Type>>;
+}

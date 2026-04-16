@@ -1,0 +1,55 @@
+{
+  "name": "@remirror/extension-entity-reference",
+  "version": "2.2.8",
+  "description": "Allow users to highlight important content",
+  "keywords": [
+    "remirror",
+    "extension"
+  ],
+  "homepage": "https://github.com/remirror/remirror/tree/HEAD/packages/remirror__extension-entity-reference",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remirror/remirror.git",
+    "directory": "packages/remirror__extension-entity-reference"
+  },
+  "license": "MIT",
+  "contributors": [
+    "NEXT <open-source@nextapp.co>"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/remirror-extension-entity-reference.d.ts",
+      "import": "./dist/remirror-extension-entity-reference.js",
+      "require": "./dist/remirror-extension-entity-reference.cjs"
+    },
+    "./package.json": "./package.json",
+    "./types/*": "./dist/declarations/src/*.d.ts"
+  },
+  "main": "./dist/remirror-extension-entity-reference.cjs",
+  "module": "./dist/remirror-extension-entity-reference.js",
+  "types": "./dist/remirror-extension-entity-reference.d.ts",
+  "files": [
+    "dist",
+    "dist-types"
+  ],
+  "dependencies": {
+    "@babel/runtime": "^7.22.3",
+    "@remirror/core": "^2.0.19",
+    "@remirror/extension-events": "^2.1.17",
+    "@remirror/extension-positioner": "^2.1.8"
+  },
+  "devDependencies": {
+    "@remirror/pm": "^2.0.9"
+  },
+  "peerDependencies": {
+    "@remirror/pm": "^2.0.9"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "@remirror": {
+    "sizeLimit": "5 KB"
+  }
+}

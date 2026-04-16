@@ -1,0 +1,116 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-paragraph/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  ParagraphExtension: () => ParagraphExtension
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-paragraph/src/paragraph-extension.ts
+var import_core = require("@remirror/core");
+var import_messages = require("@remirror/messages");
+var insertParagraphOptions = {
+  icon: "paragraph",
+  label: ({ t }) => t(import_messages.ExtensionParagraphMessages.INSERT_LABEL),
+  description: ({ t }) => t(import_messages.ExtensionParagraphMessages.INSERT_DESCRIPTION)
+};
+var convertParagraphOptions = {
+  icon: "paragraph",
+  label: ({ t }) => t(import_messages.ExtensionParagraphMessages.CONVERT_LABEL),
+  description: ({ t }) => t(import_messages.ExtensionParagraphMessages.CONVERT_DESCRIPTION)
+};
+var ParagraphExtension = class extends import_core.NodeExtension {
+  get name() {
+    return "paragraph";
+  }
+  createTags() {
+    return [
+      import_core.ExtensionTag.LastNodeCompatible,
+      import_core.ExtensionTag.TextBlock,
+      import_core.ExtensionTag.Block,
+      import_core.ExtensionTag.FormattingNode
+    ];
+  }
+  createNodeSpec(extra, override) {
+    return {
+      content: "inline*",
+      draggable: false,
+      ...override,
+      attrs: {
+        ...extra.defaults()
+      },
+      parseDOM: [
+        {
+          tag: "p",
+          getAttrs: (node) => ({
+            ...extra.parse(node)
+          })
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => {
+        return ["p", extra.dom(node), 0];
+      }
+    };
+  }
+  convertParagraph(options = {}) {
+    const { attrs, selection, preserveAttrs } = options;
+    return this.store.commands.setBlockNodeType.original(
+      this.type,
+      attrs,
+      selection,
+      preserveAttrs
+    );
+  }
+  insertParagraph(content, options = {}) {
+    const { selection, attrs } = options;
+    return this.store.commands.insertNode.original(this.type, { content, selection, attrs });
+  }
+  shortcut(props) {
+    return this.convertParagraph()(props);
+  }
+};
+__decorateClass([
+  (0, import_core.command)(convertParagraphOptions)
+], ParagraphExtension.prototype, "convertParagraph", 1);
+__decorateClass([
+  (0, import_core.command)(insertParagraphOptions)
+], ParagraphExtension.prototype, "insertParagraph", 1);
+__decorateClass([
+  (0, import_core.keyBinding)({ shortcut: import_core.NamedShortcut.Paragraph, command: "convertParagraph" })
+], ParagraphExtension.prototype, "shortcut", 1);
+ParagraphExtension = __decorateClass([
+  (0, import_core.extension)({
+    defaultPriority: import_core.ExtensionPriority.Medium
+  })
+], ParagraphExtension);
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  ParagraphExtension
+});

@@ -1,0 +1,17 @@
+import { WebpackPluginInstance, Compiler } from 'webpack';
+import { CommonPluginOptions as Options } from '@perfsee/plugin-utils';
+export interface StatsReport {
+    reports: string;
+    duplicated: string;
+}
+export declare class PerfseePlugin implements WebpackPluginInstance {
+    private static readonly PluginName;
+    private readonly options;
+    private outputPath;
+    private stats;
+    private readonly modules;
+    constructor(options?: Options);
+    apply: (compiler: Compiler) => void;
+    private readonly handleEmit;
+    private readonly afterEmit;
+}

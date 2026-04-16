@@ -1,0 +1,65 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.injectTraceIdJSX = void 0;
+var parser_1 = require("@babel/parser");
+var traverse_1 = __importDefault(require("@babel/traverse"));
+var generator_1 = __importDefault(require("@babel/generator"));
+var types_1 = require("@babel/types");
+var path_1 = __importDefault(require("path"));
+var ATTR_ID = 'data-source';
+/**
+ * inject Trace Id in jsx code
+ */
+function injectTraceIdJSX(jsx, options) {
+    var filepath = options.filepath, opener = options.opener;
+    try {
+        var ast = (0, parser_1.parse)(jsx, {
+            sourceType: 'module',
+            plugins: ['jsx', 'typescript'],
+        });
+        (0, traverse_1.default)(ast, {
+            JSXOpeningElement: function (path) {
+                var _a, _b, _c;
+                var location = path.node.loc;
+                if (!location) {
+                    return;
+                }
+                if (Array.isArray(location)) {
+                    return;
+                }
+                var name = path.node.name;
+                if ((0, types_1.isJSXIdentifier)(name) && name.name === 'Fragment') {
+                    return;
+                }
+                if ((0, types_1.isJSXMemberExpression)(name) && name.property.name === 'Fragment') {
+                    return;
+                }
+                var line = location.start.line;
+                var col = location.start.column;
+                var attrs = path.node.attributes;
+                if (attrs.some(function (attr) { return attr.type === 'JSXAttribute' && attr.name.name === ATTR_ID; })) {
+                    return;
+                }
+                var uri = "".concat(filepath, ":").concat(line, ":").concat(col);
+                if (opener.type === 'github') {
+                    var relativeFilepath = path_1.default.relative((_a = opener.cwd) !== null && _a !== void 0 ? _a : process.cwd(), filepath);
+                    uri = "".concat(opener.url, "/blob/").concat((_b = opener.branch) !== null && _b !== void 0 ? _b : 'main', "/").concat(relativeFilepath, "#L").concat(line);
+                }
+                else if (opener.type === 'jetbrains') {
+                    uri = "http://localhost:".concat((_c = opener.port) !== null && _c !== void 0 ? _c : 63342, "/api/file/").concat(uri);
+                }
+                attrs.push((0, types_1.jsxAttribute)((0, types_1.jsxIdentifier)(ATTR_ID), (0, types_1.stringLiteral)(uri)));
+            },
+        });
+        var res = (0, generator_1.default)(ast);
+        return { code: res.code, map: res.map };
+    }
+    catch (err) {
+        console.error(err);
+        return { code: jsx };
+    }
+}
+exports.injectTraceIdJSX = injectTraceIdJSX;

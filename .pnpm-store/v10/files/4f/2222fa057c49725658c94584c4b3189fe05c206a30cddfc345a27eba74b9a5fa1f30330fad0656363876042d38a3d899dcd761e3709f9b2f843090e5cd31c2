@@ -1,0 +1,24 @@
+import type { JobInsightAssetsSizeTotalData } from '@bundle-stats/utils';
+export declare function getReportInfo(report: any): JobInsightAssetsSizeTotalData;
+export interface ReportOptions {
+    compare?: boolean;
+    baseline?: boolean;
+    baselineFilepath?: string;
+    html?: boolean;
+    json?: boolean;
+    outDir?: string;
+    silent?: boolean;
+}
+interface ReportPluginOptions {
+    outputPath?: string;
+    logger?: Console;
+}
+interface ReportAssets {
+    [filepath: string]: {
+        type: 'report' | 'baseline';
+        source: string;
+        filepath: string;
+    };
+}
+export declare const generateReports: (source: object, options: ReportOptions, pluginOptions?: ReportPluginOptions) => Promise<ReportAssets>;
+export {};

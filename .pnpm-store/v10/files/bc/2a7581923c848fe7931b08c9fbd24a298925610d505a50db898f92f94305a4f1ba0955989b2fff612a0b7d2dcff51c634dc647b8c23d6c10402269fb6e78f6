@@ -1,0 +1,12 @@
+import { CommandFunction } from '@remirror/pm';
+import { Transaction } from '@remirror/pm/state';
+/**
+ * A helper function to dedent selected list items.
+ *
+ * @beta
+ */
+export declare function dedentList(tr: Transaction): boolean;
+/**
+ * @internal
+ */
+export declare const dedentListCommand: CommandFunction;

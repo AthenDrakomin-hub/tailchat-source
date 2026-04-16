@@ -1,0 +1,248 @@
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RoomClient = void 0;
+var eventemitter_strict_1 = require("eventemitter-strict");
+var logger_1 = require("../helper/logger");
+var logger = new logger_1.Logger('MediaClient');
+var RoomClient = /** @class */ (function (_super) {
+    __extends(RoomClient, _super);
+    function RoomClient(signaling) {
+        var _this = _super.call(this) || this;
+        _this.signaling = signaling;
+        _this.roomState = {
+            state: 'new',
+            selectedPeers: [],
+            spotlights: [],
+        };
+        _this.peers = [];
+        _this.lobbyPeers = [];
+        _this.handleSignaling();
+        return _this;
+    }
+    RoomClient.prototype.handleSignaling = function () {
+        var _this = this;
+        this.signaling.on('notification', function (notification) {
+            logger.debug('signalingService "notification" event [method:%s, data:%o]', notification.method, notification.data);
+            try {
+                switch (notification.method) {
+                    case 'roomReady': {
+                        var turnServers = notification.data.turnServers;
+                        _this.iceServers = turnServers;
+                        _this.updateRoomState({
+                            inLobby: false,
+                            joined: true,
+                        });
+                        break;
+                    }
+                    case 'enteredLobby': {
+                        _this.updateRoomState({
+                            inLobby: true,
+                        });
+                        // TODO: send displayname and picture
+                        break;
+                    }
+                    case 'overRoomLimit': {
+                        _this.updateRoomState({
+                            overRoomLimit: true,
+                        });
+                        break;
+                    }
+                    case 'roomBack': {
+                        break;
+                    }
+                    case 'activeSpeaker': {
+                        var peerId = notification.data.peerId;
+                        _this.setActiveSpeakerId(peerId);
+                        break;
+                    }
+                    case 'newPeer': {
+                        var _a = notification.data, id = _a.id, displayName = _a.displayName, picture = _a.picture, roles = _a.roles, raisedHand = _a.raisedHand, raisedHandTimestamp = _a.raisedHandTimestamp;
+                        var peerInfo = {
+                            id: id,
+                            displayName: displayName,
+                            picture: picture,
+                            roles: roles,
+                            raisedHand: raisedHand,
+                            raisedHandTimestamp: raisedHandTimestamp,
+                        };
+                        _this.peers.push(peerInfo);
+                        _this.emit('peerJoin', peerInfo);
+                        _this.emit('peersUpdated', _this.peers);
+                        break;
+                    }
+                    case 'peerClosed': {
+                        var peerId_1 = notification.data.peerId;
+                        var leavedPeerInfo_1;
+                        _this.peers = _this.peers.filter(function (peer) {
+                            if (peer.id !== peerId_1) {
+                                return true;
+                            }
+                            else {
+                                leavedPeerInfo_1 = peer;
+                                return false;
+                            }
+                        });
+                        if (leavedPeerInfo_1) {
+                            _this.emit('peerLeave', leavedPeerInfo_1);
+                        }
+                        _this.emit('peersUpdated', _this.peers);
+                        break;
+                    }
+                    case 'changeDisplayName':
+                    case 'changePicture':
+                    case 'raisedHand': {
+                        var _b = notification.data, peerId = _b.peerId, displayName = _b.displayName, picture = _b.picture, raisedHand = _b.raisedHand, raisedHandTimestamp = _b.raisedHandTimestamp;
+                        _this.updatePeer({
+                            id: peerId,
+                            displayName: displayName,
+                            picture: picture,
+                            raisedHand: raisedHand,
+                            raisedHandTimestamp: raisedHandTimestamp,
+                        });
+                        break;
+                    }
+                    case 'parkedPeer': {
+                        var peerId = notification.data.peerId;
+                        _this.lobbyPeers.push({ id: peerId });
+                        break;
+                    }
+                    case 'parkedPeers': {
+                        var lobbyPeers = notification.data.lobbyPeers;
+                        lobbyPeers === null || lobbyPeers === void 0 ? void 0 : lobbyPeers.forEach(function (peer) {
+                            _this.lobbyPeers.push(__assign({}, peer));
+                        });
+                        break;
+                    }
+                    case 'lobby:peerClosed': {
+                        var peerId_2 = notification.data.peerId;
+                        _this.lobbyPeers = _this.lobbyPeers.filter(function (p) { return p !== peerId_2; });
+                        break;
+                    }
+                    case 'lobby:promotedPeer': {
+                        var peerId_3 = notification.data.peerId;
+                        _this.lobbyPeers = _this.lobbyPeers.filter(function (p) { return p !== peerId_3; });
+                        break;
+                    }
+                    case 'lobby:changeDisplayName':
+                    case 'lobby:changePicture': {
+                        var _c = notification.data, peerId = _c.peerId, picture = _c.picture, displayName = _c.displayName;
+                        _this.updateLobbyPeer({ id: peerId, displayName: displayName, picture: picture });
+                        break;
+                    }
+                }
+            }
+            catch (error) {
+                logger.error('error on signalService "notification" event [error:%o]', error);
+            }
+        });
+    };
+    RoomClient.prototype.init = function (_a) {
+        var peers = _a.peers, lobbyPeers = _a.lobbyPeers;
+        if (peers.length > 0) {
+            this.peers = peers;
+            this.emit('peersUpdated', this.peers);
+        }
+        if (lobbyPeers.length > 0) {
+            this.lobbyPeers = lobbyPeers;
+            this.emit('lobbyPeersUpdated', this.lobbyPeers);
+        }
+    };
+    RoomClient.prototype.updateRoomState = function (state) {
+        this.roomState = __assign(__assign({}, this.roomState), state);
+        this.emit('roomStateUpdated', this.roomState);
+    };
+    RoomClient.prototype.setActiveSpeakerId = function (peerId) {
+        this.activeSpeakerId = peerId;
+        this.emit('activeSpeakerChanged', this.activeSpeakerId);
+    };
+    RoomClient.prototype.updatePeer = function (peerInfo) {
+        var peer = this.peers.find(function (p) { return p.id === peerInfo.id; });
+        if (peer) {
+            var displayName = peerInfo.displayName, picture = peerInfo.picture, videoInProgress = peerInfo.videoInProgress, stopVideoInProgress = peerInfo.stopVideoInProgress, audioInProgress = peerInfo.audioInProgress, stopAudioInProgress = peerInfo.stopAudioInProgress, screenInProgress = peerInfo.screenInProgress, stopScreenSharingInProgress = peerInfo.stopScreenSharingInProgress, kickInProgress = peerInfo.kickInProgress, modifyRolesInProgress = peerInfo.modifyRolesInProgress, raisedHandInProgress = peerInfo.raisedHandInProgress, raisedHand = peerInfo.raisedHand, raisedHandTimestamp = peerInfo.raisedHandTimestamp;
+            if (displayName) {
+                peer.displayName = displayName;
+            }
+            if (picture) {
+                peer.picture = picture;
+            }
+            if (videoInProgress !== undefined) {
+                peer.videoInProgress = videoInProgress;
+            }
+            if (stopVideoInProgress !== undefined) {
+                peer.stopVideoInProgress = stopVideoInProgress;
+            }
+            if (audioInProgress !== undefined) {
+                peer.audioInProgress = audioInProgress;
+            }
+            if (stopAudioInProgress !== undefined) {
+                peer.stopAudioInProgress = stopAudioInProgress;
+            }
+            if (screenInProgress !== undefined) {
+                peer.screenInProgress = screenInProgress;
+            }
+            if (stopScreenSharingInProgress !== undefined) {
+                peer.stopScreenSharingInProgress = stopScreenSharingInProgress;
+            }
+            if (kickInProgress !== undefined) {
+                peer.kickInProgress = kickInProgress;
+            }
+            if (modifyRolesInProgress !== undefined) {
+                peer.modifyRolesInProgress = modifyRolesInProgress;
+            }
+            if (raisedHandInProgress !== undefined) {
+                peer.raisedHandInProgress = raisedHandInProgress;
+            }
+            if (raisedHand !== undefined) {
+                peer.raisedHand = raisedHand;
+            }
+            if (raisedHandTimestamp !== undefined) {
+                peer.raisedHandTimestamp = raisedHandTimestamp;
+            }
+        }
+        this.emit('peersUpdated', this.peers);
+    };
+    RoomClient.prototype.updateLobbyPeer = function (lobbyPeerInfo) {
+        var peer = this.lobbyPeers.find(function (p) { return p.id === lobbyPeerInfo.id; });
+        if (peer) {
+            var displayName = lobbyPeerInfo.displayName, picture = lobbyPeerInfo.picture, promotionInProgress = lobbyPeerInfo.promotionInProgress;
+            if (displayName) {
+                peer.displayName = displayName;
+            }
+            if (picture) {
+                peer.picture = picture;
+            }
+            if (promotionInProgress) {
+                peer.promotionInProgress = promotionInProgress;
+            }
+        }
+        this.emit('lobbyPeersUpdated', this.peers);
+    };
+    return RoomClient;
+}(eventemitter_strict_1.EventEmitter));
+exports.RoomClient = RoomClient;

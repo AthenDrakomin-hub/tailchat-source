@@ -1,0 +1,12 @@
+import bowser from 'bowser';
+/**
+ * 检测设备信息
+ */
+export declare function detectDeviceInfo(): {
+    flag: string;
+    os: string;
+    platform: string;
+    name: string;
+    version: string;
+    bowser: bowser.Parser.Parser;
+};

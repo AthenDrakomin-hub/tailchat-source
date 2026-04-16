@@ -1,0 +1,10 @@
+export declare class Inspector {
+    srs: any[];
+    containerId: string;
+    focusBlock: any;
+    constructor(node: EventTarget);
+    getParentSrs: (node: EventTarget) => any[];
+    setFocusBlock: (target: Element) => void;
+    getContainer: () => HTMLElement;
+    renderHTML: () => void;
+}

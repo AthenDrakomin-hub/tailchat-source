@@ -1,0 +1,8 @@
+import { EditorView } from '@remirror/core';
+export interface TableControllerCellProps {
+    view: EditorView;
+    getPos: () => number;
+    contentDOM: HTMLElement;
+}
+declare const TableControllerCell: ({ view, getPos, contentDOM, }: TableControllerCellProps) => HTMLElement;
+export default TableControllerCell;

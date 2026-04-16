@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getLoadedModules = exports.regSharedModule = exports.regDependency = exports.loadPluginList = exports.loadSinglePlugin = exports.initMiniStar = void 0;
+require("./types");
+require("./init");
+var loader_1 = require("./loader");
+Object.defineProperty(exports, "initMiniStar", { enumerable: true, get: function () { return loader_1.initMiniStar; } });
+Object.defineProperty(exports, "loadSinglePlugin", { enumerable: true, get: function () { return loader_1.loadSinglePlugin; } });
+Object.defineProperty(exports, "loadPluginList", { enumerable: true, get: function () { return loader_1.loadPluginList; } });
+var helper_1 = require("./helper");
+Object.defineProperty(exports, "regDependency", { enumerable: true, get: function () { return helper_1.regDependency; } });
+Object.defineProperty(exports, "regSharedModule", { enumerable: true, get: function () { return helper_1.regSharedModule; } });
+Object.defineProperty(exports, "getLoadedModules", { enumerable: true, get: function () { return helper_1.getLoadedModules; } });

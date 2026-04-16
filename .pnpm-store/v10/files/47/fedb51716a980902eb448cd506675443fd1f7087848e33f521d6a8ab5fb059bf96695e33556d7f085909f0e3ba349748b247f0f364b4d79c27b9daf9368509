@@ -1,0 +1,31 @@
+import { EditorView, NodeView } from '@remirror/core';
+import { Node as ProsemirrorNode } from '@remirror/pm/model';
+import { TableMap } from '@remirror/pm/tables';
+import { Decoration } from '@remirror/pm/view';
+export declare class TableView implements NodeView {
+    node: ProsemirrorNode;
+    cellMinWidth: number;
+    decorations: readonly Decoration[];
+    view: EditorView;
+    getPos: () => number;
+    readonly root: HTMLElement;
+    readonly table: HTMLTableElement;
+    readonly colgroup: HTMLTableColElement;
+    readonly tbody: HTMLTableSectionElement;
+    readonly insertButtonWrapper: HTMLElement;
+    private readonly handleMouseMove;
+    private showInsertButton;
+    private removeInsertButton?;
+    map: TableMap;
+    get dom(): HTMLElement;
+    get contentDOM(): HTMLElement;
+    constructor(node: ProsemirrorNode, cellMinWidth: number, decorations: readonly Decoration[], view: EditorView, getPos: () => number);
+    update(node: ProsemirrorNode, decorations: readonly Decoration[]): boolean;
+    private render;
+    private renderTable;
+    private renderInsertButton;
+    private attrs;
+    ignoreMutation(): boolean;
+    destroy(): void;
+}
+export declare function replaceChildren(parent: HTMLElement, children: HTMLElement[]): void;

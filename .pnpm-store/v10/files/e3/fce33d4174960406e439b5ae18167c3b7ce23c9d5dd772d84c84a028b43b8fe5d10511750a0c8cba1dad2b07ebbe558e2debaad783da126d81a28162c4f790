@@ -1,0 +1,128 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Inspector = void 0;
+var utils_1 = require("./utils");
+var Inspector = /** @class */ (function () {
+    function Inspector(node) {
+        var _this = this;
+        this.srs = [];
+        this.containerId = '__source-ref-panel';
+        this.focusBlock = null;
+        this.getParentSrs = function (node) {
+            var srs = [];
+            var cur = node;
+            while (cur !== document.body) {
+                if (!(cur instanceof HTMLElement)) {
+                    break;
+                }
+                if (cur.dataset.sr) {
+                    srs.push(cur.dataset.sr);
+                }
+                cur = cur.parentElement;
+            }
+            return srs;
+        };
+        this.setFocusBlock = function (target) {
+            if (target === null) {
+                // clear if target is null
+                if (_this.focusBlock) {
+                    document.body.removeChild(_this.focusBlock);
+                    _this.focusBlock = null;
+                }
+                return;
+            }
+            if (!_this.focusBlock) {
+                _this.focusBlock = document.createElement('div');
+                _this.focusBlock.className = '__source-ref-mask';
+                _this.focusBlock.style.position = 'absolute';
+                _this.focusBlock.style.backgroundColor = 'rgba(134, 185, 242, 0.5)';
+                document.body.appendChild(_this.focusBlock);
+            }
+            var rect = target.getBoundingClientRect();
+            _this.focusBlock.style.height = rect.height + 'px';
+            _this.focusBlock.style.width = rect.width + 'px';
+            _this.focusBlock.style.left = rect.x + 'px';
+            _this.focusBlock.style.top = rect.y + 'px';
+        };
+        this.getContainer = function () {
+            var container = document.getElementById(_this.containerId);
+            if (!container) {
+                var div_1 = document.createElement('div');
+                div_1.id = _this.containerId;
+                document.body.appendChild(div_1);
+                // Add dom red border on hover
+                div_1.addEventListener('mouseover', function (e) {
+                    var node = e.target;
+                    if (!(node instanceof HTMLElement)) {
+                        return;
+                    }
+                    if (node.dataset.sr) {
+                        var target = document.querySelector("[data-sr=\"".concat(node.dataset.sr, "\"]"));
+                        if (target) {
+                            target.classList.add('__source-ref-selected');
+                            _this.setFocusBlock(target);
+                        }
+                    }
+                });
+                // Remove dom red border when leave
+                div_1.addEventListener('mouseout', function (e) {
+                    var node = e.target;
+                    if (!(node instanceof HTMLElement)) {
+                        return;
+                    }
+                    if (node.dataset.sr) {
+                        var target = document.querySelector("[data-sr=\"".concat(node.dataset.sr, "\"]"));
+                        if (target) {
+                            target.classList.remove('__source-ref-selected');
+                        }
+                    }
+                });
+                var close_1 = function () {
+                    _this.setFocusBlock(null);
+                    document.body.removeChild(div_1);
+                };
+                // click event
+                div_1.addEventListener('click', function (e) {
+                    var node = e.target;
+                    if (!(node instanceof HTMLElement)) {
+                        return;
+                    }
+                    var command = node.dataset.command;
+                    switch (command) {
+                        case 'close': {
+                            e.stopPropagation();
+                            close_1();
+                            return;
+                        }
+                        default:
+                            console.warn('Unknown command', command);
+                    }
+                });
+                // keyboard event
+                var escKeyHandler_1 = function (e) {
+                    if (e.key === 'Escape') {
+                        e.stopPropagation();
+                        close_1();
+                        document.removeEventListener('keydown', escKeyHandler_1);
+                    }
+                };
+                document.addEventListener('keydown', escKeyHandler_1);
+                return div_1;
+            }
+            return container;
+        };
+        this.renderHTML = function () {
+            var html = "\n      <div style=\"\n        position: fixed;\n        background: white;\n        bottom: 0;\n        left: 0;\n        z-index: 9999;\n        opacity: 0.6;\n        border-radius: 0 10px 0 0;\n        box-shadow: 0px 0 4px 0px;\n        max-width: 90vw;\n        padding: 10px;\n      \">\n        <div style=\"display: flex; align-items: center;\">\n          <div style=\"flex: 1;\">SourceRef</div>\n          <div style=\"\n            cursor: pointer;\n            text-align: right;\n            font-size: 24px;\n            line-height: 24px;\n          \" data-command=\"close\" title=\"Close(esc)\">\u00D7</div>\n        </div>\n\n        ".concat(_this.srs
+                .map(function (sr) {
+                var uri = (0, utils_1.srToURI)(sr);
+                return "<a href=\"".concat(uri, "\" style=\"\n              display: block;\n              margin: 6px 0;\n              white-space: nowrap;\n              overflow: hidden;\n              text-overflow: ellipsis;\n              direction: rtl;\n              text-align: left;\n            \" data-sr=\"").concat(sr, "\">source-ref: ").concat(uri, "</a>");
+            })
+                .join(''), "\n\n      </div>\n    ");
+            var container = _this.getContainer();
+            container.innerHTML = html;
+        };
+        this.srs = this.getParentSrs(node);
+    }
+    return Inspector;
+}());
+exports.Inspector = Inspector;

@@ -1,0 +1,6 @@
+import { Decoration } from '@remirror/pm/view';
+import { EntityReferenceMetaData } from '../types';
+/**
+ * Helper function to add decorations for each entity reference and also handles
+ */
+export declare const decorateEntityReferences: (entityReferences: EntityReferenceMetaData[][]) => Decoration[];

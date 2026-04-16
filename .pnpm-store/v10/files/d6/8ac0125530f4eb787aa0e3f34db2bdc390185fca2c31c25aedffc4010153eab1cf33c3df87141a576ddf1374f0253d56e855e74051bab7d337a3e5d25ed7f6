@@ -1,0 +1,7 @@
+// packages/remirror__preset-formatting/src/formatting-preset.ts
+var formattingPreset = (_ = {}) => {
+  return [];
+};
+export {
+  formattingPreset
+};

@@ -1,0 +1,5 @@
+import { NodeType, ProsemirrorNode } from '@remirror/pm';
+export declare function isList(type: NodeType): boolean;
+export declare function isListItem(type: NodeType): boolean;
+export declare function isListNode(node: ProsemirrorNode): boolean;
+export declare function isListItemNode(node: ProsemirrorNode): boolean;

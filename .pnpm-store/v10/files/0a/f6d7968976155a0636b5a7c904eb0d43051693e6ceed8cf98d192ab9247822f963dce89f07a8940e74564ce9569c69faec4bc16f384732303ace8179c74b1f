@@ -1,0 +1,7 @@
+import { Size } from '../../types';
+export declare type ModuleData = {
+    id: string | number;
+    realPath: string;
+    concatenating: ModuleData[];
+    size: Size;
+};

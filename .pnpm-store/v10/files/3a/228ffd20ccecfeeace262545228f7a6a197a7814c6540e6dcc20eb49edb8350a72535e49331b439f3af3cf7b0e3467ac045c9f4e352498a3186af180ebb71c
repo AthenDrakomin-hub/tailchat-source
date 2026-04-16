@@ -1,0 +1,626 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+var __accessCheck = (obj, member, msg) => {
+  if (!member.has(obj))
+    throw TypeError("Cannot " + msg);
+};
+var __privateGet = (obj, member, getter) => {
+  __accessCheck(obj, member, "read from private field");
+  return getter ? getter.call(obj) : member.get(obj);
+};
+var __privateAdd = (obj, member, value) => {
+  if (member.has(obj))
+    throw TypeError("Cannot add the same private member more than once");
+  member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+};
+var __privateSet = (obj, member, value, setter) => {
+  __accessCheck(obj, member, "write to private field");
+  setter ? setter.call(obj, value) : member.set(obj, value);
+  return value;
+};
+
+// packages/remirror__extension-positioner/src/core-positioners.ts
+import {
+  findParentNode,
+  getDefaultBlockNode,
+  getMarkRanges,
+  getSelectedWord,
+  getTextSelection,
+  isElementDomNode as isElementDomNode2,
+  isSelectionEmpty,
+  isTextSelection
+} from "@remirror/core";
+
+// packages/remirror__extension-positioner/src/positioner.ts
+import { createNanoEvents } from "nanoevents";
+import {
+  ErrorConstant,
+  invariant,
+  isFunction
+} from "@remirror/core";
+var _handler, _active, _props, _ids, _updated, _constructorProps, _getActive, _getID, _getPosition;
+var _Positioner = class {
+  constructor(props) {
+    __privateAdd(this, _handler, createNanoEvents());
+    __privateAdd(this, _active, []);
+    __privateAdd(this, _props, /* @__PURE__ */ new Map());
+    __privateAdd(this, _ids, []);
+    __privateAdd(this, _updated, false);
+    __privateAdd(this, _constructorProps, void 0);
+    __privateAdd(this, _getActive, void 0);
+    __privateAdd(this, _getID, void 0);
+    __privateAdd(this, _getPosition, void 0);
+    /**
+     * Add a listener to the positioner events.
+     */
+    this.addListener = (event, cb) => {
+      return __privateGet(this, _handler).on(event, cb);
+    };
+    __privateSet(this, _constructorProps, props);
+    __privateSet(this, _getActive, props.getActive);
+    __privateSet(this, _getPosition, props.getPosition);
+    __privateSet(this, _getID, props.getID);
+    this.hasChanged = props.hasChanged;
+    this.events = props.events ?? ["state", "scroll"];
+  }
+  /**
+   * Create a positioner.
+   */
+  static create(props) {
+    return new _Positioner(props);
+  }
+  /**
+   * Create a positioner from an existing positioner.
+   *
+   * This is useful when you want to modify parts of the positioner.
+   */
+  static fromPositioner(positioner, base) {
+    return _Positioner.create({ ...positioner.basePositioner, ...base });
+  }
+  get basePositioner() {
+    return {
+      getActive: __privateGet(this, _getActive),
+      getPosition: __privateGet(this, _getPosition),
+      hasChanged: this.hasChanged,
+      events: this.events,
+      getID: __privateGet(this, _getID)
+    };
+  }
+  /**
+   * Get the active element setters.
+   */
+  onActiveChanged(props) {
+    this.recentUpdate = props;
+    const active = __privateGet(this, _getActive).call(this, props);
+    __privateSet(this, _active, active);
+    __privateSet(this, _props, /* @__PURE__ */ new Map());
+    __privateSet(this, _updated, false);
+    __privateSet(this, _ids, []);
+    const elementSetters = [];
+    for (const [index, data] of active.entries()) {
+      const id = this.getID(data, index);
+      __privateGet(this, _ids).push(id);
+      elementSetters.push({
+        setElement: (element) => {
+          return this.addProps({ ...props, data, element }, index);
+        },
+        id,
+        data
+      });
+    }
+    __privateGet(this, _handler).emit("update", elementSetters);
+  }
+  /**
+   * Get the id for the active data. Defaults to the index of the data item.
+   */
+  getID(data, index) {
+    var _a;
+    return ((_a = __privateGet(this, _getID)) == null ? void 0 : _a.call(this, data, index)) ?? index.toString();
+  }
+  addProps(props, index) {
+    if (__privateGet(this, _updated)) {
+      return;
+    }
+    __privateGet(this, _props).set(index, props);
+    if (__privateGet(this, _props).size < __privateGet(this, _active).length) {
+      return;
+    }
+    const doneProps = [];
+    for (const index2 of __privateGet(this, _active).keys()) {
+      const item = __privateGet(this, _props).get(index2);
+      invariant(item, {
+        code: ErrorConstant.INTERNAL,
+        message: "Something went wrong when retrieving the parameters"
+      });
+      const id = __privateGet(this, _ids)[index2];
+      if (!id) {
+        return;
+      }
+      doneProps.push({
+        position: __privateGet(this, _getPosition).call(this, item),
+        element: item.element,
+        id
+      });
+    }
+    __privateGet(this, _handler).emit("done", doneProps);
+  }
+  /**
+   * Create a new Positioner with the provided props.
+   */
+  clone(props) {
+    return _Positioner.create({
+      ...__privateGet(this, _constructorProps),
+      ...isFunction(props) ? props(__privateGet(this, _constructorProps)) : props
+    });
+  }
+  /**
+   * Clones the positioner while updating the `active` value. This is designed
+   * for usage in frameworks like `react`.
+   */
+  active(isActive) {
+    const filterFunction = isFunction(isActive) ? isActive : () => isActive;
+    return this.clone((original) => ({
+      getActive: (props) => original.getActive(props).filter(filterFunction)
+    }));
+  }
+};
+var Positioner = _Positioner;
+_handler = new WeakMap();
+_active = new WeakMap();
+_props = new WeakMap();
+_ids = new WeakMap();
+_updated = new WeakMap();
+_constructorProps = new WeakMap();
+_getActive = new WeakMap();
+_getID = new WeakMap();
+_getPosition = new WeakMap();
+/**
+ * An empty return value for the positioner.
+ */
+Positioner.EMPTY = [];
+
+// packages/remirror__extension-positioner/src/positioner-utils.ts
+import {
+  getStyle,
+  hasTransactionChanged,
+  isElementDomNode,
+  within
+} from "@remirror/core";
+import { isEmptyBlockNode } from "@remirror/core";
+function isPositionerUpdateTransaction(tr, key = POSITIONER_UPDATE_ALL) {
+  const { key: trKey } = (tr == null ? void 0 : tr.getMeta(POSITIONER_UPDATE_KEY)) ?? {};
+  return trKey === key;
+}
+function hasStateChanged(props) {
+  const { tr, state, previousState } = props;
+  if (!previousState) {
+    return true;
+  }
+  if (tr && isPositionerUpdateTransaction(tr)) {
+    return true;
+  }
+  if (tr) {
+    return hasTransactionChanged(tr);
+  }
+  return !state.doc.eq(previousState.doc) || !state.selection.eq(previousState.selection);
+}
+function isPositionVisible(rect, element, options = {}) {
+  const elementRect = element.getBoundingClientRect();
+  const { accountForPadding = false } = options;
+  let leftDelta = 0;
+  let rightDelta = 0;
+  let topDelta = 0;
+  let bottomDelta = 0;
+  if (isElementDomNode(element) && accountForPadding) {
+    const paddingLeft = Number.parseFloat(getStyle(element, "padding-left").replace("px", ""));
+    const paddingRight = Number.parseFloat(getStyle(element, "padding-right").replace("px", ""));
+    const paddingTop = Number.parseFloat(getStyle(element, "padding-top").replace("px", ""));
+    const paddingBottom = Number.parseFloat(getStyle(element, "padding-bottom").replace("px", ""));
+    const borderLeft = Number.parseFloat(getStyle(element, "border-left").replace("px", ""));
+    const borderRight = Number.parseFloat(getStyle(element, "border-right").replace("px", ""));
+    const borderTop = Number.parseFloat(getStyle(element, "border-top").replace("px", ""));
+    const borderBottom = Number.parseFloat(getStyle(element, "border-bottom").replace("px", ""));
+    const verticalScrollBarWidth = element.offsetWidth - element.clientWidth;
+    const horizontalScrollBarHeight = element.offsetHeight - element.clientHeight;
+    leftDelta += paddingLeft + borderLeft + (element.dir === "rtl" ? verticalScrollBarWidth : 0);
+    rightDelta += paddingRight + borderRight + (element.dir === "rtl" ? 0 : verticalScrollBarWidth);
+    topDelta += paddingTop + borderTop;
+    bottomDelta += paddingBottom + borderBottom + horizontalScrollBarHeight;
+  }
+  const containerRect = new DOMRect(
+    elementRect.left + leftDelta,
+    elementRect.top + topDelta,
+    elementRect.width - rightDelta,
+    elementRect.height - bottomDelta
+  );
+  for (const [top, left] of [
+    [rect.top, rect.left],
+    [rect.top, rect.right],
+    [rect.bottom, rect.left],
+    [rect.bottom, rect.right]
+  ]) {
+    if (within(top, containerRect.top, containerRect.bottom) && within(left, containerRect.left, containerRect.right)) {
+      return true;
+    }
+  }
+  return false;
+}
+var POSITIONER_WIDGET_KEY = "remirror-positioner-widget";
+var POSITIONER_UPDATE_KEY = "positionerUpdate";
+var POSITIONER_UPDATE_ALL = "__all_positioners__";
+
+// packages/remirror__extension-positioner/src/core-positioners.ts
+var basePosition = { y: -999999, x: -999999, width: 0, height: 0 };
+var baseRect = {
+  ...basePosition,
+  left: -999999,
+  top: -999999,
+  bottom: -999999,
+  right: -999999
+};
+var defaultAbsolutePosition = {
+  ...basePosition,
+  rect: { ...baseRect, toJSON: () => baseRect },
+  visible: false
+};
+var blockNodePositioner = Positioner.create({
+  hasChanged: hasStateChanged,
+  /**
+   * This is only active for empty top level nodes. The data is the cursor start
+   * and end position.
+   */
+  getActive(props) {
+    const { state } = props;
+    if (!isSelectionEmpty(state) || state.selection.$anchor.depth > 2) {
+      return Positioner.EMPTY;
+    }
+    const parentNode = findParentNode({ predicate: (node) => node.type.isBlock, selection: state });
+    return parentNode ? [parentNode] : Positioner.EMPTY;
+  },
+  getPosition(props) {
+    const { view, data } = props;
+    const node = view.nodeDOM(data.pos);
+    if (!isElementDomNode2(node)) {
+      return defaultAbsolutePosition;
+    }
+    const rect = node.getBoundingClientRect();
+    const editorRect = view.dom.getBoundingClientRect();
+    const height = rect.height;
+    const width = rect.width;
+    const left = view.dom.scrollLeft + rect.left - editorRect.left;
+    const top = view.dom.scrollTop + rect.top - editorRect.top;
+    const visible = isPositionVisible(rect, view.dom);
+    return { y: top, x: left, height, width, rect, visible };
+  }
+});
+var emptyBlockNodePositioner = blockNodePositioner.clone(({ getActive }) => ({
+  getActive: (props) => {
+    const [parentNode] = getActive(props);
+    return parentNode && isEmptyBlockNode(parentNode.node) && parentNode.node.type === getDefaultBlockNode(props.state.schema) ? [parentNode] : Positioner.EMPTY;
+  }
+}));
+var emptyBlockNodeStartPositioner = emptyBlockNodePositioner.clone(({ getPosition }) => ({
+  getPosition: (props) => ({ ...getPosition(props), width: 1 })
+}));
+var emptyBlockNodeEndPositioner = emptyBlockNodePositioner.clone(({ getPosition }) => ({
+  getPosition: (props) => {
+    const { width, x: left, y: top, height } = getPosition(props);
+    return {
+      ...getPosition(props),
+      width: 1,
+      x: width + left,
+      rect: new DOMRect(width + left, top, 1, height)
+    };
+  }
+}));
+function createSelectionPositioner(isActive) {
+  return Positioner.create({
+    hasChanged: hasStateChanged,
+    getActive: (props) => {
+      const { state, view } = props;
+      if (!isActive(state) || !isTextSelection(state.selection)) {
+        return Positioner.EMPTY;
+      }
+      try {
+        const { head, anchor } = state.selection;
+        return [{ from: view.coordsAtPos(anchor), to: view.coordsAtPos(head) }];
+      } catch {
+        return Positioner.EMPTY;
+      }
+    },
+    getPosition(props) {
+      const { element, data, view } = props;
+      const { from, to } = data;
+      const parent = element.offsetParent ?? view.dom;
+      const parentRect = parent.getBoundingClientRect();
+      const height = Math.abs(to.bottom - from.top);
+      const spansMultipleLines = height > from.bottom - from.top;
+      const leftmost = Math.min(from.left, to.left);
+      const topmost = Math.min(from.top, to.top);
+      const left = parent.scrollLeft + (spansMultipleLines ? to.left - parentRect.left : leftmost - parentRect.left);
+      const top = parent.scrollTop + topmost - parentRect.top;
+      const width = spansMultipleLines ? 1 : Math.abs(from.left - to.right);
+      const rect = new DOMRect(spansMultipleLines ? to.left : leftmost, topmost, width, height);
+      const visible = isPositionVisible(rect, view.dom);
+      return { rect, y: top, x: left, height, width, visible };
+    }
+  });
+}
+var selectionPositioner = createSelectionPositioner((state) => !state.selection.empty);
+var cursorPositioner = createSelectionPositioner((state) => state.selection.empty);
+var alwaysPositioner = createSelectionPositioner(() => true);
+var nearestWordPositioner = selectionPositioner.clone(() => ({
+  getActive: (props) => {
+    const { state, view } = props;
+    if (!state.selection.empty) {
+      return Positioner.EMPTY;
+    }
+    const word = getSelectedWord(state);
+    if (!word) {
+      return Positioner.EMPTY;
+    }
+    try {
+      return [{ from: view.coordsAtPos(word.from), to: view.coordsAtPos(word.to) }];
+    } catch {
+      return Positioner.EMPTY;
+    }
+  }
+}));
+function createMarkPositioner(props) {
+  const { type, all = false, onlyVisible = false } = props;
+  return Positioner.create({
+    hasChanged: hasStateChanged,
+    getActive: (props2) => {
+      const { state, view } = props2;
+      const selection = getTextSelection(all ? "all" : state.selection, state.doc);
+      try {
+        const ranges = getMarkRanges(selection, type).map((range) => {
+          const { from, to } = range;
+          const cursor = { from: view.coordsAtPos(from), to: view.coordsAtPos(to) };
+          const visible = isPositionVisible(getCursorRect(cursor.from), view.dom) || isPositionVisible(getCursorRect(cursor.to), view.dom);
+          return { ...range, visible, cursor };
+        });
+        return onlyVisible ? ranges.filter((range) => range.visible) : ranges;
+      } catch {
+        return Positioner.EMPTY;
+      }
+    },
+    getPosition: (props2) => {
+      const { element, data, view } = props2;
+      const { cursor, visible } = data;
+      const { from, to } = cursor;
+      const parent = element.offsetParent ?? view.dom;
+      const parentRect = parent.getBoundingClientRect();
+      const height = Math.abs(to.bottom - from.top);
+      const spansMultipleLines = height > from.bottom - from.top;
+      const leftmost = Math.min(from.left, to.left);
+      const topmost = Math.min(from.top, to.top);
+      const left = parent.scrollLeft + (spansMultipleLines ? to.left - parentRect.left : leftmost - parentRect.left);
+      const top = parent.scrollTop + topmost - parentRect.top;
+      const width = spansMultipleLines ? 1 : Math.abs(from.left - to.right);
+      const rect = new DOMRect(spansMultipleLines ? to.left : leftmost, topmost, width, height);
+      return { rect, y: top, x: left, height, width, visible };
+    }
+  });
+}
+function getCursorRect(coords) {
+  return new DOMRect(coords.left, coords.top, 1, coords.top - coords.bottom);
+}
+var positioners = {
+  /**
+   * Creates a rect which wraps the current selection.
+   */
+  selection: selectionPositioner,
+  /**
+   * Creates a rect for the cursor. Is inactive for
+   */
+  cursor: cursorPositioner,
+  /**
+   * Creates a positioner which always shows the position of the selection whether empty or not.
+   */
+  always: alwaysPositioner,
+  /**
+   * Creates a position which wraps the entire selected block node.
+   */
+  block: blockNodePositioner,
+  /**
+   * Creates a position which wraps the entire selected block node. This is only active when the block node is empty.
+   */
+  emptyBlock: emptyBlockNodePositioner,
+  /**
+   * Creates a position which wraps the entire selected block node. This is only active when the block node is empty.
+   */
+  emptyBlockStart: emptyBlockNodeStartPositioner,
+  /**
+   * Creates a position which wraps the entire selected block node. This is only active when the block node is empty.
+   */
+  emptyBlockEnd: emptyBlockNodeEndPositioner,
+  /**
+   * Create a rect which surrounds the nearest word.
+   */
+  nearestWord: nearestWordPositioner
+};
+
+// packages/remirror__extension-positioner/src/positioner-extension.ts
+import {
+  command,
+  debounce,
+  extension,
+  helper,
+  isFunction as isFunction2,
+  isString,
+  PlainExtension
+} from "@remirror/core";
+import { Decoration, DecorationSet } from "@remirror/pm/view";
+import { ExtensionPositionerTheme } from "@remirror/theme";
+var PositionerExtension = class extends PlainExtension {
+  constructor() {
+    super(...arguments);
+    /**
+     * All the active positioners for the editor.
+     */
+    this.positioners = [];
+    this.onAddCustomHandler = ({ positioner }) => {
+      if (!positioner) {
+        return;
+      }
+      this.positioners = [...this.positioners, positioner];
+      this.store.commands.forceUpdate();
+      return () => {
+        this.positioners = this.positioners.filter((handler) => handler !== positioner);
+      };
+    };
+  }
+  get name() {
+    return "positioner";
+  }
+  createAttributes() {
+    return { class: ExtensionPositionerTheme.EDITOR };
+  }
+  init() {
+    this.onScroll = debounce(this.options.scrollDebounce, this.onScroll.bind(this));
+  }
+  createEventHandlers() {
+    return {
+      scroll: () => {
+        this.onScroll();
+        return false;
+      },
+      hover: (_, hover) => {
+        this.positioner(this.getBaseProps("hover", { hover }));
+        return false;
+      },
+      contextmenu: (_, contextmenu) => {
+        this.positioner(this.getBaseProps("contextmenu", { contextmenu }));
+        return false;
+      }
+    };
+  }
+  onStateUpdate(update) {
+    this.positioner({
+      ...update,
+      previousState: update.firstUpdate ? void 0 : update.previousState,
+      event: "state",
+      helpers: this.store.helpers
+    });
+  }
+  /**
+   * Create a placeholder decoration which is never removed from the document.
+   */
+  createDecorations(state) {
+    this.element ?? (this.element = this.createElement());
+    if (!this.element.hasChildNodes()) {
+      return DecorationSet.empty;
+    }
+    const decoration = Decoration.widget(0, this.element, {
+      key: "positioner-widget",
+      side: -1,
+      // TODO tests this which prevents any events from bubbling through
+      stopEvent: () => true
+    });
+    return DecorationSet.create(state.doc, [decoration]);
+  }
+  forceUpdatePositioners(key = POSITIONER_UPDATE_ALL) {
+    return ({ tr, dispatch }) => {
+      dispatch == null ? void 0 : dispatch(tr.setMeta(POSITIONER_UPDATE_KEY, { key }));
+      return true;
+    };
+  }
+  getPositionerWidget() {
+    return this.element ?? (this.element = this.createElement());
+  }
+  createElement() {
+    const element = document.createElement("span");
+    element.dataset.id = POSITIONER_WIDGET_KEY;
+    element.setAttribute("role", "presentation");
+    return element;
+  }
+  triggerPositioner(positioner, update) {
+    if (!positioner.hasChanged(update)) {
+      return;
+    }
+    positioner.onActiveChanged({ ...update, view: this.store.view });
+  }
+  positioner(update) {
+    for (const positioner of this.positioners) {
+      const eventIsNotSupported = !positioner.events.includes(update.event);
+      if (eventIsNotSupported) {
+        continue;
+      }
+      this.triggerPositioner(positioner, update);
+    }
+  }
+  getBaseProps(event, extra) {
+    const state = this.store.getState();
+    const previousState = this.store.previousState;
+    return {
+      helpers: this.store.helpers,
+      event,
+      firstUpdate: false,
+      previousState,
+      state,
+      ...extra
+    };
+  }
+  onScroll() {
+    this.positioner(
+      this.getBaseProps("scroll", {
+        scroll: { scrollTop: this.store.view.dom.scrollTop }
+      })
+    );
+  }
+};
+__decorateClass([
+  command()
+], PositionerExtension.prototype, "forceUpdatePositioners", 1);
+__decorateClass([
+  helper()
+], PositionerExtension.prototype, "getPositionerWidget", 1);
+PositionerExtension = __decorateClass([
+  extension({
+    defaultOptions: { scrollDebounce: 100 },
+    customHandlerKeys: ["positioner"],
+    staticKeys: ["scrollDebounce"]
+  })
+], PositionerExtension);
+function getPositioner(positioner) {
+  if (isString(positioner)) {
+    return positioners[positioner].clone();
+  }
+  if (isFunction2(positioner)) {
+    return positioner().clone();
+  }
+  return positioner.clone();
+}
+export {
+  POSITIONER_UPDATE_ALL,
+  POSITIONER_UPDATE_KEY,
+  POSITIONER_WIDGET_KEY,
+  Positioner,
+  PositionerExtension,
+  alwaysPositioner,
+  blockNodePositioner,
+  createMarkPositioner,
+  cursorPositioner,
+  defaultAbsolutePosition,
+  emptyBlockNodeEndPositioner,
+  emptyBlockNodePositioner,
+  emptyBlockNodeStartPositioner,
+  getPositioner,
+  hasStateChanged,
+  isEmptyBlockNode,
+  isPositionVisible,
+  isPositionerUpdateTransaction,
+  nearestWordPositioner,
+  positioners,
+  selectionPositioner
+};

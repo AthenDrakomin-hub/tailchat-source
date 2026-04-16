@@ -1,0 +1,25 @@
+import { PlainExtension, InputRule } from '@remirror/core';
+
+interface ShortcutsOptions {
+}
+/**
+ * Replace characters with keyboard shortcuts
+ *
+ * Inspired by Tiptap's extension-typography
+ */
+declare class ShortcutsExtension extends PlainExtension<ShortcutsOptions> {
+    get name(): "shortcuts";
+    /**
+     * Manage input rules for keyboard shortcuts
+     */
+    createInputRules(): InputRule[];
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            template: ShortcutsExtension;
+        }
+    }
+}
+
+export { ShortcutsExtension, ShortcutsOptions };

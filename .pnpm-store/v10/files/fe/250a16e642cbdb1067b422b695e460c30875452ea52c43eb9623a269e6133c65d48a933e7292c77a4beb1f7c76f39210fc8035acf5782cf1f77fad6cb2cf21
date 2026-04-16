@@ -1,0 +1,61 @@
+// packages/remirror__preset-core/src/core-preset.ts
+import {
+  getLazyArray,
+  RemirrorManager
+} from "@remirror/core";
+import { DocExtension } from "@remirror/extension-doc";
+import { EventsExtension } from "@remirror/extension-events";
+import { GapCursorExtension } from "@remirror/extension-gap-cursor";
+import { HistoryExtension } from "@remirror/extension-history";
+import { ParagraphExtension } from "@remirror/extension-paragraph";
+import { PositionerExtension } from "@remirror/extension-positioner";
+import { TextExtension } from "@remirror/extension-text";
+var defaultOptions = {
+  ...DocExtension.defaultOptions,
+  ...ParagraphExtension.defaultOptions,
+  ...HistoryExtension.defaultOptions,
+  excludeExtensions: []
+};
+function corePreset(options = {}) {
+  options = { ...defaultOptions, ...options };
+  const { content, depth, getDispatch, getState, newGroupDelay, excludeExtensions } = options;
+  const excludeMap = {};
+  for (const name of excludeExtensions ?? []) {
+    excludeMap[name] = true;
+  }
+  const coreExtensions = [];
+  if (!excludeMap["history"]) {
+    const historyExtension = new HistoryExtension({ depth, getDispatch, getState, newGroupDelay });
+    coreExtensions.push(historyExtension);
+  }
+  if (!excludeMap["doc"]) {
+    coreExtensions.push(new DocExtension({ content }));
+  }
+  if (!excludeMap["text"]) {
+    coreExtensions.push(new TextExtension());
+  }
+  if (!excludeMap["paragraph"]) {
+    coreExtensions.push(new ParagraphExtension());
+  }
+  if (!excludeMap["positioner"]) {
+    coreExtensions.push(new PositionerExtension());
+  }
+  if (!excludeMap["gapCursor"]) {
+    coreExtensions.push(new GapCursorExtension());
+  }
+  if (!excludeMap["events"]) {
+    coreExtensions.push(new EventsExtension());
+  }
+  return coreExtensions;
+}
+function createCoreManager(extensions, options = {}) {
+  const { core, ...managerSettings } = options;
+  return RemirrorManager.create(
+    () => [...getLazyArray(extensions), ...corePreset(core)],
+    managerSettings
+  );
+}
+export {
+  corePreset,
+  createCoreManager
+};

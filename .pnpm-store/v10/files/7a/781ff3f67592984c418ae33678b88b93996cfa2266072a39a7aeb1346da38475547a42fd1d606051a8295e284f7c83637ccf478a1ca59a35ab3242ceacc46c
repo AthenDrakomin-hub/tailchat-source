@@ -1,0 +1,2 @@
+import { MetricTypes, MetricTypeConfig } from '../constants';
+export declare const METRIC_TYPE_CONFIGS: Record<MetricTypes, MetricTypeConfig>;

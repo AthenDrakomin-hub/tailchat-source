@@ -1,0 +1,18 @@
+import { EditorView, Transaction } from '@remirror/core';
+import { TableRect } from '@remirror/pm/tables';
+export interface InsertButtonAttrs {
+    x: number;
+    y: number;
+    triggerRect: DOMRect;
+    row: number;
+    col: number;
+}
+export declare function shouldHideInsertButton(attrs: InsertButtonAttrs, e: MouseEvent): boolean;
+export interface TableInsertButtonProps {
+    view: EditorView;
+    tableRect: TableRect;
+    attrs: InsertButtonAttrs;
+    removeInsertButton: (tr: Transaction) => Transaction;
+}
+declare function TableInsertButton({ view, tableRect, attrs, removeInsertButton, }: TableInsertButtonProps): HTMLElement;
+export default TableInsertButton;

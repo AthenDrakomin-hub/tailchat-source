@@ -1,0 +1,31 @@
+{
+  "name": "@perfsee/webpack",
+  "version": "1.0.0-alpha.4",
+  "description": "perfsee webpack plugin",
+  "repository": "https://github.com/perfsee/perfsee",
+  "license": "Apache-2.0",
+  "keywords": [
+    "webpack",
+    "perfsee"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "dependencies": {
+    "@perfsee/bundle-analyzer": "1.0.0-alpha.4",
+    "@perfsee/plugin-utils": "1.0.0-alpha.4",
+    "chalk": "^4.1.2",
+    "tslib": "^2.4.0"
+  },
+  "peerDependencies": {
+    "webpack": ">= 4"
+  },
+  "gitHead": "71252e424ebea84ec8b2ca616e545cc1177241c8"
+}

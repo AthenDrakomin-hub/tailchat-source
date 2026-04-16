@@ -1,0 +1,4 @@
+/**
+ * Converts the provide HTML to markdown.
+ */
+export declare function htmlToMarkdown(html: string): string;

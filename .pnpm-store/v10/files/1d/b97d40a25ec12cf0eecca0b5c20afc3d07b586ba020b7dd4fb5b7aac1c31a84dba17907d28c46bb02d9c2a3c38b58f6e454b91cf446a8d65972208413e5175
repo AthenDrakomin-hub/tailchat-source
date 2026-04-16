@@ -1,0 +1,36 @@
+import { CreateExtensionPlugin, EditorView, PlainExtension } from '@remirror/core';
+import type { EpicModeOptions } from './epic-mode-types';
+export declare class EpicModeExtension extends PlainExtension<EpicModeOptions> {
+    get name(): "epicMode";
+    createPlugin(): CreateExtensionPlugin<EpicModePluginState>;
+}
+export declare class EpicModePluginState {
+    #private;
+    canvas: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    get options(): Readonly<Required<EpicModeOptions>>;
+    private container;
+    private view;
+    constructor(extension: EpicModeExtension);
+    /**
+     * Store a reference to the Prosemirror view and add the canvas to the DOM
+     *
+     * @param view
+     */
+    init(view: EditorView): this;
+    destroy(): void;
+    shake: () => void;
+    spawnParticles: () => void;
+    /**
+     * Runs through the animation loop
+     */
+    loop: () => void;
+    private drawParticles;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            epicMode: EpicModeExtension;
+        }
+    }
+}

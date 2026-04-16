@@ -1,0 +1,4 @@
+export declare const setFontSizeOptions: Remirror.CommandDecoratorOptions;
+export declare const increaseFontSizeOptions: Remirror.CommandDecoratorOptions;
+export declare const decreaseFontSizeOptions: Remirror.CommandDecoratorOptions;
+export declare const FONT_SIZE_ATTRIBUTE = "data-font-size-mark";

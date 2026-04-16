@@ -1,0 +1,38 @@
+import { PlainExtension, ProsemirrorPlugin } from '@remirror/core';
+
+interface DropCursorOptions {
+    /**
+     * Set the color of the cursor.
+     *
+     * @defaultValue 'black'
+     */
+    color?: string;
+    /**
+     * Set the precise width of the cursor in pixels.
+     *
+     * @defaultValue 1
+     */
+    width?: number;
+}
+/**
+ * Create a plugin that, when added to a ProseMirror instance,
+ * shows a line indicator for where the drop target will be.
+ *
+ * @builtin
+ */
+declare class DropCursorExtension extends PlainExtension<DropCursorOptions> {
+    get name(): "dropCursor";
+    /**
+     * Use the dropCursor plugin with provided options.
+     */
+    createExternalPlugins(): ProsemirrorPlugin[];
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            dropCursor: DropCursorExtension;
+        }
+    }
+}
+
+export { DropCursorExtension, DropCursorOptions };

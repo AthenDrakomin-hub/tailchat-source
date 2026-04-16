@@ -1,0 +1,5 @@
+import { FC, ReactNode } from 'react';
+export interface HistoryButtonGroupProps {
+    children?: ReactNode | ReactNode[];
+}
+export declare const HistoryButtonGroup: FC<HistoryButtonGroupProps>;

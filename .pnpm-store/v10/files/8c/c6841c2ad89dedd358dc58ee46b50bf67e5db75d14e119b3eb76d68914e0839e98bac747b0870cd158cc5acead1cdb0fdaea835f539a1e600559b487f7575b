@@ -1,0 +1,32 @@
+import { EditorSchema, EditorView, ResolvedPos } from '@remirror/core';
+import { Node as ProsemirrorNode } from '@remirror/pm/model';
+import { CellSelection, TableMap } from '@remirror/pm/tables';
+import { DOMEvents } from './dom';
+import { CellAxis, FindTable } from './types';
+export interface InjectControllersProps {
+    schema: EditorSchema;
+    getMap: () => TableMap;
+    table: ProsemirrorNode;
+}
+export declare function injectControllers({ schema, getMap, table: oldTable, }: InjectControllersProps): ProsemirrorNode;
+export declare function createControllerEvents({ view, findTable, }: {
+    view: EditorView;
+    findTable: FindTable;
+}): DOMEvents<HTMLElement>;
+export declare function setPredelete(view: EditorView, value: boolean): void;
+/**
+ * @deprecated
+ */
+export declare function getCellAxisV1($cellPos: ResolvedPos): CellAxis;
+export declare function getCellAxisByMouseEvent(view: EditorView, event: MouseEvent): CellAxis | null;
+export declare function getCellAxisByCoords(view: EditorView, coords: {
+    left: number;
+    top: number;
+}): CellAxis | null;
+export declare enum CellSelectionType {
+    row = 1,
+    col = 2,
+    table = 3,
+    other = 4
+}
+export declare function getCellSelectionType(selection: CellSelection): CellSelectionType;

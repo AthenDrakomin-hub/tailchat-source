@@ -1,0 +1,8 @@
+export declare const getAssetName: (statsAssetPath?: string | null) => string;
+export declare const getModuleName: (name?: string | null) => string;
+export declare const calculateCacheInvalidation: (rows: Array<any>) => number;
+export declare const getMetricAdded: (runs: Array<any>) => boolean;
+export declare const getMetricDeleted: (runs: Array<any>) => boolean;
+export declare const getMetricType: (key: string, type?: import("..").MetricTypes) => import("..").Metric;
+export declare const getPackagePublicName: (packageId: string) => string;
+export declare const normalizeChunkId: (chunkId: string | number) => string;

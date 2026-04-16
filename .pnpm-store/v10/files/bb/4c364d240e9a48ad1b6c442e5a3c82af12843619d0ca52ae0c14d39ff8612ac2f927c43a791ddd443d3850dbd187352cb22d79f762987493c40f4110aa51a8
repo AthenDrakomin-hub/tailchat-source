@@ -1,0 +1,2013 @@
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// packages/remirror__react-components/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  BaselineButtonGroup: () => BaselineButtonGroup,
+  BasicFormattingButtonGroup: () => BasicFormattingButtonGroup,
+  CalloutTypeButtonGroup: () => CalloutTypeButtonGroup,
+  CenterAlignButton: () => CenterAlignButton,
+  CommandButton: () => CommandButton,
+  CommandButtonGroup: () => CommandButtonGroup,
+  CommandMenuItem: () => CommandMenuItem,
+  CopyButton: () => CopyButton,
+  CreateTableButton: () => CreateTableButton,
+  CutButton: () => CutButton,
+  DataTransferButtonGroup: () => DataTransferButtonGroup,
+  DecreaseFontSizeButton: () => DecreaseFontSizeButton,
+  DecreaseIndentButton: () => DecreaseIndentButton,
+  DropdownButton: () => DropdownButton,
+  EmojiPopupComponent: () => EmojiPopupComponent,
+  FindReplaceComponent: () => FindReplaceComponent,
+  FloatingToolbar: () => FloatingToolbar,
+  FloatingWrapper: () => FloatingWrapper,
+  FormattingButtonGroup: () => FormattingButtonGroup,
+  GenIcon: () => GenIcon,
+  HeadingLevelButtonGroup: () => HeadingLevelButtonGroup,
+  HistoryButtonGroup: () => HistoryButtonGroup,
+  Icon: () => Icon,
+  IconBase: () => IconBase,
+  IncreaseFontSizeButton: () => IncreaseFontSizeButton,
+  IncreaseIndentButton: () => IncreaseIndentButton,
+  IndentationButtonGroup: () => IndentationButtonGroup,
+  InsertHorizontalRuleButton: () => InsertHorizontalRuleButton,
+  JustifyAlignButton: () => JustifyAlignButton,
+  LeftAlignButton: () => LeftAlignButton,
+  ListButtonGroup: () => ListButtonGroup,
+  MarkdownToolbar: () => MarkdownToolbar,
+  MentionAtomPopupComponent: () => MentionAtomPopupComponent,
+  PasteButton: () => PasteButton,
+  PositionerPortal: () => PositionerPortal,
+  RedoButton: () => RedoButton,
+  RightAlignButton: () => RightAlignButton,
+  TextAlignmentButtonGroup: () => TextAlignmentButtonGroup,
+  ThemeProvider: () => ThemeProvider,
+  ToggleBlockquoteButton: () => ToggleBlockquoteButton,
+  ToggleBoldButton: () => ToggleBoldButton,
+  ToggleBulletListButton: () => ToggleBulletListButton,
+  ToggleCalloutButton: () => ToggleCalloutButton,
+  ToggleCalloutMenuItem: () => ToggleCalloutMenuItem,
+  ToggleCodeBlockButton: () => ToggleCodeBlockButton,
+  ToggleCodeButton: () => ToggleCodeButton,
+  ToggleColumnsButton: () => ToggleColumnsButton,
+  ToggleHeadingButton: () => ToggleHeadingButton,
+  ToggleHeadingMenuItem: () => ToggleHeadingMenuItem,
+  ToggleItalicButton: () => ToggleItalicButton,
+  ToggleOrderedListButton: () => ToggleOrderedListButton,
+  ToggleStrikeButton: () => ToggleStrikeButton,
+  ToggleSubscriptButton: () => ToggleSubscriptButton,
+  ToggleSuperscriptButton: () => ToggleSuperscriptButton,
+  ToggleTaskListButton: () => ToggleTaskListButton,
+  ToggleUnderlineButton: () => ToggleUnderlineButton,
+  ToggleWhitespaceButton: () => ToggleWhitespaceButton,
+  Toolbar: () => Toolbar,
+  UndoButton: () => UndoButton,
+  VerticalDivider: () => VerticalDivider,
+  WysiwygToolbar: () => WysiwygToolbar,
+  useTheme: () => useTheme
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__react-components/src/button-groups/baseline-button-group.tsx
+var import_react39 = __toESM(require("react"), 1);
+
+// packages/remirror__react-components/src/buttons/center-align-button.tsx
+var import_react6 = __toESM(require("react"), 1);
+var import_react_core2 = require("@remirror/react-core");
+
+// packages/remirror__react-components/src/buttons/command-button.tsx
+var import_material2 = require("@mui/material");
+var import_react5 = __toESM(require("react"), 1);
+var import_core3 = require("@remirror/core");
+
+// packages/remirror__react-components/src/use-command-option-values.ts
+var import_react = require("react");
+var import_react_core = require("@remirror/react-core");
+
+// packages/remirror__react-components/src/react-component-utils.ts
+var import_core = require("@remirror/core");
+function getCommandOptionValue(value, commandProps) {
+  return (0, import_core.isFunction)(value) ? value(commandProps) : value;
+}
+function isStringArray(array) {
+  return (0, import_core.isString)(array[0]);
+}
+function getUiShortcutString(uiShortcut, attrs) {
+  var _a;
+  if ((0, import_core.isString)(uiShortcut)) {
+    return uiShortcut;
+  }
+  if (!(0, import_core.isArray)(uiShortcut)) {
+    return uiShortcut.shortcut;
+  }
+  if (isStringArray(uiShortcut)) {
+    return uiShortcut[0] ?? "";
+  }
+  return ((_a = uiShortcut.find((shortcut) => (0, import_core.isEqual)(shortcut.attrs, attrs)) ?? uiShortcut[0]) == null ? void 0 : _a.shortcut) ?? "";
+}
+var CASINGS = {
+  title: (value) => (0, import_core.capitalize)(value),
+  upper: (value) => value.toLocaleUpperCase(),
+  lower: (value) => value.toLocaleLowerCase()
+};
+function getShortcutString(shortcut, options) {
+  const {
+    casing = "title",
+    namedAsSymbol = false,
+    modifierAsSymbol = true,
+    separator = " ",
+    t
+  } = options;
+  const symbols = (0, import_core.getShortcutSymbols)(shortcut);
+  const stringSymbols = [];
+  const transform = CASINGS[casing];
+  for (const sym of symbols) {
+    if (sym.type === "char") {
+      stringSymbols.push(transform(sym.key));
+      continue;
+    }
+    if (sym.type === "named") {
+      const value2 = namedAsSymbol === true || (0, import_core.isArray)(namedAsSymbol) && (0, import_core.includes)(namedAsSymbol, sym.key) ? sym.symbol ?? t(sym.i18n) : t(sym.i18n);
+      stringSymbols.push(transform(value2));
+      continue;
+    }
+    const value = modifierAsSymbol === true || (0, import_core.isArray)(modifierAsSymbol) && (0, import_core.includes)(modifierAsSymbol, sym.key) ? sym.symbol : t(sym.i18n);
+    stringSymbols.push(transform(value));
+  }
+  return stringSymbols.join(separator);
+}
+
+// packages/remirror__react-components/src/use-command-option-values.ts
+var useCommandOptionValues = ({
+  commandName,
+  active,
+  enabled,
+  attrs
+}) => {
+  const { t } = (0, import_react_core.useI18n)();
+  const { getCommandOptions } = (0, import_react_core.useHelpers)();
+  const options = getCommandOptions(commandName);
+  const { description, label, icon, shortcut } = options || {};
+  const commandProps = (0, import_react.useMemo)(
+    () => ({ active, attrs, enabled, t }),
+    [active, attrs, enabled, t]
+  );
+  const shortcutString = (0, import_react.useMemo)(() => {
+    if (!shortcut) {
+      return;
+    }
+    return getShortcutString(getUiShortcutString(shortcut, attrs ?? {}), { t, separator: "" });
+  }, [shortcut, attrs, t]);
+  return (0, import_react.useMemo)(
+    () => ({
+      description: getCommandOptionValue(description, commandProps),
+      label: getCommandOptionValue(label, commandProps),
+      icon: getCommandOptionValue(icon, commandProps),
+      shortcut: shortcutString
+    }),
+    [commandProps, description, label, icon, shortcutString]
+  );
+};
+
+// packages/remirror__react-components/src/buttons/command-button-icon.tsx
+var import_material = require("@mui/material");
+var import_react4 = __toESM(require("react"), 1);
+var import_core2 = require("@remirror/core");
+
+// packages/remirror__react-components/src/icons/icons-base.tsx
+var import_react3 = __toESM(require("react"), 1);
+var Icons = __toESM(require("@remirror/icons"), 1);
+
+// packages/remirror__react-components/src/icons/icons-context.tsx
+var import_react2 = require("react");
+var DefaultContext = {
+  color: void 0,
+  size: void 0,
+  className: void 0,
+  style: void 0,
+  attr: void 0
+};
+var IconContext = (0, import_react2.createContext)(DefaultContext);
+var IconProvider = IconContext.Provider;
+
+// packages/remirror__react-components/src/icons/icons-base.tsx
+function Tree2Element(tree) {
+  return tree.map(
+    (node, index) => (0, import_react3.createElement)(node.tag, { key: index, ...node.attr }, Tree2Element(node.child ?? []))
+  );
+}
+function GenIcon(tree, viewBox = "0 0 24 24") {
+  return (props) => /* @__PURE__ */ import_react3.default.createElement(IconBase, { viewBox, ...props }, Tree2Element(tree ?? []));
+}
+var Icon = (props) => {
+  const { name } = props;
+  return /* @__PURE__ */ import_react3.default.createElement(IconBase, { ...props }, Tree2Element(Icons[name]));
+};
+var IconBase = (props) => {
+  const renderSvg = (context) => {
+    const computedSize = props.size ?? context.size ?? "1em";
+    let className;
+    if (context.className) {
+      className = context.className;
+    }
+    if (props.className) {
+      className = (className ? `${className} ` : "") + props.className;
+    }
+    const { title, ...svgProps } = props;
+    return /* @__PURE__ */ import_react3.default.createElement(
+      "svg",
+      {
+        stroke: "currentColor",
+        fill: "currentColor",
+        strokeWidth: "0",
+        ...context.attr,
+        ...svgProps,
+        className,
+        style: { color: props.color ?? context.color, ...context.style, ...props.style },
+        height: computedSize,
+        width: computedSize,
+        xmlns: "http://www.w3.org/2000/svg",
+        viewBox: "0 0 24 24"
+      },
+      title && /* @__PURE__ */ import_react3.default.createElement("title", null, title),
+      props.children
+    );
+  };
+  return /* @__PURE__ */ import_react3.default.createElement(IconContext.Consumer, null, renderSvg);
+};
+
+// packages/remirror__react-components/src/buttons/command-button-icon.tsx
+var isCommandUiIcon = (val) => {
+  if (!(0, import_core2.isPlainObject)(val)) {
+    return false;
+  }
+  return !!val.name;
+};
+var CommandButtonIcon = ({ icon }) => {
+  if ((0, import_core2.isString)(icon)) {
+    return /* @__PURE__ */ import_react4.default.createElement(Icon, { name: icon, size: "1rem" });
+  }
+  return icon;
+};
+var CommandButtonBadge = ({ icon, children }) => {
+  if (!isCommandUiIcon(icon)) {
+    return /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, children);
+  }
+  const { sub, sup } = icon;
+  const value = sub ?? sup;
+  const isBottom = sub !== void 0;
+  if (value === void 0) {
+    return /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, children);
+  }
+  return /* @__PURE__ */ import_react4.default.createElement(
+    import_material.Badge,
+    {
+      anchorOrigin: {
+        vertical: isBottom ? "bottom" : "top",
+        horizontal: "right"
+      },
+      badgeContent: value,
+      sx: {
+        "& > .MuiBadge-badge": {
+          bgcolor: "background.paper",
+          color: "text.secondary",
+          minWidth: 12,
+          height: 12,
+          margin: "2px 0",
+          padding: "1px"
+        }
+      }
+    },
+    children
+  );
+};
+
+// packages/remirror__react-components/src/buttons/command-button.tsx
+var CommandButton = ({
+  commandName,
+  active = false,
+  enabled,
+  attrs,
+  onSelect,
+  onChange,
+  icon,
+  displayShortcut = true,
+  "aria-label": ariaLabel,
+  label,
+  ...rest
+}) => {
+  const handleChange = (0, import_react5.useCallback)(
+    (e, value) => {
+      onSelect();
+      onChange == null ? void 0 : onChange(e, value);
+    },
+    [onSelect, onChange]
+  );
+  const handleMouseDown = (0, import_react5.useCallback)((e) => {
+    e.preventDefault();
+  }, []);
+  const commandOptions = useCommandOptionValues({ commandName, active, enabled, attrs });
+  let fallbackIcon = null;
+  if (commandOptions.icon) {
+    fallbackIcon = (0, import_core3.isString)(commandOptions.icon) ? commandOptions.icon : commandOptions.icon.name;
+  }
+  const labelText = ariaLabel ?? commandOptions.label ?? "";
+  const tooltipText = label ?? labelText;
+  const shortcutText = displayShortcut && commandOptions.shortcut ? ` (${commandOptions.shortcut})` : "";
+  return /* @__PURE__ */ import_react5.default.createElement(import_material2.Tooltip, { title: `${tooltipText}${shortcutText}` }, /* @__PURE__ */ import_react5.default.createElement(import_material2.Box, { component: "span", sx: { "&:not(:first-of-type)": { marginLeft: "-1px" } } }, /* @__PURE__ */ import_react5.default.createElement(
+    import_material2.ToggleButton,
+    {
+      "aria-label": labelText,
+      selected: active,
+      disabled: !enabled,
+      onMouseDown: handleMouseDown,
+      color: "primary",
+      size: "small",
+      sx: {
+        padding: "6px 12px",
+        "&.Mui-selected": {
+          backgroundColor: "primary.main",
+          color: "primary.contrastText"
+        },
+        "&.Mui-selected:hover": {
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText"
+        },
+        "&:not(:first-of-type)": {
+          borderLeft: "1px solid transparent",
+          borderTopLeftRadius: 0,
+          borderBottomLeftRadius: 0
+        },
+        "&:not(:last-of-type)": {
+          borderTopRightRadius: 0,
+          borderBottomRightRadius: 0
+        }
+      },
+      ...rest,
+      value: commandName,
+      onChange: handleChange
+    },
+    /* @__PURE__ */ import_react5.default.createElement(CommandButtonBadge, { icon: commandOptions.icon }, /* @__PURE__ */ import_react5.default.createElement(CommandButtonIcon, { icon: icon ?? fallbackIcon }))
+  )));
+};
+
+// packages/remirror__react-components/src/buttons/center-align-button.tsx
+var CenterAlignButton = (props) => {
+  var _a;
+  const { centerAlign } = (0, import_react_core2.useCommands)();
+  (0, import_react_core2.useCurrentSelection)();
+  const handleSelect = (0, import_react6.useCallback)(() => {
+    if (centerAlign.enabled()) {
+      centerAlign();
+    }
+  }, [centerAlign]);
+  const active = (_a = centerAlign.active) == null ? void 0 : _a.call(centerAlign);
+  const enabled = centerAlign.enabled();
+  return /* @__PURE__ */ import_react6.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "centerAlign",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/copy-button.tsx
+var import_react7 = __toESM(require("react"), 1);
+var import_react_core3 = require("@remirror/react-core");
+var CopyButton = (props) => {
+  const { copy } = (0, import_react_core3.useCommands)();
+  (0, import_react_core3.useCurrentSelection)();
+  const handleSelect = (0, import_react7.useCallback)(() => {
+    if (copy.enabled()) {
+      copy();
+    }
+  }, [copy]);
+  const enabled = copy.enabled();
+  return /* @__PURE__ */ import_react7.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "copy",
+      active: false,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/create-table-button.tsx
+var import_react8 = __toESM(require("react"), 1);
+var import_react_core4 = require("@remirror/react-core");
+var CreateTableButton = (props) => {
+  const { createTable } = (0, import_react_core4.useCommands)();
+  const handleSelect = (0, import_react8.useCallback)(() => {
+    if (createTable.enabled()) {
+      createTable();
+    }
+  }, [createTable]);
+  const active = (0, import_react_core4.useActive)().table();
+  const enabled = createTable.enabled();
+  return /* @__PURE__ */ import_react8.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "createTable",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/cut-button.tsx
+var import_react9 = __toESM(require("react"), 1);
+var import_react_core5 = require("@remirror/react-core");
+var CutButton = (props) => {
+  const { cut } = (0, import_react_core5.useCommands)();
+  (0, import_react_core5.useCurrentSelection)();
+  const handleSelect = (0, import_react9.useCallback)(() => {
+    if (cut.enabled()) {
+      cut();
+    }
+  }, [cut]);
+  const enabled = cut.enabled();
+  return /* @__PURE__ */ import_react9.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "cut",
+      active: false,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/decrease-font-size-button.tsx
+var import_react10 = __toESM(require("react"), 1);
+var import_react_core6 = require("@remirror/react-core");
+var DecreaseFontSizeButton = (props) => {
+  const { decreaseFontSize } = (0, import_react_core6.useCommands)();
+  const handleSelect = (0, import_react10.useCallback)(() => {
+    if (decreaseFontSize.enabled()) {
+      decreaseFontSize();
+    }
+  }, [decreaseFontSize]);
+  const enabled = decreaseFontSize.enabled();
+  return /* @__PURE__ */ import_react10.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "decreaseFontSize",
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/decrease-indent-button.tsx
+var import_react11 = __toESM(require("react"), 1);
+var import_react_core7 = require("@remirror/react-core");
+var DecreaseIndentButton = (props) => {
+  const { decreaseIndent } = (0, import_react_core7.useCommands)();
+  const handleSelect = (0, import_react11.useCallback)(() => {
+    if (decreaseIndent.enabled()) {
+      decreaseIndent();
+    }
+  }, [decreaseIndent]);
+  const enabled = decreaseIndent.enabled();
+  return /* @__PURE__ */ import_react11.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "decreaseIndent",
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/dropdown-button.tsx
+var import_material3 = require("@mui/material");
+var import_react12 = __toESM(require("react"), 1);
+var import_core4 = require("@remirror/core");
+var ButtonIcon = ({ icon }) => {
+  if ((0, import_core4.isString)(icon)) {
+    return /* @__PURE__ */ import_react12.default.createElement(Icon, { name: icon, size: "1rem" });
+  }
+  return icon;
+};
+var DropdownButton = ({
+  label,
+  "aria-label": ariaLabel,
+  icon,
+  children,
+  onClose,
+  ...rest
+}) => {
+  const id = (0, import_react12.useRef)((0, import_core4.uniqueId)());
+  const [anchorEl, setAnchorEl] = (0, import_react12.useState)(null);
+  const open = Boolean(anchorEl);
+  const handleMouseDown = (0, import_react12.useCallback)((e) => {
+    e.preventDefault();
+  }, []);
+  const handleClick = (0, import_react12.useCallback)((event) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+  const handleClose = (0, import_react12.useCallback)(
+    (e, reason) => {
+      setAnchorEl(null);
+      onClose == null ? void 0 : onClose(e, reason);
+    },
+    [onClose]
+  );
+  return /* @__PURE__ */ import_react12.default.createElement(import_react12.default.Fragment, null, /* @__PURE__ */ import_react12.default.createElement(import_material3.Tooltip, { title: label ?? ariaLabel }, /* @__PURE__ */ import_react12.default.createElement(
+    import_material3.IconButton,
+    {
+      "aria-label": ariaLabel,
+      "aria-controls": open ? id.current : void 0,
+      "aria-haspopup": true,
+      "aria-expanded": open ? "true" : void 0,
+      onMouseDown: handleMouseDown,
+      onClick: handleClick,
+      size: "small",
+      sx: (theme) => ({
+        border: `1px solid ${theme.palette.divider}`,
+        borderRadius: `${theme.shape.borderRadius}px`,
+        padding: "6px 12px",
+        "&:not(:first-of-type)": {
+          marginLeft: "-1px",
+          borderLeft: "1px solid transparent",
+          borderTopLeftRadius: 0,
+          borderBottomLeftRadius: 0
+        },
+        "&:not(:last-of-type)": {
+          borderTopRightRadius: 0,
+          borderBottomRightRadius: 0
+        }
+      })
+    },
+    icon && /* @__PURE__ */ import_react12.default.createElement(ButtonIcon, { icon }),
+    /* @__PURE__ */ import_react12.default.createElement(Icon, { name: "arrowDownSFill", size: "1rem" })
+  )), /* @__PURE__ */ import_react12.default.createElement(import_material3.Menu, { ...rest, id: id.current, anchorEl, open, onClose: handleClose }, children));
+};
+
+// packages/remirror__react-components/src/buttons/increase-font-size-button.tsx
+var import_react13 = __toESM(require("react"), 1);
+var import_react_core8 = require("@remirror/react-core");
+var IncreaseFontSizeButton = (props) => {
+  const { increaseFontSize } = (0, import_react_core8.useCommands)();
+  const handleSelect = (0, import_react13.useCallback)(() => {
+    if (increaseFontSize.enabled()) {
+      increaseFontSize();
+    }
+  }, [increaseFontSize]);
+  const enabled = increaseFontSize.enabled();
+  return /* @__PURE__ */ import_react13.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "increaseFontSize",
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/increase-indent-button.tsx
+var import_react14 = __toESM(require("react"), 1);
+var import_react_core9 = require("@remirror/react-core");
+var IncreaseIndentButton = (props) => {
+  const { increaseIndent } = (0, import_react_core9.useCommands)();
+  const handleSelect = (0, import_react14.useCallback)(() => {
+    if (increaseIndent.enabled()) {
+      increaseIndent();
+    }
+  }, [increaseIndent]);
+  const enabled = increaseIndent.enabled();
+  return /* @__PURE__ */ import_react14.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "increaseIndent",
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/insert-horizontal-rule-button.tsx
+var import_react15 = __toESM(require("react"), 1);
+var import_react_core10 = require("@remirror/react-core");
+var InsertHorizontalRuleButton = (props) => {
+  const { insertHorizontalRule } = (0, import_react_core10.useCommands)();
+  (0, import_react_core10.useCurrentSelection)();
+  const handleSelect = (0, import_react15.useCallback)(() => {
+    if (insertHorizontalRule.enabled()) {
+      insertHorizontalRule();
+    }
+  }, [insertHorizontalRule]);
+  const enabled = insertHorizontalRule.enabled();
+  return /* @__PURE__ */ import_react15.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "insertHorizontalRule",
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/justify-align-button.tsx
+var import_react16 = __toESM(require("react"), 1);
+var import_react_core11 = require("@remirror/react-core");
+var JustifyAlignButton = (props) => {
+  var _a;
+  const { justifyAlign } = (0, import_react_core11.useCommands)();
+  (0, import_react_core11.useCurrentSelection)();
+  const handleSelect = (0, import_react16.useCallback)(() => {
+    if (justifyAlign.enabled()) {
+      justifyAlign();
+    }
+  }, [justifyAlign]);
+  const active = (_a = justifyAlign.active) == null ? void 0 : _a.call(justifyAlign);
+  const enabled = justifyAlign.enabled();
+  return /* @__PURE__ */ import_react16.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "justifyAlign",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/left-align-button.tsx
+var import_react17 = __toESM(require("react"), 1);
+var import_react_core12 = require("@remirror/react-core");
+var LeftAlignButton = (props) => {
+  var _a;
+  const { leftAlign } = (0, import_react_core12.useCommands)();
+  (0, import_react_core12.useCurrentSelection)();
+  const handleSelect = (0, import_react17.useCallback)(() => {
+    if (leftAlign.enabled()) {
+      leftAlign();
+    }
+  }, [leftAlign]);
+  const active = (_a = leftAlign.active) == null ? void 0 : _a.call(leftAlign);
+  const enabled = leftAlign.enabled();
+  return /* @__PURE__ */ import_react17.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "leftAlign",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/paste-button.tsx
+var import_react18 = __toESM(require("react"), 1);
+var import_react_core13 = require("@remirror/react-core");
+var PasteButton = (props) => {
+  const { paste } = (0, import_react_core13.useCommands)();
+  (0, import_react_core13.useEditorState)();
+  const handleSelect = (0, import_react18.useCallback)(() => {
+    if (paste.enabled()) {
+      paste();
+    }
+  }, [paste]);
+  const enabled = paste.enabled();
+  return /* @__PURE__ */ import_react18.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "paste",
+      active: false,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/redo-button.tsx
+var import_react19 = __toESM(require("react"), 1);
+var import_react_core14 = require("@remirror/react-core");
+var RedoButton = (props) => {
+  const { redo } = (0, import_react_core14.useCommands)();
+  const { redoDepth } = (0, import_react_core14.useHelpers)(true);
+  const handleSelect = (0, import_react19.useCallback)(() => {
+    if (redo.enabled()) {
+      redo();
+    }
+  }, [redo]);
+  const enabled = redoDepth() > 0;
+  return /* @__PURE__ */ import_react19.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "redo",
+      active: false,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/right-align-button.tsx
+var import_react20 = __toESM(require("react"), 1);
+var import_react_core15 = require("@remirror/react-core");
+var RightAlignButton = (props) => {
+  var _a;
+  const { rightAlign } = (0, import_react_core15.useCommands)();
+  (0, import_react_core15.useCurrentSelection)();
+  const handleSelect = (0, import_react20.useCallback)(() => {
+    if (rightAlign.enabled()) {
+      rightAlign();
+    }
+  }, [rightAlign]);
+  const active = (_a = rightAlign.active) == null ? void 0 : _a.call(rightAlign);
+  const enabled = rightAlign.enabled();
+  return /* @__PURE__ */ import_react20.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "rightAlign",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-blockquote-button.tsx
+var import_react21 = __toESM(require("react"), 1);
+var import_react_core16 = require("@remirror/react-core");
+var ToggleBlockquoteButton = (props) => {
+  const { toggleBlockquote } = (0, import_react_core16.useCommands)();
+  const handleSelect = (0, import_react21.useCallback)(() => {
+    if (toggleBlockquote.enabled()) {
+      toggleBlockquote();
+    }
+  }, [toggleBlockquote]);
+  const active = (0, import_react_core16.useActive)().blockquote();
+  const enabled = toggleBlockquote.enabled();
+  return /* @__PURE__ */ import_react21.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "toggleBlockquote",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-bold-button.tsx
+var import_react22 = __toESM(require("react"), 1);
+var import_react_core17 = require("@remirror/react-core");
+var ToggleBoldButton = (props) => {
+  const { toggleBold } = (0, import_react_core17.useCommands)();
+  const handleSelect = (0, import_react22.useCallback)(() => {
+    if (toggleBold.enabled()) {
+      toggleBold();
+    }
+  }, [toggleBold]);
+  const active = (0, import_react_core17.useActive)().bold();
+  const enabled = toggleBold.enabled();
+  return /* @__PURE__ */ import_react22.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "toggleBold",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-bullet-list-button.tsx
+var import_react23 = __toESM(require("react"), 1);
+var import_react_core18 = require("@remirror/react-core");
+var ToggleBulletListButton = (props) => {
+  const { toggleBulletList } = (0, import_react_core18.useCommands)();
+  const handleSelect = (0, import_react23.useCallback)(() => {
+    if (toggleBulletList.enabled()) {
+      toggleBulletList();
+    }
+  }, [toggleBulletList]);
+  const active = (0, import_react_core18.useActive)().bulletList();
+  const enabled = toggleBulletList.enabled();
+  return /* @__PURE__ */ import_react23.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "toggleBulletList",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-callout-button.tsx
+var import_react24 = __toESM(require("react"), 1);
+var import_react_core19 = require("@remirror/react-core");
+var ToggleCalloutButton = ({ attrs = {}, ...rest }) => {
+  const { toggleCallout } = (0, import_react_core19.useCommands)();
+  const handleSelect = (0, import_react24.useCallback)(() => {
+    if (toggleCallout.enabled(attrs)) {
+      toggleCallout(attrs);
+    }
+  }, [toggleCallout, attrs]);
+  const active = (0, import_react_core19.useActive)().callout(attrs);
+  const enabled = toggleCallout.enabled(attrs);
+  return /* @__PURE__ */ import_react24.default.createElement(
+    CommandButton,
+    {
+      ...rest,
+      commandName: "toggleCallout",
+      active,
+      enabled,
+      attrs,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-code-block-button.tsx
+var import_react25 = __toESM(require("react"), 1);
+var import_react_core20 = require("@remirror/react-core");
+var ToggleCodeBlockButton = ({ attrs = {}, ...rest }) => {
+  const { toggleCodeBlock } = (0, import_react_core20.useCommands)();
+  const handleSelect = (0, import_react25.useCallback)(() => {
+    if (toggleCodeBlock.enabled(attrs)) {
+      toggleCodeBlock(attrs);
+    }
+  }, [toggleCodeBlock, attrs]);
+  const active = (0, import_react_core20.useActive)().codeBlock();
+  const enabled = toggleCodeBlock.enabled(attrs);
+  return /* @__PURE__ */ import_react25.default.createElement(
+    CommandButton,
+    {
+      ...rest,
+      commandName: "toggleCodeBlock",
+      active,
+      enabled,
+      attrs,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-code-button.tsx
+var import_react26 = __toESM(require("react"), 1);
+var import_react_core21 = require("@remirror/react-core");
+var ToggleCodeButton = (props) => {
+  const { toggleCode } = (0, import_react_core21.useCommands)();
+  const handleSelect = (0, import_react26.useCallback)(() => {
+    if (toggleCode.enabled()) {
+      toggleCode();
+    }
+  }, [toggleCode]);
+  const active = (0, import_react_core21.useActive)().code();
+  const enabled = toggleCode.enabled();
+  return /* @__PURE__ */ import_react26.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "toggleCode",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-columns-button.tsx
+var import_react27 = __toESM(require("react"), 1);
+var import_react_core22 = require("@remirror/react-core");
+var ToggleColumnsButton = ({ attrs = {}, ...rest }) => {
+  const { toggleColumns } = (0, import_react_core22.useCommands)();
+  const handleSelect = (0, import_react27.useCallback)(() => {
+    if (toggleColumns.enabled(attrs)) {
+      toggleColumns(attrs);
+    }
+  }, [toggleColumns, attrs]);
+  const active = (0, import_react_core22.useActive)().columns(attrs);
+  const enabled = toggleColumns.enabled(attrs);
+  return /* @__PURE__ */ import_react27.default.createElement(
+    CommandButton,
+    {
+      ...rest,
+      commandName: "toggleColumns",
+      active,
+      enabled,
+      attrs,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-heading-button.tsx
+var import_react28 = __toESM(require("react"), 1);
+var import_react_core23 = require("@remirror/react-core");
+var ToggleHeadingButton = ({ attrs, ...rest }) => {
+  const { toggleHeading } = (0, import_react_core23.useCommands)();
+  const handleSelect = (0, import_react28.useCallback)(() => {
+    if (toggleHeading.enabled(attrs)) {
+      toggleHeading(attrs);
+    }
+  }, [toggleHeading, attrs]);
+  const active = (0, import_react_core23.useActive)().heading(attrs);
+  const enabled = toggleHeading.enabled(attrs);
+  return /* @__PURE__ */ import_react28.default.createElement(
+    CommandButton,
+    {
+      ...rest,
+      commandName: "toggleHeading",
+      active,
+      enabled,
+      attrs,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-italic-button.tsx
+var import_react29 = __toESM(require("react"), 1);
+var import_react_core24 = require("@remirror/react-core");
+var ToggleItalicButton = (props) => {
+  const { toggleItalic } = (0, import_react_core24.useCommands)();
+  const handleSelect = (0, import_react29.useCallback)(() => {
+    if (toggleItalic.enabled()) {
+      toggleItalic();
+    }
+  }, [toggleItalic]);
+  const active = (0, import_react_core24.useActive)().italic();
+  const enabled = toggleItalic.enabled();
+  return /* @__PURE__ */ import_react29.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "toggleItalic",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-ordered-list-button.tsx
+var import_react30 = __toESM(require("react"), 1);
+var import_react_core25 = require("@remirror/react-core");
+var ToggleOrderedListButton = (props) => {
+  const { toggleOrderedList } = (0, import_react_core25.useCommands)();
+  const handleSelect = (0, import_react30.useCallback)(() => {
+    if (toggleOrderedList.enabled()) {
+      toggleOrderedList();
+    }
+  }, [toggleOrderedList]);
+  const active = (0, import_react_core25.useActive)().orderedList();
+  const enabled = toggleOrderedList.enabled();
+  return /* @__PURE__ */ import_react30.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "toggleOrderedList",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-strike-button.tsx
+var import_react31 = __toESM(require("react"), 1);
+var import_react_core26 = require("@remirror/react-core");
+var ToggleStrikeButton = (props) => {
+  const { toggleStrike } = (0, import_react_core26.useCommands)();
+  const handleSelect = (0, import_react31.useCallback)(() => {
+    if (toggleStrike.enabled()) {
+      toggleStrike();
+    }
+  }, [toggleStrike]);
+  const active = (0, import_react_core26.useActive)().strike();
+  const enabled = toggleStrike.enabled();
+  return /* @__PURE__ */ import_react31.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "toggleStrike",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-subscript-button.tsx
+var import_react32 = __toESM(require("react"), 1);
+var import_react_core27 = require("@remirror/react-core");
+var ToggleSubscriptButton = (props) => {
+  const { toggleSubscript } = (0, import_react_core27.useCommands)();
+  const handleSelect = (0, import_react32.useCallback)(() => {
+    if (toggleSubscript.enabled()) {
+      toggleSubscript();
+    }
+  }, [toggleSubscript]);
+  const active = (0, import_react_core27.useActive)().sub();
+  const enabled = toggleSubscript.enabled();
+  return /* @__PURE__ */ import_react32.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "toggleSubscript",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-superscript-button.tsx
+var import_react33 = __toESM(require("react"), 1);
+var import_react_core28 = require("@remirror/react-core");
+var ToggleSuperscriptButton = (props) => {
+  const { toggleSuperscript } = (0, import_react_core28.useCommands)();
+  const handleSelect = (0, import_react33.useCallback)(() => {
+    if (toggleSuperscript.enabled()) {
+      toggleSuperscript();
+    }
+  }, [toggleSuperscript]);
+  const active = (0, import_react_core28.useActive)().sup();
+  const enabled = toggleSuperscript.enabled();
+  return /* @__PURE__ */ import_react33.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "toggleSuperscript",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-task-list-button.tsx
+var import_react34 = __toESM(require("react"), 1);
+var import_react_core29 = require("@remirror/react-core");
+var ToggleTaskListButton = (props) => {
+  const { toggleTaskList } = (0, import_react_core29.useCommands)();
+  const handleSelect = (0, import_react34.useCallback)(() => {
+    if (toggleTaskList.enabled()) {
+      toggleTaskList();
+    }
+  }, [toggleTaskList]);
+  const active = (0, import_react_core29.useActive)().taskList();
+  const enabled = toggleTaskList.enabled();
+  return /* @__PURE__ */ import_react34.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "toggleTaskList",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-underline-button.tsx
+var import_react35 = __toESM(require("react"), 1);
+var import_react_core30 = require("@remirror/react-core");
+var ToggleUnderlineButton = (props) => {
+  const { toggleUnderline } = (0, import_react_core30.useCommands)();
+  const handleSelect = (0, import_react35.useCallback)(() => {
+    if (toggleUnderline.enabled()) {
+      toggleUnderline();
+    }
+  }, [toggleUnderline]);
+  const active = (0, import_react_core30.useActive)().underline();
+  const enabled = toggleUnderline.enabled();
+  return /* @__PURE__ */ import_react35.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "toggleUnderline",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/toggle-whitespace-button.tsx
+var import_react36 = __toESM(require("react"), 1);
+var import_react_core31 = require("@remirror/react-core");
+var ToggleWhitespaceButton = (props) => {
+  const { toggleWhitespace } = (0, import_react_core31.useCommands)();
+  const { isWhitespaceVisible } = (0, import_react_core31.useHelpers)(true);
+  const handleSelect = (0, import_react36.useCallback)(() => {
+    if (toggleWhitespace.enabled()) {
+      toggleWhitespace();
+    }
+  }, [toggleWhitespace]);
+  const active = isWhitespaceVisible();
+  const enabled = toggleWhitespace.enabled();
+  return /* @__PURE__ */ import_react36.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "toggleWhitespace",
+      active,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/buttons/undo-button.tsx
+var import_react37 = __toESM(require("react"), 1);
+var import_react_core32 = require("@remirror/react-core");
+var UndoButton = (props) => {
+  const { undo } = (0, import_react_core32.useCommands)();
+  const { undoDepth } = (0, import_react_core32.useHelpers)(true);
+  const handleSelect = (0, import_react37.useCallback)(() => {
+    if (undo.enabled()) {
+      undo();
+    }
+  }, [undo]);
+  const enabled = undoDepth() > 0;
+  return /* @__PURE__ */ import_react37.default.createElement(
+    CommandButton,
+    {
+      ...props,
+      commandName: "undo",
+      active: false,
+      enabled,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/button-groups/command-button-group.tsx
+var import_material4 = require("@mui/material");
+var import_react38 = __toESM(require("react"), 1);
+var CommandButtonGroup = (props) => /* @__PURE__ */ import_react38.default.createElement(
+  import_material4.Box,
+  {
+    sx: {
+      display: "flex",
+      alignItems: "center",
+      width: "fit-content",
+      bgcolor: "background.paper",
+      color: "text.secondary"
+    },
+    ...props
+  }
+);
+
+// packages/remirror__react-components/src/button-groups/baseline-button-group.tsx
+var BaselineButtonGroup = ({ children }) => /* @__PURE__ */ import_react39.default.createElement(CommandButtonGroup, null, /* @__PURE__ */ import_react39.default.createElement(ToggleSubscriptButton, null), /* @__PURE__ */ import_react39.default.createElement(ToggleSuperscriptButton, null), children);
+
+// packages/remirror__react-components/src/button-groups/basic-formatting-button-group.tsx
+var import_react40 = __toESM(require("react"), 1);
+var BasicFormattingButtonGroup = ({ children }) => /* @__PURE__ */ import_react40.default.createElement(CommandButtonGroup, null, /* @__PURE__ */ import_react40.default.createElement(ToggleBoldButton, null), /* @__PURE__ */ import_react40.default.createElement(ToggleItalicButton, null), /* @__PURE__ */ import_react40.default.createElement(ToggleUnderlineButton, null), children);
+
+// packages/remirror__react-components/src/button-groups/callout-type-button-group.tsx
+var import_react41 = __toESM(require("react"), 1);
+var INFO_CALLOUT = { type: "info" };
+var WARNING_CALLOUT = { type: "warning" };
+var ERROR_CALLOUT = { type: "error" };
+var SUCCESS_CALLOUT = { type: "success" };
+var CalloutTypeButtonGroup = ({ children }) => /* @__PURE__ */ import_react41.default.createElement(CommandButtonGroup, null, /* @__PURE__ */ import_react41.default.createElement(ToggleCalloutButton, { attrs: INFO_CALLOUT }), /* @__PURE__ */ import_react41.default.createElement(ToggleCalloutButton, { attrs: WARNING_CALLOUT }), /* @__PURE__ */ import_react41.default.createElement(ToggleCalloutButton, { attrs: ERROR_CALLOUT }), /* @__PURE__ */ import_react41.default.createElement(ToggleCalloutButton, { attrs: SUCCESS_CALLOUT }), children);
+
+// packages/remirror__react-components/src/button-groups/data-transfer-button-group.tsx
+var import_react42 = __toESM(require("react"), 1);
+var DataTransferButtonGroup = ({ children }) => /* @__PURE__ */ import_react42.default.createElement(CommandButtonGroup, null, /* @__PURE__ */ import_react42.default.createElement(CopyButton, null), /* @__PURE__ */ import_react42.default.createElement(CutButton, null), /* @__PURE__ */ import_react42.default.createElement(PasteButton, null), children);
+
+// packages/remirror__react-components/src/button-groups/formatting-button-group.tsx
+var import_react43 = __toESM(require("react"), 1);
+var FormattingButtonGroup = ({ children }) => /* @__PURE__ */ import_react43.default.createElement(CommandButtonGroup, null, /* @__PURE__ */ import_react43.default.createElement(ToggleBoldButton, null), /* @__PURE__ */ import_react43.default.createElement(ToggleItalicButton, null), /* @__PURE__ */ import_react43.default.createElement(ToggleUnderlineButton, null), /* @__PURE__ */ import_react43.default.createElement(ToggleStrikeButton, null), /* @__PURE__ */ import_react43.default.createElement(ToggleCodeButton, null), children);
+
+// packages/remirror__react-components/src/button-groups/heading-level-button-group.tsx
+var import_react47 = __toESM(require("react"), 1);
+
+// packages/remirror__react-components/src/menus/command-menu-item.tsx
+var import_material5 = require("@mui/material");
+var import_react44 = __toESM(require("react"), 1);
+var import_core5 = require("@remirror/core");
+var MenuItemIcon = ({ icon }) => {
+  if (icon) {
+    return /* @__PURE__ */ import_react44.default.createElement(import_material5.ListItemIcon, null, (0, import_core5.isString)(icon) ? /* @__PURE__ */ import_react44.default.createElement(Icon, { name: icon, size: "1rem" }) : /* @__PURE__ */ import_react44.default.createElement(import_react44.default.Fragment, null, icon));
+  }
+  return null;
+};
+var CommandMenuItem = ({
+  commandName,
+  active = false,
+  enabled,
+  attrs,
+  onSelect,
+  onClick,
+  icon,
+  displayShortcut = true,
+  label,
+  description,
+  displayDescription = true,
+  ...rest
+}) => {
+  const handleClick = (0, import_react44.useCallback)(
+    (e) => {
+      onSelect();
+      onClick == null ? void 0 : onClick(e);
+    },
+    [onSelect, onClick]
+  );
+  const handleMouseDown = (0, import_react44.useCallback)((e) => {
+    e.preventDefault();
+  }, []);
+  const commandOptions = useCommandOptionValues({ commandName, active, enabled, attrs });
+  let fallbackIcon = null;
+  if (commandOptions.icon) {
+    fallbackIcon = (0, import_core5.isString)(commandOptions.icon) ? commandOptions.icon : commandOptions.icon.name;
+  }
+  const primary = label ?? commandOptions.label ?? "";
+  const secondary = displayDescription && (description ?? commandOptions.description);
+  return /* @__PURE__ */ import_react44.default.createElement(
+    import_material5.MenuItem,
+    {
+      selected: active,
+      disabled: !enabled,
+      onMouseDown: handleMouseDown,
+      ...rest,
+      onClick: handleClick
+    },
+    icon !== null && /* @__PURE__ */ import_react44.default.createElement(MenuItemIcon, { icon: icon ?? fallbackIcon }),
+    /* @__PURE__ */ import_react44.default.createElement(import_material5.ListItemText, { primary, secondary }),
+    displayShortcut && commandOptions.shortcut && /* @__PURE__ */ import_react44.default.createElement(import_material5.Typography, { variant: "body2", color: "text.secondary", sx: { ml: 2 } }, commandOptions.shortcut)
+  );
+};
+
+// packages/remirror__react-components/src/menus/toggle-callout-menu-item.tsx
+var import_react45 = __toESM(require("react"), 1);
+var import_react_core33 = require("@remirror/react-core");
+var ToggleCalloutMenuItem = ({ attrs, ...rest }) => {
+  const { toggleCallout } = (0, import_react_core33.useCommands)();
+  const handleSelect = (0, import_react45.useCallback)(() => {
+    if (toggleCallout.enabled(attrs)) {
+      toggleCallout(attrs);
+    }
+  }, [toggleCallout, attrs]);
+  const active = (0, import_react_core33.useActive)().callout(attrs);
+  const enabled = toggleCallout.enabled(attrs);
+  return /* @__PURE__ */ import_react45.default.createElement(
+    CommandMenuItem,
+    {
+      ...rest,
+      commandName: "toggleCallout",
+      active,
+      enabled,
+      attrs,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/menus/toggle-heading-menu-item.tsx
+var import_react46 = __toESM(require("react"), 1);
+var import_react_core34 = require("@remirror/react-core");
+var ToggleHeadingMenuItem = ({ attrs, ...rest }) => {
+  const { toggleHeading } = (0, import_react_core34.useCommands)();
+  const handleSelect = (0, import_react46.useCallback)(() => {
+    if (toggleHeading.enabled(attrs)) {
+      toggleHeading(attrs);
+    }
+  }, [toggleHeading, attrs]);
+  const active = (0, import_react_core34.useActive)().heading(attrs);
+  const enabled = toggleHeading.enabled(attrs);
+  return /* @__PURE__ */ import_react46.default.createElement(
+    CommandMenuItem,
+    {
+      ...rest,
+      commandName: "toggleHeading",
+      active,
+      enabled,
+      attrs,
+      onSelect: handleSelect
+    }
+  );
+};
+
+// packages/remirror__react-components/src/button-groups/heading-level-button-group.tsx
+var LEVEL_1 = { level: 1 };
+var LEVEL_2 = { level: 2 };
+var LEVEL_3 = { level: 3 };
+var LEVEL_4 = { level: 4 };
+var LEVEL_5 = { level: 5 };
+var LEVEL_6 = { level: 6 };
+var HeadingLevelButtonGroup = ({
+  showAll = false,
+  children
+}) => /* @__PURE__ */ import_react47.default.createElement(CommandButtonGroup, null, /* @__PURE__ */ import_react47.default.createElement(ToggleHeadingButton, { attrs: LEVEL_1 }), /* @__PURE__ */ import_react47.default.createElement(ToggleHeadingButton, { attrs: LEVEL_2 }), !showAll ? /* @__PURE__ */ import_react47.default.createElement(ToggleHeadingButton, { attrs: LEVEL_3 }) : /* @__PURE__ */ import_react47.default.createElement(DropdownButton, { "aria-label": "More heading options" }, /* @__PURE__ */ import_react47.default.createElement(ToggleHeadingMenuItem, { attrs: LEVEL_3 }), /* @__PURE__ */ import_react47.default.createElement(ToggleHeadingMenuItem, { attrs: LEVEL_4 }), /* @__PURE__ */ import_react47.default.createElement(ToggleHeadingMenuItem, { attrs: LEVEL_5 }), /* @__PURE__ */ import_react47.default.createElement(ToggleHeadingMenuItem, { attrs: LEVEL_6 })), children);
+
+// packages/remirror__react-components/src/button-groups/history-button-group.tsx
+var import_react48 = __toESM(require("react"), 1);
+var HistoryButtonGroup = ({ children }) => /* @__PURE__ */ import_react48.default.createElement(CommandButtonGroup, null, /* @__PURE__ */ import_react48.default.createElement(UndoButton, null), /* @__PURE__ */ import_react48.default.createElement(RedoButton, null), children);
+
+// packages/remirror__react-components/src/button-groups/indentation-button-group.tsx
+var import_react49 = __toESM(require("react"), 1);
+var IndentationButtonGroup = ({ children }) => /* @__PURE__ */ import_react49.default.createElement(CommandButtonGroup, null, /* @__PURE__ */ import_react49.default.createElement(DecreaseIndentButton, null), /* @__PURE__ */ import_react49.default.createElement(IncreaseIndentButton, null), children);
+
+// packages/remirror__react-components/src/button-groups/list-button-group.tsx
+var import_react51 = __toESM(require("react"), 1);
+var import_extension_list = require("@remirror/extension-list");
+
+// packages/remirror__react-components/src/if-extension-present.tsx
+var import_react50 = __toESM(require("react"), 1);
+var import_react_core35 = require("@remirror/react-core");
+var IfExtensionPresent = ({ children, extension }) => {
+  const hasExtension = (0, import_react_core35.useHasExtension)(extension);
+  return hasExtension ? /* @__PURE__ */ import_react50.default.createElement(import_react50.default.Fragment, null, children) : null;
+};
+
+// packages/remirror__react-components/src/button-groups/list-button-group.tsx
+var ListButtonGroup = ({ children }) => /* @__PURE__ */ import_react51.default.createElement(CommandButtonGroup, null, /* @__PURE__ */ import_react51.default.createElement(ToggleBulletListButton, null), /* @__PURE__ */ import_react51.default.createElement(ToggleOrderedListButton, null), /* @__PURE__ */ import_react51.default.createElement(IfExtensionPresent, { extension: import_extension_list.TaskListExtension }, /* @__PURE__ */ import_react51.default.createElement(ToggleTaskListButton, null)), children);
+
+// packages/remirror__react-components/src/button-groups/text-alignment-button-group.tsx
+var import_react52 = __toESM(require("react"), 1);
+var TextAlignmentButtonGroup = ({
+  showAll = false,
+  children
+}) => /* @__PURE__ */ import_react52.default.createElement(CommandButtonGroup, null, /* @__PURE__ */ import_react52.default.createElement(LeftAlignButton, null), /* @__PURE__ */ import_react52.default.createElement(CenterAlignButton, null), /* @__PURE__ */ import_react52.default.createElement(RightAlignButton, null), showAll && /* @__PURE__ */ import_react52.default.createElement(JustifyAlignButton, null), children);
+
+// packages/remirror__react-components/src/find-replace/find-replace-component.tsx
+var import_material10 = require("@mui/material");
+var import_react59 = __toESM(require("react"), 1);
+
+// packages/remirror__react-components/src/find-replace/find-controller.tsx
+var import_material6 = require("@mui/material");
+var import_react54 = __toESM(require("react"), 1);
+
+// packages/remirror__react-components/src/find-replace/letter-icon.tsx
+var import_react53 = __toESM(require("react"), 1);
+var MdiFormatLetterCase = (props) => /* @__PURE__ */ import_react53.default.createElement("svg", { width: "1em", height: "1em", viewBox: "0 0 24 24", ...props }, /* @__PURE__ */ import_react53.default.createElement(
+  "path",
+  {
+    fill: "currentColor",
+    d: "M20.06 18a3.99 3.99 0 0 1-.2-.89c-.67.7-1.48 1.05-2.41 1.05c-.83 0-1.52-.24-2.05-.71c-.53-.45-.8-1.06-.8-1.79c0-.88.33-1.56 1-2.05c.67-.49 1.61-.73 2.83-.73h1.4v-.64c0-.49-.15-.88-.45-1.17c-.3-.29-.75-.43-1.33-.43c-.52 0-.95.12-1.3.36c-.35.25-.52.54-.52.89h-1.46c0-.43.15-.84.45-1.24c.28-.4.71-.71 1.22-.94c.51-.21 1.06-.35 1.69-.35c.98 0 1.74.24 2.29.73s.84 1.16.86 2.02V16c0 .8.1 1.42.3 1.88V18h-1.52m-2.4-1.12c.45 0 .88-.11 1.29-.32c.4-.21.7-.49.88-.83v-1.57H18.7c-1.77 0-2.66.47-2.66 1.41c0 .43.15.73.46.96c.3.23.68.35 1.16.35m-12.2-3.17h4.07L7.5 8.29l-2.04 5.42M6.64 6h1.72l4.71 12h-1.93l-.97-2.57H4.82L3.86 18H1.93L6.64 6Z"
+  }
+));
+
+// packages/remirror__react-components/src/find-replace/find-controller.tsx
+var FindController = ({ findPrev, findNext, stopFind, caseSensitive, toggleCaseSensitive, onDismiss }) => /* @__PURE__ */ import_react54.default.createElement(import_react54.default.Fragment, null, /* @__PURE__ */ import_react54.default.createElement(
+  import_material6.IconButton,
+  {
+    onClick: findPrev,
+    size: "small",
+    title: "Next Match (Enter)",
+    "aria-label": "Next Match (Enter)"
+  },
+  /* @__PURE__ */ import_react54.default.createElement(Icon, { name: "arrowLeftSFill" })
+), /* @__PURE__ */ import_react54.default.createElement(
+  import_material6.IconButton,
+  {
+    onClick: findNext,
+    size: "small",
+    title: "Previous Match (Shift+Enter)",
+    "aria-label": "Previous Match (Shift+Enter)"
+  },
+  /* @__PURE__ */ import_react54.default.createElement(Icon, { name: "arrowRightSFill" })
+), /* @__PURE__ */ import_react54.default.createElement(
+  import_material6.IconButton,
+  {
+    onClick: toggleCaseSensitive,
+    size: "small",
+    color: caseSensitive ? "primary" : "default",
+    title: "Match Case",
+    "aria-label": "Match Case"
+  },
+  /* @__PURE__ */ import_react54.default.createElement(MdiFormatLetterCase, null)
+), /* @__PURE__ */ import_react54.default.createElement(
+  import_material6.IconButton,
+  {
+    onClick: () => {
+      stopFind();
+      onDismiss == null ? void 0 : onDismiss();
+    },
+    size: "small"
+  },
+  /* @__PURE__ */ import_react54.default.createElement(Icon, { name: "closeFill" })
+));
+
+// packages/remirror__react-components/src/find-replace/find-input.tsx
+var import_material7 = require("@mui/material");
+var import_react55 = __toESM(require("react"), 1);
+var FindInput = ({ query, setQuery, total, activeIndex }) => {
+  const counterLabel = `${total && activeIndex != null ? activeIndex + 1 : 0} of ${total}`;
+  return /* @__PURE__ */ import_react55.default.createElement(
+    import_material7.OutlinedInput,
+    {
+      fullWidth: true,
+      margin: "none",
+      placeholder: "Find",
+      value: query,
+      onChange: (event) => setQuery(event.target.value),
+      sx: {
+        "& input": {
+          paddingTop: "4px",
+          paddingBottom: "4px"
+        }
+      },
+      size: "small",
+      inputProps: { "aria-label": "Find" },
+      endAdornment: /* @__PURE__ */ import_react55.default.createElement(import_material7.InputAdornment, { position: "end" }, counterLabel)
+    }
+  );
+};
+
+// packages/remirror__react-components/src/find-replace/replace-controller.tsx
+var import_material8 = require("@mui/material");
+var import_react56 = __toESM(require("react"), 1);
+var ReplaceController = ({ replace, replaceAll }) => /* @__PURE__ */ import_react56.default.createElement(import_material8.ButtonGroup, { variant: "outlined", size: "small" }, /* @__PURE__ */ import_react56.default.createElement(import_material8.Button, { "aria-label": "Relace", sx: { textTransform: "none" }, onClick: replace }, "Replace"), /* @__PURE__ */ import_react56.default.createElement(import_material8.Button, { "aria-label": "Relace all", sx: { textTransform: "none" }, onClick: replaceAll }, "All"));
+
+// packages/remirror__react-components/src/find-replace/replace-input.tsx
+var import_material9 = require("@mui/material");
+var import_react57 = __toESM(require("react"), 1);
+var ReplaceInput = ({ replacement, setReplacement }) => /* @__PURE__ */ import_react57.default.createElement(
+  import_material9.OutlinedInput,
+  {
+    fullWidth: true,
+    margin: "none",
+    placeholder: "Replace",
+    value: replacement,
+    onChange: (event) => setReplacement(event.target.value),
+    sx: {
+      "& input": {
+        paddingTop: "4px",
+        paddingBottom: "4px"
+      }
+    },
+    size: "small",
+    inputProps: { "aria-label": "Replace" }
+  }
+);
+
+// packages/remirror__react-components/src/find-replace/use-find-replace.tsx
+var import_react58 = require("react");
+var import_react_core36 = require("@remirror/react-core");
+function initialState() {
+  return {
+    query: "",
+    replacement: "",
+    activeIndex: null,
+    total: 0,
+    caseSensitive: false
+  };
+}
+function useFindReplace() {
+  const helpers = (0, import_react_core36.useHelpers)();
+  const commands = (0, import_react_core36.useCommands)();
+  const [state, setState] = (0, import_react58.useState)(initialState);
+  const find = (0, import_react58.useCallback)(
+    (indexDiff = 0) => {
+      setState((state2) => {
+        const { query, caseSensitive, activeIndex } = state2;
+        const result = helpers.findRanges({
+          query,
+          caseSensitive,
+          activeIndex: activeIndex == null ? 0 : activeIndex + indexDiff
+        });
+        return { ...state2, total: result.ranges.length, activeIndex: result.activeIndex ?? 0 };
+      });
+    },
+    [helpers]
+  );
+  const findNext = (0, import_react58.useCallback)(() => find(1), [find]);
+  const findPrev = (0, import_react58.useCallback)(() => find(-1), [find]);
+  const stopFind = (0, import_react58.useCallback)(() => {
+    setState(initialState());
+    commands.stopFind();
+  }, [commands]);
+  const replace = (0, import_react58.useCallback)(() => {
+    const { query, replacement, caseSensitive, activeIndex } = state;
+    commands.findAndReplace({ query, replacement, caseSensitive, index: activeIndex ?? void 0 });
+    const isQuerySubsetOfReplacement = caseSensitive ? replacement.includes(query) : replacement.toLowerCase().includes(query.toLowerCase());
+    if (isQuerySubsetOfReplacement) {
+      findNext();
+    } else {
+      find();
+    }
+  }, [state, commands, findNext, find]);
+  const replaceAll = (0, import_react58.useCallback)(() => {
+    const { query, replacement, caseSensitive } = state;
+    commands.findAndReplaceAll({ query, replacement, caseSensitive });
+    find();
+  }, [commands, state, find]);
+  const toggleCaseSensitive = (0, import_react58.useCallback)(() => {
+    setState((state2) => ({ ...state2, caseSensitive: !state2.caseSensitive }));
+  }, []);
+  const setQuery = (0, import_react58.useCallback)((query) => {
+    setState((state2) => ({ ...state2, query }));
+  }, []);
+  const setReplacement = (0, import_react58.useCallback)((replacement) => {
+    setState((state2) => ({ ...state2, replacement }));
+  }, []);
+  (0, import_react58.useEffect)(() => {
+    find();
+  }, [find, commands, state.query, state.caseSensitive]);
+  return {
+    ...state,
+    findNext,
+    findPrev,
+    stopFind,
+    replace,
+    replaceAll,
+    toggleCaseSensitive,
+    setQuery,
+    setReplacement
+  };
+}
+
+// packages/remirror__react-components/src/find-replace/find-replace-component.tsx
+var FindReplaceComponent = ({ onDismiss }) => {
+  const {
+    query,
+    setQuery,
+    activeIndex,
+    total,
+    caseSensitive,
+    replacement,
+    setReplacement,
+    toggleCaseSensitive,
+    findNext,
+    findPrev,
+    stopFind,
+    replace,
+    replaceAll
+  } = useFindReplace();
+  return /* @__PURE__ */ import_react59.default.createElement(
+    import_material10.Box,
+    {
+      sx: {
+        display: "grid",
+        gridTemplateColumns: "1fr max-content",
+        gridTemplateRows: "1fr 1fr",
+        rowGap: 1,
+        columnGap: 1,
+        alignItems: "center"
+      }
+    },
+    /* @__PURE__ */ import_react59.default.createElement(import_material10.Box, null, /* @__PURE__ */ import_react59.default.createElement(FindInput, { query, setQuery, total, activeIndex })),
+    /* @__PURE__ */ import_react59.default.createElement(import_material10.Box, { sx: { justifySelf: "end" } }, /* @__PURE__ */ import_react59.default.createElement(
+      FindController,
+      {
+        findPrev,
+        findNext,
+        toggleCaseSensitive,
+        caseSensitive,
+        stopFind,
+        onDismiss
+      }
+    )),
+    /* @__PURE__ */ import_react59.default.createElement(import_material10.Box, null, /* @__PURE__ */ import_react59.default.createElement(ReplaceInput, { replacement, setReplacement })),
+    /* @__PURE__ */ import_react59.default.createElement(import_material10.Box, { sx: { justifySelf: "end" } }, /* @__PURE__ */ import_react59.default.createElement(ReplaceController, { replace, replaceAll }))
+  );
+};
+
+// packages/remirror__react-components/src/floating-menu.tsx
+var import_react60 = require("@floating-ui/react");
+var import_react61 = __toESM(require("react"), 1);
+var import_react_dom = require("react-dom");
+var import_core6 = require("@remirror/core");
+var import_extension_positioner = require("@remirror/extension-positioner");
+var import_react_core37 = require("@remirror/react-core");
+var import_react_hooks = require("@remirror/react-hooks");
+var import_theme = require("@remirror/theme");
+
+// packages/remirror__react-components/src/commonjs-packages/seznam-compose-react-refs.ts
+var import_compose_react_refs = __toESM(require("@seznam/compose-react-refs"), 1);
+var composeRefs = typeof import_compose_react_refs.default === "object" && import_compose_react_refs.default.__esModule && import_compose_react_refs.default.default ? import_compose_react_refs.default.default : import_compose_react_refs.default;
+
+// packages/remirror__react-components/src/floating-menu.tsx
+function useMemoizedPosition(props) {
+  const { height, left, top, width } = props;
+  return (0, import_react61.useMemo)(() => ({ height, left, top, width }), [height, left, top, width]);
+}
+var FloatingWrapper = (props) => {
+  const {
+    containerClass,
+    placement = "right-end",
+    positioner,
+    children,
+    blurOnInactive = false,
+    ignoredElements = [],
+    enabled = true,
+    floatingLabel,
+    hideWhenInvisible = true,
+    renderOutsideEditor = false,
+    middleware: propsMiddleware,
+    strategy,
+    useFloatingPortal
+  } = props;
+  const [isFocused] = (0, import_react_hooks.useEditorFocus)({ blurOnInactive, ignoredElements });
+  const {
+    ref,
+    active,
+    height,
+    x: left,
+    y: top,
+    width,
+    visible
+  } = (0, import_react_hooks.usePositioner)(() => {
+    const active2 = isFocused && enabled;
+    const refinedPositioner = (0, import_extension_positioner.getPositioner)(positioner);
+    return refinedPositioner.active(active2);
+  }, [isFocused, enabled, renderOutsideEditor]);
+  const shouldShow = (hideWhenInvisible ? visible : true) && active;
+  const position = useMemoizedPosition({ height, left, top, width });
+  const _placement = isFloatingUIPlacement(placement) ? placement : void 0;
+  const middleware = (0, import_react61.useMemo)(() => {
+    if (propsMiddleware) {
+      return propsMiddleware;
+    }
+    return [
+      _placement ? (0, import_react60.flip)({ padding: 8 }) : (0, import_react60.autoPlacement)({ padding: 8 }),
+      (0, import_react60.offset)({ mainAxis: 12 })
+    ];
+  }, [_placement, propsMiddleware]);
+  const { refs, floatingStyles } = (0, import_react60.useFloating)({
+    placement: _placement,
+    open: visible,
+    whileElementsMounted: import_react60.autoUpdate,
+    strategy,
+    middleware
+  });
+  const handleMouseDown = (0, import_react61.useCallback)(
+    (e) => {
+      if (renderOutsideEditor || useFloatingPortal) {
+        e.preventDefault();
+      }
+    },
+    [renderOutsideEditor, useFloatingPortal]
+  );
+  let floatingElement = /* @__PURE__ */ import_react61.default.createElement(
+    "div",
+    {
+      "aria-label": floatingLabel,
+      ref: refs.setFloating,
+      style: floatingStyles,
+      className: (0, import_core6.cx)(import_theme.ComponentsTheme.FLOATING_POPOVER, containerClass),
+      onMouseDown: handleMouseDown
+    },
+    shouldShow && children
+  );
+  if (!renderOutsideEditor && !useFloatingPortal) {
+    floatingElement = /* @__PURE__ */ import_react61.default.createElement(PositionerPortal, null, floatingElement);
+  } else if (useFloatingPortal) {
+    const props2 = (0, import_core6.isObject)(useFloatingPortal) ? useFloatingPortal : {};
+    floatingElement = /* @__PURE__ */ import_react61.default.createElement(import_react60.FloatingPortal, { ...props2 }, floatingElement);
+  }
+  return /* @__PURE__ */ import_react61.default.createElement(import_react61.default.Fragment, null, /* @__PURE__ */ import_react61.default.createElement(PositionerPortal, null, /* @__PURE__ */ import_react61.default.createElement(
+    "span",
+    {
+      className: import_theme.ExtensionPositionerTheme.POSITIONER,
+      style: {
+        top: position.top,
+        left: position.left,
+        width: position.width,
+        height: position.height
+      },
+      ref: composeRefs(ref, refs.setReference)
+    }
+  )), floatingElement);
+};
+var PositionerPortal = (props) => {
+  const container = (0, import_react_core37.useHelpers)().getPositionerWidget();
+  return (0, import_react_dom.createPortal)(/* @__PURE__ */ import_react61.default.createElement(import_react61.default.Fragment, null, props.children), container);
+};
+function isFloatingUIPlacement(placement) {
+  return !(placement == null ? void 0 : placement.startsWith("auto"));
+}
+
+// packages/remirror__react-components/src/popups/emoji-popup-component.tsx
+var import_react62 = __toESM(require("react"), 1);
+var import_core7 = require("@remirror/core");
+var import_react_hooks2 = require("@remirror/react-hooks");
+var import_theme2 = require("@remirror/theme");
+var EmojiFromCdn = (props) => /* @__PURE__ */ import_react62.default.createElement(
+  "img",
+  {
+    role: "presentation",
+    className: import_theme2.ExtensionEmojiTheme.EMOJI_IMAGE,
+    "aria-label": props.annotation,
+    alt: props.annotation,
+    src: props.url
+  }
+);
+var emptyList = [];
+var EmojiPopupComponent = () => {
+  const { state, getMenuProps, getItemProps, indexIsHovered, indexIsSelected } = (0, import_react_hooks2.useEmoji)();
+  const enabled = !!state;
+  if (state == null ? void 0 : state.exit) {
+    return null;
+  }
+  return /* @__PURE__ */ import_react62.default.createElement(FloatingWrapper, { positioner: "cursor", enabled, placement: "auto-end", renderOutsideEditor: true }, /* @__PURE__ */ import_react62.default.createElement("div", { ...getMenuProps(), className: (0, import_core7.cx)(import_theme2.ExtensionEmojiTheme.EMOJI_POPUP_WRAPPER) }, enabled && ((state == null ? void 0 : state.list) ?? emptyList).map((emoji, index) => {
+    var _a;
+    const isHighlighted = indexIsSelected(index);
+    const isHovered = indexIsHovered(index);
+    const shortcode = ((_a = emoji.shortcodes) == null ? void 0 : _a[0]) ?? emoji.annotation;
+    return /* @__PURE__ */ import_react62.default.createElement(
+      "div",
+      {
+        key: emoji.emoji,
+        className: (0, import_core7.cx)(
+          import_theme2.ExtensionEmojiTheme.EMOJI_POPUP_ITEM,
+          isHighlighted && import_theme2.ExtensionEmojiTheme.EMOJI_POPUP_HIGHLIGHT,
+          isHovered && import_theme2.ExtensionEmojiTheme.EMOJI_POPUP_HOVERED
+        ),
+        ...getItemProps({
+          item: emoji,
+          index
+        })
+      },
+      /* @__PURE__ */ import_react62.default.createElement("span", { className: import_theme2.ExtensionEmojiTheme.EMOJI_POPUP_CHAR }, /* @__PURE__ */ import_react62.default.createElement(EmojiFromCdn, { ...emoji })),
+      /* @__PURE__ */ import_react62.default.createElement("span", { className: import_theme2.ExtensionEmojiTheme.EMOJI_POPUP_NAME }, ":", shortcode, ":")
+    );
+  })));
+};
+
+// packages/remirror__react-components/src/popups/mention-atom-popup-component.tsx
+var import_react63 = __toESM(require("react"), 1);
+var import_core8 = require("@remirror/core");
+var import_messages = require("@remirror/messages");
+var import_react_core38 = require("@remirror/react-core");
+var import_react_hooks3 = require("@remirror/react-hooks");
+var import_theme3 = require("@remirror/theme");
+function useMentionAtomChangeHandler(props) {
+  const { onChange, state } = props;
+  (0, import_react63.useEffect)(() => {
+    onChange(state);
+  }, [state, onChange]);
+}
+function MentionAtomPopupComponent(props) {
+  const { focus } = (0, import_react_core38.useCommands)();
+  const {
+    onChange,
+    ItemComponent = DefaultItemComponent,
+    ZeroItemsComponent = DefaultZeroItemsComponent,
+    ...hookProps
+  } = props;
+  const { state, getMenuProps, getItemProps, indexIsHovered, indexIsSelected } = (0, import_react_hooks3.useMentionAtom)(hookProps);
+  useMentionAtomChangeHandler({ state, onChange });
+  return /* @__PURE__ */ import_react63.default.createElement(FloatingWrapper, { positioner: "cursor", enabled: !!state, placement: "auto-end", renderOutsideEditor: true }, /* @__PURE__ */ import_react63.default.createElement("div", { ...getMenuProps(), className: (0, import_core8.cx)(import_theme3.ExtensionMentionAtomTheme.MENTION_ATOM_POPUP_WRAPPER) }, !!state && (0, import_core8.isEmptyArray)(hookProps.items) ? /* @__PURE__ */ import_react63.default.createElement(ZeroItemsComponent, null) : hookProps.items.map((item, index) => {
+    const isHighlighted = indexIsSelected(index);
+    const isHovered = indexIsHovered(index);
+    return /* @__PURE__ */ import_react63.default.createElement(
+      "div",
+      {
+        key: item.id,
+        className: (0, import_core8.cx)(
+          import_theme3.ExtensionMentionAtomTheme.MENTION_ATOM_POPUP_ITEM,
+          isHighlighted && import_theme3.ExtensionMentionAtomTheme.MENTION_ATOM_POPUP_HIGHLIGHT,
+          isHovered && import_theme3.ExtensionMentionAtomTheme.MENTION_ATOM_POPUP_HOVERED
+        ),
+        ...getItemProps({
+          onClick: () => {
+            state == null ? void 0 : state.command(item);
+            focus();
+          },
+          item,
+          index
+        })
+      },
+      /* @__PURE__ */ import_react63.default.createElement(ItemComponent, { item, state })
+    );
+  })));
+}
+function DefaultItemComponent(props) {
+  return /* @__PURE__ */ import_react63.default.createElement("span", { className: import_theme3.ExtensionMentionAtomTheme.MENTION_ATOM_POPUP_NAME }, props.item.label);
+}
+var DefaultZeroItemsComponent = () => {
+  const { t } = (0, import_react_core38.useI18n)();
+  return /* @__PURE__ */ import_react63.default.createElement("span", { className: import_theme3.ExtensionMentionAtomTheme.MENTION_ATOM_ZERO_ITEMS }, t(import_messages.ReactComponentMessages.NO_ITEMS_AVAILABLE));
+};
+
+// packages/remirror__react-components/src/providers/theme-provider.tsx
+var import_material11 = require("@mui/material");
+var import_react64 = __toESM(require("react"), 1);
+var import_core9 = require("@remirror/core");
+var import_theme4 = require("@remirror/theme");
+var ThemeContext = (0, import_react64.createContext)({});
+function useTheme(props = {}) {
+  const parent = (0, import_react64.useContext)(ThemeContext);
+  const theme = (0, import_react64.useMemo)(() => (0, import_core9.deepMerge)(parent, props.theme ?? {}), [parent, props.theme]);
+  const style = (0, import_react64.useMemo)(() => (0, import_theme4.createThemeVariables)(theme).styles, [theme]);
+  const className = (0, import_core9.cx)(import_theme4.THEME, props.className);
+  return (0, import_react64.useMemo)(() => ({ style, className, theme }), [style, className, theme]);
+}
+var ThemeProvider = (props) => {
+  var _a, _b, _c, _d, _e, _f, _g, _h;
+  const { children, as: Component = "div" } = props;
+  const { theme, style, className } = useTheme({ theme: props.theme ?? import_theme4.defaultRemirrorTheme });
+  const muiTheme = (0, import_material11.createTheme)({
+    palette: {
+      primary: {
+        main: ((_a = theme.color) == null ? void 0 : _a.primary) ?? import_theme4.defaultRemirrorTheme.color.primary,
+        dark: ((_c = (_b = theme.color) == null ? void 0 : _b.hover) == null ? void 0 : _c.primary) ?? import_theme4.defaultRemirrorTheme.color.hover.primary,
+        contrastText: ((_d = theme.color) == null ? void 0 : _d.primaryText) ?? import_theme4.defaultRemirrorTheme.color.primaryText
+      },
+      secondary: {
+        main: ((_e = theme.color) == null ? void 0 : _e.secondary) ?? import_theme4.defaultRemirrorTheme.color.secondary,
+        dark: ((_g = (_f = theme.color) == null ? void 0 : _f.hover) == null ? void 0 : _g.secondary) ?? import_theme4.defaultRemirrorTheme.color.hover.secondary,
+        contrastText: ((_h = theme.color) == null ? void 0 : _h.secondaryText) ?? import_theme4.defaultRemirrorTheme.color.secondaryText
+      }
+    }
+  });
+  return /* @__PURE__ */ import_react64.default.createElement(import_material11.ThemeProvider, { theme: muiTheme }, /* @__PURE__ */ import_react64.default.createElement(ThemeContext.Provider, { value: theme }, /* @__PURE__ */ import_react64.default.createElement(Component, { style, className }, children)));
+};
+
+// packages/remirror__react-components/src/toolbar/base-toolbar.tsx
+var import_material12 = require("@mui/material");
+var import_react65 = __toESM(require("react"), 1);
+var Toolbar = (props) => /* @__PURE__ */ import_react65.default.createElement(
+  import_material12.Stack,
+  {
+    direction: "row",
+    spacing: 1,
+    sx: { backgroundColor: "background.paper", overflowX: "auto" },
+    ...props
+  }
+);
+
+// packages/remirror__react-components/src/toolbar/floating-toolbar.tsx
+var import_material13 = require("@mui/material");
+var import_react66 = __toESM(require("react"), 1);
+var import_extension_positioner2 = require("@remirror/extension-positioner");
+var import_react_hooks4 = require("@remirror/react-hooks");
+var DEFAULT_MODIFIERS = [
+  {
+    name: "offset",
+    options: {
+      offset: [0, 8]
+    }
+  }
+];
+var FloatingToolbar = ({
+  positioner = "selection",
+  children,
+  ...rest
+}) => {
+  const { ref, x, y, width, height, active } = (0, import_react_hooks4.usePositioner)(
+    () => (0, import_extension_positioner2.getPositioner)(positioner),
+    [positioner]
+  );
+  const [anchorEl, setAnchorEl] = (0, import_react66.useState)(null);
+  const inlineStyle = (0, import_react66.useMemo)(
+    () => ({
+      position: "absolute",
+      pointerEvents: "none",
+      left: x,
+      top: y,
+      width,
+      height
+    }),
+    [x, y, width, height]
+  );
+  const combinedSelectionRefs = (0, import_react66.useCallback)(
+    (elem) => {
+      setAnchorEl(elem);
+      ref == null ? void 0 : ref(elem);
+    },
+    [ref]
+  );
+  return /* @__PURE__ */ import_react66.default.createElement(import_react66.default.Fragment, null, /* @__PURE__ */ import_react66.default.createElement("div", { ref: combinedSelectionRefs, style: inlineStyle }), /* @__PURE__ */ import_react66.default.createElement(
+    import_material13.Popper,
+    {
+      placement: "top",
+      modifiers: DEFAULT_MODIFIERS,
+      ...rest,
+      open: active,
+      anchorEl
+    },
+    /* @__PURE__ */ import_react66.default.createElement(Toolbar, null, children ? /* @__PURE__ */ import_react66.default.createElement(import_react66.default.Fragment, null, children) : /* @__PURE__ */ import_react66.default.createElement(FormattingButtonGroup, null))
+  ));
+};
+
+// packages/remirror__react-components/src/toolbar/markdown-toolbar.tsx
+var import_react68 = __toESM(require("react"), 1);
+
+// packages/remirror__react-components/src/toolbar/vertical-divider.tsx
+var import_material14 = require("@mui/material");
+var import_react67 = __toESM(require("react"), 1);
+var VerticalDivider = (props) => /* @__PURE__ */ import_react67.default.createElement(import_material14.Divider, { flexItem: true, sx: { mx: 0.5 }, ...props, orientation: "vertical" });
+
+// packages/remirror__react-components/src/toolbar/markdown-toolbar.tsx
+var MarkdownToolbar = () => /* @__PURE__ */ import_react68.default.createElement(Toolbar, null, /* @__PURE__ */ import_react68.default.createElement(CommandButtonGroup, null, /* @__PURE__ */ import_react68.default.createElement(ToggleBoldButton, null), /* @__PURE__ */ import_react68.default.createElement(ToggleItalicButton, null), /* @__PURE__ */ import_react68.default.createElement(ToggleStrikeButton, null), /* @__PURE__ */ import_react68.default.createElement(ToggleCodeButton, null)), /* @__PURE__ */ import_react68.default.createElement(VerticalDivider, null), /* @__PURE__ */ import_react68.default.createElement(HeadingLevelButtonGroup, { showAll: true }), /* @__PURE__ */ import_react68.default.createElement(VerticalDivider, null), /* @__PURE__ */ import_react68.default.createElement(CommandButtonGroup, null, /* @__PURE__ */ import_react68.default.createElement(ToggleBlockquoteButton, null), /* @__PURE__ */ import_react68.default.createElement(ToggleCodeBlockButton, null)), /* @__PURE__ */ import_react68.default.createElement(VerticalDivider, null), /* @__PURE__ */ import_react68.default.createElement(HistoryButtonGroup, null));
+
+// packages/remirror__react-components/src/toolbar/wysiwyg-toolbar.tsx
+var import_react69 = __toESM(require("react"), 1);
+var WysiwygToolbar = () => /* @__PURE__ */ import_react69.default.createElement(Toolbar, null, /* @__PURE__ */ import_react69.default.createElement(HistoryButtonGroup, null), /* @__PURE__ */ import_react69.default.createElement(VerticalDivider, null), /* @__PURE__ */ import_react69.default.createElement(DataTransferButtonGroup, null), /* @__PURE__ */ import_react69.default.createElement(VerticalDivider, null), /* @__PURE__ */ import_react69.default.createElement(HeadingLevelButtonGroup, null), /* @__PURE__ */ import_react69.default.createElement(VerticalDivider, null), /* @__PURE__ */ import_react69.default.createElement(BasicFormattingButtonGroup, null), /* @__PURE__ */ import_react69.default.createElement(VerticalDivider, null), /* @__PURE__ */ import_react69.default.createElement(ListButtonGroup, null, /* @__PURE__ */ import_react69.default.createElement(CreateTableButton, null)));
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  BaselineButtonGroup,
+  BasicFormattingButtonGroup,
+  CalloutTypeButtonGroup,
+  CenterAlignButton,
+  CommandButton,
+  CommandButtonGroup,
+  CommandMenuItem,
+  CopyButton,
+  CreateTableButton,
+  CutButton,
+  DataTransferButtonGroup,
+  DecreaseFontSizeButton,
+  DecreaseIndentButton,
+  DropdownButton,
+  EmojiPopupComponent,
+  FindReplaceComponent,
+  FloatingToolbar,
+  FloatingWrapper,
+  FormattingButtonGroup,
+  GenIcon,
+  HeadingLevelButtonGroup,
+  HistoryButtonGroup,
+  Icon,
+  IconBase,
+  IncreaseFontSizeButton,
+  IncreaseIndentButton,
+  IndentationButtonGroup,
+  InsertHorizontalRuleButton,
+  JustifyAlignButton,
+  LeftAlignButton,
+  ListButtonGroup,
+  MarkdownToolbar,
+  MentionAtomPopupComponent,
+  PasteButton,
+  PositionerPortal,
+  RedoButton,
+  RightAlignButton,
+  TextAlignmentButtonGroup,
+  ThemeProvider,
+  ToggleBlockquoteButton,
+  ToggleBoldButton,
+  ToggleBulletListButton,
+  ToggleCalloutButton,
+  ToggleCalloutMenuItem,
+  ToggleCodeBlockButton,
+  ToggleCodeButton,
+  ToggleColumnsButton,
+  ToggleHeadingButton,
+  ToggleHeadingMenuItem,
+  ToggleItalicButton,
+  ToggleOrderedListButton,
+  ToggleStrikeButton,
+  ToggleSubscriptButton,
+  ToggleSuperscriptButton,
+  ToggleTaskListButton,
+  ToggleUnderlineButton,
+  ToggleWhitespaceButton,
+  Toolbar,
+  UndoButton,
+  VerticalDivider,
+  WysiwygToolbar,
+  useTheme
+});

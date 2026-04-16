@@ -1,0 +1,149 @@
+import { Mapping as Mapping$1 } from 'prosemirror-transform';
+import { InputRule as InputRule$1 } from 'prosemirror-inputrules';
+import { Selection as Selection$1, Transaction as Transaction$1, PluginKey as PluginKey$1, Plugin, EditorState as EditorState$1 } from 'prosemirror-state';
+import { EditorView as EditorView$1, DecorationSet as DecorationSet$1, NodeView as NodeView$1, Decoration as Decoration$1 } from 'prosemirror-view';
+import { Schema, Mark as Mark$1, ResolvedPos as ResolvedPos$1, Fragment as Fragment$1, Node, MarkType as MarkType$1, NodeType as NodeType$1, Slice as Slice$1 } from 'prosemirror-model';
+
+type EditorSchema = Schema;
+type EditorView = EditorView$1;
+type Selection = Selection$1;
+type DecorationSet = DecorationSet$1;
+type Transaction = Transaction$1;
+type PluginKey<PluginState = any> = PluginKey$1<PluginState>;
+type Mark = Mark$1;
+type ResolvedPos = ResolvedPos$1;
+type InputRule = InputRule$1;
+type Fragment = Fragment$1;
+type NodeView = NodeView$1;
+type ProsemirrorNode = Node;
+type ProsemirrorPlugin<PluginState = any> = Plugin<PluginState>;
+type MarkType = MarkType$1;
+type NodeType = NodeType$1;
+type EditorState = Readonly<EditorState$1>;
+type Slice = Slice$1;
+type Decoration = Decoration$1;
+type Mapping = Mapping$1;
+declare const _brand: unique symbol;
+interface Branding<Type> {
+    readonly [_brand]: Type;
+}
+type Brand<Type, B> = Type & Branding<B>;
+/**
+ * Brands a command as non chainable so that it can be excluded from the
+ * inferred chainable commands.
+ */
+type NonChainableCommandFunction<Extra extends object = object> = Brand<CommandFunction<Extra>, 'non-chainable'>;
+/**
+ * Used to apply the Prosemirror transaction to the current {@link EditorState}.
+ *
+ * @typeParam Schema - the underlying editor schema.
+ */
+type DispatchFunction = (tr: Transaction) => void;
+/**
+ * This is the type signature for commands within the prosemirror editor.
+ *
+ * @remarks
+ *
+ * A command function takes an editor state and optionally a dispatch function
+ * that it can use to dispatch a transaction. It should return a boolean that
+ * indicates whether it could perform any action.
+ *
+ * When no dispatch callback is passed, the command should do a 'dry run',
+ * determining whether it is applicable, but not actually performing any action.
+ *
+ * @typeParam Schema - the underlying editor schema.
+ */
+type ProsemirrorCommandFunction = (state: EditorState, dispatch: DispatchFunction | undefined, view: EditorView | undefined) => boolean;
+/**
+ * A command method for running commands in your editor.
+ *
+ * @typeParam Schema - the underlying editor schema.
+ * @typeParam ExtraProps - extra parameters to add to the command function.
+ *
+ * @remarks
+ *
+ * This groups all the prosemirror command arguments into a single parameter.
+ *
+ * tldr; When `dispatch=undefined` make sure the command function is **idempotent**.
+ *
+ * One thing to be aware of is that when creating a command function the
+ * `tr` should only be updated when the `dispatch` method is available. This is
+ * because by convention calling the command function with `dispatch=undefined`
+ * is used to check if the function returns `true`, an indicator that it is
+ * enabled, or returns `false` to indicate it is not enabled.
+ *
+ * If the transaction has been updated outside of the `dispatch=true` condition
+ * then running the command again will result in multiple transaction updates
+ * and unpredictable behavior.
+ *
+ * @see {@link ProsemirrorCommandFunction}
+ */
+type CommandFunction<ExtraProps extends object = object> = (params: CommandFunctionProps & ExtraProps) => boolean;
+/**
+ * A parameter builder interface for the remirror `CommandFunction`.
+ *
+ * @typeParam Schema - the underlying editor schema.
+ */
+interface CommandFunctionProps {
+    /**
+     * The shared ProseMirror Transaction.
+     */
+    tr: Transaction;
+    /**
+     * A snapshot of the ProseMirror editor state.
+     */
+    state: EditorState;
+    /**
+     * The dispatch function which causes the command to be performed.
+     *
+     * @remarks
+     *
+     * `dispatch` can be `undefined`. When no `dispatch` callback is provided the
+     * command should perform a 'dry run', determining whether the command is
+     * applicable (`return true`), but not actually performing the action.
+     */
+    dispatch?: DispatchFunction;
+    /**
+     * An instance of the ProseMirror editor `view`.
+     */
+    view?: EditorView;
+}
+
+/**
+ * Creates a fake state that can be used on ProseMirror library commands to make
+ * them chainable. The provided Transaction `tr` can be a shared one.
+ *
+ * @param tr - the chainable transaction that should be amended.
+ * @param state - the state of the editor (available via `view.state`).
+ *
+ * This should not be used other than for passing to `prosemirror-*` library
+ * commands.
+ */
+declare function chainableEditorState(tr: Transaction$1, state: EditorState$1): EditorState$1;
+/**
+ * Wraps the default [[ProsemirrorCommandFunction]] and makes it compatible with
+ * the default **remirror** [[CommandFunction]] call signature.
+ *
+ * It extracts all the public APIs of the state object and assigns the
+ * chainable transaction to the `state.tr` property to support chaining.
+ */
+declare function convertCommand<Extra extends object = object>(commandFunction: ProsemirrorCommandFunction): CommandFunction<Extra>;
+/**
+ * Marks a command function as non chainable. It will throw an error when
+ * chaining is attempted.
+ *
+ * @remarks
+ *
+ * ```ts
+ * const command = nonChainable(({ state, dispatch }) => {...});
+ * ```
+ */
+declare function nonChainable<Extra extends object = object>(commandFunction: CommandFunction<Extra>): NonChainableCommandFunction<Extra>;
+/**
+ * Similar to the chainCommands from the `prosemirror-commands` library. Allows
+ * multiple commands to be chained together and runs until one of them returns
+ * true.
+ */
+declare function chainCommands<Extra extends object = object>(...commands: Array<CommandFunction<Extra>>): CommandFunction<Extra>;
+
+export { type CommandFunction, type CommandFunctionProps, type Decoration, type DecorationSet, type DispatchFunction, type EditorSchema, type EditorState, type EditorView, type Fragment, type InputRule, type Mapping, type Mark, type MarkType, type NodeType, type NodeView, type NonChainableCommandFunction, type PluginKey, type ProsemirrorCommandFunction, type ProsemirrorNode, type ProsemirrorPlugin, type ResolvedPos, type Selection, type Slice, type Transaction, chainCommands, chainableEditorState, convertCommand, nonChainable };

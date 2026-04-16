@@ -1,0 +1,5 @@
+import { TFunction } from 'i18next';
+/**
+ * 国际化翻译
+ */
+export declare const t: TFunction;

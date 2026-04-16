@@ -1,0 +1,143 @@
+import { srToURI } from './utils';
+var selectedClassName = '__source-ref-selected';
+var selectedMaskClassName = '__source-ref-mask';
+var closeClassName = '__source-ref-close';
+var Inspector = /** @class */ (function () {
+    function Inspector(target) {
+        var _this = this;
+        this.target = target;
+        this.containerId = '__source-ref-panel';
+        this.focusBlock = null;
+        this.path = [];
+        this.initNodePath = function (target) {
+            var path = [];
+            var cur = target;
+            while (cur !== document.body) {
+                if (!(cur instanceof HTMLElement)) {
+                    break;
+                }
+                if (cur.dataset.sr) {
+                    path.push({
+                        sr: cur.dataset.sr,
+                        node: cur,
+                    });
+                }
+                cur = cur.parentElement;
+            }
+            _this.path = path;
+        };
+        this.setFocusBlock = function (target) {
+            if (target === null) {
+                // clear if target is null
+                if (_this.focusBlock) {
+                    document.body.removeChild(_this.focusBlock);
+                    _this.focusBlock = null;
+                }
+                return;
+            }
+            if (!(target instanceof HTMLElement)) {
+                return;
+            }
+            if (!_this.focusBlock) {
+                _this.focusBlock = document.createElement('div');
+                _this.focusBlock.className = selectedMaskClassName;
+                _this.focusBlock.style.position = 'absolute';
+                _this.focusBlock.style.backgroundColor = 'rgba(134, 185, 242, 0.5)';
+                document.body.appendChild(_this.focusBlock);
+            }
+            var rect = target.getBoundingClientRect();
+            _this.focusBlock.style.height = rect.height + 'px';
+            _this.focusBlock.style.width = rect.width + 'px';
+            _this.focusBlock.style.left = rect.left + 'px';
+            _this.focusBlock.style.top = rect.top + 'px';
+        };
+        this.close = function () {
+            _this.setFocusBlock(null);
+            document.body.removeChild(_this.getContainer());
+        };
+        this.getContainer = function () {
+            var container = document.getElementById(_this.containerId);
+            if (container) {
+                return container;
+            }
+            var div = document.createElement('div');
+            div.id = _this.containerId;
+            document.body.appendChild(div);
+            // Add dom red border on hover
+            div.addEventListener('mouseover', function (e) {
+                var node = e.target;
+                if (!(node instanceof HTMLElement)) {
+                    return;
+                }
+                if (node.dataset.sr) {
+                    var finded = _this.path.find(function (p) { return p.sr === node.dataset.sr; });
+                    if (finded) {
+                        var target = finded.node;
+                        target.classList.add(selectedClassName);
+                        _this.setFocusBlock(target);
+                    }
+                }
+            });
+            // Remove dom red border when leave
+            div.addEventListener('mouseout', function (e) {
+                var node = e.target;
+                if (!(node instanceof HTMLElement)) {
+                    return;
+                }
+                if (node.dataset.sr) {
+                    var target = document.querySelector("[data-sr=\"".concat(node.dataset.sr, "\"]"));
+                    if (target) {
+                        target.classList.remove(selectedClassName);
+                        _this.setFocusBlock(null);
+                    }
+                }
+            });
+            // click event
+            div.addEventListener('click', function (e) {
+                var node = e.target;
+                if (!(node instanceof HTMLElement)) {
+                    return;
+                }
+                // Close btn
+                if (node.classList.contains(closeClassName)) {
+                    e.stopPropagation();
+                    _this.close();
+                }
+            });
+            // keyboard event
+            var escKeyHandler = function (e) {
+                if (e.key === 'Escape') {
+                    e.stopPropagation();
+                    _this.close();
+                    document.removeEventListener('keydown', escKeyHandler);
+                }
+            };
+            document.addEventListener('keydown', escKeyHandler);
+            return div;
+        };
+        this.renderHTML = function () {
+            var isBottomHalf = _this.checkTargetIsInBottom();
+            var html = "\n      <div style=\"\n        position: fixed;\n        background: white;\n        ".concat(isBottomHalf ? 'top' : 'bottom', ": 0;\n        left: 0;\n        z-index: 9999;\n        border-radius: ").concat(isBottomHalf ? '0 0 10px 0' : '0 10px 0 0', ";\n        box-shadow: 0px 0 4px 0px;\n        max-width: 90vw;\n        max-height: 80vh;\n        overflow: auto;\n        padding: 10px;\n      \">\n        <div style=\"display: flex; align-items: center;\">\n          <div style=\"flex: 1;\">SourceRef</div>\n          <div style=\"\n            cursor: pointer;\n            text-align: right;\n            font-size: 24px;\n            line-height: 24px;\n          \" class=\"").concat(closeClassName, "\" title=\"Close(esc)\">\u00D7</div>\n        </div>\n\n        ").concat(_this.path
+                .map(function (_a) {
+                var sr = _a.sr;
+                var uri = srToURI(sr);
+                return "<a href=\"".concat(uri, "\" target=\"_blank\" style=\"\n              display: block;\n              ling-height: 1.5em;\n              white-space: nowrap;\n              overflow: hidden;\n              text-overflow: ellipsis;\n              direction: rtl;\n              text-align: left;\n            \" data-sr=\"").concat(sr, "\">source-ref: ").concat(uri, "</a>");
+            })
+                .join(''), "\n\n      </div>\n    ");
+            var container = _this.getContainer();
+            container.innerHTML = html;
+        };
+        this.initNodePath(target);
+    }
+    /**
+     * Check if the target is in the bottom half of the screen
+     */
+    Inspector.prototype.checkTargetIsInBottom = function () {
+        if (this.target instanceof HTMLElement) {
+            return this.target.getBoundingClientRect().y > window.innerHeight / 2;
+        }
+        return false;
+    };
+    return Inspector;
+}());
+export { Inspector };

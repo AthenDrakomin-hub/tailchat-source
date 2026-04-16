@@ -1,0 +1,12 @@
+{
+  "files": {
+    "packages/source-ref-runtime/.rush/temp/shrinkwrap-deps.json": "58dde1b5a789d83d58cb1c687cacdbf2e73aa37d",
+    "packages/source-ref-runtime/.gitignore": "a65b41774ad52b3cc7b60496d35eaafc5da4bb16",
+    "packages/source-ref-runtime/package.json": "b0ced17361633632cd48f36c75e84fb5c0e9bc62",
+    "packages/source-ref-runtime/src/Inspector.ts": "334bc3b2d0c336dbe5d894d9f36b8343dd700540",
+    "packages/source-ref-runtime/src/index.ts": "86e2a584e4de51e1a4ee699545d0d16f9466237c",
+    "packages/source-ref-runtime/src/utils.ts": "1a337c466c28eb4d66a5f4efbc29d0f2933ca0f0",
+    "packages/source-ref-runtime/tsconfig.json": "4c3993f46a1c31d7ae97a1474e435cf233b7436d"
+  },
+  "arguments": "tsc "
+}

@@ -1,0 +1,275 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-image/src/image-extension.ts
+import {
+  command,
+  ErrorConstant,
+  extension,
+  ExtensionTag,
+  getTextSelection,
+  invariant,
+  isElementDomNode,
+  isNumber,
+  NodeExtension,
+  omitExtraAttributes
+} from "@remirror/core";
+import { insertPoint } from "@remirror/pm/transform";
+import { ExtensionImageTheme } from "@remirror/theme";
+
+// packages/remirror__extension-image/src/resizable-image-view.ts
+import { ResizableNodeView, ResizableRatioType } from "prosemirror-resizable-view";
+import { setStyle } from "@remirror/core";
+var ResizableImageView = class extends ResizableNodeView {
+  constructor(node, view, getPos) {
+    super({ node, view, getPos, aspectRatio: ResizableRatioType.Fixed });
+  }
+  createElement({ node }) {
+    const inner = document.createElement("img");
+    inner.setAttribute("src", node.attrs.src);
+    setStyle(inner, {
+      width: "100%",
+      minWidth: "50px",
+      objectFit: "contain"
+      // maintain image's aspect ratio
+    });
+    return inner;
+  }
+};
+
+// packages/remirror__extension-image/src/image-extension.ts
+var ImageExtension = class extends NodeExtension {
+  get name() {
+    return "image";
+  }
+  createTags() {
+    return [ExtensionTag.InlineNode, ExtensionTag.Media];
+  }
+  createNodeSpec(extra, override) {
+    const { preferPastedTextContent } = this.options;
+    return {
+      inline: true,
+      draggable: true,
+      selectable: false,
+      ...override,
+      attrs: {
+        ...extra.defaults(),
+        alt: { default: "" },
+        crop: { default: null },
+        height: { default: null },
+        width: { default: null },
+        rotate: { default: null },
+        src: { default: null },
+        title: { default: "" },
+        fileName: { default: null },
+        resizable: { default: false }
+      },
+      parseDOM: [
+        {
+          tag: "img[src]",
+          getAttrs: (element) => {
+            if (isElementDomNode(element)) {
+              const attrs = getImageAttributes({ element, parse: extra.parse });
+              if (preferPastedTextContent && attrs.src?.startsWith("file:///")) {
+                return false;
+              }
+              return attrs;
+            }
+            return {};
+          }
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => {
+        const attrs = omitExtraAttributes(node.attrs, extra);
+        return ["img", { ...extra.dom(node), ...attrs }];
+      }
+    };
+  }
+  insertImage(attributes, selection) {
+    return ({ tr, dispatch }) => {
+      const { from, to } = getTextSelection(selection ?? tr.selection, tr.doc);
+      const node = this.type.create(attributes);
+      dispatch?.(tr.replaceRangeWith(from, to, node));
+      return true;
+    };
+  }
+  uploadImage(value, onElement) {
+    const { updatePlaceholder, destroyPlaceholder, createPlaceholder: createPlaceholder2 } = this.options;
+    return (props) => {
+      const { tr } = props;
+      let pos = tr.selection.from;
+      return this.store.createPlaceholderCommand({
+        promise: value,
+        placeholder: {
+          type: "widget",
+          get pos() {
+            return pos;
+          },
+          createElement: (view, pos2) => {
+            const element = createPlaceholder2(view, pos2);
+            onElement?.(element);
+            return element;
+          },
+          onUpdate: (view, pos2, element, data) => {
+            updatePlaceholder(view, pos2, element, data);
+          },
+          onDestroy: (view, element) => {
+            destroyPlaceholder(view, element);
+          }
+        },
+        onSuccess: (value2, range, commandProps) => this.insertImage(value2, range)(commandProps)
+      }).validate(({ tr: tr2, dispatch }) => {
+        const insertPos = insertPoint(tr2.doc, pos, this.type);
+        if (insertPos == null) {
+          return false;
+        }
+        pos = insertPos;
+        if (!tr2.selection.empty) {
+          dispatch?.(tr2.deleteSelection());
+        }
+        return true;
+      }, "unshift").generateCommand()(props);
+    };
+  }
+  fileUploadFileHandler(files, event, pos) {
+    const { preferPastedTextContent, uploadHandler: uploadHandler2 } = this.options;
+    if (preferPastedTextContent && isClipboardEvent(event) && event.clipboardData?.getData("text/plain")) {
+      return false;
+    }
+    const { commands, chain } = this.store;
+    const filesWithProgress = files.map((file, index) => ({
+      file,
+      progress: (progress) => {
+        commands.updatePlaceholder(uploads[index], progress);
+      }
+    }));
+    const uploads = uploadHandler2(filesWithProgress);
+    if (isNumber(pos)) {
+      chain.selectText(pos);
+    }
+    for (const upload of uploads) {
+      chain.uploadImage(upload);
+    }
+    chain.run();
+    return true;
+  }
+  createPasteRules() {
+    return [
+      {
+        type: "file",
+        regexp: /image/i,
+        fileHandler: (props) => {
+          const pos = props.type === "drop" ? props.pos : void 0;
+          return this.fileUploadFileHandler(props.files, props.event, pos);
+        }
+      }
+    ];
+  }
+  createNodeViews() {
+    if (this.options.enableResizing) {
+      return (node, view, getPos) => new ResizableImageView(node, view, getPos);
+    }
+    return {};
+  }
+};
+__decorateClass([
+  command()
+], ImageExtension.prototype, "insertImage", 1);
+__decorateClass([
+  command()
+], ImageExtension.prototype, "uploadImage", 1);
+ImageExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      createPlaceholder,
+      updatePlaceholder: () => {
+      },
+      destroyPlaceholder: () => {
+      },
+      uploadHandler,
+      enableResizing: false,
+      preferPastedTextContent: true
+    }
+  })
+], ImageExtension);
+var IMAGE_FILE_TYPES = /* @__PURE__ */ new Set([
+  "image/jpeg",
+  "image/gif",
+  "image/png",
+  "image/jpg",
+  "image/svg",
+  "image/webp"
+]);
+function isImageFileType(file) {
+  return IMAGE_FILE_TYPES.has(file.type);
+}
+function getDimensions(element) {
+  let { width, height } = element.style;
+  width = width || element.getAttribute("width") || "";
+  height = height || element.getAttribute("height") || "";
+  return { width, height };
+}
+function getImageAttributes({
+  element,
+  parse
+}) {
+  const { width, height } = getDimensions(element);
+  return {
+    ...parse(element),
+    alt: element.getAttribute("alt") ?? "",
+    height: Number.parseInt(height || "0", 10) || null,
+    src: element.getAttribute("src") ?? null,
+    title: element.getAttribute("title") ?? "",
+    width: Number.parseInt(width || "0", 10) || null,
+    fileName: element.getAttribute("data-file-name") ?? null
+  };
+}
+function createPlaceholder(_, __) {
+  const element = document.createElement("div");
+  element.classList.add(ExtensionImageTheme.IMAGE_LOADER);
+  return element;
+}
+function uploadHandler(files) {
+  invariant(files.length > 0, {
+    code: ErrorConstant.EXTENSION,
+    message: "The upload handler was applied for the image extension without any valid files"
+  });
+  let completed = 0;
+  const promises = [];
+  for (const { file, progress } of files) {
+    promises.push(
+      () => new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.addEventListener(
+          "load",
+          (readerEvent) => {
+            completed += 1;
+            progress(completed / files.length);
+            resolve({ src: readerEvent.target?.result, fileName: file.name });
+          },
+          { once: true }
+        );
+        reader.readAsDataURL(file);
+      })
+    );
+  }
+  return promises;
+}
+function isClipboardEvent(event) {
+  return event.clipboardData !== void 0;
+}
+export {
+  ImageExtension,
+  ResizableImageView,
+  isImageFileType
+};

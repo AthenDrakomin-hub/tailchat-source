@@ -1,0 +1,303 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-callout/src/callout-extension.ts
+import {
+  command,
+  extension,
+  ExtensionTag,
+  findNodeAtSelection,
+  getMatchString,
+  isElementDomNode,
+  isTextSelection,
+  keyBinding,
+  NodeExtension,
+  nodeInputRule,
+  omitExtraAttributes,
+  toggleWrap
+} from "@remirror/core";
+import { Fragment, Slice } from "@remirror/pm/model";
+import { TextSelection } from "@remirror/pm/state";
+import { ExtensionCalloutTheme } from "@remirror/theme";
+
+// packages/remirror__extension-callout/src/callout-utils.ts
+import {
+  findParentNodeOfType,
+  includes,
+  isEqual,
+  isObject,
+  isString
+} from "@remirror/core";
+import { ExtensionCalloutMessages } from "@remirror/messages";
+var dataAttributeType = "data-callout-type";
+var dataAttributeEmoji = "data-callout-emoji";
+function isValidCalloutExtensionAttributes(attributes) {
+  if (attributes && isObject(attributes)) {
+    const attributesChecklist = Object.entries(attributes).map(([key, value]) => {
+      switch (key) {
+        case "type":
+          return !!(isString(value) && value.length > 0);
+        case "emoji":
+          return !!(isString(value) && value.length > 0);
+        default:
+          return true;
+      }
+    });
+    return attributesChecklist.every((attr) => !!attr);
+  }
+  return false;
+}
+function updateNodeAttributes(type) {
+  return (attributes, pos) => ({ state: { tr, selection, doc }, dispatch }) => {
+    if (!isValidCalloutExtensionAttributes(attributes)) {
+      throw new Error("Invalid attrs passed to the updateAttributes method");
+    }
+    const parent = findParentNodeOfType({
+      types: type,
+      selection: pos ? doc.resolve(pos) : selection
+    });
+    if (!parent || isEqual(attributes, parent.node.attrs)) {
+      return false;
+    }
+    tr.setNodeMarkup(parent.pos, type, {
+      ...parent.node.attrs,
+      ...attributes
+    });
+    if (dispatch) {
+      dispatch(tr);
+    }
+    return true;
+  };
+}
+var { DESCRIPTION, LABEL } = ExtensionCalloutMessages;
+var toggleCalloutOptions = {
+  icon: ({ attrs }) => {
+    switch (attrs?.type) {
+      case "error":
+        return "closeCircleLine";
+      case "success":
+        return "checkboxCircleLine";
+      case "warning":
+        return "errorWarningLine";
+      default:
+        return "informationLine";
+    }
+  },
+  description: ({ t, attrs }) => t({
+    ...DESCRIPTION,
+    values: {
+      type: attrs?.type
+    }
+  }),
+  label: ({ t, attrs }) => t({
+    ...LABEL,
+    values: {
+      type: attrs?.type
+    }
+  })
+};
+function getCalloutType(value, validTypes, defaultType) {
+  return includes(validTypes, value) ? value : defaultType;
+}
+function defaultEmojiRender(node) {
+  const emoji = document.createElement("span");
+  emoji.textContent = node.attrs.emoji;
+  return emoji;
+}
+
+// packages/remirror__extension-callout/src/callout-extension.ts
+var CalloutExtension = class extends NodeExtension {
+  get name() {
+    return "callout";
+  }
+  tags = [ExtensionTag.Block];
+  /**
+   * Defines the callout html structure.
+   * Adds the returned DOM node form `renderEmoji`  into it.
+   */
+  createNodeViews() {
+    return (node, view, getPos) => {
+      const { type, emoji } = node.attrs;
+      const { renderEmoji } = this.options;
+      const dom = document.createElement("div");
+      const contentDOM = document.createElement("div");
+      dom.setAttribute(dataAttributeType, type);
+      if (emoji) {
+        const emojiWrapper = document.createElement("div");
+        const emojiNode = renderEmoji(node, view, getPos);
+        dom.setAttribute(dataAttributeEmoji, emoji);
+        emojiWrapper.classList.add(ExtensionCalloutTheme.CALLOUT_EMOJI_WRAPPER);
+        if (emojiNode) {
+          emojiWrapper.append(emojiNode);
+          dom.append(emojiWrapper);
+        }
+      }
+      dom.append(contentDOM);
+      return { dom, contentDOM };
+    };
+  }
+  createNodeSpec(extra, override) {
+    const { defaultType, validTypes, defaultEmoji } = this.options;
+    return {
+      content: "block+",
+      defining: true,
+      draggable: false,
+      ...override,
+      attrs: {
+        ...extra.defaults(),
+        type: { default: defaultType },
+        emoji: { default: defaultEmoji }
+      },
+      parseDOM: [
+        {
+          tag: `div[${dataAttributeType}]`,
+          getAttrs: (node) => {
+            if (!isElementDomNode(node)) {
+              return false;
+            }
+            const rawType = node.getAttribute(dataAttributeType);
+            const emoji = node.getAttribute(dataAttributeEmoji) ?? "";
+            const type = getCalloutType(rawType, validTypes, defaultType);
+            const content = node.textContent;
+            return { ...extra.parse(node), type, emoji, content };
+          }
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => {
+        const { type, emoji, ...rest } = omitExtraAttributes(node.attrs, extra);
+        const emojiAttributes = emoji ? { [dataAttributeEmoji]: emoji } : {};
+        const attributes = {
+          ...extra.dom(node),
+          ...rest,
+          [dataAttributeType]: type,
+          ...emojiAttributes
+        };
+        return ["div", attributes, 0];
+      }
+    };
+  }
+  /**
+   * Create an input rule that listens for input of 3 colons followed
+   * by a valid callout type, to create a callout node
+   * If the callout type is invalid, the defaultType callout is created
+   */
+  createInputRules() {
+    return [
+      nodeInputRule({
+        regexp: /^:::([\dA-Za-z]*) $/,
+        type: this.type,
+        beforeDispatch: ({ tr, start }) => {
+          const $pos = tr.doc.resolve(start);
+          tr.setSelection(TextSelection.near($pos));
+        },
+        getAttributes: (match) => {
+          const { defaultType, validTypes } = this.options;
+          return { type: getCalloutType(getMatchString(match, 1), validTypes, defaultType) };
+        }
+      })
+    ];
+  }
+  toggleCallout(attributes = {}) {
+    return toggleWrap(this.type, attributes);
+  }
+  updateCallout(attributes, pos) {
+    return updateNodeAttributes(this.type)(attributes, pos);
+  }
+  handleEnterKey({ dispatch, tr }) {
+    if (!(isTextSelection(tr.selection) && tr.selection.empty)) {
+      return false;
+    }
+    const { nodeBefore, parent } = tr.selection.$from;
+    if (!nodeBefore?.isText || !parent.type.isTextblock) {
+      return false;
+    }
+    const regex = /^:::([A-Za-z]*)?$/;
+    const { text, nodeSize } = nodeBefore;
+    const { textContent } = parent;
+    if (!text) {
+      return false;
+    }
+    const matchesNodeBefore = text.match(regex);
+    const matchesParent = textContent.match(regex);
+    if (!matchesNodeBefore || !matchesParent) {
+      return false;
+    }
+    const { defaultType, validTypes } = this.options;
+    const type = getCalloutType(matchesNodeBefore[1], validTypes, defaultType);
+    const pos = tr.selection.$from.before();
+    const end = pos + nodeSize + 1;
+    if (dispatch) {
+      const slice = new Slice(Fragment.from(this.type.create({ type })), 0, 1);
+      tr.replace(pos, end, slice);
+      tr.setSelection(TextSelection.near(tr.doc.resolve(pos + 1)));
+      dispatch(tr);
+    }
+    return true;
+  }
+  handleBackspace({ dispatch, tr }) {
+    if (!tr.selection.empty) {
+      return false;
+    }
+    const { $from } = tr.selection;
+    if ($from.parentOffset !== 0) {
+      return false;
+    }
+    const previousPosition = $from.before($from.depth) - 1;
+    if (previousPosition < 1) {
+      return false;
+    }
+    const previousPos = tr.doc.resolve(previousPosition);
+    if (!previousPos?.parent) {
+      return false;
+    }
+    const previousNode = previousPos.parent;
+    const { node, pos } = findNodeAtSelection(tr.selection);
+    if (node.type !== this.type && previousNode.type === this.type) {
+      const { content, nodeSize } = node;
+      tr.delete(pos, pos + nodeSize);
+      tr.setSelection(TextSelection.near(tr.doc.resolve(previousPosition - 1)));
+      tr.insert(previousPosition - 1, content);
+      if (dispatch) {
+        dispatch(tr);
+      }
+      return true;
+    }
+    return false;
+  }
+};
+__decorateClass([
+  command(toggleCalloutOptions)
+], CalloutExtension.prototype, "toggleCallout", 1);
+__decorateClass([
+  command(toggleCalloutOptions)
+], CalloutExtension.prototype, "updateCallout", 1);
+__decorateClass([
+  keyBinding({ shortcut: "Enter" })
+], CalloutExtension.prototype, "handleEnterKey", 1);
+__decorateClass([
+  keyBinding({ shortcut: "Backspace" })
+], CalloutExtension.prototype, "handleBackspace", 1);
+CalloutExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      defaultType: "info",
+      validTypes: ["info", "warning", "error", "success", "blank"],
+      defaultEmoji: "",
+      renderEmoji: defaultEmojiRender
+    },
+    staticKeys: ["defaultType", "validTypes", "defaultEmoji"]
+  })
+], CalloutExtension);
+export {
+  CalloutExtension
+};

@@ -1,0 +1,96 @@
+import { MentionAtomNodeAttributes } from '@remirror/extension-mention-atom';
+export { MentionAtomNodeAttributes } from '@remirror/extension-mention-atom';
+import { SuggestChangeHandlerProps, ChangeReason } from '@remirror/pm/suggest';
+import { MultishiftPropGetters, MultishiftHelpers, MultishiftState } from 'multishift';
+import { KeyBindingNames } from '@remirror/core';
+
+/**
+ * @module
+ *
+ * Create menu navigation handlers when showing popup menus inside the editor.
+ */
+
+interface MenuNavigationOptions {
+    /**
+     * The direction of the arrow key press.
+     *
+     * @defaultValue 'vertical';
+     */
+    direction?: MenuDirection;
+    /**
+     * Keys that can submit the selection.
+     *
+     * @defaultValue ['Enter']
+     */
+    submitKeys?: KeyBindingNames[];
+    /**
+     * Keys that can dismiss the menu.
+     *
+     * @defaultValue ['Escape', 'Tab', 'Shift-Tab']
+     */
+    dismissKeys?: KeyBindingNames[];
+    /**
+     * When true, refocus the editor when a click is made.
+     *
+     * @defaultValue true
+     */
+    focusOnClick?: boolean;
+}
+type MenuDirection = 'horizontal' | 'vertical';
+interface UseMenuNavigationReturn<Item = any> extends Pick<MultishiftPropGetters<Item>, 'getMenuProps' | 'getItemProps'>, Pick<MultishiftHelpers<Item>, 'itemIsSelected' | 'indexIsSelected' | 'indexIsHovered' | 'itemIsHovered'>, Pick<MultishiftState<Item>, 'hoveredIndex'> {
+    /**
+     * The selected index.
+     */
+    index: number;
+    setIndex: (index: number) => void;
+}
+
+interface MentionAtomState<Data extends MentionAtomNodeAttributes = MentionAtomNodeAttributes> extends Pick<SuggestChangeHandlerProps, 'name' | 'query' | 'text' | 'range'> {
+    /**
+     * The reason for the change.
+     */
+    reason: ChangeReason;
+    /**
+     * A command that will update the current matching region with the provided
+     * attributes. To see what can be accomplished please inspect the type of the attrs which should be passed through.
+     */
+    command: (attrs: Data) => void;
+}
+interface UseMentionAtomReturn<Data extends MentionAtomNodeAttributes = MentionAtomNodeAttributes> extends UseMenuNavigationReturn<Data> {
+    state: MentionAtomState<Data> | null;
+}
+/**
+ * A hook that provides the state for social mention atoms that responds to
+ * keybindings and key-presses from the user.
+ *
+ * The difference between this and the `useMention` is that `useMention` creates
+ * editable mentions that can be changed over an over again. This creates atom
+ * mention which are inserted into the editor as non editable nodes. Backspacing
+ * into this node will delete the whole mention.
+ *
+ * In order to properly support keybindings you will need to provide a list of
+ * data that is to be shown to the user. This allows for the user to press the
+ * arrow up and arrow down key.
+ *
+ * You can also add other supported attributes which will be added to the
+ * mention node, like `href` and whatever you decide upon.
+ *
+ * @param props - the props that can be passed through to the mention atom.
+ */
+declare function useMentionAtom<Data extends MentionAtomNodeAttributes = MentionAtomNodeAttributes>(props: UseMentionAtomProps<Data>): UseMentionAtomReturn<Data>;
+interface UseMentionAtomProps<Data extends MentionAtomNodeAttributes = MentionAtomNodeAttributes> extends MenuNavigationOptions, Pick<MentionAtomNodeAttributes, 'replacementType'> {
+    /**
+     * The list of data from which an index can be calculated. Must include at
+     * least an `id` and a `label`.
+     */
+    items: Data[];
+    /**
+     * Whether matches should be permanently ignored when the user dismisses the
+     * mention suggestion.
+     *
+     * @defaultValue true
+     */
+    ignoreMatchesOnDismiss?: boolean;
+}
+
+export { MentionAtomState, UseMentionAtomProps, UseMentionAtomReturn, useMentionAtom };

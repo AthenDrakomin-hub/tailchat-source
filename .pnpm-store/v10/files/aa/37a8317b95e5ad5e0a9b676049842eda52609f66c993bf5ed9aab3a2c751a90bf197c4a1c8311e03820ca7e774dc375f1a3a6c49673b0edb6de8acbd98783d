@@ -1,0 +1,11 @@
+import { FC, ReactNode } from 'react';
+import { CommandUiIcon, CoreIcon } from '@remirror/core';
+export interface CommandButtonIconProps {
+    icon: CoreIcon | JSX.Element | null;
+}
+export declare const CommandButtonIcon: FC<CommandButtonIconProps>;
+export interface CommandButtonBadgeProps {
+    icon?: CommandUiIcon | CoreIcon | JSX.Element | null;
+    children: ReactNode;
+}
+export declare const CommandButtonBadge: FC<CommandButtonBadgeProps>;

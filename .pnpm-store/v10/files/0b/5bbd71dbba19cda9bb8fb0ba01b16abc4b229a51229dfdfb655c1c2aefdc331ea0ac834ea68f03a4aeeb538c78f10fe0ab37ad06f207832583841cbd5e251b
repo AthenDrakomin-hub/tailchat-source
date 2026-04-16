@@ -1,0 +1,5 @@
+/// <reference types="node" />
+import { PerfseeReportStats } from './stats';
+export declare function resolveStatsPath(dir: string, regexp: RegExp): string | null;
+export declare function extractBundleFromStream(stream: NodeJS.ReadableStream, path: string): Promise<string>;
+export declare function readStatsFile(path: string): PerfseeReportStats;

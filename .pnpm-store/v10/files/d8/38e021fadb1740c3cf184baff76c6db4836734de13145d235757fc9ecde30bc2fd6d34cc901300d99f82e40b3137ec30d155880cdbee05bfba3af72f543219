@@ -1,0 +1,32 @@
+import { ApplySchemaAttributes, CommandFunction, Helper, MarkExtension, MarkExtensionSpec, MarkSpecOverride } from '@remirror/core';
+import { SetTextColorOptions, TextColorOptions } from './text-color-types';
+/**
+ * Wraps text with a styled span using the color css property. The name of the wrapper tag should be configurable.
+ */
+export declare class TextColorExtension extends MarkExtension<TextColorOptions> {
+    get name(): "textColor";
+    createTags(): ("formattingMark" | "fontStyle")[];
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    /**
+     * Set the text color value for the selected text.
+     *
+     * To remove the color you can set the value to null.
+     */
+    setTextColor(color: string, options?: SetTextColorOptions): CommandFunction;
+    /**
+     * Remove the color mark from the selection.
+     */
+    removeTextColor(options?: SetTextColorOptions): CommandFunction;
+    /**
+     * Get the color from the provided string. The string can be a computed
+     * property as well.
+     */
+    getHexColor(color: string): Helper<string>;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            textColor: TextColorExtension;
+        }
+    }
+}

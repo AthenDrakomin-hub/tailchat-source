@@ -1,0 +1,12 @@
+/**
+ * @module
+ *
+ * A formatter for code which can be consumed via
+ * `@remirror/extension-code-block/formatter`.
+ */
+import type { FormattedContent, FormatterProps } from './code-block-types';
+/**
+ * A prettier based code formatter which can be dropped in for use within the
+ * `CodeBlockExtension`.
+ */
+export declare function formatter(props: FormatterProps): FormattedContent | undefined;

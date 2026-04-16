@@ -1,0 +1,7 @@
+import { FC } from 'react';
+import { HeadingExtensionAttributes } from '@remirror/extension-heading';
+import { CommandMenuItemProps } from './command-menu-item';
+export interface ToggleHeadingMenuItemProps extends Omit<CommandMenuItemProps, 'commandName' | 'active' | 'enabled' | 'attrs' | 'onSelect'> {
+    attrs?: Partial<HeadingExtensionAttributes>;
+}
+export declare const ToggleHeadingMenuItem: FC<ToggleHeadingMenuItemProps>;

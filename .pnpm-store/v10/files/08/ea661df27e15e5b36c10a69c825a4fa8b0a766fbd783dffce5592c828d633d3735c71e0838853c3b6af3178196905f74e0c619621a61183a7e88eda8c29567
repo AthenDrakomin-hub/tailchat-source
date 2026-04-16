@@ -1,0 +1,46 @@
+{
+  "name": "@perfsee/plugin-utils",
+  "version": "1.0.0-alpha.4",
+  "description": "pertsuite plugin utilities",
+  "repository": "https://github.com/perfsee/perfsee",
+  "license": "Apache-2.0",
+  "keywords": [
+    "utils",
+    "perfsee"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "public",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "dependencies": {
+    "@msgpack/msgpack": "^2.7.2",
+    "@perfsee/bundle-analyzer": "1.0.0-alpha.4",
+    "@perfsee/utils": "1.0.0-alpha.3",
+    "chalk": "^4.1.2",
+    "debug": "4.3.4",
+    "env-ci": "^7.2.1",
+    "file-type": "^16.5.4",
+    "lodash": "^4.17.21",
+    "node-fetch": "^2.6.2",
+    "query-string": "^7.1.1",
+    "simple-git": "^3.10.0",
+    "table": "^6.8.0",
+    "tar": "^6.1.11",
+    "tslib": "^2.4.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/env-ci": "^3.1.1",
+    "@types/node-fetch": "^2.5.12",
+    "@types/table": "^6.3.2",
+    "@types/uuid": "^8.3.4"
+  },
+  "gitHead": "71252e424ebea84ec8b2ca616e545cc1177241c8"
+}

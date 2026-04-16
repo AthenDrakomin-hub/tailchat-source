@@ -1,0 +1,7 @@
+import type { Plugin } from 'rollup';
+import { InjectTraceIdJSXOptions } from 'source-ref-core';
+interface Options {
+    opener?: InjectTraceIdJSXOptions['opener'];
+}
+export default function sourceRef(options?: Options): Plugin;
+export {};

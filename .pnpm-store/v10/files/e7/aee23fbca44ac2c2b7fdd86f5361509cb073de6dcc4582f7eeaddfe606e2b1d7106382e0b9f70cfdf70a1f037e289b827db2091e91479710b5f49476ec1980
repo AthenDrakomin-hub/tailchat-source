@@ -1,0 +1,58 @@
+import { ApplySchemaAttributes, CommandFunction, InputRule, KeyBindingProps, NodeExtension, NodeExtensionSpec, NodeSpecOverride, NodeViewMethod } from '@remirror/core';
+import type { CalloutExtensionAttributes, CalloutOptions } from './callout-types';
+/**
+ * Adds a callout to the editor.
+ */
+export declare class CalloutExtension extends NodeExtension<CalloutOptions> {
+    get name(): "callout";
+    readonly tags: "block"[];
+    /**
+     * Defines the callout html structure.
+     * Adds the returned DOM node form `renderEmoji`  into it.
+     */
+    createNodeViews(): NodeViewMethod;
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    /**
+     * Create an input rule that listens for input of 3 colons followed
+     * by a valid callout type, to create a callout node
+     * If the callout type is invalid, the defaultType callout is created
+     */
+    createInputRules(): InputRule[];
+    /**
+     * Toggle the callout at the current selection. If you don't provide the
+     * type it will use the options.defaultType.
+     *
+     * If none exists one will be created or the existing callout content will be
+     * lifted out of the callout node.
+     *
+     * ```ts
+     * if (commands.toggleCallout.enabled()) {
+     *   commands.toggleCallout({ type: 'success' });
+     * }
+     * ```
+     */
+    toggleCallout(attributes?: CalloutExtensionAttributes): CommandFunction;
+    /**
+     * Update the callout at the current position. Primarily this is used
+     * to change the type.
+     *
+     * ```ts
+     * if (commands.updateCallout.enabled()) {
+     *   commands.updateCallout({ type: 'error' });
+     * }
+     * ```
+     */
+    updateCallout(attributes: CalloutExtensionAttributes, pos?: number): CommandFunction;
+    handleEnterKey({ dispatch, tr }: KeyBindingProps): boolean;
+    /**
+     * Handle the backspace key when deleting content.
+     */
+    handleBackspace({ dispatch, tr }: KeyBindingProps): boolean;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            callout: CalloutExtension;
+        }
+    }
+}

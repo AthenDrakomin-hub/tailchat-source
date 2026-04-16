@@ -1,0 +1,8 @@
+import type { LoaderContext } from 'webpack';
+import { InjectTraceIdJSXOptions } from 'source-ref-core';
+interface Options {
+    available?: boolean;
+    opener?: InjectTraceIdJSXOptions['opener'];
+}
+declare function loader(this: LoaderContext<Options>, source: string): Promise<void>;
+export default loader;

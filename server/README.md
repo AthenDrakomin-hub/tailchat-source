@@ -25,11 +25,14 @@ pnpm plugin:install com.msgbyte.tasks
 - docker-compose(或者docker compose plugin)
 
 
-在项目根目录下执行
+在项目根目录下执行（使用根目录的 docker-compose.yml 与 docker-compose.env）
 ```bash
 docker compose build # 需要编译
 docker compose up -d
 ```
+
+部署前请至少配置:
+- [docker-compose.env](file:///workspace/docker-compose.env) 中的 `SECRET`、`API_URL`、`ADMIN_PASS`
 
 ## DevOps
 

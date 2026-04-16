@@ -1,0 +1,15 @@
+# Installation
+> `npm install --save @types/react-canvas-draw`
+
+# Summary
+This package contains type definitions for react-canvas-draw (https://embiem.github.io/react-canvas-draw/).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react-canvas-draw.
+
+### Additional Details
+ * Last updated: Fri, 18 Oct 2024 20:36:43 GMT
+ * Dependencies: [@types/react](https://npmjs.com/package/@types/react)
+
+# Credits
+These definitions were written by [Kamil Socha](https://github.com/ksocha).

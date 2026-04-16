@@ -1,0 +1,9 @@
+import { I18n } from '@remirror/i18n';
+import { ColorPalette } from './text-color-types';
+export declare const setTextColorOptions: Remirror.CommandDecoratorOptions;
+/**
+ * The default color palette which uses css properties to update the colors.
+ */
+export declare function palette(t: I18n['_']): ColorPalette;
+export declare const CSS_VAR_REGEX: RegExp;
+export declare const TEXT_COLOR_ATTRIBUTE = "data-text-color-mark";

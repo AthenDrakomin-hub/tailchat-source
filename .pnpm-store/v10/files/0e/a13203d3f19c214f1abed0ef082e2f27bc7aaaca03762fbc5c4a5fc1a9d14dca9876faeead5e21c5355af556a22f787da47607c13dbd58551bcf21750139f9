@@ -1,0 +1,22 @@
+import { ApplySchemaAttributes, CommandFunction, KeyBindingProps, MarkExtension, MarkExtensionSpec, MarkSpecOverride } from '@remirror/core';
+export declare class SupExtension extends MarkExtension {
+    get name(): "sup";
+    createTags(): ("formattingMark" | "fontStyle")[];
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    /**
+     * Toggle the subscript formatting of the selected text.
+     */
+    toggleSuperscript(): CommandFunction;
+    /**
+     * Attach the keyboard shortcut for making text bold to this mark and also to
+     * the `toggleBold` command.
+     */
+    shortcut(props: KeyBindingProps): boolean;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            sup: SupExtension;
+        }
+    }
+}

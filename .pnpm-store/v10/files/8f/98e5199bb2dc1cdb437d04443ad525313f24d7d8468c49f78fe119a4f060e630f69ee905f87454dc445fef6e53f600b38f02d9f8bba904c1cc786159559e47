@@ -1,0 +1,18 @@
+import type { GlobalConfig, Plugin, PluginLoadError, PluginModuleError } from './types';
+export declare function applyConfig(config: GlobalConfig): void;
+/**
+ * get all pluginList
+ */
+export declare function getPluginList(): Record<string, Plugin>;
+/**
+ * get all pluginUrlPrefix
+ */
+export declare function getPluginUrlPrefix(): string;
+export declare function callPluginLoadError(error: PluginLoadError): void;
+export declare function callModuleLoadError(error: PluginModuleError): void;
+/**
+ * Get plugin url builder
+ * @default
+ * (pluginName) => `/plugins/${pluginName}/index.js`
+ */
+export declare function getFallbackPluginUrl(pluginName: string): string;

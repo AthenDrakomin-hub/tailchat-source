@@ -1,0 +1,43 @@
+export const ASSET_ENTRY_TYPE: "et";
+export const ASSET_CHUNK: "c";
+export const ASSET_FILE_TYPE: "ft";
+export const MODULE_CHUNK: "c";
+export const MODULE_FILE_TYPE: "mft";
+export const MODULE_SOURCE_TYPE: "mst";
+export namespace ASSET_FILTERS {
+    let OTHER: string;
+    let CHANGED: string;
+    let ENTRY: string;
+    let INITIAL: string;
+    let CHUNK: string;
+}
+export namespace MODULE_FILTERS {
+    let CHANGED_1: string;
+    export { CHANGED_1 as CHANGED };
+    export let DUPLICATED: string;
+    export let FIRST_PARTY: string;
+    export let THIRD_PARTY: string;
+    export let METRIC: string;
+}
+export namespace PACKAGE_FILTERS {
+    let CHANGED_2: string;
+    export { CHANGED_2 as CHANGED };
+    export let DUPLICATE: string;
+}
+export namespace SECTIONS {
+    let TOTALS: string;
+    let ASSETS: string;
+    let MODULES: string;
+    let PACKAGES: string;
+}
+export namespace COMPONENT {
+    let BUNDLE_ASSETS: string;
+    let BUNDLE_MODULES: string;
+    let BUNDLE_PACKAGES: string;
+}
+export namespace MODULE_SOURCE_TYPE_LABELS {
+    let FIRST_PARTY_1: string;
+    export { FIRST_PARTY_1 as FIRST_PARTY };
+    let THIRD_PARTY_1: string;
+    export { THIRD_PARTY_1 as THIRD_PARTY };
+}

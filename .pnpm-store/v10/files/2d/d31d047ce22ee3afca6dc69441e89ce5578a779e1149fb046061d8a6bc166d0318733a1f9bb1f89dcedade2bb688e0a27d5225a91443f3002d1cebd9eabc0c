@@ -1,0 +1,4 @@
+export interface FormattingOptions {
+}
+export declare const formattingPreset: (_?: FormattingOptions) => never[];
+export type TemplatePreset = ReturnType<typeof formattingPreset>;

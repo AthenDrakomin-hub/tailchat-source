@@ -1,0 +1,618 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-code-block/src/code-block-extension.ts
+import refractor2 from "refractor/core.js";
+import {
+  assertGet,
+  command,
+  extension,
+  ExtensionTag,
+  findNodeAtSelection,
+  findParentNodeOfType as findParentNodeOfType2,
+  getMatchString,
+  getStyle,
+  isElementDomNode,
+  isNodeActive,
+  isNodeOfType,
+  isTextSelection,
+  keyBinding,
+  NamedShortcut,
+  NodeExtension as NodeExtension2,
+  nodeInputRule,
+  removeNodeAtPosition,
+  replaceNodeAtPosition,
+  setBlockType,
+  toggleBlockItem
+} from "@remirror/core";
+import { keydownHandler } from "@remirror/pm/keymap";
+import { TextSelection as TextSelection2 } from "@remirror/pm/state";
+import { ExtensionCodeBlockTheme as Theme } from "@remirror/theme";
+
+// packages/remirror__extension-code-block/src/code-block-plugin.ts
+import {
+  findChildrenByNode,
+  getChangedNodes
+} from "@remirror/core";
+import { DecorationSet } from "@remirror/pm/view";
+
+// packages/remirror__extension-code-block/src/code-block-utils.ts
+import refractor from "refractor/core.js";
+import {
+  cx,
+  findParentNodeOfType,
+  flattenArray,
+  isEqual,
+  isObject,
+  isString,
+  joinStyles,
+  object,
+  omitExtraAttributes,
+  range
+} from "@remirror/core";
+import { ExtensionCodeBlockMessages } from "@remirror/messages";
+import { TextSelection } from "@remirror/pm/state";
+import { Decoration } from "@remirror/pm/view";
+var LANGUAGE_ATTRIBUTE = "data-code-block-language";
+function parseRefractorNodes(refractorNodes, plainTextClassName, className = []) {
+  return refractorNodes.map((node) => {
+    const classes = [...className];
+    if (node.type === "element" && node.properties.className) {
+      classes.push(...node.properties.className);
+    } else if (node.type === "text" && classes.length === 0 && plainTextClassName) {
+      classes.push(plainTextClassName);
+    }
+    if (node.type === "element") {
+      return parseRefractorNodes(node.children, plainTextClassName, classes);
+    }
+    return {
+      text: node.value,
+      classes
+    };
+  });
+}
+function getPositionedRefractorNodes(nodeWithPos, plainTextClassName) {
+  const { node, pos } = nodeWithPos;
+  const language = getLanguage({
+    language: node.attrs.language?.replace("language-", ""),
+    fallback: "markup"
+  });
+  const refractorNodes = refractor.highlight(node.textContent ?? "", language);
+  const parsedRefractorNodes = parseRefractorNodes(refractorNodes, plainTextClassName);
+  let startPos = pos + 1;
+  function mapper(refractorNode) {
+    const from = startPos;
+    const to = from + refractorNode.text.length;
+    startPos = to;
+    return {
+      ...refractorNode,
+      from,
+      to
+    };
+  }
+  return flattenArray(parsedRefractorNodes).map(mapper);
+}
+function createDecorations(props) {
+  const { blocks, skipLast, plainTextClassName } = props;
+  const decorations = [];
+  for (const block of blocks) {
+    const positionedRefractorNodes = getPositionedRefractorNodes(block, plainTextClassName);
+    const lastBlockLength = skipLast ? positionedRefractorNodes.length - 1 : positionedRefractorNodes.length;
+    for (const index of range(lastBlockLength)) {
+      const positionedRefractorNode = positionedRefractorNodes[index];
+      const classes = positionedRefractorNode?.classes;
+      if (!positionedRefractorNode || !classes?.length) {
+        continue;
+      }
+      const decoration = Decoration.inline(
+        positionedRefractorNode.from,
+        positionedRefractorNode.to,
+        {
+          class: classes.join(" ")
+        }
+      );
+      decorations.push(decoration);
+    }
+  }
+  return decorations;
+}
+function isValidCodeBlockAttributes(attributes) {
+  return !!(attributes && isObject(attributes) && isString(attributes.language) && attributes.language.length > 0);
+}
+function updateNodeAttributes(type) {
+  return (attributes) => ({ state: { tr, selection }, dispatch }) => {
+    if (!isValidCodeBlockAttributes(attributes)) {
+      throw new Error("Invalid attrs passed to the updateAttributes method");
+    }
+    const parent = findParentNodeOfType({ types: type, selection });
+    if (!parent || isEqual(attributes, parent.node.attrs)) {
+      return false;
+    }
+    tr.setNodeMarkup(parent.pos, type, { ...parent.node.attrs, ...attributes });
+    if (dispatch) {
+      dispatch(tr);
+    }
+    return true;
+  };
+}
+function getLanguage(props) {
+  const { language, fallback } = props;
+  if (!language) {
+    return fallback;
+  }
+  const supportedLanguages = refractor.listLanguages();
+  for (const name of supportedLanguages) {
+    if (name.toLowerCase() === language.toLowerCase()) {
+      return name;
+    }
+  }
+  return fallback;
+}
+function codeBlockToDOM(node, extra) {
+  const { language, wrap } = omitExtraAttributes(node.attrs, extra);
+  const { style: _, ...extraAttrs } = extra.dom(node);
+  let style = extraAttrs.style;
+  if (wrap) {
+    style = joinStyles({ whiteSpace: "pre-wrap", wordBreak: "break-all" }, style);
+  }
+  const attributes = {
+    spellcheck: "false",
+    ...extraAttrs,
+    class: cx(extraAttrs.class, `language-${language}`)
+  };
+  return ["pre", attributes, ["code", { [LANGUAGE_ATTRIBUTE]: language, style }, 0]];
+}
+function formatCodeBlockFactory(props) {
+  return ({ pos } = object()) => ({ tr, dispatch }) => {
+    const { type, formatter, defaultLanguage: fallback } = props;
+    const { from, to } = pos ? { from: pos, to: pos } : tr.selection;
+    const codeBlock = findParentNodeOfType({ types: type, selection: tr.selection });
+    if (!codeBlock) {
+      return false;
+    }
+    const {
+      node: { attrs, textContent },
+      start
+    } = codeBlock;
+    const offsetStart = from - start;
+    const offsetEnd = to - start;
+    const language = getLanguage({ language: attrs.language, fallback });
+    const formatStart = formatter({ source: textContent, language, cursorOffset: offsetStart });
+    let formatEnd;
+    if (offsetStart !== offsetEnd) {
+      formatEnd = formatter({ source: textContent, language, cursorOffset: offsetEnd });
+    }
+    if (!formatStart) {
+      return false;
+    }
+    const { cursorOffset, formatted } = formatStart;
+    if (formatted === textContent) {
+      return false;
+    }
+    const end = start + textContent.length;
+    tr.insertText(formatted, start, end);
+    const anchor = start + cursorOffset;
+    const head = formatEnd ? start + formatEnd.cursorOffset : void 0;
+    tr.setSelection(
+      TextSelection.between(tr.doc.resolve(anchor), tr.doc.resolve(head ?? anchor))
+    );
+    if (dispatch) {
+      dispatch(tr);
+    }
+    return true;
+  };
+}
+function getLanguageFromDom(codeElement) {
+  return (codeElement.getAttribute(LANGUAGE_ATTRIBUTE) ?? codeElement.classList[0])?.replace(
+    "language-",
+    ""
+  );
+}
+var { DESCRIPTION, LABEL } = ExtensionCodeBlockMessages;
+var toggleCodeBlockOptions = {
+  icon: "bracesLine",
+  description: ({ t }) => t(DESCRIPTION),
+  label: ({ t }) => t(LABEL)
+};
+
+// packages/remirror__extension-code-block/src/code-block-plugin.ts
+var CodeBlockState = class {
+  #extension;
+  /**
+   * Keep track of the node type of the `codeBlock`
+   */
+  #type;
+  /**
+   * Tracks whether or not a deletion has occurred.
+   */
+  #deleted = false;
+  /**
+   * The set of cached decorations to minimize dom updates
+   */
+  decorationSet;
+  constructor(type, extension2) {
+    this.#type = type;
+    this.#extension = extension2;
+  }
+  /**
+   * Creates the initial set of decorations
+   */
+  init(state) {
+    const blocks = findChildrenByNode({ node: state.doc, type: this.#type });
+    this.refreshDecorationSet(state.doc, blocks);
+    return this;
+  }
+  /**
+   * Recreate all the decorations again for all the provided blocks.
+   */
+  refreshDecorationSet(doc, blocks) {
+    const decorations = createDecorations({
+      blocks,
+      skipLast: this.#deleted,
+      defaultLanguage: this.#extension.options.defaultLanguage,
+      plainTextClassName: this.#extension.options.plainTextClassName ?? void 0
+    });
+    this.decorationSet = DecorationSet.create(doc, decorations);
+  }
+  /**
+   * Apply the state and update decorations when a change has happened in the
+   * editor.
+   */
+  apply(tr, _) {
+    if (!tr.docChanged) {
+      return this;
+    }
+    this.decorationSet = this.decorationSet.map(tr.mapping, tr.doc);
+    const changedNodes = getChangedNodes(tr, {
+      descend: true,
+      predicate: (node) => node.type === this.#type,
+      StepTypes: []
+    });
+    this.updateDecorationSet(tr, changedNodes);
+    return this;
+  }
+  /**
+   * Removes all decorations which relate to the changed block node before creating new decorations
+   * and adding them to the decorationSet.
+   */
+  updateDecorationSet(tr, blocks) {
+    if (blocks.length === 0) {
+      return;
+    }
+    let decorationSet = this.decorationSet;
+    for (const { node, pos } of blocks) {
+      decorationSet = this.decorationSet.remove(this.decorationSet.find(pos, pos + node.nodeSize));
+    }
+    this.decorationSet = decorationSet.add(
+      tr.doc,
+      createDecorations({
+        blocks,
+        skipLast: this.#deleted,
+        defaultLanguage: this.#extension.options.defaultLanguage,
+        plainTextClassName: this.#extension.options.plainTextClassName ?? void 0
+      })
+    );
+  }
+  /**
+   * Flags that a deletion has just occurred.
+   */
+  setDeleted(deleted) {
+    this.#deleted = deleted;
+  }
+};
+
+// packages/remirror__extension-code-block/src/code-block-extension.ts
+var CodeBlockExtension = class extends NodeExtension2 {
+  get name() {
+    return "codeBlock";
+  }
+  createTags() {
+    return [ExtensionTag.Block, ExtensionTag.Code];
+  }
+  /**
+   * Add the languages to the environment if they have not yet been added.
+   */
+  init() {
+    this.registerLanguages();
+  }
+  createNodeSpec(extra, override) {
+    const githubHighlightRegExp = /highlight-(?:text|source)-([\da-z]+)/;
+    return {
+      content: "text*",
+      marks: "",
+      defining: true,
+      draggable: false,
+      ...override,
+      code: true,
+      attrs: {
+        ...extra.defaults(),
+        language: { default: this.options.defaultLanguage },
+        wrap: { default: this.options.defaultWrap }
+      },
+      parseDOM: [
+        // Add support for github code blocks.
+        {
+          tag: "div.highlight",
+          preserveWhitespace: "full",
+          getAttrs: (node) => {
+            if (!isElementDomNode(node)) {
+              return false;
+            }
+            const codeElement = node.querySelector("pre.code");
+            if (!isElementDomNode(codeElement)) {
+              return false;
+            }
+            const wrap = getStyle(codeElement, "white-space") === "pre-wrap";
+            const language = node.className.match(githubHighlightRegExp)?.[1]?.replace("language-", "");
+            return { ...extra.parse(node), language, wrap };
+          }
+        },
+        {
+          tag: "pre",
+          preserveWhitespace: "full",
+          getAttrs: (node) => {
+            if (!isElementDomNode(node)) {
+              return false;
+            }
+            const codeElement = node.querySelector("code");
+            if (!isElementDomNode(codeElement)) {
+              return false;
+            }
+            const wrap = getStyle(codeElement, "white-space") === "pre-wrap";
+            const language = this.options.getLanguageFromDom(codeElement, node);
+            return { ...extra.parse(node), language, wrap };
+          }
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => codeBlockToDOM(node, extra)
+    };
+  }
+  /**
+   * Add the syntax theme class to the editor.
+   */
+  createAttributes() {
+    return { class: Theme[this.options.syntaxTheme.toUpperCase()] };
+  }
+  /**
+   * Create an input rule that listens converts the code fence into a code block
+   * when typing triple back tick followed by a space.
+   */
+  createInputRules() {
+    const regexp = /^```([\dA-Za-z]*) $/;
+    const getAttributes = (match) => {
+      const language = getLanguage({
+        language: getMatchString(match, 1),
+        fallback: this.options.defaultLanguage
+      });
+      return { language };
+    };
+    return [
+      nodeInputRule({
+        regexp,
+        type: this.type,
+        beforeDispatch: ({ tr, start }) => {
+          const $pos = tr.doc.resolve(start);
+          tr.setSelection(TextSelection2.near($pos));
+        },
+        getAttributes
+      })
+    ];
+  }
+  onSetOptions(props) {
+    const { changes } = props;
+    if (changes.supportedLanguages.changed) {
+      this.registerLanguages();
+    }
+    if (changes.syntaxTheme.changed) {
+      this.store.updateAttributes();
+    }
+  }
+  /**
+   * Create the custom code block plugin which handles the delete key amongst other things.
+   */
+  createPlugin() {
+    const pluginState = new CodeBlockState(this.type, this);
+    const handler = () => {
+      pluginState.setDeleted(true);
+      return false;
+    };
+    return {
+      state: {
+        init(_, state) {
+          return pluginState.init(state);
+        },
+        apply(tr, _, __, state) {
+          return pluginState.apply(tr, state);
+        }
+      },
+      props: {
+        handleKeyDown: keydownHandler({
+          Backspace: handler,
+          "Mod-Backspace": handler,
+          Delete: handler,
+          "Mod-Delete": handler,
+          "Ctrl-h": handler,
+          "Alt-Backspace": handler,
+          "Ctrl-d": handler,
+          "Ctrl-Alt-Backspace": handler,
+          "Alt-Delete": handler,
+          "Alt-d": handler
+        }),
+        decorations() {
+          pluginState.setDeleted(false);
+          return pluginState.decorationSet;
+        }
+      }
+    };
+  }
+  toggleCodeBlock(attributes = {}) {
+    return toggleBlockItem({
+      type: this.type,
+      toggleType: this.options.toggleName,
+      attrs: { language: this.options.defaultLanguage, ...attributes }
+    });
+  }
+  createCodeBlock(attributes) {
+    return setBlockType(this.type, attributes);
+  }
+  updateCodeBlock(attributes) {
+    return updateNodeAttributes(this.type)(attributes);
+  }
+  formatCodeBlock(props) {
+    return formatCodeBlockFactory({
+      type: this.type,
+      formatter: this.options.formatter,
+      defaultLanguage: this.options.defaultLanguage
+    })(props);
+  }
+  tabKey({ state, dispatch }) {
+    const { selection, tr, schema } = state;
+    const { node } = findNodeAtSelection(selection);
+    if (!isNodeOfType({ node, types: this.type })) {
+      return false;
+    }
+    if (selection.empty) {
+      tr.insertText("	");
+    } else {
+      const { from, to } = selection;
+      tr.replaceWith(from, to, schema.text("	"));
+    }
+    if (dispatch) {
+      dispatch(tr);
+    }
+    return true;
+  }
+  backspaceKey({ dispatch, tr, state }) {
+    if (!tr.selection.empty) {
+      return false;
+    }
+    const parent = findParentNodeOfType2({ types: this.type, selection: tr.selection });
+    if (parent?.start !== tr.selection.from) {
+      return false;
+    }
+    const { pos, node, start } = parent;
+    const toggleNode = assertGet(state.schema.nodes, this.options.toggleName);
+    if (node.textContent.trim() === "") {
+      if (tr.doc.lastChild === node && tr.doc.firstChild === node) {
+        replaceNodeAtPosition({ pos, tr, content: toggleNode.create() });
+      } else {
+        removeNodeAtPosition({ pos, tr });
+      }
+    } else if (start > 2) {
+      tr.setSelection(TextSelection2.near(tr.doc.resolve(start - 2)));
+    } else {
+      tr.insert(0, toggleNode.create());
+      tr.setSelection(TextSelection2.near(tr.doc.resolve(1)));
+    }
+    if (dispatch) {
+      dispatch(tr);
+    }
+    return true;
+  }
+  enterKey({ dispatch, tr }) {
+    if (!(isTextSelection(tr.selection) && tr.selection.empty)) {
+      return false;
+    }
+    const { nodeBefore, parent } = tr.selection.$anchor;
+    if (!nodeBefore?.isText || !parent.type.isTextblock) {
+      return false;
+    }
+    const regex = /^```([A-Za-z]*)?$/;
+    const { text, nodeSize } = nodeBefore;
+    const { textContent } = parent;
+    if (!text) {
+      return false;
+    }
+    const matchesNodeBefore = text.match(regex);
+    const matchesParent = textContent.match(regex);
+    if (!matchesNodeBefore || !matchesParent) {
+      return false;
+    }
+    const [, lang] = matchesNodeBefore;
+    const language = getLanguage({
+      language: lang,
+      fallback: this.options.defaultLanguage
+    });
+    const pos = tr.selection.$from.before();
+    const end = pos + nodeSize + 1;
+    tr.replaceWith(pos, end, this.type.create({ language }));
+    tr.setSelection(TextSelection2.near(tr.doc.resolve(pos + 1)));
+    if (dispatch) {
+      dispatch(tr);
+    }
+    return true;
+  }
+  formatShortcut({ tr }) {
+    const commands = this.store.commands;
+    if (!isNodeActive({ type: this.type, state: tr })) {
+      return false;
+    }
+    const enabled = commands.formatCodeBlock.isEnabled();
+    if (enabled) {
+      commands.formatCodeBlock();
+    }
+    return enabled;
+  }
+  /**
+   * Register passed in languages.
+   */
+  registerLanguages() {
+    for (const language of this.options.supportedLanguages) {
+      refractor2.register(language);
+    }
+  }
+};
+__decorateClass([
+  command(toggleCodeBlockOptions)
+], CodeBlockExtension.prototype, "toggleCodeBlock", 1);
+__decorateClass([
+  command()
+], CodeBlockExtension.prototype, "createCodeBlock", 1);
+__decorateClass([
+  command()
+], CodeBlockExtension.prototype, "updateCodeBlock", 1);
+__decorateClass([
+  command()
+], CodeBlockExtension.prototype, "formatCodeBlock", 1);
+__decorateClass([
+  keyBinding({ shortcut: "Tab" })
+], CodeBlockExtension.prototype, "tabKey", 1);
+__decorateClass([
+  keyBinding({ shortcut: "Backspace" })
+], CodeBlockExtension.prototype, "backspaceKey", 1);
+__decorateClass([
+  keyBinding({ shortcut: "Enter" })
+], CodeBlockExtension.prototype, "enterKey", 1);
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.Format })
+], CodeBlockExtension.prototype, "formatShortcut", 1);
+CodeBlockExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      supportedLanguages: [],
+      toggleName: "paragraph",
+      formatter: ({ source }) => ({ cursorOffset: 0, formatted: source }),
+      syntaxTheme: "a11y_dark",
+      defaultLanguage: "markup",
+      defaultWrap: false,
+      // See https://github.com/remirror/remirror/issues/624 for the ''
+      plainTextClassName: "",
+      getLanguageFromDom
+    },
+    staticKeys: ["getLanguageFromDom"]
+  })
+], CodeBlockExtension);
+export {
+  CodeBlockExtension,
+  getLanguage
+};

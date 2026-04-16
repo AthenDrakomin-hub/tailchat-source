@@ -1,0 +1,6 @@
+import { FC, ReactNode } from 'react';
+export interface TextAlignmentButtonGroupProps {
+    showAll?: boolean;
+    children?: ReactNode | ReactNode[];
+}
+export declare const TextAlignmentButtonGroup: FC<TextAlignmentButtonGroupProps>;

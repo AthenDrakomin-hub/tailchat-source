@@ -1,0 +1,66 @@
+// packages/remirror__pm/src/extra/pm-utils.ts
+import { ErrorConstant } from "@remirror/core-constants";
+import { invariant, object } from "@remirror/core-helpers";
+function chainableEditorState(tr, state) {
+  const proto = Object.getPrototypeOf(state);
+  let selection = tr.selection;
+  let doc = tr.doc;
+  let storedMarks = tr.storedMarks;
+  const properties = object();
+  for (const [key, value] of Object.entries(state)) {
+    properties[key] = { value };
+  }
+  return Object.create(proto, {
+    ...properties,
+    storedMarks: {
+      get() {
+        return storedMarks;
+      }
+    },
+    selection: {
+      get() {
+        return selection;
+      }
+    },
+    doc: {
+      get() {
+        return doc;
+      }
+    },
+    tr: {
+      get() {
+        selection = tr.selection;
+        doc = tr.doc;
+        storedMarks = tr.storedMarks;
+        return tr;
+      }
+    }
+  });
+}
+function convertCommand(commandFunction) {
+  return ({ state, dispatch, view, tr }) => commandFunction(chainableEditorState(tr, state), dispatch, view);
+}
+function nonChainable(commandFunction) {
+  return (props) => {
+    invariant(props.dispatch === void 0 || props.dispatch === props.view?.dispatch, {
+      code: ErrorConstant.NON_CHAINABLE_COMMAND
+    });
+    return commandFunction(props);
+  };
+}
+function chainCommands(...commands) {
+  return ({ state, dispatch, view, tr, ...rest }) => {
+    for (const element of commands) {
+      if (element({ state, dispatch, view, tr, ...rest })) {
+        return true;
+      }
+    }
+    return false;
+  };
+}
+export {
+  chainCommands,
+  chainableEditorState,
+  convertCommand,
+  nonChainable
+};

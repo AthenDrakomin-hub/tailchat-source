@@ -1,0 +1,19 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.readJSONStream = void 0;
+const fs_1 = require("fs");
+const stream_json_1 = require("stream-json");
+const stream_chain_1 = require("stream-chain");
+const Assembler_1 = __importDefault(require("stream-json/Assembler"));
+const readJSONStream = (filepath) => {
+    const pipeline = (0, stream_chain_1.chain)([(0, fs_1.createReadStream)(filepath), (0, stream_json_1.parser)()]);
+    const asm = Assembler_1.default.connectTo(pipeline);
+    return new Promise((fulfill) => {
+        asm.on('done', (data) => fulfill(data.current));
+    });
+};
+exports.readJSONStream = readJSONStream;
+//# sourceMappingURL=fs.js.map

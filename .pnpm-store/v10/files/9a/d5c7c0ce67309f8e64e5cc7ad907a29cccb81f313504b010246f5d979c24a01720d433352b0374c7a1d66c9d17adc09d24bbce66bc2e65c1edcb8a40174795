@@ -1,0 +1,106 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-placeholder/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  PlaceholderExtension: () => PlaceholderExtension
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-placeholder/src/placeholder-extension.ts
+var import_core = require("@remirror/core");
+var import_view = require("@remirror/pm/view");
+var import_theme = require("@remirror/theme");
+var PlaceholderExtension = class extends import_core.PlainExtension {
+  get name() {
+    return "placeholder";
+  }
+  createAttributes() {
+    return { "aria-placeholder": this.options.placeholder };
+  }
+  createPlugin() {
+    return {
+      state: {
+        init: (_, state) => ({
+          ...this.options,
+          empty: (0, import_core.isDefaultDocNode)(state.doc, { ignoreAttributes: true })
+        }),
+        apply: (tr, pluginState, _, state) => {
+          return applyState({ pluginState, tr, extension: this, state });
+        }
+      },
+      props: {
+        decorations: (state) => {
+          return createDecorationSet({ state, extension: this });
+        }
+      }
+    };
+  }
+  onSetOptions(props) {
+    const { changes } = props;
+    if (changes.placeholder.changed && this.store.phase >= import_core.ManagerPhase.EditorView) {
+      this.store.updateAttributes();
+    }
+  }
+};
+PlaceholderExtension = __decorateClass([
+  (0, import_core.extension)({
+    defaultOptions: {
+      emptyNodeClass: import_theme.ExtensionPlaceholderTheme.IS_EMPTY,
+      placeholder: ""
+    }
+  })
+], PlaceholderExtension);
+function applyState(props) {
+  const { pluginState, extension: extension2, tr, state } = props;
+  if (!tr.docChanged) {
+    return pluginState;
+  }
+  return { ...extension2.options, empty: (0, import_core.isDefaultDocNode)(state.doc) };
+}
+function createDecorationSet(props) {
+  const { extension: extension2, state } = props;
+  const { empty } = extension2.pluginKey.getState(state);
+  const { emptyNodeClass, placeholder } = extension2.options;
+  if (!empty) {
+    return null;
+  }
+  const decorations = [];
+  state.doc.descendants((node, pos) => {
+    const decoration = import_view.Decoration.node(pos, pos + node.nodeSize, {
+      class: emptyNodeClass,
+      "data-placeholder": placeholder
+    });
+    decorations.push(decoration);
+  });
+  return import_view.DecorationSet.create(state.doc, decorations);
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  PlaceholderExtension
+});

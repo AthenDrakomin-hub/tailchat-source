@@ -1,0 +1,96 @@
+"use strict";
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// packages/remirror__pm/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  chainCommands: () => chainCommands,
+  chainableEditorState: () => chainableEditorState,
+  convertCommand: () => convertCommand,
+  nonChainable: () => nonChainable
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__pm/src/extra/pm-utils.ts
+var import_core_constants = require("@remirror/core-constants");
+var import_core_helpers = require("@remirror/core-helpers");
+function chainableEditorState(tr, state) {
+  const proto = Object.getPrototypeOf(state);
+  let selection = tr.selection;
+  let doc = tr.doc;
+  let storedMarks = tr.storedMarks;
+  const properties = (0, import_core_helpers.object)();
+  for (const [key, value] of Object.entries(state)) {
+    properties[key] = { value };
+  }
+  return Object.create(proto, {
+    ...properties,
+    storedMarks: {
+      get() {
+        return storedMarks;
+      }
+    },
+    selection: {
+      get() {
+        return selection;
+      }
+    },
+    doc: {
+      get() {
+        return doc;
+      }
+    },
+    tr: {
+      get() {
+        selection = tr.selection;
+        doc = tr.doc;
+        storedMarks = tr.storedMarks;
+        return tr;
+      }
+    }
+  });
+}
+function convertCommand(commandFunction) {
+  return ({ state, dispatch, view, tr }) => commandFunction(chainableEditorState(tr, state), dispatch, view);
+}
+function nonChainable(commandFunction) {
+  return (props) => {
+    (0, import_core_helpers.invariant)(props.dispatch === void 0 || props.dispatch === props.view?.dispatch, {
+      code: import_core_constants.ErrorConstant.NON_CHAINABLE_COMMAND
+    });
+    return commandFunction(props);
+  };
+}
+function chainCommands(...commands) {
+  return ({ state, dispatch, view, tr, ...rest }) => {
+    for (const element of commands) {
+      if (element({ state, dispatch, view, tr, ...rest })) {
+        return true;
+      }
+    }
+    return false;
+  };
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  chainCommands,
+  chainableEditorState,
+  convertCommand,
+  nonChainable
+});

@@ -1,0 +1,8 @@
+import type { StatsCompilation } from 'webpack';
+/**
+ * 提取数据
+ */
+export declare function extractData(source: StatsCompilation): {
+    entrypoints: import("webpack").StatsChunkGroup[];
+    chunks: import("webpack").StatsChunk[];
+};

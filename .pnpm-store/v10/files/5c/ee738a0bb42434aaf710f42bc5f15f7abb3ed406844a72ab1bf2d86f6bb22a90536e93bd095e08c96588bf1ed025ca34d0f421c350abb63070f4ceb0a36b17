@@ -1,0 +1,124 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-bold/src/bold-extension.ts
+import {
+  command,
+  extension,
+  ExtensionTag,
+  getTextSelection,
+  isElementDomNode,
+  isString,
+  keyBinding,
+  MarkExtension,
+  markInputRule,
+  NamedShortcut,
+  toggleMark
+} from "@remirror/core";
+import { ExtensionBoldMessages as Messages } from "@remirror/messages";
+var toggleBoldOptions = {
+  icon: "bold",
+  label: ({ t }) => t(Messages.LABEL),
+  description: ({ t }) => t(Messages.DESCRIPTION)
+};
+var BoldExtension = class extends MarkExtension {
+  get name() {
+    return "bold";
+  }
+  createTags() {
+    return [ExtensionTag.FormattingMark, ExtensionTag.FontStyle];
+  }
+  createMarkSpec(extra, override) {
+    return {
+      ...override,
+      attrs: extra.defaults(),
+      parseDOM: [
+        {
+          tag: "strong",
+          getAttrs: extra.parse
+        },
+        // This works around a Google Docs misbehavior where
+        // pasted content will be inexplicably wrapped in `<b>`
+        // tags with a font-weight normal.
+        {
+          tag: "b",
+          getAttrs: (node) => isElementDomNode(node) && node.style.fontWeight !== "normal" ? extra.parse(node) : false
+        },
+        {
+          style: "font-weight",
+          getAttrs: (node) => isString(node) && /^(bold(er)?|[5-9]\d{2,})$/.test(node) ? null : false
+        },
+        ...override.parseDOM ?? []
+      ],
+      toDOM: (node) => {
+        const { weight } = this.options;
+        if (weight) {
+          return ["strong", { "font-weight": weight.toString() }, 0];
+        }
+        return ["strong", extra.dom(node), 0];
+      }
+    };
+  }
+  createInputRules() {
+    return [
+      markInputRule({
+        regexp: /(?:\*\*|__)([^*_]+)(?:\*\*|__)$/,
+        type: this.type,
+        ignoreWhitespace: true
+      })
+    ];
+  }
+  toggleBold(selection) {
+    return toggleMark({ type: this.type, selection });
+  }
+  setBold(selection) {
+    return ({ tr, dispatch }) => {
+      const { from, to } = getTextSelection(selection ?? tr.selection, tr.doc);
+      dispatch == null ? void 0 : dispatch(tr.addMark(from, to, this.type.create()));
+      return true;
+    };
+  }
+  removeBold(selection) {
+    return ({ tr, dispatch }) => {
+      const { from, to } = getTextSelection(selection ?? tr.selection, tr.doc);
+      if (!tr.doc.rangeHasMark(from, to, this.type)) {
+        return false;
+      }
+      dispatch == null ? void 0 : dispatch(tr.removeMark(from, to, this.type));
+      return true;
+    };
+  }
+  shortcut(props) {
+    return this.toggleBold()(props);
+  }
+};
+__decorateClass([
+  command(toggleBoldOptions)
+], BoldExtension.prototype, "toggleBold", 1);
+__decorateClass([
+  command()
+], BoldExtension.prototype, "setBold", 1);
+__decorateClass([
+  command()
+], BoldExtension.prototype, "removeBold", 1);
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.Bold, command: "toggleBold" })
+], BoldExtension.prototype, "shortcut", 1);
+BoldExtension = __decorateClass([
+  extension({
+    defaultOptions: { weight: void 0 },
+    staticKeys: ["weight"]
+  })
+], BoldExtension);
+export {
+  BoldExtension
+};

@@ -1,0 +1,1 @@
+export declare const catchModuleVersionFromRequest: (request: any, modules: Map<string, string>, buildPath: string, repoPath: string) => void;

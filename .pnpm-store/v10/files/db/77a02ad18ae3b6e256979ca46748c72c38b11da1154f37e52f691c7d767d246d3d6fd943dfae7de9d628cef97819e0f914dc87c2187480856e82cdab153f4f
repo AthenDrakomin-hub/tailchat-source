@@ -1,0 +1,574 @@
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TailchatMeetingClient = void 0;
+var signaling_1 = require("./signaling");
+var logger_1 = require("../helper/logger");
+var media_1 = require("./media");
+var device_1 = require("./device");
+var consts_1 = require("../consts");
+var error_1 = require("../error");
+var settings_1 = require("./settings");
+var encodings_1 = require("../helper/encodings");
+var eventemitter_strict_1 = require("eventemitter-strict");
+var room_1 = require("./room");
+var logger = new logger_1.Logger('client');
+var TailchatMeetingClient = /** @class */ (function (_super) {
+    __extends(TailchatMeetingClient, _super);
+    /**
+     * @param signalingHost 信令服务器地址，形如: wss://xxxx.com:443
+     * @param peerId 用户的唯一标识
+     */
+    function TailchatMeetingClient(signalingHost, peerId) {
+        var _this = _super.call(this) || this;
+        _this.signalingHost = signalingHost;
+        _this.peerId = peerId;
+        _this.device = new device_1.DeviceClient();
+        _this.closed = false;
+        _this.settings = __assign({}, settings_1.defaultSettings);
+        return _this;
+    }
+    /**
+     * 加入房间
+     */
+    TailchatMeetingClient.prototype.join = function (roomId, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var signalingUrl, _a, authenticated, roles, peers, tracker, roomPermissions, userRoles, allowWhenRoleMissing, chatHistory, fileHistory, lastNHistory, locked, lobbyPeers, accessCode;
+            var _this = this;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        logger.debug('join(): %s %o', roomId, options);
+                        signalingUrl = "".concat(this.signalingHost, "/?peerId=").concat(this.peerId, "&roomId=").concat(roomId);
+                        this.signaling = new signaling_1.SignalingClient();
+                        this.signaling.connect({ url: signalingUrl });
+                        this.signaling.on('disconnect', function () {
+                            _this.close();
+                        });
+                        this.media = new media_1.MediaClient(this.signaling);
+                        return [4 /*yield*/, this.media.createTransports()];
+                    case 1:
+                        _b.sent();
+                        return [4 /*yield*/, this.signaling.sendRequest('join', {
+                                displayName: options.displayName,
+                                picture: options.picture,
+                                from: options.from,
+                                rtpCapabilities: this.media.rtpCapabilities,
+                                // returning: options.returning, //TODO: 不知道什么用，暂时保留
+                            })];
+                    case 2:
+                        _a = _b.sent(), authenticated = _a.authenticated, roles = _a.roles, peers = _a.peers, tracker = _a.tracker, roomPermissions = _a.roomPermissions, userRoles = _a.userRoles, allowWhenRoleMissing = _a.allowWhenRoleMissing, chatHistory = _a.chatHistory, fileHistory = _a.fileHistory, lastNHistory = _a.lastNHistory, locked = _a.locked, lobbyPeers = _a.lobbyPeers, accessCode = _a.accessCode;
+                        this.room = new room_1.RoomClient(this.signaling);
+                        this.room.init({
+                            peers: peers,
+                            lobbyPeers: lobbyPeers,
+                        });
+                        logger.debug('_joinRoom() joined [authenticated:"%s", peers:"%o", roles:"%o", userRoles:"%o"]', authenticated, peers, roles, userRoles);
+                        if (options.video) {
+                            this.enableWebcam();
+                        }
+                        if (options.audio) {
+                            this.enableMic();
+                        }
+                        console.log('roomInfo:', {
+                            authenticated: authenticated,
+                            roles: roles,
+                            peers: peers,
+                            tracker: tracker,
+                            roomPermissions: roomPermissions,
+                            userRoles: userRoles,
+                            allowWhenRoleMissing: allowWhenRoleMissing,
+                            chatHistory: chatHistory,
+                            fileHistory: fileHistory,
+                            lastNHistory: lastNHistory,
+                            locked: locked,
+                            lobbyPeers: lobbyPeers,
+                            accessCode: accessCode,
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * 关闭客户端
+     */
+    TailchatMeetingClient.prototype.close = function () {
+        var _a, _b;
+        if (this.closed) {
+            return;
+        }
+        this.closed = true;
+        (_a = this.signaling) === null || _a === void 0 ? void 0 : _a.disconnect();
+        (_b = this.media) === null || _b === void 0 ? void 0 : _b.close();
+        this.emit('clientClose');
+    };
+    /**
+     * 获取所有可用设备
+     * @returns
+     */
+    TailchatMeetingClient.prototype.getAvailableMediaDevices = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.device.updateMediaDevices()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, this.device.allDevices];
+                }
+            });
+        });
+    };
+    Object.defineProperty(TailchatMeetingClient.prototype, "webcamEnabled", {
+        get: function () {
+            return !!this.currentWebcamProducer;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    TailchatMeetingClient.prototype.enableWebcam = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        logger.debug('enableWebcam()');
+                        return [4 /*yield*/, this.updateWebcam({ init: true, start: true })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    TailchatMeetingClient.prototype.disableWebcam = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                logger.debug('disableWebcam()');
+                if (!this.media) {
+                    throw new error_1.InitClientError();
+                }
+                if (!this.currentWebcamProducer) {
+                    return [2 /*return*/];
+                }
+                this.media.changeProducer(this.currentWebcamProducer.id, 'close');
+                this.emit('webcamClose', this.currentWebcamProducer.id);
+                this.currentWebcamProducer = undefined;
+                return [2 /*return*/];
+            });
+        });
+    };
+    /**
+     * 更新摄像头
+     */
+    TailchatMeetingClient.prototype.updateWebcam = function (_a) {
+        var _b;
+        var _c = _a === void 0 ? {} : _a, _d = _c.init, init = _d === void 0 ? false : _d, _e = _c.start, start = _e === void 0 ? false : _e, _f = _c.restart, restart = _f === void 0 ? false : _f, _g = _c.newDeviceId, newDeviceId = _g === void 0 ? null : _g, _h = _c.newResolution, newResolution = _h === void 0 ? null : _h, _j = _c.newFrameRate, newFrameRate = _j === void 0 ? null : _j, _k = _c.selectedVideoDevice, selectedVideoDevice = _k === void 0 ? '' : _k;
+        return __awaiter(this, void 0, void 0, function () {
+            var track, webcamProducer, deviceId, stream, _l, trackDeviceId, width, height, encodings, resolutionScalings, err_1;
+            return __generator(this, function (_m) {
+                switch (_m.label) {
+                    case 0:
+                        logger.debug('updateWebcam() [start:"%s", restart:"%s", newDeviceId:"%s", newResolution:"%s", newFrameRate:"%s"]', start, restart, newDeviceId, newResolution, newFrameRate);
+                        if (!this.media) {
+                            throw new error_1.InitClientError();
+                        }
+                        _m.label = 1;
+                    case 1:
+                        _m.trys.push([1, 14, , 15]);
+                        if (!this.media.mediaCapabilities.canSendWebcam) {
+                            throw new Error('cannot produce video');
+                        }
+                        if (newDeviceId && !restart) {
+                            throw new Error('changing device requires restart');
+                        }
+                        return [4 /*yield*/, this.device.updateMediaDevices()];
+                    case 2:
+                        _m.sent();
+                        deviceId = this.device.getDeviceId(selectedVideoDevice, 'videoinput');
+                        if (!deviceId) {
+                            logger.warn('no webcam devices');
+                        }
+                        webcamProducer = (_b = this.media) === null || _b === void 0 ? void 0 : _b.getProducers().find(function (producer) { return producer.appData.source === 'webcam'; });
+                        if (!((restart && webcamProducer) || start)) return [3 /*break*/, 10];
+                        if (!this.currentWebcamProducer) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.disableWebcam()];
+                    case 3:
+                        _m.sent();
+                        _m.label = 4;
+                    case 4: return [4 /*yield*/, navigator.mediaDevices.getUserMedia({
+                            video: __assign(__assign({ deviceId: { ideal: deviceId } }, (0, consts_1.getVideoConstrains)(this.settings.resolution, this.settings.aspectRatio)), { frameRate: this.settings.frameRate }),
+                        })];
+                    case 5:
+                        stream = _m.sent();
+                        track = stream.getVideoTracks()[0];
+                        if (!track) {
+                            throw new Error('no webcam track');
+                        }
+                        _l = track.getSettings(), trackDeviceId = _l.deviceId, width = _l.width, height = _l.height;
+                        logger.debug('getUserMedia track settings:', trackDeviceId, track.getSettings());
+                        if (!this.settings.simulcast) return [3 /*break*/, 7];
+                        encodings = (0, encodings_1.getEncodings)(this.media.rtpCapabilities, this.settings.simulcastProfiles, width, height);
+                        resolutionScalings = encodings.map(function (encoding) { return encoding.scaleResolutionDownBy; });
+                        return [4 /*yield*/, this.media.produce({
+                                track: track,
+                                encodings: encodings,
+                                codecOptions: {
+                                    videoGoogleStartBitrate: 1000,
+                                },
+                                appData: {
+                                    source: 'webcam',
+                                    width: width,
+                                    height: height,
+                                    resolutionScalings: resolutionScalings,
+                                },
+                            })];
+                    case 6:
+                        webcamProducer = _m.sent();
+                        return [3 /*break*/, 9];
+                    case 7: return [4 /*yield*/, this.media.produce({
+                            track: track,
+                            appData: {
+                                source: 'webcam',
+                                width: width,
+                                height: height,
+                            },
+                        })];
+                    case 8:
+                        webcamProducer = _m.sent();
+                        _m.label = 9;
+                    case 9: return [3 /*break*/, 12];
+                    case 10:
+                        if (!webcamProducer) return [3 /*break*/, 12];
+                        (track = webcamProducer.track);
+                        return [4 /*yield*/, (track === null || track === void 0 ? void 0 : track.applyConstraints(__assign(__assign({}, (0, consts_1.getVideoConstrains)(this.settings.resolution, this.settings.aspectRatio)), { frameRate: this.settings.frameRate })))];
+                    case 11:
+                        _m.sent();
+                        _m.label = 12;
+                    case 12:
+                        this.emit('webcamProduce', webcamProducer);
+                        this.currentWebcamProducer = webcamProducer;
+                        return [4 /*yield*/, this.device.updateMediaDevices()];
+                    case 13:
+                        _m.sent();
+                        return [3 /*break*/, 15];
+                    case 14:
+                        err_1 = _m.sent();
+                        logger.error('updateWebcam() [error:"%o"]', err_1);
+                        if (track) {
+                            track.stop();
+                        }
+                        throw err_1;
+                    case 15: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Object.defineProperty(TailchatMeetingClient.prototype, "micEnabled", {
+        get: function () {
+            return !!this.currentMicProducer;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    TailchatMeetingClient.prototype.enableMic = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.updateMic({ start: true })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    TailchatMeetingClient.prototype.disableMic = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (!this.media) {
+                    throw new error_1.InitClientError();
+                }
+                if (!this.currentMicProducer) {
+                    return [2 /*return*/];
+                }
+                this.media.changeProducer(this.currentMicProducer.id, 'close');
+                this.emit('micClose', this.currentMicProducer.id);
+                this.currentMicProducer = undefined;
+                return [2 /*return*/];
+            });
+        });
+    };
+    TailchatMeetingClient.prototype.updateMic = function (_a) {
+        var _b = _a === void 0 ? {} : _a, _c = _b.start, start = _c === void 0 ? false : _c, _d = _b.restart, restart = _d === void 0 ? true : _d, _e = _b.newDeviceId, newDeviceId = _e === void 0 ? null : _e, _f = _b.selectedAudioDevice, selectedAudioDevice = _f === void 0 ? '' : _f;
+        return __awaiter(this, void 0, void 0, function () {
+            var track, micProducer, deviceId, _g, autoGainControl, echoCancellation, noiseSuppression, sampleRate, channelCount, sampleSize, opusStereo, opusDtx, opusFec, opusPtime, opusMaxPlaybackRate, stream, err_2;
+            var _h;
+            return __generator(this, function (_j) {
+                switch (_j.label) {
+                    case 0:
+                        logger.debug('updateMic() [start:"%s", restart:"%s", newDeviceId:"%s"]', start, restart, newDeviceId);
+                        if (!this.media) {
+                            throw new error_1.InitClientError();
+                        }
+                        _j.label = 1;
+                    case 1:
+                        _j.trys.push([1, 13, , 14]);
+                        return [4 /*yield*/, this.device.updateMediaDevices()];
+                    case 2:
+                        _j.sent();
+                        if (!this.media.mediaCapabilities.canSendMic) {
+                            throw new Error('cannot produce audio');
+                        }
+                        if (newDeviceId && !restart) {
+                            throw new Error('changing device requires restart');
+                        }
+                        return [4 /*yield*/, this.device.updateMediaDevices()];
+                    case 3:
+                        _j.sent();
+                        deviceId = this.device.getDeviceId(selectedAudioDevice, 'audioinput');
+                        if (!deviceId) {
+                            logger.warn('no audio devices');
+                        }
+                        _g = this.settings, autoGainControl = _g.autoGainControl, echoCancellation = _g.echoCancellation, noiseSuppression = _g.noiseSuppression, sampleRate = _g.sampleRate, channelCount = _g.channelCount, sampleSize = _g.sampleSize, opusStereo = _g.opusStereo, opusDtx = _g.opusDtx, opusFec = _g.opusFec, opusPtime = _g.opusPtime, opusMaxPlaybackRate = _g.opusMaxPlaybackRate;
+                        micProducer = this.media
+                            .getProducers()
+                            .find(function (producer) { return producer.appData.source === 'mic'; });
+                        if (!((restart && micProducer) || start)) return [3 /*break*/, 9];
+                        if (!micProducer) return [3 /*break*/, 5];
+                        return [4 /*yield*/, this.disableMic()];
+                    case 4:
+                        _j.sent();
+                        _j.label = 5;
+                    case 5:
+                        if (!!track) return [3 /*break*/, 7];
+                        return [4 /*yield*/, navigator.mediaDevices.getUserMedia({
+                                audio: {
+                                    deviceId: { ideal: deviceId },
+                                    sampleRate: sampleRate,
+                                    channelCount: channelCount,
+                                    autoGainControl: autoGainControl,
+                                    echoCancellation: echoCancellation,
+                                    noiseSuppression: noiseSuppression,
+                                    sampleSize: sampleSize,
+                                },
+                            })];
+                    case 6:
+                        stream = _j.sent();
+                        _h = __read(stream.getAudioTracks(), 1), track = _h[0];
+                        _j.label = 7;
+                    case 7:
+                        if (!track)
+                            throw new Error('no mic track');
+                        return [4 /*yield*/, this.media.produce({
+                                track: track,
+                                codecOptions: {
+                                    opusStereo: opusStereo,
+                                    opusFec: opusFec,
+                                    opusDtx: opusDtx,
+                                    opusMaxPlaybackRate: opusMaxPlaybackRate,
+                                    opusPtime: opusPtime,
+                                },
+                                appData: { source: 'mic' },
+                            })];
+                    case 8:
+                        micProducer = _j.sent();
+                        return [3 /*break*/, 11];
+                    case 9:
+                        if (!micProducer) return [3 /*break*/, 11];
+                        (track = micProducer.track);
+                        return [4 /*yield*/, (track === null || track === void 0 ? void 0 : track.applyConstraints({
+                                sampleRate: sampleRate,
+                                channelCount: channelCount,
+                                autoGainControl: autoGainControl,
+                                echoCancellation: echoCancellation,
+                                noiseSuppression: noiseSuppression,
+                                sampleSize: sampleSize,
+                            }))];
+                    case 10:
+                        _j.sent();
+                        _j.label = 11;
+                    case 11:
+                        this.emit('micProduce', micProducer);
+                        this.currentMicProducer = micProducer;
+                        return [4 /*yield*/, this.device.updateMediaDevices()];
+                    case 12:
+                        _j.sent();
+                        return [3 /*break*/, 14];
+                    case 13:
+                        err_2 = _j.sent();
+                        logger.error('updateMic() [error:"%o"]', err_2);
+                        if (track) {
+                            track.stop();
+                        }
+                        return [3 /*break*/, 14];
+                    case 14: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    //#endregion
+    /**
+     * 根据参会者id查找消费端
+     * @param peerId 参会者ID
+     * @returns
+     */
+    TailchatMeetingClient.prototype.getConsumersByPeerId = function (peerId) {
+        var _a;
+        var consumers = (_a = this.media) === null || _a === void 0 ? void 0 : _a.getConsumers();
+        var matched = (consumers !== null && consumers !== void 0 ? consumers : []).filter(function (consumer) { return consumer.appData.peerId === peerId; });
+        var micConsumer = matched.find(function (consumer) { return consumer.appData.source === 'mic'; });
+        var webcamConsumer = matched.find(function (consumer) { return consumer.appData.source === 'webcam'; });
+        var screenConsumer = matched.find(function (consumer) { return consumer.appData.source === 'screen'; });
+        var extraVideoConsumers = matched.filter(function (consumer) { return consumer.appData.source === 'extravideo'; });
+        return {
+            /**
+             * 麦克风
+             */
+            micConsumer: micConsumer,
+            /**
+             * 摄像头
+             */
+            webcamConsumer: webcamConsumer,
+            /**
+             * 共享屏幕
+             */
+            screenConsumer: screenConsumer,
+            /**
+             * 额外视频源
+             */
+            extraVideoConsumers: extraVideoConsumers,
+        };
+    };
+    /**
+     * 当有参会者入会时的回调
+     */
+    TailchatMeetingClient.prototype.onPeerJoin = function (callback) {
+        if (!this.room) {
+            logger.warn('Please call [onPeerJoin] after join room');
+            return;
+        }
+        this.room.on('peerJoin', callback);
+    };
+    /**
+     * 当有参会者离会时的回调
+     */
+    TailchatMeetingClient.prototype.onPeerLeave = function (callback) {
+        if (!this.room) {
+            logger.warn('Please call [onPeerLeave] after join room');
+            return;
+        }
+        this.room.on('peerLeave', callback);
+    };
+    /**
+     * 当参会者人员信息发生变化时的回调
+     */
+    TailchatMeetingClient.prototype.onPeersUpdate = function (callback) {
+        var _a;
+        if (!this.room) {
+            logger.warn('Please call [onPeersUpdate] after join room');
+            return;
+        }
+        callback((_a = this.room.peers) !== null && _a !== void 0 ? _a : []);
+        this.room.on('peersUpdated', callback);
+    };
+    /**
+     * 当参会者人员信息发生变化时的回调
+     */
+    TailchatMeetingClient.prototype.onPeerConsumerUpdate = function (callback) {
+        if (!this.media) {
+            logger.warn('Please call [onPeerConsumerUpdate] after join room');
+            return;
+        }
+        this.media.on('consumerCreated', function (consumer) {
+            callback(consumer.appData.peerId, consumer);
+        });
+        this.media.on('consumerResumed', function (consumer) {
+            callback(consumer.appData.peerId, consumer);
+        });
+        this.media.on('consumerClosed', function (consumer) {
+            callback(consumer.appData.peerId, null);
+        });
+        this.media.on('consumerPaused', function (consumer) {
+            callback(consumer.appData.peerId, null);
+        });
+    };
+    return TailchatMeetingClient;
+}(eventemitter_strict_1.EventEmitter));
+exports.TailchatMeetingClient = TailchatMeetingClient;

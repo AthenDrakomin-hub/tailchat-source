@@ -1,0 +1,4 @@
+import { DividerProps } from '@mui/material';
+import { FC } from 'react';
+export type VerticalDividerProps = Omit<DividerProps, 'orientation'>;
+export declare const VerticalDivider: FC<VerticalDividerProps>;

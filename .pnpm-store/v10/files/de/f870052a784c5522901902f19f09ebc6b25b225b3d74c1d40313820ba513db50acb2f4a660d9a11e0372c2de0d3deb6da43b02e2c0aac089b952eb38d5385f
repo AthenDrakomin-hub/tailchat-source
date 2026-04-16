@@ -1,0 +1,88 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-placeholder/src/placeholder-extension.ts
+import {
+  extension,
+  isDefaultDocNode,
+  ManagerPhase,
+  PlainExtension
+} from "@remirror/core";
+import { Decoration, DecorationSet } from "@remirror/pm/view";
+import { ExtensionPlaceholderTheme } from "@remirror/theme";
+var PlaceholderExtension = class extends PlainExtension {
+  get name() {
+    return "placeholder";
+  }
+  createAttributes() {
+    return { "aria-placeholder": this.options.placeholder };
+  }
+  createPlugin() {
+    return {
+      state: {
+        init: (_, state) => ({
+          ...this.options,
+          empty: isDefaultDocNode(state.doc, { ignoreAttributes: true })
+        }),
+        apply: (tr, pluginState, _, state) => {
+          return applyState({ pluginState, tr, extension: this, state });
+        }
+      },
+      props: {
+        decorations: (state) => {
+          return createDecorationSet({ state, extension: this });
+        }
+      }
+    };
+  }
+  onSetOptions(props) {
+    const { changes } = props;
+    if (changes.placeholder.changed && this.store.phase >= ManagerPhase.EditorView) {
+      this.store.updateAttributes();
+    }
+  }
+};
+PlaceholderExtension = __decorateClass([
+  extension({
+    defaultOptions: {
+      emptyNodeClass: ExtensionPlaceholderTheme.IS_EMPTY,
+      placeholder: ""
+    }
+  })
+], PlaceholderExtension);
+function applyState(props) {
+  const { pluginState, extension: extension2, tr, state } = props;
+  if (!tr.docChanged) {
+    return pluginState;
+  }
+  return { ...extension2.options, empty: isDefaultDocNode(state.doc) };
+}
+function createDecorationSet(props) {
+  const { extension: extension2, state } = props;
+  const { empty } = extension2.pluginKey.getState(state);
+  const { emptyNodeClass, placeholder } = extension2.options;
+  if (!empty) {
+    return null;
+  }
+  const decorations = [];
+  state.doc.descendants((node, pos) => {
+    const decoration = Decoration.node(pos, pos + node.nodeSize, {
+      class: emptyNodeClass,
+      "data-placeholder": placeholder
+    });
+    decorations.push(decoration);
+  });
+  return DecorationSet.create(state.doc, decorations);
+}
+export {
+  PlaceholderExtension
+};

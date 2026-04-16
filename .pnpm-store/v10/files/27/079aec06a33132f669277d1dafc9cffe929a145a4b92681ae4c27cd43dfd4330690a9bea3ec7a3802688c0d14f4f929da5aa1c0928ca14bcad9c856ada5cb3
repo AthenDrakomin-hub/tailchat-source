@@ -1,0 +1,42 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.detectDeviceInfo = void 0;
+var bowser_1 = __importDefault(require("bowser"));
+/**
+ * 检测设备信息
+ */
+function detectDeviceInfo() {
+    var ua = navigator.userAgent;
+    var browser = bowser_1.default.getParser(ua);
+    var flag;
+    if (browser.satisfies({ chrome: '>=0', chromium: '>=0' })) {
+        flag = 'chrome';
+    }
+    else if (browser.satisfies({ firefox: '>=0' })) {
+        flag = 'firefox';
+    }
+    else if (browser.satisfies({ safari: '>=0' })) {
+        flag = 'safari';
+    }
+    else if (browser.satisfies({ opera: '>=0' })) {
+        flag = 'opera';
+    }
+    else if (browser.satisfies({ 'microsoft edge': '>=0' })) {
+        flag = 'edge';
+    }
+    else {
+        flag = 'unknown';
+    }
+    return {
+        flag: flag,
+        os: browser.getOSName(true),
+        platform: browser.getPlatformType(true),
+        name: browser.getBrowserName(true),
+        version: browser.getBrowserVersion(),
+        bowser: browser,
+    };
+}
+exports.detectDeviceInfo = detectDeviceInfo;

@@ -1,0 +1,227 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-bidi/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  BidiExtension: () => BidiExtension
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-bidi/src/bidi-extension.ts
+var import_direction = __toESM(require("direction"), 1);
+var import_core = require("@remirror/core");
+var import_messages = require("@remirror/messages");
+var setTextDirectionOptions = {
+  icon: ({ attrs }) => attrs?.dir === "ltr" ? "textDirectionL" : "textDirectionR",
+  description: ({ t, attrs }) => t({
+    ...import_messages.ExtensionBidiMessages.DESCRIPTION,
+    values: {
+      dir: attrs?.dir
+    }
+  }),
+  label: ({ t, attrs }) => t({
+    ...import_messages.ExtensionBidiMessages.LABEL,
+    values: {
+      dir: attrs?.dir
+    }
+  })
+};
+var BidiExtension = class extends import_core.PlainExtension {
+  get name() {
+    return "bidi";
+  }
+  /**
+   * Whether to ignore next updated.
+   */
+  _ignoreNextUpdate = false;
+  /**
+   * Add the bidi property to the top level editor attributes `doc`.
+   */
+  createAttributes() {
+    if (this.options.defaultDirection) {
+      return { dir: this.options.defaultDirection };
+    }
+    return {};
+  }
+  /**
+   * Add the `dir` to all the inner node types.
+   */
+  createSchemaAttributes() {
+    const IGNORE_BIDI_AUTO_UPDATE = "data-ignore-bidi-auto";
+    return [
+      {
+        identifiers: {
+          type: "node",
+          tags: [import_core.ExtensionTag.BlockNode],
+          excludeNames: this.options.excludeNodes
+        },
+        attributes: {
+          dir: this.dir(),
+          ignoreBidiAutoUpdate: {
+            default: null,
+            parseDOM: IGNORE_BIDI_AUTO_UPDATE,
+            toDOM: (attrs) => attrs.ignoreBidiAutoUpdate ? [IGNORE_BIDI_AUTO_UPDATE, "true"] : void 0
+          }
+        }
+      }
+    ];
+  }
+  /**
+   * Create the plugin that ensures the node has the correct `dir` value on each
+   * state update.
+   */
+  createPlugin() {
+    return {
+      state: {
+        init: () => false,
+        apply: (tr) => {
+          if (this._ignoreNextUpdate) {
+            this._ignoreNextUpdate = false;
+            return false;
+          }
+          return (0, import_core.hasTransactionChanged)(tr);
+        }
+      },
+      appendTransaction: (_, __, state) => {
+        const shouldUpdate = this.getPluginState();
+        const { autoUpdate, excludeNodes } = this.options;
+        const tr = state.tr;
+        if (!shouldUpdate || !autoUpdate) {
+          return;
+        }
+        const parent = findParent(state.selection, excludeNodes);
+        if (!parent) {
+          return;
+        }
+        const { node, pos } = parent;
+        const currentDirection = node.attrs.dir;
+        const dir = this.getDirection(node.textContent);
+        if (currentDirection === dir) {
+          return;
+        }
+        if (node.attrs.ignoreBidiAutoUpdate) {
+          return;
+        }
+        this._ignoreNextUpdate = true;
+        return this.store.chain(tr).updateNodeAttributes(pos, {
+          ...node.attrs,
+          dir
+        }).tr();
+      }
+    };
+  }
+  onSetOptions(props) {
+    const { changes } = props;
+    if (changes.defaultDirection.changed) {
+      this.store.updateAttributes();
+    }
+  }
+  /**
+   * Create the `SchemaAttributesObject`
+   */
+  dir() {
+    return {
+      default: this.options.defaultDirection ?? null,
+      parseDOM: (element) => element.getAttribute("dir") ?? this.getDirection(element.textContent),
+      toDOM: (_, { node }) => {
+        if (!node) {
+          return;
+        }
+        if (!node.textContent) {
+          return;
+        }
+        return this.getDirection(node.textContent) ?? this.options.defaultDirection;
+      }
+    };
+  }
+  /**
+   * Get the direction of the text.
+   */
+  getDirection(text) {
+    if (!(0, import_core.isString)(text)) {
+      return;
+    }
+    const dir = (0, import_direction.default)(text);
+    if (dir === "neutral") {
+      return this.options.defaultDirection;
+    }
+    return dir;
+  }
+  setTextDirection(dir, options = {}) {
+    return (props) => {
+      const { tr } = props;
+      const { selection } = options;
+      const cmd = this.store.commands.updateNodeAttributes.original;
+      const parent = findParent(
+        (0, import_core.getTextSelection)(selection ?? tr.selection, tr.doc),
+        this.options.excludeNodes
+      );
+      if (!parent || parent.node.attrs.dir == dir) {
+        return false;
+      }
+      return cmd(parent.pos, {
+        dir,
+        ignoreBidiAutoUpdate: dir ? true : dir
+      })(props);
+    };
+  }
+};
+__decorateClass([
+  (0, import_core.command)(setTextDirectionOptions)
+], BidiExtension.prototype, "setTextDirection", 1);
+BidiExtension = __decorateClass([
+  (0, import_core.extension)({
+    defaultOptions: {
+      defaultDirection: void 0,
+      autoUpdate: false,
+      excludeNodes: []
+    },
+    staticKeys: ["excludeNodes"]
+  })
+], BidiExtension);
+function findParent(selection, excludeNodes) {
+  return (0, import_core.findParentNode)({
+    predicate: (node) => !!(node.isTextblock && node.textContent && !excludeNodes.includes(node.type.name)),
+    selection
+  });
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  BidiExtension
+});

@@ -1,0 +1,21 @@
+import { PlainExtension, OnSetOptionsProps } from '@remirror/core';
+import { PlaceholderOptions, PlaceholderExtension } from '@remirror/extension-placeholder';
+export * from '@remirror/extension-placeholder';
+import { ReactComponentOptions, ReactComponentExtension } from '@remirror/extension-react-component';
+
+interface ReactExtensionOptions extends PlaceholderOptions, ReactComponentOptions {
+}
+/**
+ * This extension supplies all required extensions for the functionality of the
+ * `React` framework implementation.
+ *
+ * Provides support for SSR, Placeholders and React components for components
+ * when using **remirror** with React.
+ */
+declare class ReactExtension extends PlainExtension<ReactExtensionOptions> {
+    get name(): "react";
+    protected onSetOptions(props: OnSetOptionsProps<ReactExtensionOptions>): void;
+    createExtensions(): (PlaceholderExtension | ReactComponentExtension)[];
+}
+
+export { ReactExtension, ReactExtensionOptions };

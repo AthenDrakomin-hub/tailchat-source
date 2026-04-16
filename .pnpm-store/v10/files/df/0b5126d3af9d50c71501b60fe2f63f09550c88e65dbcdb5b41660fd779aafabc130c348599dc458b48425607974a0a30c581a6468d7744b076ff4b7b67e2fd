@@ -1,0 +1,6 @@
+declare type AllowedLanguage = 'en-US' | 'zh-CN';
+/**
+ * 解析请求头的 Accept-Language
+ */
+export declare function parseLanguageFromHead(headerLanguage?: string): AllowedLanguage;
+export {};

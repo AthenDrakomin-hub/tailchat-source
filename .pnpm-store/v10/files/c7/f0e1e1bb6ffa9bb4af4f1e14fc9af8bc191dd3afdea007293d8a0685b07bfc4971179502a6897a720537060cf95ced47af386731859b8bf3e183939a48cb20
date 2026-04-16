@@ -1,0 +1,58 @@
+import { CommandDecoratorMessageProps, CommandDecoratorShortcut, CommandDecoratorValue, ProsemirrorAttributes } from '@remirror/core';
+import type { I18n } from '@remirror/i18n';
+/**
+ * Get the value from the option passed into the command.
+ */
+export declare function getCommandOptionValue<Type>(value: CommandDecoratorValue<Type> | undefined, commandProps: CommandDecoratorMessageProps): Type | undefined;
+/**
+ * Get the string value from the available UI Shortcut.
+ */
+export declare function getUiShortcutString(uiShortcut: CommandDecoratorShortcut, attrs: ProsemirrorAttributes): string;
+/**
+ * How to display the symbols.
+ */
+type Modifiers = 'shift' | 'command' | 'control' | 'alt';
+interface ShortcutStringOptions {
+    /**
+     * True to display all named values as symbols (where possible, otherwise
+     * display the translated string).
+     *
+     * @defaultValue false
+     */
+    namedAsSymbol?: boolean | string[];
+    /**
+     * `true` to display modifiers as symbols. `false` to display as translated strings.
+     *
+     * An array to only set the provided array values as symbols.
+     *
+     * @defaultValue true
+     */
+    modifierAsSymbol?: boolean | Modifiers[];
+    /**
+     * How the values should be cased.
+     *
+     * @defaultValue 'title'
+     */
+    casing?: keyof typeof CASINGS;
+    /**
+     * The separator to use between symbols.
+     *
+     * @defaultValue ' '
+     */
+    separator?: string;
+    /**
+     * A translation utility for translating a predefined string / or message
+     * descriptor.
+     */
+    t: I18n['_'];
+}
+declare const CASINGS: {
+    title: (value: string) => string;
+    upper: (value: string) => string;
+    lower: (value: string) => string;
+};
+/**
+ * Get a normalized shortcut as a string.
+ */
+export declare function getShortcutString(shortcut: string, options: ShortcutStringOptions): string;
+export {};

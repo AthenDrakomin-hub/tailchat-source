@@ -1,0 +1,100 @@
+import { Response, Router, RequestHandler } from 'express';
+import { Model, Document } from 'mongoose';
+
+interface ADPBaseSchema {
+    _id: string;
+}
+declare type ADPBaseModel = Model<ADPBaseSchema & Document & any>;
+
+declare function virtualId<T extends {
+    _id: string;
+}>(arr: T[]): Array<T & {
+    id: string;
+}>;
+declare function virtualId<T extends {
+    _id: string;
+}>(doc: T): T & {
+    id: string;
+};
+
+/** Turns id into _id for search queries */
+declare function convertId<T extends Record<string, unknown>>(obj: T): T;
+
+/**
+ * Turns all the params into their proper types, string into regexes.
+ * Only works with shallow objects.
+ * Mutates original object and returns mutated object.
+ */
+declare function castFilter<T extends ADPBaseModel>(obj: Record<string, any>, model: T, allowedRegexes?: string[]): Record<string, any>;
+
+interface parseQueryParam {
+    q?: string;
+    $or?: any;
+}
+/**
+ * Turns ?q into $or queries, deletes q
+ * @param {Object} results Original object with the q field
+ * @param {string[]} fields Fields to apply q to
+ */
+declare function parseQuery<T extends parseQueryParam, M extends ADPBaseModel>(result: T, model: M, allowedRegexes: string[], fields?: string[]): T & {
+    $or?: any;
+};
+
+/** Removes _sort, _order, _start, _end from a query. */
+declare function filterGetList<T extends Record<string, unknown>>(obj: T): Omit<T, "_sort" | "_order" | "_start" | "_end">;
+
+/** Makes sure that it does not modify crucial and sacred parts mutates the original object. */
+declare function filterReadOnly<T extends {}>(obj: T, readOnlyFields?: string[]): Partial<T>;
+
+/**
+ * @file statusMessages
+ * @description handles status messages / error responses
+ */
+
+/**
+ * Handles rejections other than errors. 400, 401, etc.
+ */
+declare function reject(res: Response, status: number, reason?: any): Response<any, Record<string, any>>;
+/**
+ * Handles errors
+ */
+declare function error(res: Response, status: number, e: Error, message?: string): Response<any, Record<string, any>>;
+declare const _default: {
+    reject: typeof reject;
+    error: typeof error;
+};
+
+interface raExpressMongooseCapabilities {
+    list?: boolean;
+    get?: boolean;
+    create?: boolean;
+    update?: boolean;
+    delete?: boolean;
+}
+interface raExpressMongooseOptions<T> {
+    /** Fields to search from ?q (used for autofill and search) */
+    q?: string[];
+    /** Base name for ACLs (e.g. list operation does baseName.list) */
+    aclName?: string;
+    /** Fields to allow regex based search (non-exact search) */
+    allowedRegexFields?: string[];
+    /** Read-only fields to filter out during create and update */
+    readOnlyFields?: string[];
+    /** Function to transform inputs received in create and update */
+    inputTransformer?: (input: Partial<T>) => Promise<Partial<T>>;
+    /** Additional queries for list, e.g. deleted/hidden flag. */
+    listQuery?: Record<string, any>;
+    /** Max rows from a get operation to prevent accidental server suicide (default 100) */
+    maxRows?: number;
+    /** Extra selects for mongoose queries (in the case that certain fields are hidden by default) */
+    extraSelects?: string;
+    /** Disable or enable certain parts. */
+    capabilities?: raExpressMongooseCapabilities;
+    /** Specify a custom express.js router */
+    router?: Router;
+    /** Specify an ACL middleware to check against permissions */
+    ACLMiddleware?: (name: string) => RequestHandler;
+}
+declare function raExpressMongoose<T extends ADPBaseModel, I>(model: T, options?: raExpressMongooseOptions<I>): Router;
+
+export { castFilter, convertId, raExpressMongoose as default, filterGetList, filterReadOnly, parseQuery, raExpressMongooseCapabilities, raExpressMongooseOptions, _default as statusMessages, virtualId };

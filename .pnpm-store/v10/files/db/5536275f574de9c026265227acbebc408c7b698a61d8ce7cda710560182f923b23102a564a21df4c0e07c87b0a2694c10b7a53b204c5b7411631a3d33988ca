@@ -1,0 +1,20 @@
+import type webpack from 'webpack';
+import type { WebpackPluginInstance } from 'webpack';
+declare const DEFAULT_OPTIONS: {
+    outDir: string;
+    open: boolean;
+    /**
+     * Modify your own filename
+     * @default `webpack-stats-viewer-${hash}.html`
+     */
+    filename: string;
+    stats: webpack.StatsOptions;
+};
+declare type Options = typeof DEFAULT_OPTIONS;
+export declare class WebpackStatsViewerPlugin implements WebpackPluginInstance {
+    options: Options;
+    constructor(options?: Partial<Options>);
+    apply(compiler: webpack.Compiler): void;
+    generateReport(stats: webpack.Stats): Promise<void>;
+}
+export {};

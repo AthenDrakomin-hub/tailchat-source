@@ -1,0 +1,194 @@
+import React, { MouseEventHandler } from 'react';
+import { UsePositionerReturn } from '@remirror/react-hooks';
+import { NodeViewMethod, ProsemirrorPlugin, ApplySchemaAttributes, EditorView, CommandFunction, CreateExtensionPlugin, NodeSpecOverride, FindProsemirrorNodeResult } from '@remirror/core';
+import { TableExtension as TableExtension$1, TableSchemaSpec, CreateTableCommand, TableRowExtension as TableRowExtension$1, TableHeaderCellExtension as TableHeaderCellExtension$1, TableCellExtension as TableCellExtension$1, TableControllerCellExtension as TableControllerCellExtension$1 } from '@remirror/extension-tables';
+import { PluginKey, Transaction } from '@remirror/pm/state';
+
+interface TableCellMenuComponentProps {
+    popupOpen: boolean;
+    setPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+type TableCellMenuComponent = React.ComponentType<TableCellMenuComponentProps>;
+interface TableCellMenuProps {
+    Component?: TableCellMenuComponent;
+}
+declare const TableCellMenu: React.FC<TableCellMenuProps>;
+
+interface TableDeleteRowColumnInnerButtonProps {
+    /**
+     * The position of the button
+     */
+    position: UsePositionerReturn;
+    /**
+     * The action when the button is pressed.
+     */
+    onClick: MouseEventHandler;
+    /**
+     * The action when the mouse is pressed on the button.
+     */
+    onMouseDown: MouseEventHandler;
+    /**
+     * The action when the mouse is over the button.
+     */
+    onMouseOver: MouseEventHandler;
+    /**
+     * The action when the mouse level the button.
+     */
+    onMouseOut: MouseEventHandler;
+}
+declare const TableDeleteRowColumnInnerButton: React.FC<TableDeleteRowColumnInnerButtonProps>;
+interface TableDeleteRowColumnButtonProps {
+    Component?: React.ComponentType<TableDeleteRowColumnInnerButtonProps>;
+}
+declare const TableDeleteRowColumnButton: React.FC<TableDeleteRowColumnButtonProps>;
+
+interface TableDeleteInnerButtonProps {
+    /**
+     * The position of the button
+     */
+    position: UsePositionerReturn;
+    /**
+     * The action when the button is pressed.
+     */
+    onClick: MouseEventHandler;
+    /**
+     * The action when the mouse is pressed on the button.
+     */
+    onMouseDown: MouseEventHandler;
+    /**
+     * The action when the mouse is over the button.
+     */
+    onMouseEnter: MouseEventHandler;
+    /**
+     * The action when the mouse level the button.
+     */
+    onMouseLeave: MouseEventHandler;
+}
+declare const TableDeleteInnerButton: React.FC<TableDeleteInnerButtonProps>;
+interface TableDeleteButtonProps {
+    Component?: React.ComponentType<TableDeleteInnerButtonProps>;
+}
+declare const TableDeleteButton: React.FC<TableDeleteButtonProps>;
+
+interface TableComponentsProps {
+    /**
+     * Whether to use `TableCellMenu`.
+     *
+     * @defaultValue true
+     */
+    enableTableCellMenu?: boolean;
+    /**
+     * The props that will passed to `TableCellMenu`
+     */
+    tableCellMenuProps?: TableCellMenuProps;
+    /**
+     * Whether to use `TableDeleteRowColumnButton`.
+     *
+     * @defaultValue true
+     */
+    enableTableDeleteRowColumnButton?: boolean;
+    /**
+     * The props that will passed to `TableDeleteRowColumnButton`
+     */
+    tableDeleteRowColumnButtonProps?: TableDeleteRowColumnButtonProps;
+    /**
+     * Whether to use `TableDeleteButton`.
+     *
+     * @defaultValue true
+     */
+    enableTableDeleteButton?: boolean;
+    /**
+     * The props that will passed to `TableDeleteButton`
+     */
+    tableDeleteButtonProps?: TableDeleteButtonProps;
+}
+declare const TableComponents: React.FC<TableComponentsProps>;
+
+interface InsertButtonAttrs {
+    x: number;
+    y: number;
+    triggerRect: DOMRect;
+    row: number;
+    col: number;
+}
+
+declare class TableExtension extends TableExtension$1 {
+    get name(): "table";
+    createNodeViews(): NodeViewMethod;
+    /**
+     * Add the table plugins to the editor.
+     */
+    createExternalPlugins(): ProsemirrorPlugin[];
+    createNodeSpec(extra: ApplySchemaAttributes): TableSchemaSpec;
+    /**
+     * Create the table extensions. Set the priority to low so that they appear
+     * lower down in the node list.
+     */
+    createExtensions(): TableRowExtension[];
+    onView(view: EditorView): void;
+    /**
+     * Create a table in the editor at the current selection point.
+     */
+    createTable(options?: CreateTableCommand): CommandFunction;
+    /**
+     * Command to add a column before the column with the selection.
+     */
+    addTableColumnBefore(): CommandFunction;
+    /**
+     * Command to add a column after the column with the selection.
+     */
+    addTableColumnAfter(): CommandFunction;
+    /**
+     * Add a table row before the current selection.
+     */
+    addTableRowBefore(): CommandFunction;
+    /**
+     * Add a table row after the current selection.
+     */
+    addTableRowAfter(): CommandFunction;
+    createPlugin(): CreateExtensionPlugin;
+}
+declare class TableRowExtension extends TableRowExtension$1 {
+    get name(): "tableRow";
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): TableSchemaSpec;
+    /**
+     * Automatically create the `TableCellExtension`,`TableHeaderCellExtension`
+     * and `TableControllerCellExtension`. This is placed here so that this
+     * extension can be tested independently from the `TableExtension`.
+     */
+    createExtensions(): (TableCellExtension | TableControllerCellExtension | TableHeaderCellExtension)[];
+}
+declare class TableHeaderCellExtension extends TableHeaderCellExtension$1 {
+    get name(): "tableHeaderCell";
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): TableSchemaSpec;
+}
+declare class TableCellExtension extends TableCellExtension$1 {
+    get name(): "tableCell";
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): TableSchemaSpec;
+}
+declare class TableControllerCellExtension extends TableControllerCellExtension$1 {
+    createNodeSpec(extra: ApplySchemaAttributes): TableSchemaSpec;
+    createNodeViews(): NodeViewMethod;
+    createExtensions(): never[];
+    createPlugin(): CreateExtensionPlugin;
+}
+
+declare const key: PluginKey<ControllerState>;
+
+interface ControllerStateValues {
+    tableNodeResult: FindProsemirrorNodeResult | null | undefined;
+    preselectTable: boolean;
+    preselectColumn: number;
+    preselectRow: number;
+    predelete: boolean;
+    insertButtonAttrs: InsertButtonAttrs | null;
+}
+type ControllerStateProps = Omit<Partial<ControllerStateValues>, 'tableNodeResult'>;
+declare class ControllerState {
+    action: ControllerStateProps;
+    values: ControllerStateValues;
+    constructor(action: ControllerStateProps);
+    apply(tr: Transaction): ControllerState;
+}
+
+export { TableCellExtension, TableCellMenu, type TableCellMenuComponentProps, type TableCellMenuProps, TableComponents, TableControllerCellExtension, TableDeleteButton, type TableDeleteButtonProps, TableDeleteInnerButton, type TableDeleteInnerButtonProps, TableDeleteRowColumnButton, type TableDeleteRowColumnButtonProps, TableDeleteRowColumnInnerButton, type TableDeleteRowColumnInnerButtonProps, TableExtension, TableHeaderCellExtension, TableRowExtension, key as tableControllerPluginKey };

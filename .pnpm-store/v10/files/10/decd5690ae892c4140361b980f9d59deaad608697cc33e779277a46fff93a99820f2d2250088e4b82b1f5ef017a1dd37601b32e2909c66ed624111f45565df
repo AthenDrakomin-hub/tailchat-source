@@ -1,0 +1,7 @@
+import { FC, ReactNode } from 'react';
+import { AnyExtensionConstructor } from '@remirror/core';
+export interface IfExtensionPresentProps {
+    extension: AnyExtensionConstructor;
+    children?: ReactNode;
+}
+export declare const IfExtensionPresent: FC<IfExtensionPresentProps>;

@@ -1,0 +1,83 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-code/src/code-extension.ts
+import {
+  command,
+  extension,
+  ExtensionTag,
+  keyBinding,
+  LEAF_NODE_REPLACING_CHARACTER,
+  MarkExtension,
+  markInputRule,
+  NamedShortcut,
+  toggleMark
+} from "@remirror/core";
+import { ExtensionCodeMessages } from "@remirror/messages";
+var { DESCRIPTION, LABEL } = ExtensionCodeMessages;
+var toggleCodeOptions = {
+  icon: "codeLine",
+  description: ({ t }) => t(DESCRIPTION),
+  label: ({ t }) => t(LABEL)
+};
+var CodeExtension = class extends MarkExtension {
+  get name() {
+    return "code";
+  }
+  createTags() {
+    return [ExtensionTag.Code, ExtensionTag.ExcludeInputRules];
+  }
+  createMarkSpec(extra, override) {
+    return {
+      excludes: "_",
+      ...override,
+      attrs: extra.defaults(),
+      parseDOM: [{ tag: "code", getAttrs: extra.parse }, ...override.parseDOM ?? []],
+      toDOM: (mark) => ["code", { spellcheck: "false", ...extra.dom(mark) }, 0]
+    };
+  }
+  createKeymap() {
+    return {
+      "Mod-`": toggleMark({ type: this.type })
+    };
+  }
+  keyboardShortcut(props) {
+    return this.toggleCode()(props);
+  }
+  toggleCode() {
+    return toggleMark({ type: this.type });
+  }
+  createInputRules() {
+    return [
+      markInputRule({
+        regexp: new RegExp(`(?:\`)([^\`${LEAF_NODE_REPLACING_CHARACTER}]+)(?:\`)$`),
+        type: this.type,
+        ignoreWhitespace: true
+      })
+    ];
+  }
+  createPasteRules() {
+    return [{ type: "mark", regexp: /`([^`]+)`/g, markType: this.type }];
+  }
+};
+__decorateClass([
+  keyBinding({ shortcut: NamedShortcut.Code, command: "toggleCode" })
+], CodeExtension.prototype, "keyboardShortcut", 1);
+__decorateClass([
+  command(toggleCodeOptions)
+], CodeExtension.prototype, "toggleCode", 1);
+CodeExtension = __decorateClass([
+  extension({})
+], CodeExtension);
+export {
+  CodeExtension
+};

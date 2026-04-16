@@ -1,0 +1,2 @@
+import * as types from './types';
+export declare const compareMetrics: (jobs: Array<any>, selectMetrics: (job: any) => any, metricType?: string, rowTransformers?: Array<types.MetricReportRowTransformFn>) => Array<types.ReportMetricRow>;

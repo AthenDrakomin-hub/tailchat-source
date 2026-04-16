@@ -1,0 +1,5 @@
+import { FC } from 'react';
+export declare const ReplaceInput: FC<{
+    replacement: string;
+    setReplacement: (query: string) => void;
+}>;

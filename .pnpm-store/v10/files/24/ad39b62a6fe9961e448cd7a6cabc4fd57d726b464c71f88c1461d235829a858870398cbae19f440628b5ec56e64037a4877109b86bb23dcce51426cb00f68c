@@ -1,0 +1,12 @@
+import { EditorView, NodeView } from '@remirror/core';
+import { Node as ProsemirrorNode } from '@remirror/pm/model';
+export declare class TableControllerCellView implements NodeView {
+    node: ProsemirrorNode;
+    view: EditorView;
+    getPos: () => number;
+    dom: HTMLElement;
+    contentDOM: HTMLElement;
+    constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number);
+    ignoreMutation(): boolean;
+    stopEvent(): boolean;
+}

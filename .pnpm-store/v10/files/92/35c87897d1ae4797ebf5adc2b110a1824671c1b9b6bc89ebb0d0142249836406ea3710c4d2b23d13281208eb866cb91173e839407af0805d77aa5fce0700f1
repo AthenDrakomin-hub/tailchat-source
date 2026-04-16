@@ -1,0 +1,32 @@
+import React from 'react';
+import type { ObjectSchema } from 'yup';
+import { regField } from './field';
+import type { FastifyFormFieldComponent, FastifyFormFieldProps, FastifyFormFieldMeta } from './field';
+export interface DefaultFastifyFormExtraProps {
+}
+/**
+ * 表单配置
+ */
+export interface FastifyFormProps<T extends Record<string, any> = Record<string, any>, K extends Record<string, any> = DefaultFastifyFormExtraProps> {
+    fields: FastifyFormFieldMeta[];
+    schema?: ObjectSchema<any>;
+    layout?: 'horizontal' | 'vertical';
+    submitLabel?: string;
+    initialValues?: T;
+    onSubmit?: (values: T) => Promise<void> | void;
+    onChange?: (values: T) => void;
+    extraProps?: K;
+}
+/**
+ * 一个快速生成表单的组件
+ * 用于通过配置来生成表单，简化通用代码
+ */
+export declare const FastifyForm: <T extends Record<string, any> = {}, K extends Record<string, any> = {}>(props: FastifyFormProps<T, K>) => React.ReactElement | null;
+export { CustomField } from './CustomField';
+export type { FastifyFormFieldComponent, FastifyFormFieldProps, FastifyFormFieldMeta, };
+export { regField };
+export { regFormContainer } from './container';
+export type { FastifyFormContainerComponent, FastifyFormContainerProps, } from './container';
+export { createFastifyFormSchema, fieldSchema } from './schema';
+export { useFastifyFormContext } from './context';
+export type { FastifyFormInstance } from './context';

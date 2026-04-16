@@ -1,0 +1,22 @@
+import { CommandFunction, NodeType } from '@remirror/core';
+import type { CodeMirrorExtensionAttributes } from './codemirror-types';
+/**
+ * Handling cursor motion from the outer to the inner editor must be done with a
+ * keymap on the outer editor. The `arrowHandler` function uses the
+ * `endOfTextblock` method to determine, in a bidi-text-aware way, whether the
+ * cursor is at the end of a given textblock. If it is, and the next block is a
+ * code block, the selection is moved into it.
+ *
+ * Adapted from https://prosemirror.net/examples/codemirror/
+ */
+export declare function arrowHandler(dir: 'left' | 'right' | 'up' | 'down'): CommandFunction;
+/**
+ * Updates the node attrs.
+ *
+ * This is used to update the language for the CodeMirror block.
+ */
+export declare function updateNodeAttributes(type: NodeType): (attributes: CodeMirrorExtensionAttributes) => CommandFunction;
+/**
+ * Parse a language string to CodeMirror's mode option.
+ */
+export declare function parseLanguageToMode(language?: string): string | null;

@@ -1,0 +1,50 @@
+import type { Step, StepMap, Transform } from '@remirror/pm/transform';
+interface SpanConstructorProps {
+    from: number;
+    to: number;
+    commit: number | undefined;
+}
+export declare class Span {
+    from: number;
+    to: number;
+    commit: number | undefined;
+    constructor(props: SpanConstructorProps);
+}
+interface CommitConstructorProps {
+    message: string;
+    time: number;
+    steps: Step[];
+    maps: StepMap[];
+    hidden?: boolean;
+}
+export declare class Commit {
+    message: string;
+    time: number;
+    steps: Step[];
+    maps: StepMap[];
+    hidden?: boolean;
+    constructor(props: CommitConstructorProps);
+}
+interface TrackStateConstructorProps {
+    blameMap: Span[];
+    commits: Commit[];
+    uncommittedSteps: Step[];
+    uncommittedMaps: StepMap[];
+}
+export declare class TrackState {
+    blameMap: Span[];
+    commits: Commit[];
+    uncommittedSteps: Step[];
+    uncommittedMaps: StepMap[];
+    constructor(props: TrackStateConstructorProps);
+    /**
+     * Apply a transform to this state.
+     */
+    applyTransform(transform: Transform): TrackState;
+    /**
+     * When a transaction is marked as a commit, this is used to put any
+     * uncommitted steps into a new commit.
+     */
+    applyCommit(message: string, time: number): TrackState;
+}
+export {};

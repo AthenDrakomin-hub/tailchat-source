@@ -1,0 +1,24 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var source_ref_core_1 = require("source-ref-core");
+function sourceRef(options) {
+    return {
+        name: 'source-ref',
+        transform: function (code, id) {
+            var _a;
+            var filepath = id;
+            if (['.js', '.jsx', '.ts', '.tsx', '.mjs'].some(function (ext) {
+                return filepath.endsWith(ext);
+            })) {
+                return (0, source_ref_core_1.injectTraceIdJSX)(code, {
+                    filepath: filepath,
+                    opener: (_a = options === null || options === void 0 ? void 0 : options.opener) !== null && _a !== void 0 ? _a : { type: 'vscode' },
+                });
+            }
+            else {
+                return { code: code };
+            }
+        },
+    };
+}
+exports.default = sourceRef;

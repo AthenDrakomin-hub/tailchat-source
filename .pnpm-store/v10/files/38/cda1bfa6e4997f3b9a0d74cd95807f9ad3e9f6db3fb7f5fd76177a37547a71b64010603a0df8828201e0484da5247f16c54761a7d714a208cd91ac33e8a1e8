@@ -1,0 +1,31 @@
+/// <reference types="node" />
+import { BundleResult, ModuleTreeNode } from '@perfsee/bundle-analyzer';
+interface Data {
+    branch: string;
+    hash: string;
+    report: BundleResult;
+    content: ModuleTreeNode[];
+}
+export interface ServerOptions {
+    /**
+     * Port the local report server will listen on
+     *
+     * @default 8080
+     */
+    port?: number;
+    /**
+     * Host of the local report server
+     *
+     * @default '127.0.0.1'
+     */
+    host?: string;
+    /**
+     * Path of the static files used to render report.
+     *
+     * Unless you want to change the default report viewer, otherwise leave it undefined.
+     */
+    publicPath?: string;
+}
+export declare function renderReportViewer(entry: string, data: Data): string;
+export declare function startServer(data: Data, options?: ServerOptions): Promise<import("http").Server>;
+export {};

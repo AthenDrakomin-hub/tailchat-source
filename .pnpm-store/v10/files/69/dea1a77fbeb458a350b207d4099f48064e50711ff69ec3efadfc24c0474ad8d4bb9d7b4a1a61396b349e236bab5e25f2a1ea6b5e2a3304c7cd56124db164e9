@@ -1,0 +1,6 @@
+/**
+ * Returns a number between 0 and length-1 (inclusive)
+ *
+ * @internal
+ */
+export declare function rotateIndex(index: number, length: number): number;

@@ -1,0 +1,7 @@
+import { FC } from 'react';
+import { ColumnAttributes } from '@remirror/extension-columns';
+import { CommandButtonProps } from './command-button';
+export interface ToggleColumnsButtonProps extends Omit<CommandButtonProps, 'commandName' | 'active' | 'enabled' | 'attrs' | 'onSelect'> {
+    attrs?: Partial<ColumnAttributes>;
+}
+export declare const ToggleColumnsButton: FC<ToggleColumnsButtonProps>;

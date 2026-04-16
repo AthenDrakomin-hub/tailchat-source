@@ -1,0 +1,142 @@
+import { PlainExtension, CreateExtensionPlugin, EditorView } from '@remirror/core';
+
+type EpicModePluginStateProps = Required<EpicModeOptions>;
+interface ParticleRange {
+    min: number;
+    max: number;
+}
+interface EpicModeOptions {
+    /**
+     * The particle effect to use
+     */
+    particleEffect?: ParticleEffect;
+    /**
+     * Where in the dom the canvas element should be stored
+     */
+    getCanvasContainer?: () => HTMLElement;
+    /**
+     * The colors for the epic effect
+     */
+    colors?: string[];
+    /**
+     * Range for the particles
+     */
+    particleRange?: ParticleRange;
+    /**
+     * Whether epic mode is active.
+     *
+     * @defaultValue true
+     */
+    active?: boolean;
+    /**
+     * How long the shaking should last for.
+     *
+     * @defaultValue 0.3
+     */
+    shakeTime?: number;
+    /**
+     * How strong should the intensity of the shaking be.
+     *
+     * @defaultValue 5
+     */
+    shakeIntensity?: number;
+}
+interface Particle {
+    x: number;
+    y: number;
+    alpha: number;
+    color: string[] | number[];
+    size: number;
+    vx: number;
+    vy: number;
+    drag?: number;
+    wander?: number;
+    theta?: number;
+}
+interface CreateParticleProps {
+    /**
+     * x coordinate
+     */
+    x: number;
+    /**
+     * y coordinate
+     */
+    y: number;
+    /**
+     * Suggested color of the particle
+     */
+    color: string[] | number[];
+    /**
+     * Current color of the font being typed
+     */
+    textColor: string[] | number[];
+    /**
+     * The ctx of the canvas
+     */
+    ctx: CanvasRenderingContext2D;
+    /**
+     * The canvas element
+     */
+    canvas: HTMLCanvasElement;
+}
+interface UpdateParticleProps {
+    particle: Particle;
+    ctx: CanvasRenderingContext2D;
+    canvas: HTMLCanvasElement;
+}
+interface ParticleEffect {
+    /**
+     * Create a particle
+     *
+     * @param props
+     */
+    createParticle: (props: CreateParticleProps) => Particle;
+    /**
+     * Update the created particle (via mutation)
+     *
+     * @param props
+     */
+    updateParticle: (props: UpdateParticleProps) => void;
+}
+
+declare const COLORS: string[];
+declare const defaultEffect: ParticleEffect;
+declare const spawningEffect: ParticleEffect;
+declare const heartEffect: ParticleEffect;
+
+declare class EpicModeExtension extends PlainExtension<EpicModeOptions> {
+    get name(): "epicMode";
+    createPlugin(): CreateExtensionPlugin<EpicModePluginState>;
+}
+declare class EpicModePluginState {
+    #private;
+    canvas: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    get options(): Readonly<Required<EpicModeOptions>>;
+    private container;
+    private view;
+    constructor(extension: EpicModeExtension);
+    /**
+     * Store a reference to the Prosemirror view and add the canvas to the DOM
+     *
+     * @param view
+     */
+    init(view: EditorView): this;
+    destroy(): void;
+    shake: () => void;
+    spawnParticles: () => void;
+    /**
+     * Runs through the animation loop
+     */
+    loop: () => void;
+    private drawParticles;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            epicMode: EpicModeExtension;
+        }
+    }
+}
+
+export { COLORS, CreateParticleProps, EpicModeExtension, EpicModeOptions, EpicModePluginStateProps, Particle, ParticleEffect, ParticleRange, UpdateParticleProps, defaultEffect, heartEffect, spawningEffect };

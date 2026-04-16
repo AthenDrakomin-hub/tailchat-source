@@ -1,0 +1,47 @@
+import { ApplySchemaAttributes, Array1, CommandFunction, Helper, KeyBindingProps, MarkExtension, MarkExtensionSpec, MarkSpecOverride, ParsedDomSize, PrimitiveSelection } from '@remirror/core';
+import { FontSizeOptions } from './font-size-types';
+/**
+ * Add a font size to the selected text (or text within a specified range).
+ */
+export declare class FontSizeExtension extends MarkExtension<FontSizeOptions> {
+    get name(): "fontSize";
+    createTags(): ("formattingMark" | "fontStyle")[];
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    private getFontSize;
+    /**
+     * Set the text size color value for the selected text.
+     */
+    setFontSize(size: string | number, options?: SizeCommandOptions): CommandFunction;
+    increaseFontSize(options?: SizeCommandOptions): CommandFunction;
+    decreaseFontSize(options?: SizeCommandOptions): CommandFunction;
+    /**
+     * Remove the size mark from the selection.
+     */
+    removeFontSize(options?: SizeCommandOptions): CommandFunction;
+    /**
+     * Handle exiting the mark forwards.
+     */
+    increaseFontSizeShortcut(props: KeyBindingProps): boolean;
+    /**
+     * Handle exiting the mark forwards.
+     */
+    decreaseFontSizeShortcut(props: KeyBindingProps): boolean;
+    /**
+     * Get the font size at the current selection (or provided custom selection).
+     * Returns an array of parsed font size tuples if there are multiple sizes in
+     * the non-empty selection.
+     */
+    getFontSizeForSelection(position?: PrimitiveSelection): Helper<Array1<ParsedDomSize>>;
+    getFontSizeFromDom(position?: PrimitiveSelection): Helper<ParsedDomSize>;
+}
+interface SizeCommandOptions {
+    selection?: PrimitiveSelection;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            fontSize: FontSizeExtension;
+        }
+    }
+}
+export {};

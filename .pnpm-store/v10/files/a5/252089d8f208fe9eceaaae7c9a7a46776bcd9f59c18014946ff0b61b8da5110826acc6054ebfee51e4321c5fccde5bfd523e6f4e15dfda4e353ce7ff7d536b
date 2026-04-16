@@ -1,0 +1,44 @@
+import { AnyExtension, FrameworkOutput, FrameworkProps, RemirrorManager, BuiltinPreset } from '@remirror/core';
+import { CreateCoreManagerOptions, CorePreset } from '@remirror/preset-core';
+
+interface DomFrameworkOutput<Extension extends AnyExtension> extends FrameworkOutput<Extension> {
+    /**
+     * Call this method when cleaning up the DOM. It is called for you if you call
+     * `manager.destroy()`.
+     */
+    destroy: () => void;
+}
+interface DomFrameworkProps<Extension extends AnyExtension> extends FrameworkProps<Extension> {
+    /**
+     * Provide a container element. Which the editor will be appended to.
+     */
+    element: Element;
+}
+
+/**
+ * Create an editor manager. It comes with the `CorePreset` already available.
+ */
+declare function createDomManager<Extension extends AnyExtension>(extensions: Extension[] | (() => Extension[]), options?: CreateCoreManagerOptions): RemirrorManager<CorePreset | BuiltinPreset | Extension>;
+/**
+ * Create the `remirror` editor for the DOM environment.
+ *
+ * ```ts
+ * // Get the element to append the editor to.
+ * const element = document.querySelector('#editor');
+ *
+ * // Create the manager.
+ * const manager = createDomManager(() => [], {});
+ *
+ * // Create the dom editor.
+ * const editor = createDomEditor({ element, manager });
+ *
+ * // Focus at the end of the editor.
+ * editor.focus('end');
+ *
+ * // Insert some text.
+ * editor.commands.insertText('Hello Friend!');
+ * ```
+ */
+declare function createDomEditor<Extension extends AnyExtension>(props: DomFrameworkProps<Extension>): DomFrameworkOutput<Extension>;
+
+export { DomFrameworkOutput, DomFrameworkProps, createDomEditor, createDomManager };

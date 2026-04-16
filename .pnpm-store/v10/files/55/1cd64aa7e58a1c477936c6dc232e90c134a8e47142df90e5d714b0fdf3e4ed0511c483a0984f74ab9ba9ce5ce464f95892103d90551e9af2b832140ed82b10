@@ -1,0 +1,46 @@
+import { Static, MarkExtension, ApplySchemaAttributes, MarkSpecOverride, MarkExtensionSpec, InputRule, PrimitiveSelection, CommandFunction, KeyBindingProps } from '@remirror/core';
+
+type FontWeightProperty = '-moz-initial' | 'inherit' | 'initial' | 'revert' | 'unset' | 'bold' | 'normal' | 'bolder' | 'lighter' | number;
+interface BoldOptions {
+    /**
+     * Optionally set the font weight property for this extension.
+     */
+    weight?: Static<FontWeightProperty>;
+}
+/**
+ * When added to your editor it will provide the `toggleBold` command which makes the
+ * text under the cursor / or at the provided position range bold.
+ */
+declare class BoldExtension extends MarkExtension<BoldOptions> {
+    get name(): "bold";
+    createTags(): ("formattingMark" | "fontStyle")[];
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    createInputRules(): InputRule[];
+    /**
+     * Toggle the bold styling on and off. Remove the formatting if any
+     * matching bold formatting within the selection or provided range.
+     */
+    toggleBold(selection?: PrimitiveSelection): CommandFunction;
+    /**
+     * Set the bold formatting for the provided range.
+     */
+    setBold(selection?: PrimitiveSelection): CommandFunction;
+    /**
+     * Remove the bold formatting from the provided range.
+     */
+    removeBold(selection?: PrimitiveSelection): CommandFunction;
+    /**
+     * Attach the keyboard shortcut for making text bold to this mark and also to
+     * the `toggleBold` command.
+     */
+    shortcut(props: KeyBindingProps): boolean;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            bold: BoldExtension;
+        }
+    }
+}
+
+export { BoldExtension, BoldOptions };

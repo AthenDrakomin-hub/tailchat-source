@@ -1,0 +1,24 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getPluginDirs = exports.getPluginDirContainerPath = void 0;
+var fs_1 = __importDefault(require("fs"));
+var path_1 = __importDefault(require("path"));
+var config_1 = require("./config");
+function getPluginDirContainerPath() {
+    return path_1.default.resolve(config_1.config.pluginRoot, './plugins/');
+}
+exports.getPluginDirContainerPath = getPluginDirContainerPath;
+/**
+ * Find plugin dir names
+ */
+function getPluginDirs() {
+    var list = fs_1.default.readdirSync(getPluginDirContainerPath());
+    var plugins = list.filter(function (item) {
+        return fs_1.default.statSync(path_1.default.resolve(getPluginDirContainerPath(), item)).isDirectory();
+    });
+    return plugins;
+}
+exports.getPluginDirs = getPluginDirs;

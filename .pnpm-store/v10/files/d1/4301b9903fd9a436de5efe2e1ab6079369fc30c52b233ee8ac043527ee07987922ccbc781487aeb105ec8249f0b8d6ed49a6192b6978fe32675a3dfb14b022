@@ -1,0 +1,27 @@
+import { ApplySchemaAttributes, CommandFunction, MarkExtension, MarkExtensionSpec, MarkSpecOverride, ProsemirrorAttributes } from '@remirror/core';
+export type FontFamilyAttributes = ProsemirrorAttributes<{
+    fontFamily?: string;
+}>;
+/**
+ * Add a font family to the selected text (or text within a specified range).
+ */
+export declare class FontFamilyExtension extends MarkExtension {
+    get name(): "fontFamily";
+    createTags(): ("formattingMark" | "fontStyle")[];
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    /**
+     * Set the font family for the selected text.
+     */
+    setFontFamily(fontFamily: string): CommandFunction;
+    /**
+     * Set the font family for the selected text.
+     */
+    toggleFontFamily(fontFamily: string): CommandFunction;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            fontFamily: FontFamilyExtension;
+        }
+    }
+}

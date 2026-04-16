@@ -1,0 +1,51 @@
+{
+  "name": "@remirror/extension-annotation",
+  "version": "2.0.16",
+  "description": "This extension allows to annotate the content in your editor",
+  "keywords": [
+    "remirror",
+    "extension"
+  ],
+  "homepage": "https://github.com/remirror/remirror/tree/HEAD/packages/remirror__extension-annotation",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remirror/remirror.git",
+    "directory": "packages/remirror__extension-annotation"
+  },
+  "license": "MIT",
+  "contributors": [
+    "Ronny Roeller <ronny@nextapp.co>"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/remirror-extension-annotation.d.ts",
+      "import": "./dist/remirror-extension-annotation.js",
+      "require": "./dist/remirror-extension-annotation.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/remirror-extension-annotation.cjs",
+  "module": "./dist/remirror-extension-annotation.js",
+  "types": "./dist/remirror-extension-annotation.d.ts",
+  "files": [
+    "dist",
+    "dist-types"
+  ],
+  "dependencies": {
+    "@babel/runtime": "^7.21.0",
+    "@remirror/core": "^2.0.13",
+    "@remirror/extension-positioner": "^2.1.8",
+    "@remirror/messages": "^2.0.3"
+  },
+  "devDependencies": {
+    "@remirror/pm": "^2.0.5"
+  },
+  "peerDependencies": {
+    "@remirror/pm": "^2.0.5"
+  },
+  "@remirror": {
+    "sizeLimit": "5 KB"
+  }
+}

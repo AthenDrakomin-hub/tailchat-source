@@ -1,10 +1,17 @@
 import type { ServiceSchema } from 'moleculer';
-import { TcContext, TcService, call, config, NoPermissionError } from 'tailchat-server-sdk';
+import {
+  TcContext,
+  TcService,
+  call,
+  config,
+  NoPermissionError,
+} from 'tailchat-server-sdk';
 import path from 'path';
 import fs from 'fs';
 import { pipeline } from 'stream/promises';
 import { spawn } from 'child_process';
 import { parseObjectNameFromFileUrl } from '../utils/parseObjectNameFromFileUrl';
+import mime from 'mime';
 
 function randomId() {
   return Math.random().toString(36).slice(2);
@@ -41,11 +48,10 @@ class PseudoLiveService extends TcService {
   }
 
   private get dataDir() {
-    return process.env.PSEUDOLIVE_DATA_DIR || path.join(process.cwd(), 'data', 'pseudolive');
-  }
-
-  private get streamsDir() {
-    return path.join(process.cwd(), 'public', 'streams');
+    return (
+      process.env.PSEUDOLIVE_DATA_DIR ||
+      path.join(process.cwd(), 'data', 'pseudolive')
+    );
   }
 
   async start(
@@ -59,9 +65,11 @@ class PseudoLiveService extends TcService {
     const { groupId, panelId, title, fileUrl } = ctx.params;
     const { userId, t } = ctx.meta;
 
-    const [hasPermission] = await call(ctx).checkUserPermissions(groupId, userId, [
-      'core.managePanel',
-    ]);
+    const [hasPermission] = await call(ctx).checkUserPermissions(
+      groupId,
+      userId,
+      ['core.managePanel']
+    );
     if (!hasPermission) {
       throw new NoPermissionError(t('没有操作权限'));
     }
@@ -74,7 +82,7 @@ class PseudoLiveService extends TcService {
     const streamId = `pl_${Date.now()}_${randomId()}`;
     const rawDir = path.join(this.dataDir, 'raw');
     const rawPath = path.join(rawDir, `${streamId}.mp4`);
-    const outDir = path.join(this.streamsDir, streamId);
+    const outDir = path.join(this.dataDir, 'hls', streamId);
 
     await fs.promises.mkdir(rawDir, { recursive: true });
     await fs.promises.mkdir(outDir, { recursive: true });
@@ -111,10 +119,38 @@ class PseudoLiveService extends TcService {
       hlsPath,
     ]);
 
+    const files = await fs.promises.readdir(outDir);
+    await Promise.all(
+      files.map(async (filename) => {
+        const filePath = path.join(outDir, filename);
+        const stat = await fs.promises.stat(filePath);
+        if (!stat.isFile()) {
+          return;
+        }
+
+        const ext = path.extname(filename);
+        const contentType = mime.getType(ext) || 'application/octet-stream';
+        const objectName = `streams/${streamId}/${filename}`;
+        const stream = fs.createReadStream(filePath);
+
+        await ctx.call('file.putObject', stream, {
+          meta: {
+            bucketName: config.storage.bucketName,
+            objectName,
+            size: stat.size,
+            metaData: {
+              'content-type': contentType,
+            },
+          },
+        });
+      })
+    );
+
     ctx.call('file.delete', { objectName }).catch(() => {});
     fs.promises.unlink(rawPath).catch(() => {});
+    fs.promises.rm(outDir, { recursive: true, force: true }).catch(() => {});
 
-    const hlsUrl = `${config.apiUrl}/streams/${streamId}/index.m3u8`;
+    const hlsUrl = `${config.apiUrl}/static/streams/${streamId}/index.m3u8`;
     const converseId = `${groupId}|${panelId}`;
 
     const meta = {
@@ -140,4 +176,3 @@ class PseudoLiveService extends TcService {
 }
 
 export default PseudoLiveService as unknown as ServiceSchema;
-

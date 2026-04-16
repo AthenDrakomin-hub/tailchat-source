@@ -1,0 +1,43 @@
+import { EditorState, NodeWithPosition, Static, Transaction } from '@remirror/core';
+export declare const increaseIndentOptions: Remirror.CommandDecoratorOptions;
+export declare const decreaseIndentOptions: Remirror.CommandDecoratorOptions;
+export declare const centerAlignOptions: Remirror.CommandDecoratorOptions;
+export declare const justifyAlignOptions: Remirror.CommandDecoratorOptions;
+export declare const rightAlignOptions: Remirror.CommandDecoratorOptions;
+export declare const leftAlignOptions: Remirror.CommandDecoratorOptions;
+export declare function gatherNodes(state: Transaction | EditorState, included: string[], excluded: string[]): NodeWithPosition[];
+/**
+ * The data attribute for an indented node attribute.
+ */
+export declare const NODE_INDENT_ATTRIBUTE = "data-node-indent";
+/**
+ * The data attribute text alignment within a block node which accepts
+ * formatting.
+ */
+export declare const NODE_TEXT_ALIGNMENT_ATTRIBUTE = "data-node-text-align";
+/**
+ * The data attribute for the line height of a node.
+ */
+export declare const NODE_LINE_HEIGHT_ATTRIBUTE = "data-line-height-align";
+export interface NodeFormattingOptions {
+    /**
+     * The nodes to exclude from being included in the formattable collection.
+     */
+    excludeNodes?: Static<string[]>;
+    /**
+     * The list of available indent levels.
+     *
+     * The first item (0-index) is ignored. By default the indents start at index
+     * `1`.
+     */
+    indents?: Static<string[]>;
+}
+export type NodeTextAlignment = 'none' | 'left' | 'right' | 'center' | 'justify' | 'start' | 'end';
+/**
+ * Extract the indent index from a list of indents and left margin.
+ */
+export declare function extractIndent(indents: string[], marginLeft: string | null): number;
+/**
+ * Extract the line height from numeric or percentage line-height values
+ */
+export declare function extractLineHeight(lineHeight: string | number | null): number | null;

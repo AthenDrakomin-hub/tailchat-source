@@ -1,0 +1,23 @@
+declare type GitEnv = {
+    host: string;
+    namespace: string;
+    name: string;
+    commit: string;
+    branch: string;
+    tag?: string;
+    pr?: {
+        number: number;
+        baseHash: string;
+        headHash: string;
+    };
+};
+declare type BuildEnv = {
+    isCi: boolean;
+    pwd: string;
+    platform: string;
+    upload: boolean;
+} & {
+    git: Promise<GitEnv>;
+};
+export declare const BUILD_ENV: BuildEnv;
+export {};

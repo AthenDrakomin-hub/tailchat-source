@@ -1,0 +1,33 @@
+# Installation
+> `npm install --save @types/generate-json-webpack-plugin`
+
+# Summary
+This package contains type definitions for generate-json-webpack-plugin (https://github.com/elliottsj/generate-json-webpack-plugin).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/generate-json-webpack-plugin.
+## [index.d.ts](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/generate-json-webpack-plugin/index.d.ts)
+````ts
+import webpack = require("webpack");
+
+export = GenerateJsonWebpackPlugin;
+
+declare class GenerateJsonWebpackPlugin implements webpack.WebpackPluginInstance {
+    constructor(
+        fileName: string,
+        value: object,
+        replacer?: ((key: string, value: any) => any) | null,
+        space?: string | number | null,
+    );
+
+    apply: (compiler: webpack.Compiler) => void;
+}
+
+````
+
+### Additional Details
+ * Last updated: Tue, 21 Oct 2025 16:38:34 GMT
+ * Dependencies: [@types/webpack](https://npmjs.com/package/@types/webpack)
+
+# Credits
+These definitions were written by .

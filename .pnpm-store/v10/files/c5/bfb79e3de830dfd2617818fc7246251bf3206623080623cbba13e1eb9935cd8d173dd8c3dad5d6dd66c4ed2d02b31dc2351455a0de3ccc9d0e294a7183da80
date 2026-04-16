@@ -1,0 +1,24 @@
+import { CommandFunction, NodeType, ProsemirrorAttributes, ProsemirrorNode } from '@remirror/core';
+import type { CalloutExtensionAttributes } from './callout-types';
+export declare const dataAttributeType = "data-callout-type";
+export declare const dataAttributeEmoji = "data-callout-emoji";
+/**
+ * Check that the attributes exist and are valid for the codeBlock
+ * updateAttributes.
+ */
+export declare function isValidCalloutExtensionAttributes(attributes: ProsemirrorAttributes): attributes is CalloutExtensionAttributes;
+/**
+ * Updates the node attrs.
+ *
+ * This is used to update the type of the callout.
+ */
+export declare function updateNodeAttributes(type: NodeType): (attributes: CalloutExtensionAttributes, pos?: number) => CommandFunction;
+export declare const toggleCalloutOptions: Remirror.CommandDecoratorOptions;
+/**
+ * Get the callout type from the provided string.
+ */
+export declare function getCalloutType(value: string | null | undefined, validTypes: string[], defaultType: string): string;
+/**
+ * The default emoji render function.
+ */
+export declare function defaultEmojiRender(node: ProsemirrorNode): HTMLElement;

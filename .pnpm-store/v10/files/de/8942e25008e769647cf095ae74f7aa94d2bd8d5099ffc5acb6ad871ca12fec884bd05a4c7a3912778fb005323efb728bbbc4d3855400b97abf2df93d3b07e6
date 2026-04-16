@@ -1,0 +1,16 @@
+import { EventEmitter } from 'eventemitter-strict';
+export interface DevicesUpdated {
+    devices: MediaDeviceInfo[];
+    removedDevices: MediaDeviceInfo[];
+    newDevices: MediaDeviceInfo[];
+}
+interface DeviceClientEventMap {
+    devicesUpdated: (updatedDevices: DevicesUpdated) => void;
+}
+export declare class DeviceClient extends EventEmitter<DeviceClientEventMap> {
+    private devices;
+    get allDevices(): MediaDeviceInfo[];
+    updateMediaDevices(): Promise<void>;
+    getDeviceId(deviceId: string, kind: MediaDeviceKind): string | undefined;
+}
+export {};

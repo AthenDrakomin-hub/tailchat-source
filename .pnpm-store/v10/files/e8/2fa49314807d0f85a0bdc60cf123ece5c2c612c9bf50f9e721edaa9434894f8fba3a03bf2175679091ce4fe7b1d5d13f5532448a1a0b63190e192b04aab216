@@ -1,0 +1,29 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.compare = exports.compareBySection = exports.compareModuleTotalSize = exports.compareModuleDuplicateSize = void 0;
+const constants_1 = require("../constants");
+const compare_metrics_1 = require("../report/compare-metrics");
+const constants_2 = require("./constants");
+const selectors_1 = require("./selectors");
+const compareStats = (jobs, rowTransformers) => (0, compare_metrics_1.compareMetrics)(jobs, selectors_1.selectors.stats, undefined, rowTransformers);
+const compareSizes = (jobs, rowTransformers) => (0, compare_metrics_1.compareMetrics)(jobs, selectors_1.selectors.sizes, undefined, rowTransformers);
+const compareAssets = (jobs, rowTransformers) => (0, compare_metrics_1.compareMetrics)(jobs, selectors_1.selectors.assets, constants_1.MetricTypes.FileSize, rowTransformers);
+const compareModules = (jobs, rowTransformers) => (0, compare_metrics_1.compareMetrics)(jobs, selectors_1.selectors.modules, constants_1.MetricTypes.FileSize, rowTransformers);
+const compareModuleDuplicateSize = (jobs, rowTransformers) => (0, compare_metrics_1.compareMetrics)(jobs, selectors_1.getModulesDuplicateSizeMetrics, constants_1.MetricTypes.FileSize, rowTransformers);
+exports.compareModuleDuplicateSize = compareModuleDuplicateSize;
+const compareModuleTotalSize = (jobs, rowTransformers) => (0, compare_metrics_1.compareMetrics)(jobs, selectors_1.getModulesTotalSizeMetrics, constants_1.MetricTypes.FileSize, rowTransformers);
+exports.compareModuleTotalSize = compareModuleTotalSize;
+const comparePackages = (jobs, rowTransformers) => (0, compare_metrics_1.compareMetrics)(jobs, selectors_1.selectors.packages, constants_1.MetricTypes.FileSize, rowTransformers);
+exports.compareBySection = {
+    [constants_2.SECTION_WEBPACK_STATS]: compareStats,
+    [constants_2.SECTION_WEBPACK_SIZES]: compareSizes,
+    [constants_2.SECTION_WEBPACK_ASSETS]: compareAssets,
+    [constants_2.SECTION_WEBPACK_MODULES]: compareModules,
+    [constants_2.SECTION_WEBPACK_PACKAGES]: comparePackages,
+};
+const compare = (jobs) => constants_2.SECTIONS.reduce((agg, sectionId) => ({
+    ...agg,
+    [sectionId]: exports.compareBySection[sectionId](jobs),
+}), {});
+exports.compare = compare;
+//# sourceMappingURL=compare.js.map

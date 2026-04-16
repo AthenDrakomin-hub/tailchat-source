@@ -1,0 +1,68 @@
+import { ApplySchemaAttributes, CommandFunction, DOMOutputSpec, NodeType, NodeTypeProps, NodeWithPosition, PosProps, ProsemirrorAttributes, ProsemirrorNode } from '@remirror/core';
+import { Decoration } from '@remirror/pm/view';
+import type { CodeBlockAttributes, CodeBlockOptions } from './code-block-types';
+export declare const LANGUAGE_ATTRIBUTE = "data-code-block-language";
+export declare const WRAP_ATTRIBUTE = "data-code-block-wrap";
+interface CreateDecorationsProps {
+    defaultLanguage: string;
+    /**
+     * The list of codeBlocks and their positions which we would like to update.
+     */
+    blocks: NodeWithPosition[];
+    /**
+     * When a delete happens within the last valid decoration in a block it causes
+     * the editor to jump. This skipLast should be set to true immediately after a
+     * delete which then allows for createDecorations to skip updating the
+     * decoration for the last refactor node, and hence preventing the jumpy bug.
+     */
+    skipLast: boolean;
+    plainTextClassName: string | undefined;
+}
+/**
+ * Creates a decoration set for the provided blocks
+ */
+export declare function createDecorations(props: CreateDecorationsProps): Decoration[];
+/**
+ * Check that the attributes exist and are valid for the codeBlock
+ * updateAttributes.
+ */
+export declare function isValidCodeBlockAttributes(attributes: ProsemirrorAttributes): attributes is CodeBlockAttributes;
+/**
+ * Updates the node attrs.
+ *
+ * This is used to update the language for the codeBlock.
+ */
+export declare function updateNodeAttributes(type: NodeType): (attributes: CodeBlockAttributes) => CommandFunction;
+interface GetLanguageProps {
+    /**
+     * The language input from the user;
+     */
+    language: string | undefined;
+    /**
+     * The default language to use if none found.
+     */
+    fallback: string;
+}
+/**
+ * Get the language from user input.
+ */
+export declare function getLanguage(props: GetLanguageProps): string;
+/**
+ * Used to provide a `toDom` function for the code block. Currently this only
+ * support the browser runtime.
+ */
+export declare function codeBlockToDOM(node: ProsemirrorNode, extra: ApplySchemaAttributes): DOMOutputSpec;
+interface FormatCodeBlockFactoryProps extends NodeTypeProps, Required<Pick<CodeBlockOptions, 'formatter' | 'defaultLanguage'>> {
+}
+/**
+ * A factory for creating a command which can format a selected codeBlock (or
+ * one located at the provided position).
+ */
+export declare function formatCodeBlockFactory(props: FormatCodeBlockFactoryProps): ({ pos }?: Partial<PosProps>) => CommandFunction;
+/**
+ * Get the language from the provided `code` element. This is used as the
+ * default implementation in the `CodeExtension` but it can be overridden.
+ */
+export declare function getLanguageFromDom(codeElement: HTMLElement): string | undefined;
+export declare const toggleCodeBlockOptions: Remirror.CommandDecoratorOptions;
+export {};

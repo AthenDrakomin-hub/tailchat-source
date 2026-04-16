@@ -1,0 +1,28 @@
+import { ApplySchemaAttributes, CommandFunction, KeyBindingProps, NodeExtension, NodeExtensionSpec, NodeSpecOverride } from '@remirror/core';
+import { InputRule } from '@remirror/pm/inputrules';
+import { ListItemExtension } from './list-item-extension';
+/**
+ * Creates the list for the ordered list.
+ */
+export declare class OrderedListExtension extends NodeExtension {
+    get name(): "orderedList";
+    createTags(): ("listContainer" | "block")[];
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    /**
+     * Automatically add the `ListItemExtension` which is required here.
+     */
+    createExtensions(): ListItemExtension[];
+    /**
+     * Toggle the ordered list for the current selection.
+     */
+    toggleOrderedList(): CommandFunction;
+    listShortcut(props: KeyBindingProps): boolean;
+    createInputRules(): InputRule[];
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            orderedList: OrderedListExtension;
+        }
+    }
+}

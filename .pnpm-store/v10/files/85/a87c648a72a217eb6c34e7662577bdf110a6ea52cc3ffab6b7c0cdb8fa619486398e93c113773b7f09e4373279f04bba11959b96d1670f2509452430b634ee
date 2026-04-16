@@ -1,0 +1,1057 @@
+/**
+ * The shape of the content which is placed within an SVG for creating the
+ * generated icon.
+ */
+interface IconTree {
+    /**
+     * The name of the tag to render.
+     */
+    tag: string;
+    /**
+     * The attributes (camel cased) to add to the rendered tag.
+     */
+    attr: {
+        [key: string]: string;
+    };
+    /**
+     * The child tags to render.
+     */
+    child?: IconTree[];
+}
+
+/** THIS FILE IS AUTO GENERATED */
+
+/**
+ * The icon for `ab.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Ab](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/a-b.svg)
+ */
+declare const ab: IconTree[];
+/**
+ * The icon for `add-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Add Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/add-fill.svg)
+ */
+declare const addFill: IconTree[];
+/**
+ * The icon for `add-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Add Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/add-line.svg)
+ */
+declare const addLine: IconTree[];
+/**
+ * The icon for `alert-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Alert Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/alert-line.svg)
+ */
+declare const alertLine: IconTree[];
+/**
+ * The icon for `align-bottom.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Align Bottom](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/align-bottom.svg)
+ */
+declare const alignBottom: IconTree[];
+/**
+ * The icon for `align-center.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Align Center](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/align-center.svg)
+ */
+declare const alignCenter: IconTree[];
+/**
+ * The icon for `align-justify.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Align Justify](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/align-justify.svg)
+ */
+declare const alignJustify: IconTree[];
+/**
+ * The icon for `align-left.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Align Left](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/align-left.svg)
+ */
+declare const alignLeft: IconTree[];
+/**
+ * The icon for `align-right.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Align Right](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/align-right.svg)
+ */
+declare const alignRight: IconTree[];
+/**
+ * The icon for `align-top.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Align Top](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/align-top.svg)
+ */
+declare const alignTop: IconTree[];
+/**
+ * The icon for `align-vertically.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Align Vertically](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/align-vertically.svg)
+ */
+declare const alignVertically: IconTree[];
+/**
+ * The icon for `apps-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Apps Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/apps-line.svg)
+ */
+declare const appsLine: IconTree[];
+/**
+ * The icon for `arrow-down-s-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Arrow Down S Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/arrow-down-s-fill.svg)
+ */
+declare const arrowDownSFill: IconTree[];
+/**
+ * The icon for `arrow-go-back-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Arrow Go Back Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/arrow-go-back-fill.svg)
+ */
+declare const arrowGoBackFill: IconTree[];
+/**
+ * The icon for `arrow-go-forward-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Arrow Go Forward Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/arrow-go-forward-fill.svg)
+ */
+declare const arrowGoForwardFill: IconTree[];
+/**
+ * The icon for `arrow-left-s-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Arrow Left S Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/arrow-left-s-fill.svg)
+ */
+declare const arrowLeftSFill: IconTree[];
+/**
+ * The icon for `arrow-right-s-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Arrow Right S Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/arrow-right-s-fill.svg)
+ */
+declare const arrowRightSFill: IconTree[];
+/**
+ * The icon for `arrow-up-s-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Arrow Up S Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/arrow-up-s-fill.svg)
+ */
+declare const arrowUpSFill: IconTree[];
+/**
+ * The icon for `asterisk.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Asterisk](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/asterisk.svg)
+ */
+declare const asterisk: IconTree[];
+/**
+ * The icon for `attachment-2.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Attachment 2](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/attachment-2.svg)
+ */
+declare const attachment2: IconTree[];
+/**
+ * The icon for `bold.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Bold](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/bold.svg)
+ */
+declare const bold: IconTree[];
+/**
+ * The icon for `braces-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Braces Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Development/braces-line.svg)
+ */
+declare const bracesLine: IconTree[];
+/**
+ * The icon for `bring-forward.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Bring Forward](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/bring-forward.svg)
+ */
+declare const bringForward: IconTree[];
+/**
+ * The icon for `bring-to-front.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Bring To Front](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/bring-to-front.svg)
+ */
+declare const bringToFront: IconTree[];
+/**
+ * The icon for `chat-new-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Chat New Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Communication/chat-new-line.svg)
+ */
+declare const chatNewLine: IconTree[];
+/**
+ * The icon for `checkbox-circle-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Checkbox Circle Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/checkbox-circle-line.svg)
+ */
+declare const checkboxCircleLine: IconTree[];
+/**
+ * The icon for `checkbox-multiple-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Checkbox Multiple Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/checkbox-multiple-line.svg)
+ */
+declare const checkboxMultipleLine: IconTree[];
+/**
+ * The icon for `clipboard-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Clipboard Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Document/clipboard-fill.svg)
+ */
+declare const clipboardFill: IconTree[];
+/**
+ * The icon for `clipboard-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Clipboard Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Document/clipboard-line.svg)
+ */
+declare const clipboardLine: IconTree[];
+/**
+ * The icon for `close-circle-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Close Circle Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/close-circle-line.svg)
+ */
+declare const closeCircleLine: IconTree[];
+/**
+ * The icon for `close-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Close Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/close-fill.svg)
+ */
+declare const closeFill: IconTree[];
+/**
+ * The icon for `close-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Close Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/close-line.svg)
+ */
+declare const closeLine: IconTree[];
+/**
+ * The icon for `code-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Code Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Development/code-line.svg)
+ */
+declare const codeLine: IconTree[];
+/**
+ * The icon for `code-view.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Code View](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/code-view.svg)
+ */
+declare const codeView: IconTree[];
+/**
+ * The icon for `delete-bin-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Delete Bin Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/delete-bin-fill.svg)
+ */
+declare const deleteBinFill: IconTree[];
+/**
+ * The icon for `delete-bin-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Delete Bin Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/delete-bin-line.svg)
+ */
+declare const deleteBinLine: IconTree[];
+/**
+ * The icon for `delete-column.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Delete Column](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/delete-column.svg)
+ */
+declare const deleteColumn: IconTree[];
+/**
+ * The icon for `delete-row.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Delete Row](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/delete-row.svg)
+ */
+declare const deleteRow: IconTree[];
+/**
+ * The icon for `double-quotes-l.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Double Quotes L](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/double-quotes-l.svg)
+ */
+declare const doubleQuotesL: IconTree[];
+/**
+ * The icon for `double-quotes-r.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Double Quotes R](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/double-quotes-r.svg)
+ */
+declare const doubleQuotesR: IconTree[];
+/**
+ * The icon for `download-2-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Download 2 Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/download-2-fill.svg)
+ */
+declare const download2Fill: IconTree[];
+/**
+ * The icon for `drag-drop-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Drag Drop Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Design/drag-drop-line.svg)
+ */
+declare const dragDropLine: IconTree[];
+/**
+ * The icon for `emphasis-cn.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Emphasis Cn](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/emphasis-cn.svg)
+ */
+declare const emphasisCn: IconTree[];
+/**
+ * The icon for `emphasis.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Emphasis](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/emphasis.svg)
+ */
+declare const emphasis: IconTree[];
+/**
+ * The icon for `english-input.svg` created by [RemixIcons](https://remixicons.com).
+ * ![English Input](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/english-input.svg)
+ */
+declare const englishInput: IconTree[];
+/**
+ * The icon for `error-warning-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Error Warning Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/error-warning-line.svg)
+ */
+declare const errorWarningLine: IconTree[];
+/**
+ * The icon for `external-link-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![External Link Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/external-link-fill.svg)
+ */
+declare const externalLinkFill: IconTree[];
+/**
+ * The icon for `file-copy-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![File Copy Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Document/file-copy-line.svg)
+ */
+declare const fileCopyLine: IconTree[];
+/**
+ * The icon for `flow-chart.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Flow Chart](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/flow-chart.svg)
+ */
+declare const flowChart: IconTree[];
+/**
+ * The icon for `font-color.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Font Color](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/font-color.svg)
+ */
+declare const fontColor: IconTree[];
+/**
+ * The icon for `font-size-2.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Font Size 2](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/font-size-2.svg)
+ */
+declare const fontSize2: IconTree[];
+/**
+ * The icon for `font-size.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Font Size](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/font-size.svg)
+ */
+declare const fontSize: IconTree[];
+/**
+ * The icon for `format-clear.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Format Clear](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/format-clear.svg)
+ */
+declare const formatClear: IconTree[];
+/**
+ * The icon for `fullscreen-exit-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Fullscreen Exit Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Media/fullscreen-exit-line.svg)
+ */
+declare const fullscreenExitLine: IconTree[];
+/**
+ * The icon for `fullscreen-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Fullscreen Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Media/fullscreen-line.svg)
+ */
+declare const fullscreenLine: IconTree[];
+/**
+ * The icon for `functions.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Functions](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/functions.svg)
+ */
+declare const functions: IconTree[];
+/**
+ * The icon for `gallery-upload-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Gallery Upload Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Media/gallery-upload-line.svg)
+ */
+declare const galleryUploadLine: IconTree[];
+/**
+ * The icon for `h-1.svg` created by [RemixIcons](https://remixicons.com).
+ * ![H 1](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/h-1.svg)
+ */
+declare const h1: IconTree[];
+/**
+ * The icon for `h-2.svg` created by [RemixIcons](https://remixicons.com).
+ * ![H 2](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/h-2.svg)
+ */
+declare const h2: IconTree[];
+/**
+ * The icon for `h-3.svg` created by [RemixIcons](https://remixicons.com).
+ * ![H 3](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/h-3.svg)
+ */
+declare const h3: IconTree[];
+/**
+ * The icon for `h-4.svg` created by [RemixIcons](https://remixicons.com).
+ * ![H 4](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/h-4.svg)
+ */
+declare const h4: IconTree[];
+/**
+ * The icon for `h-5.svg` created by [RemixIcons](https://remixicons.com).
+ * ![H 5](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/h-5.svg)
+ */
+declare const h5: IconTree[];
+/**
+ * The icon for `h-6.svg` created by [RemixIcons](https://remixicons.com).
+ * ![H 6](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/h-6.svg)
+ */
+declare const h6: IconTree[];
+/**
+ * The icon for `hashtag.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Hashtag](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/hashtag.svg)
+ */
+declare const hashtag: IconTree[];
+/**
+ * The icon for `heading.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Heading](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/heading.svg)
+ */
+declare const heading: IconTree[];
+/**
+ * The icon for `image-add-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Image Add Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Media/image-add-line.svg)
+ */
+declare const imageAddLine: IconTree[];
+/**
+ * The icon for `image-edit-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Image Edit Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Media/image-edit-line.svg)
+ */
+declare const imageEditLine: IconTree[];
+/**
+ * The icon for `image-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Image Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Media/image-line.svg)
+ */
+declare const imageLine: IconTree[];
+/**
+ * The icon for `indent-decrease.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Indent Decrease](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/indent-decrease.svg)
+ */
+declare const indentDecrease: IconTree[];
+/**
+ * The icon for `indent-increase.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Indent Increase](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/indent-increase.svg)
+ */
+declare const indentIncrease: IconTree[];
+/**
+ * The icon for `information-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Information Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/information-line.svg)
+ */
+declare const informationLine: IconTree[];
+/**
+ * The icon for `input-cursor-move.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Input Cursor Move](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/input-cursor-move.svg)
+ */
+declare const inputCursorMove: IconTree[];
+/**
+ * The icon for `insert-column-left.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Insert Column Left](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/insert-column-left.svg)
+ */
+declare const insertColumnLeft: IconTree[];
+/**
+ * The icon for `insert-column-right.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Insert Column Right](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/insert-column-right.svg)
+ */
+declare const insertColumnRight: IconTree[];
+/**
+ * The icon for `insert-row-bottom.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Insert Row Bottom](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/insert-row-bottom.svg)
+ */
+declare const insertRowBottom: IconTree[];
+/**
+ * The icon for `insert-row-top.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Insert Row Top](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/insert-row-top.svg)
+ */
+declare const insertRowTop: IconTree[];
+/**
+ * The icon for `italic.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Italic](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/italic.svg)
+ */
+declare const italic: IconTree[];
+/**
+ * The icon for `layout-column-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Layout Column Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Design/layout-column-line.svg)
+ */
+declare const layoutColumnLine: IconTree[];
+/**
+ * The icon for `line-height.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Line Height](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/line-height.svg)
+ */
+declare const lineHeight: IconTree[];
+/**
+ * The icon for `link-m.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Link M](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/link-m.svg)
+ */
+declare const linkM: IconTree[];
+/**
+ * The icon for `link-unlink-m.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Link Unlink M](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/link-unlink-m.svg)
+ */
+declare const linkUnlinkM: IconTree[];
+/**
+ * The icon for `link-unlink.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Link Unlink](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/link-unlink.svg)
+ */
+declare const linkUnlink: IconTree[];
+/**
+ * The icon for `link.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Link](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/link.svg)
+ */
+declare const link: IconTree[];
+/**
+ * The icon for `list-check-2.svg` created by [RemixIcons](https://remixicons.com).
+ * ![List Check 2](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/list-check-2.svg)
+ */
+declare const listCheck2: IconTree[];
+/**
+ * The icon for `list-check.svg` created by [RemixIcons](https://remixicons.com).
+ * ![List Check](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/list-check.svg)
+ */
+declare const listCheck: IconTree[];
+/**
+ * The icon for `list-ordered.svg` created by [RemixIcons](https://remixicons.com).
+ * ![List Ordered](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/list-ordered.svg)
+ */
+declare const listOrdered: IconTree[];
+/**
+ * The icon for `list-unordered.svg` created by [RemixIcons](https://remixicons.com).
+ * ![List Unordered](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/list-unordered.svg)
+ */
+declare const listUnordered: IconTree[];
+/**
+ * The icon for `mark-pen-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Mark Pen Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Design/mark-pen-line.svg)
+ */
+declare const markPenLine: IconTree[];
+/**
+ * The icon for `markdown-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Markdown Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Document/markdown-fill.svg)
+ */
+declare const markdownFill: IconTree[];
+/**
+ * The icon for `markdown-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Markdown Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Document/markdown-line.svg)
+ */
+declare const markdownLine: IconTree[];
+/**
+ * The icon for `merge-cells-horizontal.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Merge Cells Horizontal](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/merge-cells-horizontal.svg)
+ */
+declare const mergeCellsHorizontal: IconTree[];
+/**
+ * The icon for `merge-cells-vertical.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Merge Cells Vertical](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/merge-cells-vertical.svg)
+ */
+declare const mergeCellsVertical: IconTree[];
+/**
+ * The icon for `mind-map.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Mind Map](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/mind-map.svg)
+ */
+declare const mindMap: IconTree[];
+/**
+ * The icon for `more-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![More Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/more-fill.svg)
+ */
+declare const moreFill: IconTree[];
+/**
+ * The icon for `node-tree.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Node Tree](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/node-tree.svg)
+ */
+declare const nodeTree: IconTree[];
+/**
+ * The icon for `number-0.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Number 0](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/number-0.svg)
+ */
+declare const number0: IconTree[];
+/**
+ * The icon for `number-1.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Number 1](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/number-1.svg)
+ */
+declare const number1: IconTree[];
+/**
+ * The icon for `number-2.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Number 2](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/number-2.svg)
+ */
+declare const number2: IconTree[];
+/**
+ * The icon for `number-3.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Number 3](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/number-3.svg)
+ */
+declare const number3: IconTree[];
+/**
+ * The icon for `number-4.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Number 4](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/number-4.svg)
+ */
+declare const number4: IconTree[];
+/**
+ * The icon for `number-5.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Number 5](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/number-5.svg)
+ */
+declare const number5: IconTree[];
+/**
+ * The icon for `number-6.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Number 6](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/number-6.svg)
+ */
+declare const number6: IconTree[];
+/**
+ * The icon for `number-7.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Number 7](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/number-7.svg)
+ */
+declare const number7: IconTree[];
+/**
+ * The icon for `number-8.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Number 8](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/number-8.svg)
+ */
+declare const number8: IconTree[];
+/**
+ * The icon for `number-9.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Number 9](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/number-9.svg)
+ */
+declare const number9: IconTree[];
+/**
+ * The icon for `omega.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Omega](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/omega.svg)
+ */
+declare const omega: IconTree[];
+/**
+ * The icon for `organization-chart.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Organization Chart](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/organization-chart.svg)
+ */
+declare const organizationChart: IconTree[];
+/**
+ * The icon for `page-separator.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Page Separator](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/page-separator.svg)
+ */
+declare const pageSeparator: IconTree[];
+/**
+ * The icon for `paragraph.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Paragraph](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/paragraph.svg)
+ */
+declare const paragraph: IconTree[];
+/**
+ * The icon for `pencil-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Pencil Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Design/pencil-fill.svg)
+ */
+declare const pencilFill: IconTree[];
+/**
+ * The icon for `pencil-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Pencil Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Design/pencil-line.svg)
+ */
+declare const pencilLine: IconTree[];
+/**
+ * The icon for `pinyin-input.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Pinyin Input](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/pinyin-input.svg)
+ */
+declare const pinyinInput: IconTree[];
+/**
+ * The icon for `question-mark.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Question Mark](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/question-mark.svg)
+ */
+declare const questionMark: IconTree[];
+/**
+ * The icon for `rounded-corner.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Rounded Corner](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/rounded-corner.svg)
+ */
+declare const roundedCorner: IconTree[];
+/**
+ * The icon for `scissors-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Scissors Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Design/scissors-fill.svg)
+ */
+declare const scissorsFill: IconTree[];
+/**
+ * The icon for `send-backward.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Send Backward](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/send-backward.svg)
+ */
+declare const sendBackward: IconTree[];
+/**
+ * The icon for `send-to-back.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Send To Back](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/send-to-back.svg)
+ */
+declare const sendToBack: IconTree[];
+/**
+ * The icon for `separator.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Separator](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/separator.svg)
+ */
+declare const separator: IconTree[];
+/**
+ * The icon for `single-quotes-l.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Single Quotes L](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/single-quotes-l.svg)
+ */
+declare const singleQuotesL: IconTree[];
+/**
+ * The icon for `single-quotes-r.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Single Quotes R](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/single-quotes-r.svg)
+ */
+declare const singleQuotesR: IconTree[];
+/**
+ * The icon for `sort-asc.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Sort Asc](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/sort-asc.svg)
+ */
+declare const sortAsc: IconTree[];
+/**
+ * The icon for `sort-desc.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Sort Desc](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/sort-desc.svg)
+ */
+declare const sortDesc: IconTree[];
+/**
+ * The icon for `space.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Space](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/space.svg)
+ */
+declare const space: IconTree[];
+/**
+ * The icon for `spam-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Spam Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/spam-line.svg)
+ */
+declare const spamLine: IconTree[];
+/**
+ * The icon for `split-cells-horizontal.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Split Cells Horizontal](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/split-cells-horizontal.svg)
+ */
+declare const splitCellsHorizontal: IconTree[];
+/**
+ * The icon for `split-cells-vertical.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Split Cells Vertical](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/split-cells-vertical.svg)
+ */
+declare const splitCellsVertical: IconTree[];
+/**
+ * The icon for `strikethrough-2.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Strikethrough 2](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/strikethrough-2.svg)
+ */
+declare const strikethrough2: IconTree[];
+/**
+ * The icon for `strikethrough.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Strikethrough](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/strikethrough.svg)
+ */
+declare const strikethrough: IconTree[];
+/**
+ * The icon for `subscript-2.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Subscript 2](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/subscript-2.svg)
+ */
+declare const subscript2: IconTree[];
+/**
+ * The icon for `subscript.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Subscript](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/subscript.svg)
+ */
+declare const subscript: IconTree[];
+/**
+ * The icon for `subtract-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Subtract Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/subtract-line.svg)
+ */
+declare const subtractLine: IconTree[];
+/**
+ * The icon for `superscript-2.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Superscript 2](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/superscript-2.svg)
+ */
+declare const superscript2: IconTree[];
+/**
+ * The icon for `superscript.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Superscript](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/superscript.svg)
+ */
+declare const superscript: IconTree[];
+/**
+ * The icon for `table-2.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Table 2](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/table-2.svg)
+ */
+declare const table2: IconTree[];
+/**
+ * The icon for `table-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Table Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Design/table-line.svg)
+ */
+declare const tableLine: IconTree[];
+/**
+ * The icon for `text-direction-l.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Text Direction L](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/text-direction-l.svg)
+ */
+declare const textDirectionL: IconTree[];
+/**
+ * The icon for `text-direction-r.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Text Direction R](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/text-direction-r.svg)
+ */
+declare const textDirectionR: IconTree[];
+/**
+ * The icon for `text-spacing.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Text Spacing](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/text-spacing.svg)
+ */
+declare const textSpacing: IconTree[];
+/**
+ * The icon for `text-wrap.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Text Wrap](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/text-wrap.svg)
+ */
+declare const textWrap: IconTree[];
+/**
+ * The icon for `text.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Text](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/text.svg)
+ */
+declare const text: IconTree[];
+/**
+ * The icon for `translate-2.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Translate 2](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/translate-2.svg)
+ */
+declare const translate2: IconTree[];
+/**
+ * The icon for `translate.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Translate](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/translate.svg)
+ */
+declare const translate: IconTree[];
+/**
+ * The icon for `underline.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Underline](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/underline.svg)
+ */
+declare const underline: IconTree[];
+/**
+ * The icon for `upload-2-fill.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Upload 2 Fill](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/System/upload-2-fill.svg)
+ */
+declare const upload2Fill: IconTree[];
+/**
+ * The icon for `video-line.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Video Line](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Media/video-line.svg)
+ */
+declare const videoLine: IconTree[];
+/**
+ * The icon for `wubi-input.svg` created by [RemixIcons](https://remixicons.com).
+ * ![Wubi Input](https://cdn.jsdelivr.net/npm/remixicon@2.5.0/icons/Editor/wubi-input.svg)
+ */
+declare const wubiInput: IconTree[];
+
+declare const Core_ab: typeof ab;
+declare const Core_addFill: typeof addFill;
+declare const Core_addLine: typeof addLine;
+declare const Core_alertLine: typeof alertLine;
+declare const Core_alignBottom: typeof alignBottom;
+declare const Core_alignCenter: typeof alignCenter;
+declare const Core_alignJustify: typeof alignJustify;
+declare const Core_alignLeft: typeof alignLeft;
+declare const Core_alignRight: typeof alignRight;
+declare const Core_alignTop: typeof alignTop;
+declare const Core_alignVertically: typeof alignVertically;
+declare const Core_appsLine: typeof appsLine;
+declare const Core_arrowDownSFill: typeof arrowDownSFill;
+declare const Core_arrowGoBackFill: typeof arrowGoBackFill;
+declare const Core_arrowGoForwardFill: typeof arrowGoForwardFill;
+declare const Core_arrowLeftSFill: typeof arrowLeftSFill;
+declare const Core_arrowRightSFill: typeof arrowRightSFill;
+declare const Core_arrowUpSFill: typeof arrowUpSFill;
+declare const Core_asterisk: typeof asterisk;
+declare const Core_attachment2: typeof attachment2;
+declare const Core_bold: typeof bold;
+declare const Core_bracesLine: typeof bracesLine;
+declare const Core_bringForward: typeof bringForward;
+declare const Core_bringToFront: typeof bringToFront;
+declare const Core_chatNewLine: typeof chatNewLine;
+declare const Core_checkboxCircleLine: typeof checkboxCircleLine;
+declare const Core_checkboxMultipleLine: typeof checkboxMultipleLine;
+declare const Core_clipboardFill: typeof clipboardFill;
+declare const Core_clipboardLine: typeof clipboardLine;
+declare const Core_closeCircleLine: typeof closeCircleLine;
+declare const Core_closeFill: typeof closeFill;
+declare const Core_closeLine: typeof closeLine;
+declare const Core_codeLine: typeof codeLine;
+declare const Core_codeView: typeof codeView;
+declare const Core_deleteBinFill: typeof deleteBinFill;
+declare const Core_deleteBinLine: typeof deleteBinLine;
+declare const Core_deleteColumn: typeof deleteColumn;
+declare const Core_deleteRow: typeof deleteRow;
+declare const Core_doubleQuotesL: typeof doubleQuotesL;
+declare const Core_doubleQuotesR: typeof doubleQuotesR;
+declare const Core_download2Fill: typeof download2Fill;
+declare const Core_dragDropLine: typeof dragDropLine;
+declare const Core_emphasis: typeof emphasis;
+declare const Core_emphasisCn: typeof emphasisCn;
+declare const Core_englishInput: typeof englishInput;
+declare const Core_errorWarningLine: typeof errorWarningLine;
+declare const Core_externalLinkFill: typeof externalLinkFill;
+declare const Core_fileCopyLine: typeof fileCopyLine;
+declare const Core_flowChart: typeof flowChart;
+declare const Core_fontColor: typeof fontColor;
+declare const Core_fontSize: typeof fontSize;
+declare const Core_fontSize2: typeof fontSize2;
+declare const Core_formatClear: typeof formatClear;
+declare const Core_fullscreenExitLine: typeof fullscreenExitLine;
+declare const Core_fullscreenLine: typeof fullscreenLine;
+declare const Core_functions: typeof functions;
+declare const Core_galleryUploadLine: typeof galleryUploadLine;
+declare const Core_h1: typeof h1;
+declare const Core_h2: typeof h2;
+declare const Core_h3: typeof h3;
+declare const Core_h4: typeof h4;
+declare const Core_h5: typeof h5;
+declare const Core_h6: typeof h6;
+declare const Core_hashtag: typeof hashtag;
+declare const Core_heading: typeof heading;
+declare const Core_imageAddLine: typeof imageAddLine;
+declare const Core_imageEditLine: typeof imageEditLine;
+declare const Core_imageLine: typeof imageLine;
+declare const Core_indentDecrease: typeof indentDecrease;
+declare const Core_indentIncrease: typeof indentIncrease;
+declare const Core_informationLine: typeof informationLine;
+declare const Core_inputCursorMove: typeof inputCursorMove;
+declare const Core_insertColumnLeft: typeof insertColumnLeft;
+declare const Core_insertColumnRight: typeof insertColumnRight;
+declare const Core_insertRowBottom: typeof insertRowBottom;
+declare const Core_insertRowTop: typeof insertRowTop;
+declare const Core_italic: typeof italic;
+declare const Core_layoutColumnLine: typeof layoutColumnLine;
+declare const Core_lineHeight: typeof lineHeight;
+declare const Core_link: typeof link;
+declare const Core_linkM: typeof linkM;
+declare const Core_linkUnlink: typeof linkUnlink;
+declare const Core_linkUnlinkM: typeof linkUnlinkM;
+declare const Core_listCheck: typeof listCheck;
+declare const Core_listCheck2: typeof listCheck2;
+declare const Core_listOrdered: typeof listOrdered;
+declare const Core_listUnordered: typeof listUnordered;
+declare const Core_markPenLine: typeof markPenLine;
+declare const Core_markdownFill: typeof markdownFill;
+declare const Core_markdownLine: typeof markdownLine;
+declare const Core_mergeCellsHorizontal: typeof mergeCellsHorizontal;
+declare const Core_mergeCellsVertical: typeof mergeCellsVertical;
+declare const Core_mindMap: typeof mindMap;
+declare const Core_moreFill: typeof moreFill;
+declare const Core_nodeTree: typeof nodeTree;
+declare const Core_number0: typeof number0;
+declare const Core_number1: typeof number1;
+declare const Core_number2: typeof number2;
+declare const Core_number3: typeof number3;
+declare const Core_number4: typeof number4;
+declare const Core_number5: typeof number5;
+declare const Core_number6: typeof number6;
+declare const Core_number7: typeof number7;
+declare const Core_number8: typeof number8;
+declare const Core_number9: typeof number9;
+declare const Core_omega: typeof omega;
+declare const Core_organizationChart: typeof organizationChart;
+declare const Core_pageSeparator: typeof pageSeparator;
+declare const Core_paragraph: typeof paragraph;
+declare const Core_pencilFill: typeof pencilFill;
+declare const Core_pencilLine: typeof pencilLine;
+declare const Core_pinyinInput: typeof pinyinInput;
+declare const Core_questionMark: typeof questionMark;
+declare const Core_roundedCorner: typeof roundedCorner;
+declare const Core_scissorsFill: typeof scissorsFill;
+declare const Core_sendBackward: typeof sendBackward;
+declare const Core_sendToBack: typeof sendToBack;
+declare const Core_separator: typeof separator;
+declare const Core_singleQuotesL: typeof singleQuotesL;
+declare const Core_singleQuotesR: typeof singleQuotesR;
+declare const Core_sortAsc: typeof sortAsc;
+declare const Core_sortDesc: typeof sortDesc;
+declare const Core_space: typeof space;
+declare const Core_spamLine: typeof spamLine;
+declare const Core_splitCellsHorizontal: typeof splitCellsHorizontal;
+declare const Core_splitCellsVertical: typeof splitCellsVertical;
+declare const Core_strikethrough: typeof strikethrough;
+declare const Core_strikethrough2: typeof strikethrough2;
+declare const Core_subscript: typeof subscript;
+declare const Core_subscript2: typeof subscript2;
+declare const Core_subtractLine: typeof subtractLine;
+declare const Core_superscript: typeof superscript;
+declare const Core_superscript2: typeof superscript2;
+declare const Core_table2: typeof table2;
+declare const Core_tableLine: typeof tableLine;
+declare const Core_text: typeof text;
+declare const Core_textDirectionL: typeof textDirectionL;
+declare const Core_textDirectionR: typeof textDirectionR;
+declare const Core_textSpacing: typeof textSpacing;
+declare const Core_textWrap: typeof textWrap;
+declare const Core_translate: typeof translate;
+declare const Core_translate2: typeof translate2;
+declare const Core_underline: typeof underline;
+declare const Core_upload2Fill: typeof upload2Fill;
+declare const Core_videoLine: typeof videoLine;
+declare const Core_wubiInput: typeof wubiInput;
+declare namespace Core {
+  export {
+    Core_ab as ab,
+    Core_addFill as addFill,
+    Core_addLine as addLine,
+    Core_alertLine as alertLine,
+    Core_alignBottom as alignBottom,
+    Core_alignCenter as alignCenter,
+    Core_alignJustify as alignJustify,
+    Core_alignLeft as alignLeft,
+    Core_alignRight as alignRight,
+    Core_alignTop as alignTop,
+    Core_alignVertically as alignVertically,
+    Core_appsLine as appsLine,
+    Core_arrowDownSFill as arrowDownSFill,
+    Core_arrowGoBackFill as arrowGoBackFill,
+    Core_arrowGoForwardFill as arrowGoForwardFill,
+    Core_arrowLeftSFill as arrowLeftSFill,
+    Core_arrowRightSFill as arrowRightSFill,
+    Core_arrowUpSFill as arrowUpSFill,
+    Core_asterisk as asterisk,
+    Core_attachment2 as attachment2,
+    Core_bold as bold,
+    Core_bracesLine as bracesLine,
+    Core_bringForward as bringForward,
+    Core_bringToFront as bringToFront,
+    Core_chatNewLine as chatNewLine,
+    Core_checkboxCircleLine as checkboxCircleLine,
+    Core_checkboxMultipleLine as checkboxMultipleLine,
+    Core_clipboardFill as clipboardFill,
+    Core_clipboardLine as clipboardLine,
+    Core_closeCircleLine as closeCircleLine,
+    Core_closeFill as closeFill,
+    Core_closeLine as closeLine,
+    Core_codeLine as codeLine,
+    Core_codeView as codeView,
+    Core_deleteBinFill as deleteBinFill,
+    Core_deleteBinLine as deleteBinLine,
+    Core_deleteColumn as deleteColumn,
+    Core_deleteRow as deleteRow,
+    Core_doubleQuotesL as doubleQuotesL,
+    Core_doubleQuotesR as doubleQuotesR,
+    Core_download2Fill as download2Fill,
+    Core_dragDropLine as dragDropLine,
+    Core_emphasis as emphasis,
+    Core_emphasisCn as emphasisCn,
+    Core_englishInput as englishInput,
+    Core_errorWarningLine as errorWarningLine,
+    Core_externalLinkFill as externalLinkFill,
+    Core_fileCopyLine as fileCopyLine,
+    Core_flowChart as flowChart,
+    Core_fontColor as fontColor,
+    Core_fontSize as fontSize,
+    Core_fontSize2 as fontSize2,
+    Core_formatClear as formatClear,
+    Core_fullscreenExitLine as fullscreenExitLine,
+    Core_fullscreenLine as fullscreenLine,
+    Core_functions as functions,
+    Core_galleryUploadLine as galleryUploadLine,
+    Core_h1 as h1,
+    Core_h2 as h2,
+    Core_h3 as h3,
+    Core_h4 as h4,
+    Core_h5 as h5,
+    Core_h6 as h6,
+    Core_hashtag as hashtag,
+    Core_heading as heading,
+    Core_imageAddLine as imageAddLine,
+    Core_imageEditLine as imageEditLine,
+    Core_imageLine as imageLine,
+    Core_indentDecrease as indentDecrease,
+    Core_indentIncrease as indentIncrease,
+    Core_informationLine as informationLine,
+    Core_inputCursorMove as inputCursorMove,
+    Core_insertColumnLeft as insertColumnLeft,
+    Core_insertColumnRight as insertColumnRight,
+    Core_insertRowBottom as insertRowBottom,
+    Core_insertRowTop as insertRowTop,
+    Core_italic as italic,
+    Core_layoutColumnLine as layoutColumnLine,
+    Core_lineHeight as lineHeight,
+    Core_link as link,
+    Core_linkM as linkM,
+    Core_linkUnlink as linkUnlink,
+    Core_linkUnlinkM as linkUnlinkM,
+    Core_listCheck as listCheck,
+    Core_listCheck2 as listCheck2,
+    Core_listOrdered as listOrdered,
+    Core_listUnordered as listUnordered,
+    Core_markPenLine as markPenLine,
+    Core_markdownFill as markdownFill,
+    Core_markdownLine as markdownLine,
+    Core_mergeCellsHorizontal as mergeCellsHorizontal,
+    Core_mergeCellsVertical as mergeCellsVertical,
+    Core_mindMap as mindMap,
+    Core_moreFill as moreFill,
+    Core_nodeTree as nodeTree,
+    Core_number0 as number0,
+    Core_number1 as number1,
+    Core_number2 as number2,
+    Core_number3 as number3,
+    Core_number4 as number4,
+    Core_number5 as number5,
+    Core_number6 as number6,
+    Core_number7 as number7,
+    Core_number8 as number8,
+    Core_number9 as number9,
+    Core_omega as omega,
+    Core_organizationChart as organizationChart,
+    Core_pageSeparator as pageSeparator,
+    Core_paragraph as paragraph,
+    Core_pencilFill as pencilFill,
+    Core_pencilLine as pencilLine,
+    Core_pinyinInput as pinyinInput,
+    Core_questionMark as questionMark,
+    Core_roundedCorner as roundedCorner,
+    Core_scissorsFill as scissorsFill,
+    Core_sendBackward as sendBackward,
+    Core_sendToBack as sendToBack,
+    Core_separator as separator,
+    Core_singleQuotesL as singleQuotesL,
+    Core_singleQuotesR as singleQuotesR,
+    Core_sortAsc as sortAsc,
+    Core_sortDesc as sortDesc,
+    Core_space as space,
+    Core_spamLine as spamLine,
+    Core_splitCellsHorizontal as splitCellsHorizontal,
+    Core_splitCellsVertical as splitCellsVertical,
+    Core_strikethrough as strikethrough,
+    Core_strikethrough2 as strikethrough2,
+    Core_subscript as subscript,
+    Core_subscript2 as subscript2,
+    Core_subtractLine as subtractLine,
+    Core_superscript as superscript,
+    Core_superscript2 as superscript2,
+    Core_table2 as table2,
+    Core_tableLine as tableLine,
+    Core_text as text,
+    Core_textDirectionL as textDirectionL,
+    Core_textDirectionR as textDirectionR,
+    Core_textSpacing as textSpacing,
+    Core_textWrap as textWrap,
+    Core_translate as translate,
+    Core_translate2 as translate2,
+    Core_underline as underline,
+    Core_upload2Fill as upload2Fill,
+    Core_videoLine as videoLine,
+    Core_wubiInput as wubiInput,
+  };
+}
+
+/**
+ * The core icons used throughout the editor.
+ */
+type CoreIcon = keyof typeof Core;
+
+export { CoreIcon, IconTree, ab, addFill, addLine, alertLine, alignBottom, alignCenter, alignJustify, alignLeft, alignRight, alignTop, alignVertically, appsLine, arrowDownSFill, arrowGoBackFill, arrowGoForwardFill, arrowLeftSFill, arrowRightSFill, arrowUpSFill, asterisk, attachment2, bold, bracesLine, bringForward, bringToFront, chatNewLine, checkboxCircleLine, checkboxMultipleLine, clipboardFill, clipboardLine, closeCircleLine, closeFill, closeLine, codeLine, codeView, deleteBinFill, deleteBinLine, deleteColumn, deleteRow, doubleQuotesL, doubleQuotesR, download2Fill, dragDropLine, emphasis, emphasisCn, englishInput, errorWarningLine, externalLinkFill, fileCopyLine, flowChart, fontColor, fontSize, fontSize2, formatClear, fullscreenExitLine, fullscreenLine, functions, galleryUploadLine, h1, h2, h3, h4, h5, h6, hashtag, heading, imageAddLine, imageEditLine, imageLine, indentDecrease, indentIncrease, informationLine, inputCursorMove, insertColumnLeft, insertColumnRight, insertRowBottom, insertRowTop, italic, layoutColumnLine, lineHeight, link, linkM, linkUnlink, linkUnlinkM, listCheck, listCheck2, listOrdered, listUnordered, markPenLine, markdownFill, markdownLine, mergeCellsHorizontal, mergeCellsVertical, mindMap, moreFill, nodeTree, number0, number1, number2, number3, number4, number5, number6, number7, number8, number9, omega, organizationChart, pageSeparator, paragraph, pencilFill, pencilLine, pinyinInput, questionMark, roundedCorner, scissorsFill, sendBackward, sendToBack, separator, singleQuotesL, singleQuotesR, sortAsc, sortDesc, space, spamLine, splitCellsHorizontal, splitCellsVertical, strikethrough, strikethrough2, subscript, subscript2, subtractLine, superscript, superscript2, table2, tableLine, text, textDirectionL, textDirectionR, textSpacing, textWrap, translate, translate2, underline, upload2Fill, videoLine, wubiInput };

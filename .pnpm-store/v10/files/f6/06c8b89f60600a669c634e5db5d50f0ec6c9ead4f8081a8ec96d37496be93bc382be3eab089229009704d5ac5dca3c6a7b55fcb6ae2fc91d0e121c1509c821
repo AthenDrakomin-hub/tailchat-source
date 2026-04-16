@@ -1,0 +1,22 @@
+import { ApplySchemaAttributes, CommandFunction, MarkExtension, MarkExtensionSpec, MarkSpecOverride, PrimitiveSelection } from '@remirror/core';
+import { TextCaseAttributes, TextCaseOptions } from './text-case-utils';
+/**
+ * Formatting for text casing in your editor.
+ */
+export declare class TextCaseExtension extends MarkExtension<TextCaseOptions> {
+    get name(): "textCase";
+    createTags(): ("formattingMark" | "fontStyle")[];
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    /**
+     * Toggle the default text case for this extension formatting annotation.
+     */
+    toggleTextCase(): CommandFunction;
+    setTextCase(casing: string | TextCaseAttributes, selection?: PrimitiveSelection): CommandFunction;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            textCase: TextCaseExtension;
+        }
+    }
+}

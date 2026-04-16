@@ -1,0 +1,12 @@
+import type { CommandDecoratorMessageProps, CommandUiIcon } from '@remirror/core';
+import type { CoreIcon } from '@remirror/icons';
+export interface UseCommandOptionValuesParams extends Omit<CommandDecoratorMessageProps, 't'> {
+    commandName: string;
+}
+export interface UseCommandOptionValuesResult {
+    description?: string;
+    label?: string;
+    icon?: CoreIcon | CommandUiIcon;
+    shortcut?: string;
+}
+export declare const useCommandOptionValues: ({ commandName, active, enabled, attrs, }: UseCommandOptionValuesParams) => UseCommandOptionValuesResult;

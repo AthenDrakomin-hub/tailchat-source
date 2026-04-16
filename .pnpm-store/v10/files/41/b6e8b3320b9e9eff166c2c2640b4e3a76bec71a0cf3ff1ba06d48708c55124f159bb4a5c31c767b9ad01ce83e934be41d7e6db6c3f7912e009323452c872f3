@@ -1,0 +1,37 @@
+export declare enum GroupPanelType {
+    TEXT = 0,
+    GROUP = 1,
+    PLUGIN = 2
+}
+interface GroupMemberStruct {
+    roles?: string[];
+    userId: string;
+}
+export interface GroupPanelStruct {
+    id: string;
+    name: string;
+    parentId?: string;
+    type: number;
+    provider?: string;
+    pluginPanelName?: string;
+    /**
+     * 面板的其他数据
+     */
+    meta?: object;
+}
+/**
+ * 群组权限组
+ */
+export interface GroupRoleStruct {
+    name: string;
+    permissions: string[];
+}
+export interface GroupStruct {
+    name: string;
+    avatar?: string;
+    owner: string;
+    members: GroupMemberStruct[];
+    panels: GroupPanelStruct[];
+    roles?: GroupRoleStruct[];
+}
+export {};

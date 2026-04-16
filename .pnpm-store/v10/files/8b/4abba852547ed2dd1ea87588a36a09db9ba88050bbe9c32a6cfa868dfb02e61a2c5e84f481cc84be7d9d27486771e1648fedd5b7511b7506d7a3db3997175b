@@ -1,0 +1,19 @@
+/// <reference types="node" />
+import { Readable } from 'stream';
+import { Logger } from './stats-parser/types';
+import { Size, AssetTypeEnum } from './types';
+export declare function readJSONFile<T = any>(path: string): T;
+export declare function detectFileType(name: string): AssetTypeEnum;
+export declare function calcStringCompressedSize(str: string): Promise<Size>;
+export declare function calcGzippedSize(input: Readable): Promise<number>;
+export declare function calcBrorliedSize(input: Readable): Promise<number>;
+export declare function isInitialFileType(type: AssetTypeEnum): boolean;
+export declare function isStringContentType(type: AssetTypeEnum): boolean;
+export declare function addSize(size1: Size, size2: Size): Size;
+export declare function getDefaultSize(): Size;
+export declare function isNotNil(value: unknown): boolean;
+export declare function mapRefs<T extends {
+    ref: number;
+}>(items: T[]): number[];
+export declare function getHtmlScripts(content: string): string[];
+export declare function getConsoleLogger(): Logger;

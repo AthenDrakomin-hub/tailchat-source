@@ -1,0 +1,19 @@
+export declare class Inspector {
+    target: EventTarget;
+    containerId: string;
+    focusBlock: any;
+    path: {
+        sr: string;
+        node: Element;
+    }[];
+    constructor(target: EventTarget);
+    initNodePath: (target: EventTarget) => void;
+    setFocusBlock: (target: Element) => void;
+    close: () => void;
+    getContainer: () => HTMLElement;
+    /**
+     * Check if the target is in the bottom half of the screen
+     */
+    checkTargetIsInBottom(): boolean;
+    renderHTML: () => void;
+}

@@ -1,0 +1,40 @@
+export var Source;
+(function (Source) {
+    Source["webpack"] = "webpack";
+    Source["lighthouse"] = "lighthouse";
+    Source["browsertime"] = "browsertime";
+})(Source || (Source = {}));
+export var InsightType;
+(function (InsightType) {
+    InsightType["ERROR"] = "error";
+    InsightType["INFO"] = "info";
+    InsightType["WARNING"] = "warning";
+})(InsightType || (InsightType = {}));
+export var MetricTypes;
+(function (MetricTypes) {
+    MetricTypes["Numeric"] = "METRIC_TYPE_NUMERIC";
+    MetricTypes["Score"] = "METRIC_TYPE_SCORE";
+    MetricTypes["FileSize"] = "METRIC_TYPE_FILE_SIZE";
+    MetricTypes["Duration"] = "METRIC_TYPE_DURATION";
+    MetricTypes["Percentage"] = "METRIC_TYPE_PERCENTAGE";
+})(MetricTypes || (MetricTypes = {}));
+export var DeltaType;
+(function (DeltaType) {
+    DeltaType["HIGH_NEGATIVE"] = "HIGH_NEGATIVE";
+    DeltaType["NEGATIVE"] = "NEGATIVE";
+    DeltaType["LOW_NEGATIVE"] = "LOW_NEGATIVE";
+    DeltaType["NO_CHANGE"] = "NO_CHANGE";
+    DeltaType["CHANGE"] = "CHANGE";
+    DeltaType["LOW_POSITIVE"] = "LOW_POSITIVE";
+    DeltaType["POSITIVE"] = "POSITIVE";
+    DeltaType["HIGH_POSITIVE"] = "HIGH_POSITIVE";
+})(DeltaType || (DeltaType = {}));
+export var JobSectionId;
+(function (JobSectionId) {
+    JobSectionId["meta"] = "meta";
+    JobSectionId["insights"] = "insights";
+    JobSectionId["summary"] = "summary";
+    JobSectionId["metrics"] = "metrics";
+    JobSectionId["rawData"] = "rawData";
+})(JobSectionId || (JobSectionId = {}));
+//# sourceMappingURL=constants.js.map

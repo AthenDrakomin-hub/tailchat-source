@@ -1,0 +1,10 @@
+import debug from 'debug';
+export declare class Logger {
+    private _debug;
+    private _warn;
+    private _error;
+    constructor(prefix?: string);
+    get debug(): debug.Debugger;
+    get warn(): debug.Debugger;
+    get error(): debug.Debugger;
+}

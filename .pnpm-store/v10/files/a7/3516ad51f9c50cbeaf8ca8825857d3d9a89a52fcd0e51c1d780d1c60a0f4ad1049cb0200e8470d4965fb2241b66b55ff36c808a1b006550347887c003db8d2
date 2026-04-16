@@ -1,0 +1,33 @@
+"use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.config = void 0;
+var path_1 = __importDefault(require("path"));
+var cosmiconfig_1 = require("cosmiconfig");
+var explorer = (0, cosmiconfig_1.cosmiconfigSync)('ministar');
+var defaultConfig = {
+    scope: 'plugins',
+    pluginRoot: process.cwd(),
+    outDir: path_1.default.resolve(process.cwd(), './dist'),
+    externalDeps: [],
+    author: undefined,
+    license: undefined,
+    rollupPlugins: [],
+    buildRollupPlugins: undefined,
+};
+var configResult = explorer.search();
+var config = __assign(__assign({}, defaultConfig), configResult === null || configResult === void 0 ? void 0 : configResult.config);
+exports.config = config;

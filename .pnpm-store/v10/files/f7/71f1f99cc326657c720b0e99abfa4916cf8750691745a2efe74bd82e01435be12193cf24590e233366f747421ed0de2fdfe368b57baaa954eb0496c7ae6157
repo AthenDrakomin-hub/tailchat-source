@@ -1,0 +1,7 @@
+import { FC } from 'react';
+import { HeadingExtensionAttributes } from '@remirror/extension-heading';
+import { CommandButtonProps } from './command-button';
+export interface ToggleHeadingButtonProps extends Omit<CommandButtonProps, 'commandName' | 'active' | 'enabled' | 'attrs' | 'onSelect'> {
+    attrs?: Partial<HeadingExtensionAttributes>;
+}
+export declare const ToggleHeadingButton: FC<ToggleHeadingButtonProps>;

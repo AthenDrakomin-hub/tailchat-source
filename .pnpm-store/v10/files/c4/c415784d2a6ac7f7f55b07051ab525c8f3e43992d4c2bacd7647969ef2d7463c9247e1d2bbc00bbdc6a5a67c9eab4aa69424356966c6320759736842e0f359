@@ -1,0 +1,36 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.db = exports.builtinAuthWhitelist = exports.buildUploadUrl = exports.config = exports.t = exports.parseLanguageFromHead = exports.TcBroker = exports.TcService = void 0;
+var base_1 = require("./services/base");
+Object.defineProperty(exports, "TcService", { enumerable: true, get: function () { return base_1.TcService; } });
+var broker_1 = require("./services/broker");
+Object.defineProperty(exports, "TcBroker", { enumerable: true, get: function () { return broker_1.TcBroker; } });
+var parser_1 = require("./services/lib/i18n/parser");
+Object.defineProperty(exports, "parseLanguageFromHead", { enumerable: true, get: function () { return parser_1.parseLanguageFromHead; } });
+var i18n_1 = require("./services/lib/i18n");
+Object.defineProperty(exports, "t", { enumerable: true, get: function () { return i18n_1.t; } });
+var settings_1 = require("./services/lib/settings");
+Object.defineProperty(exports, "config", { enumerable: true, get: function () { return settings_1.config; } });
+Object.defineProperty(exports, "buildUploadUrl", { enumerable: true, get: function () { return settings_1.buildUploadUrl; } });
+Object.defineProperty(exports, "builtinAuthWhitelist", { enumerable: true, get: function () { return settings_1.builtinAuthWhitelist; } });
+// db
+exports.db = __importStar(require("./db"));

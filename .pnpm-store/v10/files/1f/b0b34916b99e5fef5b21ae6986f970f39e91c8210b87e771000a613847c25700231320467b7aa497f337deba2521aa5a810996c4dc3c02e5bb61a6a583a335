@@ -1,0 +1,4 @@
+/**
+ * Start bind dom
+ */
+export declare function start(): void;

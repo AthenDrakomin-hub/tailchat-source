@@ -1,0 +1,28 @@
+import { ApplySchemaAttributes, CommandFunction, InputRule, KeyBindingProps, KeyBindings, MarkExtension, MarkExtensionSpec, MarkSpecOverride, PrimitiveSelection } from '@remirror/core';
+import { MarkPasteRule } from '@remirror/pm/paste-rules';
+/**
+ * Add italic formatting to your editor.
+ */
+export declare class ItalicExtension extends MarkExtension {
+    get name(): "italic";
+    createTags(): ("formattingMark" | "fontStyle")[];
+    createMarkSpec(extra: ApplySchemaAttributes, override: MarkSpecOverride): MarkExtensionSpec;
+    createKeymap(): KeyBindings;
+    createInputRules(): InputRule[];
+    createPasteRules(): MarkPasteRule[];
+    /**
+     * Toggle the italic formatting on the selected text.
+     */
+    toggleItalic(selection?: PrimitiveSelection): CommandFunction;
+    /**
+     * Attach the keyboard shortcut for formatting.
+     */
+    shortcut(props: KeyBindingProps): boolean;
+}
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            italic: ItalicExtension;
+        }
+    }
+}

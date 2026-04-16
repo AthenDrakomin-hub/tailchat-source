@@ -1,0 +1,19 @@
+interface FindReplaceState {
+    query: string;
+    replacement: string;
+    activeIndex: number | null;
+    total: number;
+    caseSensitive: boolean;
+}
+type UseFindReplaceReturn = FindReplaceState & {
+    findNext: () => void;
+    findPrev: () => void;
+    stopFind: () => void;
+    replace: () => void;
+    replaceAll: () => void;
+    toggleCaseSensitive: () => void;
+    setQuery: (query: string) => void;
+    setReplacement: (replacement: string) => void;
+};
+export declare function useFindReplace(): UseFindReplaceReturn;
+export {};

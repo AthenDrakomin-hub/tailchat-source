@@ -1,0 +1,4 @@
+/**
+ * The top 50 Top Level Domains (as of May 2022), ordered by most popular, for performance.
+ */
+export declare const TOP_50_TLDS: string[];

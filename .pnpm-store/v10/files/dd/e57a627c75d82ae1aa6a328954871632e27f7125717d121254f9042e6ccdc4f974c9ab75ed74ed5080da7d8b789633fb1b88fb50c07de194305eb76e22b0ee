@@ -1,0 +1,92 @@
+import { ApplySchemaAttributes, CommandFunction, CreateExtensionPlugin, InputRule, KeyBindingProps, NodeExtension, NodeExtensionSpec, NodeSpecOverride, OnSetOptionsProps, PosProps, ProsemirrorAttributes } from '@remirror/core';
+import { CodeBlockState } from './code-block-plugin';
+import type { CodeBlockAttributes, CodeBlockOptions } from './code-block-types';
+import { getLanguage } from './code-block-utils';
+export declare class CodeBlockExtension extends NodeExtension<CodeBlockOptions> {
+    get name(): "codeBlock";
+    createTags(): ("code" | "block")[];
+    /**
+     * Add the languages to the environment if they have not yet been added.
+     */
+    protected init(): void;
+    createNodeSpec(extra: ApplySchemaAttributes, override: NodeSpecOverride): NodeExtensionSpec;
+    /**
+     * Add the syntax theme class to the editor.
+     */
+    createAttributes(): ProsemirrorAttributes;
+    /**
+     * Create an input rule that listens converts the code fence into a code block
+     * when typing triple back tick followed by a space.
+     */
+    createInputRules(): InputRule[];
+    protected onSetOptions(props: OnSetOptionsProps<CodeBlockOptions>): void;
+    /**
+     * Create the custom code block plugin which handles the delete key amongst other things.
+     */
+    createPlugin(): CreateExtensionPlugin<CodeBlockState>;
+    /**
+     * Call this method to toggle the code block.
+     *
+     * @remarks
+     *
+     * ```ts
+     * actions.toggleCodeBlock({ language: 'ts' });
+     * ```
+     *
+     * The above makes the current node a codeBlock with the language ts or
+     * remove the code block altogether.
+     */
+    toggleCodeBlock(attributes?: Partial<CodeBlockAttributes>): CommandFunction;
+    /**
+     * Creates a code at the current position.
+     *
+     * ```ts
+     * commands.createCodeBlock({ language: 'js' });
+     * ```
+     */
+    createCodeBlock(attributes: CodeBlockAttributes): CommandFunction;
+    /**
+     * Update the code block at the current position. Primarily this is used
+     * to change the language.
+     *
+     * ```ts
+     * if (commands.updateCodeBlock.isEnabled()) {
+     *   commands.updateCodeBlock({ language: 'markdown' });
+     * }
+     * ```
+     */
+    updateCodeBlock(attributes: CodeBlockAttributes): CommandFunction;
+    /**
+     * Format the code block with the code formatting function passed as an
+     * option.
+     *
+     * Code formatters (like prettier) add a lot to the bundle size and hence
+     * it is up to you to provide a formatter which will be run on the entire
+     * code block when this method is used.
+     *
+     * ```ts
+     * if (actions.formatCodeBlock.isActive()) {
+     *   actions.formatCodeBlockFactory();
+     *   // Or with a specific position
+     *   actions.formatCodeBlock({ pos: 100 }) // to format a separate code block
+     * }
+     * ```
+     */
+    formatCodeBlock(props?: Partial<PosProps>): CommandFunction;
+    tabKey({ state, dispatch }: KeyBindingProps): boolean;
+    backspaceKey({ dispatch, tr, state }: KeyBindingProps): boolean;
+    enterKey({ dispatch, tr }: KeyBindingProps): boolean;
+    formatShortcut({ tr }: KeyBindingProps): boolean;
+    /**
+     * Register passed in languages.
+     */
+    private registerLanguages;
+}
+export { getLanguage };
+declare global {
+    namespace Remirror {
+        interface AllExtensions {
+            codeBlock: CodeBlockExtension;
+        }
+    }
+}

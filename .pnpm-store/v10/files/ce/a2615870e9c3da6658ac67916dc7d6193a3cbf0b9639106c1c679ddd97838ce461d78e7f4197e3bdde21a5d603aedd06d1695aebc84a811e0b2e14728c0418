@@ -1,0 +1,1901 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key3 of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key3) && key3 !== except)
+        __defProp(to, key3, { get: () => from[key3], enumerable: !(desc = __getOwnPropDesc(from, key3)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key3, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key3) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key3, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key3, result);
+  return result;
+};
+
+// packages/remirror__extension-react-tables/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  TableCellExtension: () => TableCellExtension,
+  TableCellMenu: () => TableCellMenu,
+  TableComponents: () => TableComponents,
+  TableControllerCellExtension: () => TableControllerCellExtension,
+  TableDeleteButton: () => TableDeleteButton,
+  TableDeleteInnerButton: () => TableDeleteInnerButton,
+  TableDeleteRowColumnButton: () => TableDeleteRowColumnButton,
+  TableDeleteRowColumnInnerButton: () => TableDeleteRowColumnInnerButton,
+  TableExtension: () => TableExtension,
+  TableHeaderCellExtension: () => TableHeaderCellExtension,
+  TableRowExtension: () => TableRowExtension,
+  tableControllerPluginKey: () => key2
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-react-tables/src/components/table-cell-menu.tsx
+var import_react = __toESM(require("react"), 1);
+var import_react_components = require("@remirror/react-components");
+var import_react_core = require("@remirror/react-core");
+var import_react_hooks = require("@remirror/react-hooks");
+var import_theme = require("@remirror/theme");
+
+// packages/remirror__extension-react-tables/src/block-positioner.ts
+var import_core = require("@remirror/core");
+var import_extension_positioner = require("@remirror/extension-positioner");
+var import_tables = require("@remirror/pm/tables");
+var cellNodeTypes = ["tableCell", "tableHeaderCell"];
+function findMenuTableCell(selection) {
+  if (selection instanceof import_tables.CellSelection) {
+    return (0, import_core.findParentNodeOfType)({ selection: selection.$head, types: cellNodeTypes });
+  }
+  return (0, import_core.findParentNodeOfType)({ selection, types: cellNodeTypes });
+}
+var menuCellPositioner = import_extension_positioner.blockNodePositioner.clone(() => ({
+  getActive: (props) => {
+    const result = findMenuTableCell(props.state.selection);
+    return result ? [result] : import_extension_positioner.Positioner.EMPTY;
+  }
+}));
+
+// packages/remirror__extension-react-tables/src/const.ts
+var borderWidth = 1;
+
+// packages/remirror__extension-react-tables/src/components/table-cell-menu.tsx
+var DefaultTableCellMenuButton = ({ setPopupOpen }) => /* @__PURE__ */ import_react.default.createElement(
+  "button",
+  {
+    onClick: () => {
+      setPopupOpen(true);
+    },
+    onMouseDown: (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    style: {
+      position: "relative",
+      right: "0px",
+      top: "0px",
+      height: "16px",
+      width: "16px",
+      border: "1px solid blue",
+      fontSize: "10px",
+      lineHeight: "10px",
+      cursor: "pointer"
+    },
+    className: import_theme.ComponentsTheme.BUTTON
+  },
+  "v"
+);
+var DefaultTableCellMenuItem = (props) => /* @__PURE__ */ import_react.default.createElement("button", { disabled: props.disabled, onClick: props.onClick, className: import_theme.ComponentsTheme.MENU_ITEM }, props.label);
+var DefaultTableCellMenuPopup = ({
+  setPopupOpen,
+  popupOpen
+}) => {
+  const commands = (0, import_react_core.useCommands)();
+  const handleClick = (command2) => () => {
+    command2();
+    setPopupOpen(false);
+  };
+  const setTableCellBackground = (color) => () => {
+    commands.setTableCellBackground(color);
+  };
+  return /* @__PURE__ */ import_react.default.createElement(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        backgroundColor: "white",
+        width: "200px",
+        border: "1px solid lightgray",
+        display: popupOpen ? "flex" : "none",
+        flexDirection: "column"
+      },
+      className: import_theme.ComponentsTheme.MENU
+    },
+    /* @__PURE__ */ import_react.default.createElement(DefaultTableCellMenuItem, { label: "Color teal", onClick: setTableCellBackground("teal") }),
+    /* @__PURE__ */ import_react.default.createElement(
+      DefaultTableCellMenuItem,
+      {
+        label: "Color pink",
+        onClick: setTableCellBackground("rgba(255,100,100,0.3)")
+      }
+    ),
+    /* @__PURE__ */ import_react.default.createElement(DefaultTableCellMenuItem, { label: "Remove color", onClick: setTableCellBackground(null) }),
+    /* @__PURE__ */ import_react.default.createElement(
+      DefaultTableCellMenuItem,
+      {
+        label: "Add row above",
+        onClick: handleClick(commands.addTableRowBefore)
+      }
+    ),
+    /* @__PURE__ */ import_react.default.createElement(
+      DefaultTableCellMenuItem,
+      {
+        label: "Add row below",
+        onClick: handleClick(commands.addTableRowAfter)
+      }
+    ),
+    /* @__PURE__ */ import_react.default.createElement(
+      DefaultTableCellMenuItem,
+      {
+        label: "Add column before",
+        onClick: handleClick(commands.addTableColumnBefore)
+      }
+    ),
+    /* @__PURE__ */ import_react.default.createElement(
+      DefaultTableCellMenuItem,
+      {
+        label: "Add column after",
+        onClick: handleClick(commands.addTableColumnAfter)
+      }
+    ),
+    /* @__PURE__ */ import_react.default.createElement(
+      DefaultTableCellMenuItem,
+      {
+        label: "Merge cells",
+        onClick: handleClick(commands.mergeTableCells),
+        disabled: !commands.mergeTableCells.enabled()
+      }
+    ),
+    /* @__PURE__ */ import_react.default.createElement(
+      DefaultTableCellMenuItem,
+      {
+        label: "Split cells",
+        onClick: handleClick(commands.splitTableCell),
+        disabled: !commands.splitTableCell.enabled()
+      }
+    ),
+    /* @__PURE__ */ import_react.default.createElement(
+      DefaultTableCellMenuItem,
+      {
+        label: "Remove column",
+        onClick: handleClick(commands.deleteTableColumn)
+      }
+    ),
+    /* @__PURE__ */ import_react.default.createElement(DefaultTableCellMenuItem, { label: "Remove row", onClick: handleClick(commands.deleteTableRow) }),
+    /* @__PURE__ */ import_react.default.createElement(DefaultTableCellMenuItem, { label: "Remove table", onClick: handleClick(commands.deleteTable) })
+  );
+};
+var DefaultTableCellMenuComponent = (props) => /* @__PURE__ */ import_react.default.createElement(import_react.default.Fragment, null, /* @__PURE__ */ import_react.default.createElement(DefaultTableCellMenuButton, { ...props }), /* @__PURE__ */ import_react.default.createElement(DefaultTableCellMenuPopup, { ...props }));
+var TableCellMenu = ({
+  Component = DefaultTableCellMenuComponent
+}) => {
+  const position = (0, import_react_hooks.usePositioner)(menuCellPositioner, []);
+  const { ref, width, height, x, y } = position;
+  const [popupOpen, setPopupOpen] = (0, import_react.useState)(false);
+  (0, import_react_hooks.useEditorEvent)("mousedown", () => {
+    if (popupOpen) {
+      setPopupOpen(false);
+    }
+    return false;
+  });
+  return /* @__PURE__ */ import_react.default.createElement(import_react_components.PositionerPortal, null, /* @__PURE__ */ import_react.default.createElement(
+    "div",
+    {
+      ref,
+      style: {
+        position: "absolute",
+        left: x,
+        top: y,
+        width: width + borderWidth,
+        height: height + borderWidth,
+        zIndex: 100,
+        pointerEvents: "none",
+        // place the child into the top-left corner
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "flex-start"
+        // for debug:
+        // backgroundColor: 'lightpink',
+        // opacity: 0.5,
+      }
+    },
+    /* @__PURE__ */ import_react.default.createElement(
+      "div",
+      {
+        style: {
+          zIndex: 100,
+          pointerEvents: "initial"
+        }
+      },
+      /* @__PURE__ */ import_react.default.createElement(Component, { popupOpen, setPopupOpen })
+    )
+  ));
+};
+
+// packages/remirror__extension-react-tables/src/components/table-components.tsx
+var import_react4 = __toESM(require("react"), 1);
+var import_react_core4 = require("@remirror/react-core");
+
+// packages/remirror__extension-react-tables/src/components/table-delete-row-column-button.tsx
+var import_react2 = __toESM(require("react"), 1);
+var import_core5 = require("@remirror/core");
+var import_extension_positioner2 = require("@remirror/extension-positioner");
+var import_tables6 = require("@remirror/pm/tables");
+var import_react_components2 = require("@remirror/react-components");
+var import_react_core2 = require("@remirror/react-core");
+var import_react_hooks2 = require("@remirror/react-hooks");
+var import_theme5 = require("@remirror/theme");
+
+// packages/remirror__extension-react-tables/src/utils/controller.ts
+var import_model2 = require("@remirror/pm/model");
+var import_tables5 = require("@remirror/pm/tables");
+
+// packages/remirror__extension-react-tables/src/table-column-resizing.ts
+var import_state = require("@remirror/pm/state");
+var import_tables4 = require("@remirror/pm/tables");
+var import_view = require("@remirror/pm/view");
+
+// packages/remirror__extension-react-tables/src/views/table-view.tsx
+var import_core3 = require("@remirror/core");
+var import_tables3 = require("@remirror/pm/tables");
+var import_theme3 = require("@remirror/theme");
+
+// packages/remirror__extension-react-tables/src/components/table-insert-button.ts
+var import_icons = require("@remirror/icons");
+var import_theme2 = require("@remirror/theme");
+
+// packages/remirror__extension-react-tables/src/react-table-commands.ts
+var import_tables2 = require("@remirror/pm/tables");
+function addColumn(tr, { map, tableStart, table }, col) {
+  const refColumn = col < map.width ? 0 : -1;
+  for (let row = 0; row < map.height; row++) {
+    const index = row * map.width + col;
+    if (col > 0 && col < map.width && map.map[index - 1] === map.map[index]) {
+      const pos = map.map[index];
+      const cell = table.nodeAt(pos);
+      tr.setNodeMarkup(
+        tr.mapping.map(tableStart + pos),
+        void 0,
+        // @ts-expect-error: cell.attrs needs stricter types
+        (0, import_tables2.addColSpan)(cell.attrs, col - map.colCount(pos))
+      );
+      row += cell.attrs.rowspan - 1;
+    } else {
+      const type = table.nodeAt(map.map[index + refColumn]).type;
+      const pos = map.positionAt(row, col, table);
+      tr.insert(tr.mapping.map(tableStart + pos), type.createAndFill());
+    }
+  }
+  return tr;
+}
+function addColumnBefore(state, dispatch) {
+  if (!(0, import_tables2.isInTable)(state)) {
+    return false;
+  }
+  if (dispatch) {
+    const rect = (0, import_tables2.selectedRect)(state);
+    dispatch(addColumn(state.tr, rect, rect.left));
+  }
+  return true;
+}
+function addColumnAfter(state, dispatch) {
+  if (!(0, import_tables2.isInTable)(state)) {
+    return false;
+  }
+  if (dispatch) {
+    const rect = (0, import_tables2.selectedRect)(state);
+    dispatch(addColumn(state.tr, rect, rect.right));
+  }
+  return true;
+}
+function addRow(tr, { map, tableStart, table }, row) {
+  let rowPos = tableStart;
+  for (let i = 0; i < row; i++) {
+    rowPos += table.child(i).nodeSize;
+  }
+  const refRow = row < map.height - 1 ? 0 : -1;
+  const cells = [];
+  for (let col = 0, index = map.width * row; col < map.width; col++, index++) {
+    if (row > 0 && row < map.height && map.map[index] === map.map[index - map.width]) {
+      const pos = map.map[index];
+      const attrs = table.nodeAt(pos).attrs;
+      tr.setNodeMarkup(tableStart + pos, void 0, setAttr(attrs, "rowspan", attrs.rowspan + 1));
+      col += attrs.colspan - 1;
+    } else {
+      const type = table.nodeAt(map.map[index + refRow * map.width]).type;
+      cells.push(type.createAndFill());
+    }
+  }
+  tr.insert(rowPos, (0, import_tables2.tableNodeTypes)(table.type.schema).row.create(null, cells));
+  return tr;
+}
+function addRowBefore(state, dispatch) {
+  if (!(0, import_tables2.isInTable)(state)) {
+    return false;
+  }
+  if (dispatch) {
+    const rect = (0, import_tables2.selectedRect)(state);
+    dispatch(addRow(state.tr, rect, rect.top));
+  }
+  return true;
+}
+function addRowAfter(state, dispatch) {
+  if (!(0, import_tables2.isInTable)(state)) {
+    return false;
+  }
+  if (dispatch) {
+    const rect = (0, import_tables2.selectedRect)(state);
+    dispatch(addRow(state.tr, rect, rect.bottom));
+  }
+  return true;
+}
+
+// packages/remirror__extension-react-tables/src/utils/dom.ts
+var import_core2 = require("@remirror/core");
+function h(tagName, attrs, ...children) {
+  const element = document.createElement(tagName);
+  if (attrs) {
+    for (let [key3, value] of Object.entries(attrs)) {
+      if ((0, import_core2.isNullOrUndefined)(value)) {
+        continue;
+      }
+      key3 = key3.toLowerCase();
+      if (/^on[a-z]+/.test(key3) && typeof value === "function") {
+        element.addEventListener(key3.slice(2), value);
+      } else if (["class", "classname"].includes(key3)) {
+        element.className = (0, import_core2.cx)(value);
+      } else if (key3 === "dataset") {
+        for (const [dataKey, dataValue] of Object.entries(value)) {
+          element.dataset[dataKey] = dataValue;
+        }
+      } else if (key3 === "style" && typeof value === "object") {
+        Object.assign(element.style, value);
+      } else if (["number", "boolean", "string"].includes(typeof value)) {
+        element.setAttribute(key3, `${value}`);
+      } else {
+        throw new TypeError(`Unexpected ${typeof value} value for attribute "${key3}"`);
+      }
+    }
+  }
+  element.append(...children);
+  return element;
+}
+function getRelativeCoord(absoluteCoord, parent) {
+  const parentRect = parent.getBoundingClientRect();
+  return {
+    x: absoluteCoord.x + parent.scrollLeft - parentRect.left,
+    y: absoluteCoord.y + parent.scrollTop - parentRect.top
+  };
+}
+
+// packages/remirror__extension-react-tables/src/components/table-insert-button.ts
+function shouldHideInsertButton(attrs, e) {
+  if (attrs.col !== -1) {
+    return e.clientX < attrs.triggerRect.left - 400 || e.clientX > attrs.triggerRect.right + 400 || e.clientY < attrs.triggerRect.top - 60 || e.clientY > attrs.triggerRect.bottom;
+  } else if (attrs.row !== -1) {
+    return e.clientX < attrs.triggerRect.left - 40 || e.clientX > attrs.triggerRect.right || e.clientY < attrs.triggerRect.top - 100 || e.clientY > attrs.triggerRect.bottom + 100;
+  }
+  return true;
+}
+var addFillIconCache = null;
+function AddFillIcon() {
+  if (addFillIconCache) {
+    return addFillIconCache;
+  }
+  const xmlns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(xmlns, "svg");
+  svg.setAttribute("xmlns", xmlns);
+  svg.setAttribute("viewBox", "0 0 24 24");
+  const g = document.createElementNS(xmlns, "g");
+  for (const tree of import_icons.addFill) {
+    const path = document.createElementNS(xmlns, tree.tag);
+    for (const [key3, value] of Object.entries(tree.attr)) {
+      path.setAttribute(key3, value);
+    }
+    g.append(path);
+  }
+  svg.append(g);
+  addFillIconCache = svg;
+  return svg;
+}
+function InnerTableInsertButton(attrs) {
+  const size = 18;
+  return h(
+    "div",
+    {
+      className: `${import_theme2.ExtensionTablesTheme.TABLE_INSERT_BUTTON} ${import_theme2.ExtensionTablesTheme.CONTROLLERS_TOGGLE}`,
+      style: {
+        top: `${attrs.y - size / 2 - 5}px`,
+        left: `${attrs.x - size / 2}px`
+      }
+    },
+    AddFillIcon()
+  );
+}
+function TableInsertButton({
+  view,
+  tableRect,
+  attrs,
+  removeInsertButton
+}) {
+  const button = InnerTableInsertButton(attrs);
+  const insertRolOrColumn = () => {
+    let tr = view.state.tr;
+    if (attrs.col !== -1) {
+      tr = addColumn(tr, tableRect, attrs.col);
+    } else if (attrs.row !== -1) {
+      tr = addRow(tr, tableRect, attrs.row);
+    } else {
+      return;
+    }
+    view.dispatch(removeInsertButton(tr));
+  };
+  button.addEventListener("mousedown", () => {
+    insertRolOrColumn();
+  });
+  return button;
+}
+var table_insert_button_default = TableInsertButton;
+
+// packages/remirror__extension-react-tables/src/utils/prosemirror.ts
+var import_model = require("@remirror/pm/model");
+var import_transform = require("@remirror/pm/transform");
+function setNodeAttrs(tr, pos, attrs, node) {
+  node = node || tr.doc.nodeAt(pos);
+  if (!node) {
+    throw new RangeError("No node at given position");
+  }
+  const type = node.type;
+  const newNode = type.create({ ...node.attrs, ...attrs }, void 0, node.marks);
+  if (node.isLeaf) {
+    return tr.replaceWith(pos, pos + node.nodeSize, newNode);
+  }
+  if (!type.validContent(node.content)) {
+    throw new RangeError(`Invalid content for node type ${type.name}`);
+  }
+  return tr.step(
+    new import_transform.ReplaceAroundStep(
+      pos,
+      pos + node.nodeSize,
+      pos + 1,
+      pos + node.nodeSize - 1,
+      new import_model.Slice(import_model.Fragment.from(newNode), 0, 0),
+      1,
+      true
+    )
+  );
+}
+function cellSelectionToSelection(selection) {
+  return selection;
+}
+
+// packages/remirror__extension-react-tables/src/views/table-view.tsx
+var TableView = class {
+  constructor(node, cellMinWidth, decorations, view, getPos) {
+    this.node = node;
+    this.cellMinWidth = cellMinWidth;
+    this.decorations = decorations;
+    this.view = view;
+    this.getPos = getPos;
+    this.map = import_tables3.TableMap.get(this.node);
+    this.tbody = h("tbody", { className: import_theme3.ExtensionTablesTheme.TABLE_TBODY_WITH_CONTROLLERS });
+    this.colgroup = h(
+      "colgroup",
+      { className: import_theme3.ExtensionTablesTheme.TABLE_COLGROUP },
+      ...(0, import_core3.range)(this.map.width).map(() => h("col"))
+    );
+    this.table = h(
+      "table",
+      {
+        className: import_theme3.ExtensionTablesTheme.TABLE,
+        dataset: { controllersInjected: "" }
+      },
+      this.colgroup,
+      this.tbody
+    );
+    this.insertButtonWrapper = h("div");
+    this.root = h("div", null, this.table, this.insertButtonWrapper);
+    this.render();
+    this.showInsertButton = false;
+    this.handleMouseMove = (0, import_core3.throttle)(100, (e) => {
+      if (this.showInsertButton) {
+        const attrs = this.attrs().insertButtonAttrs;
+        if (attrs && shouldHideInsertButton(attrs, e)) {
+          this.showInsertButton = false;
+          replaceChildren(this.insertButtonWrapper, []);
+          if (this.removeInsertButton) {
+            this.view.dispatch(this.removeInsertButton(this.view.state.tr));
+          }
+        }
+      }
+    });
+    document.addEventListener("mousemove", this.handleMouseMove);
+  }
+  root;
+  table;
+  colgroup;
+  tbody;
+  insertButtonWrapper;
+  handleMouseMove;
+  showInsertButton;
+  removeInsertButton;
+  map;
+  get dom() {
+    return this.root;
+  }
+  get contentDOM() {
+    return this.tbody;
+  }
+  update(node, decorations) {
+    if (node.type !== this.node.type) {
+      return false;
+    }
+    this.decorations = decorations;
+    this.node = node;
+    this.map = import_tables3.TableMap.get(this.node);
+    this.render();
+    return true;
+  }
+  render() {
+    this.renderTable();
+    if (!this.attrs().isControllersInjected) {
+      return;
+    }
+    this.renderInsertButton();
+  }
+  renderTable() {
+    if (this.colgroup.children.length !== this.map.width) {
+      const cols = (0, import_core3.range)(this.map.width).map(() => h("col"));
+      replaceChildren(this.colgroup, cols);
+    }
+    const className = [
+      import_theme3.ExtensionTablesTheme.TABLE,
+      // Hide the table before controllers injected
+      this.attrs().isControllersInjected ? import_theme3.ExtensionTablesTheme.TABLE_WITH_CONTROLLERS : import_theme3.ExtensionTablesTheme.TABLE_WAITTING_CONTROLLERS
+    ].join(" ");
+    if (this.table.className !== className) {
+      this.table.className = className;
+    }
+    (0, import_tables3.updateColumnsOnResize)(this.node, this.colgroup, this.table, this.cellMinWidth);
+  }
+  renderInsertButton() {
+    const attrs = this.attrs().insertButtonAttrs;
+    if (attrs) {
+      const tableRect = {
+        map: this.map,
+        table: this.node,
+        tableStart: this.getPos() + 1,
+        // The following properties are not actually used
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0
+      };
+      this.removeInsertButton = (tr) => {
+        const attrsPatch = { insertButtonAttrs: null };
+        return setNodeAttrs(tr, tableRect.tableStart - 1, attrsPatch);
+      };
+      const button = table_insert_button_default({
+        view: this.view,
+        attrs,
+        tableRect,
+        removeInsertButton: this.removeInsertButton
+      });
+      replaceChildren(this.insertButtonWrapper, [button]);
+      this.showInsertButton = true;
+    } else {
+      replaceChildren(this.insertButtonWrapper, []);
+      this.showInsertButton = false;
+    }
+  }
+  attrs() {
+    return this.node.attrs;
+  }
+  ignoreMutation() {
+    return true;
+  }
+  destroy() {
+    document.removeEventListener("mousemove", this.handleMouseMove);
+  }
+};
+function replaceChildren(parent, children) {
+  while (parent.firstChild) {
+    parent.firstChild.remove();
+  }
+  for (const child of children) {
+    parent.append(child);
+  }
+}
+
+// packages/remirror__extension-react-tables/src/table-column-resizing.ts
+function pointsAtCell($pos) {
+  return $pos.parent.type.spec.tableRole == "row" && $pos.nodeAfter;
+}
+function setAttr(attrs, name, value) {
+  let result = {};
+  for (let prop in attrs)
+    result[prop] = attrs[prop];
+  result[name] = value;
+  return result;
+}
+var key = new import_state.PluginKey("tableColumnResizing");
+function columnResizing({
+  handleWidth = 5,
+  cellMinWidth = 25,
+  View = TableView,
+  lastColumnResizable = true,
+  firstResizableColumn = 0
+} = {}) {
+  let plugin = new import_state.Plugin({
+    key,
+    state: {
+      init(_, state) {
+        return new ResizeState(-1, false);
+      },
+      apply(tr, prev) {
+        return prev.apply(tr);
+      }
+    },
+    props: {
+      attributes(state) {
+        let pluginState = key.getState(state);
+        return pluginState.activeHandle > -1 ? { class: "resize-cursor" } : null;
+      },
+      handleDOMEvents: {
+        mousemove(view, event) {
+          handleMouseMove(
+            view,
+            event,
+            handleWidth,
+            cellMinWidth,
+            lastColumnResizable,
+            firstResizableColumn
+          );
+        },
+        mouseleave(view) {
+          handleMouseLeave(view);
+        },
+        mousedown(view, event) {
+          handleMouseDown(view, event, cellMinWidth);
+        }
+      },
+      decorations(state) {
+        let pluginState = key.getState(state);
+        if (pluginState.activeHandle > -1)
+          return handleDecorations(state, pluginState.activeHandle);
+      },
+      nodeViews: {}
+    }
+  });
+  return plugin;
+}
+var ResizeState = class _ResizeState {
+  constructor(activeHandle, dragging) {
+    this.activeHandle = activeHandle;
+    this.dragging = dragging;
+  }
+  apply(tr) {
+    let state = this, action = tr.getMeta(key);
+    if (action && action.setHandle != null)
+      return new _ResizeState(action.setHandle, null);
+    if (action && action.setDragging !== void 0)
+      return new _ResizeState(state.activeHandle, action.setDragging);
+    if (state.activeHandle > -1 && tr.docChanged) {
+      let handle = tr.mapping.map(state.activeHandle, -1);
+      if (!pointsAtCell(tr.doc.resolve(handle)))
+        handle = null;
+      state = new _ResizeState(handle, state.dragging);
+    }
+    return state;
+  }
+};
+function handleMouseMove(view, event, handleWidth, cellMinWidth, lastColumnResizable, firstResizableColumn) {
+  let pluginState = key.getState(view.state);
+  if (!pluginState.dragging) {
+    let target = domCellAround(event.target), cell = -1;
+    if (target) {
+      let { left, right } = target.getBoundingClientRect();
+      if (event.clientX - left <= handleWidth)
+        cell = edgeCell(view, event, "left");
+      else if (right - event.clientX <= handleWidth)
+        cell = edgeCell(view, event, "right");
+    }
+    if (cell != pluginState.activeHandle) {
+      if (cell !== -1) {
+        let $cell = view.state.doc.resolve(cell);
+        let table = $cell.node(-1), map = import_tables4.TableMap.get(table), start = $cell.start(-1);
+        let col = map.colCount($cell.pos - start) + $cell.nodeAfter.attrs.colspan - 1;
+        if (col < firstResizableColumn) {
+          return;
+        }
+        if (!lastColumnResizable && col == map.width - 1) {
+          return;
+        }
+      }
+      updateHandle(view, cell);
+    }
+  }
+}
+function handleMouseLeave(view) {
+  let pluginState = key.getState(view.state);
+  if (pluginState.activeHandle > -1 && !pluginState.dragging)
+    updateHandle(view, -1);
+}
+function handleMouseDown(view, event, cellMinWidth) {
+  let pluginState = key.getState(view.state);
+  if (pluginState.activeHandle == -1 || pluginState.dragging)
+    return false;
+  let cell = view.state.doc.nodeAt(pluginState.activeHandle);
+  let width = currentColWidth(view, pluginState.activeHandle, cell.attrs);
+  view.dispatch(
+    view.state.tr.setMeta(key, { setDragging: { startX: event.clientX, startWidth: width } })
+  );
+  function finish(event2) {
+    window.removeEventListener("mouseup", finish);
+    window.removeEventListener("mousemove", move);
+    let pluginState2 = key.getState(view.state);
+    if (pluginState2.dragging) {
+      updateColumnWidth(
+        view,
+        pluginState2.activeHandle,
+        draggedWidth(pluginState2.dragging, event2, cellMinWidth)
+      );
+      view.dispatch(view.state.tr.setMeta(key, { setDragging: null }));
+    }
+  }
+  function move(event2) {
+    if (!event2.which)
+      return finish(event2);
+    let pluginState2 = key.getState(view.state);
+    let dragged = draggedWidth(pluginState2.dragging, event2, cellMinWidth);
+    displayColumnWidth(view, pluginState2.activeHandle, dragged, cellMinWidth);
+  }
+  window.addEventListener("mouseup", finish);
+  window.addEventListener("mousemove", move);
+  event.preventDefault();
+  return true;
+}
+function currentColWidth(view, cellPos, { colspan, colwidth }) {
+  let width = colwidth && colwidth[colwidth.length - 1];
+  if (width)
+    return width;
+  let dom = view.domAtPos(cellPos);
+  let node = dom.node.childNodes[dom.offset];
+  let domWidth = node.offsetWidth, parts = colspan;
+  if (colwidth) {
+    for (let i = 0; i < colspan; i++)
+      if (colwidth[i]) {
+        domWidth -= colwidth[i];
+        parts--;
+      }
+  }
+  return domWidth / parts;
+}
+function domCellAround(target) {
+  while (target && target.nodeName != "TD" && target.nodeName != "TH")
+    target = target.classList.contains("ProseMirror") ? null : target.parentNode;
+  return target;
+}
+function edgeCell(view, event, side) {
+  let found = view.posAtCoords({ left: event.clientX, top: event.clientY });
+  if (!found)
+    return -1;
+  let { pos } = found;
+  let $cell = (0, import_tables4.cellAround)(view.state.doc.resolve(pos));
+  if (!$cell)
+    return -1;
+  if (side == "right")
+    return $cell.pos;
+  let map = import_tables4.TableMap.get($cell.node(-1)), start = $cell.start(-1);
+  let index = map.map.indexOf($cell.pos - start);
+  return index % map.width == 0 ? -1 : start + map.map[index - 1];
+}
+function draggedWidth(dragging, event, cellMinWidth) {
+  let offset = event.clientX - dragging.startX;
+  return Math.max(cellMinWidth, dragging.startWidth + offset);
+}
+function updateHandle(view, value) {
+  view.dispatch(view.state.tr.setMeta(key, { setHandle: value }));
+}
+function updateColumnWidth(view, cell, width) {
+  let $cell = view.state.doc.resolve(cell);
+  let table = $cell.node(-1), map = import_tables4.TableMap.get(table), start = $cell.start(-1);
+  let col = map.colCount($cell.pos - start) + $cell.nodeAfter.attrs.colspan - 1;
+  let tr = view.state.tr;
+  for (let row = 0; row < map.height; row++) {
+    let mapIndex = row * map.width + col;
+    if (row && map.map[mapIndex] == map.map[mapIndex - map.width])
+      continue;
+    let pos = map.map[mapIndex], { attrs } = table.nodeAt(pos);
+    let index = attrs.colspan == 1 ? 0 : col - map.colCount(pos);
+    if (attrs.colwidth && attrs.colwidth[index] == width)
+      continue;
+    let colwidth = attrs.colwidth ? attrs.colwidth.slice() : zeroes(attrs.colspan);
+    colwidth[index] = width;
+    tr.setNodeMarkup(start + pos, null, setAttr(attrs, "colwidth", colwidth));
+  }
+  if (tr.docChanged)
+    view.dispatch(tr);
+}
+function displayColumnWidth(view, cell, width, cellMinWidth) {
+  let $cell = view.state.doc.resolve(cell);
+  let table = $cell.node(-1), start = $cell.start(-1);
+  let col = import_tables4.TableMap.get(table).colCount($cell.pos - start) + $cell.nodeAfter.attrs.colspan - 1;
+  let dom = view.domAtPos($cell.start(-1)).node;
+  while (dom.nodeName != "TABLE")
+    dom = dom.parentNode;
+  (0, import_tables4.updateColumnsOnResize)(table, dom.firstChild, dom, cellMinWidth, col, width);
+}
+function zeroes(n) {
+  let result = [];
+  for (let i = 0; i < n; i++)
+    result.push(0);
+  return result;
+}
+function handleDecorations(state, cell) {
+  let decorations = [];
+  let $cell = state.doc.resolve(cell);
+  let table = $cell.node(-1), map = import_tables4.TableMap.get(table), start = $cell.start(-1);
+  let col = map.colCount($cell.pos - start) + $cell.nodeAfter.attrs.colspan;
+  for (let row = 0; row < map.height; row++) {
+    let index = col + row * map.width - 1;
+    if ((col == map.width || map.map[index] != map.map[index + 1]) && (row == 0 || map.map[index - 1] != map.map[index - 1 - map.width])) {
+      let cellPos = map.map[index];
+      let pos = start + cellPos + table.nodeAt(cellPos).nodeSize - 1;
+      let dom = document.createElement("div");
+      dom.className = "column-resize-handle";
+      decorations.push(import_view.Decoration.widget(pos, dom));
+    }
+  }
+  return import_view.DecorationSet.create(state.doc, decorations);
+}
+
+// packages/remirror__extension-react-tables/src/table-plugins.ts
+var import_css = require("@emotion/css");
+var import_core4 = require("@remirror/core");
+var import_state2 = require("@remirror/pm/state");
+var import_view2 = require("@remirror/pm/view");
+var import_theme4 = require("@remirror/theme");
+var preselectBorderColor = (0, import_theme4.getThemeVar)("color", "table", "preselect", "border");
+var preselectControllerBackgroundColor = (0, import_theme4.getThemeVar)("color", "table", "preselect", "controller");
+function getTableStyle(attrs) {
+  const preselectClass = import_css.css`
+    /* Make the border-style 'double' instead of 'solid'. This works because 'double' has a higher priority than 'solid' */
+    border-style: double;
+    border-color: ${preselectBorderColor};
+  `;
+  const preselectControllerClass = import_css.css`
+    ${preselectClass}
+    background-color: ${preselectControllerBackgroundColor};
+  `;
+  let classNames = "";
+  if (attrs.preselectColumn !== -1) {
+    classNames = import_css.css`
+      & table.${import_theme4.ExtensionTablesTheme.TABLE} tbody tr {
+        th,
+        td {
+          &:nth-child(${attrs.preselectColumn + 1}) {
+            ${preselectClass};
+          }
+        }
+        th.${import_theme4.ExtensionTablesTheme.TABLE_CONTROLLER}:nth-child(${attrs.preselectColumn + 1}) {
+          ${preselectControllerClass}
+        }
+      }
+    `;
+  } else if (attrs.preselectRow !== -1) {
+    classNames = import_css.css`
+      & table.${import_theme4.ExtensionTablesTheme.TABLE} tbody tr:nth-child(${attrs.preselectRow + 1}) {
+        td,
+        th {
+          ${preselectClass};
+        }
+        th.${import_theme4.ExtensionTablesTheme.TABLE_CONTROLLER} {
+          ${preselectControllerClass}
+        }
+      }
+    `;
+  } else if (attrs.preselectTable) {
+    classNames = import_css.css`
+      &.${import_theme4.ExtensionTablesTheme.TABLE_PRESELECT_ALL} table.${import_theme4.ExtensionTablesTheme.TABLE} tbody tr {
+        td,
+        th {
+          ${preselectClass};
+        }
+        th.${import_theme4.ExtensionTablesTheme.TABLE_CONTROLLER} {
+          ${preselectControllerClass}
+        }
+      }
+    `;
+  }
+  return classNames;
+}
+var key2 = new import_state2.PluginKey("remirrorTableControllerPluginKey");
+function createTableControllerPlugin() {
+  return new import_state2.Plugin({
+    key: key2,
+    state: {
+      init() {
+        return new ControllerState({});
+      },
+      apply(tr, prev) {
+        return prev.apply(tr);
+      }
+    },
+    props: {
+      decorations: (state) => {
+        const controllerState = key2.getState(state);
+        if (!controllerState) {
+          return null;
+        }
+        const { tableNodeResult, predelete, preselectTable } = controllerState.values;
+        if (tableNodeResult) {
+          const styleClassName = getTableStyle(controllerState.values);
+          let className = `${import_theme4.ExtensionTablesTheme.TABLE_SHOW_CONTROLLERS} ${styleClassName}`;
+          if (preselectTable) {
+            className += ` ${import_theme4.ExtensionTablesTheme.TABLE_PRESELECT_ALL}`;
+          }
+          if (predelete) {
+            className += ` ${import_theme4.ExtensionTablesTheme.TABLE_SHOW_PREDELETE}`;
+          }
+          const decorations = [
+            import_view2.Decoration.node(tableNodeResult.pos, tableNodeResult.end, {
+              class: className
+            })
+          ];
+          return import_view2.DecorationSet.create(state.doc, decorations);
+        }
+        return null;
+      }
+    }
+  });
+}
+var ControllerState = class _ControllerState {
+  constructor(action) {
+    this.action = action;
+    this.values = {
+      tableNodeResult: null,
+      preselectTable: false,
+      preselectColumn: -1,
+      preselectRow: -1,
+      predelete: false,
+      insertButtonAttrs: null,
+      ...action
+    };
+  }
+  values;
+  apply(tr) {
+    this.values.tableNodeResult = (0, import_core4.findParentNodeOfType)({
+      types: "table",
+      selection: tr.selection
+    });
+    const props = tr.getMeta(key2);
+    if (props) {
+      return new _ControllerState({ ...this.values, ...props });
+    }
+    return this;
+  }
+};
+function setControllerPluginMeta(tr, props) {
+  return tr.setMeta(key2, props);
+}
+function resetControllerPluginMeta(tr) {
+  return setControllerPluginMeta(tr, {
+    preselectRow: -1,
+    preselectColumn: -1,
+    preselectTable: false,
+    predelete: false
+  });
+}
+
+// packages/remirror__extension-react-tables/src/utils/array.ts
+function repeat(val, times) {
+  const result = [];
+  for (let i = 0; i < times; i++) {
+    result.push(val);
+  }
+  return result;
+}
+
+// packages/remirror__extension-react-tables/src/utils/controller.ts
+function injectControllers({
+  schema,
+  getMap,
+  table: oldTable
+}) {
+  const controllerCell = schema.nodes.tableControllerCell.create();
+  const headerControllerCells = repeat(controllerCell, getMap().width + 1);
+  const controllerRow = schema.nodes.tableRow.create({}, headerControllerCells);
+  const newRowsArray = [controllerRow];
+  const oldRows = oldTable.content;
+  oldRows.forEach((oldRow) => {
+    if (oldRow.content.child(0).type === schema.nodes.tableControllerCell) {
+      newRowsArray.push(oldRow.copy());
+      return;
+    }
+    const oldCells = oldRow.content;
+    const newCells = import_model2.Fragment.from(controllerCell).append(oldCells);
+    const newRow = oldRow.copy(newCells);
+    newRowsArray.push(newRow);
+  });
+  const newRows = import_model2.Fragment.fromArray(newRowsArray);
+  const newTable = oldTable.copy(newRows);
+  newTable.attrs = {
+    ...newTable.attrs,
+    isControllersInjected: true
+  };
+  return newTable;
+}
+function createControllerEvents({
+  view,
+  findTable
+}) {
+  return {
+    onClick: (event) => {
+      const axis = getCellAxisByMouseEvent(view, event);
+      if (axis) {
+        if (axis.row > 0) {
+          selectRow(view, findTable, axis.row);
+        } else if (axis.col > 0) {
+          selectColumn(view, findTable, axis.col);
+        } else {
+          selectTable(view, findTable);
+        }
+      }
+    },
+    onMouseEnter: (event) => {
+      const axis = getCellAxisByMouseEvent(view, event);
+      if (axis) {
+        if (axis.row > 0) {
+          setPreselectRow(view, axis.row);
+        } else if (axis.col > 0) {
+          setPreselectColumn(view, axis.col);
+        } else {
+          setPreselectTable(view, true);
+        }
+      }
+    },
+    onMouseLeave: () => {
+      resetPreselection(view);
+    }
+  };
+}
+function onlyTableFound(func) {
+  return (view, findTable, ...extra) => {
+    const found = findTable();
+    if (!found) {
+      return;
+    }
+    return func(view, found, ...extra);
+  };
+}
+var selectRow = onlyTableFound(
+  (view, table, index) => {
+    const map = import_tables5.TableMap.get(table.node);
+    const cellIndex = getCellIndex(map, index, 0);
+    let tr = view.state.tr;
+    const posInTable = map.map[cellIndex + 1];
+    const pos = table.pos + posInTable + 1;
+    const $pos = tr.doc.resolve(pos);
+    const selection = import_tables5.CellSelection.rowSelection($pos);
+    tr = tr.setSelection(cellSelectionToSelection(selection));
+    view.dispatch(tr);
+  }
+);
+var selectColumn = onlyTableFound(
+  (view, table, index) => {
+    const map = import_tables5.TableMap.get(table.node);
+    const cellIndex = getCellIndex(map, 0, index);
+    let tr = view.state.tr;
+    const posInTable = map.map[cellIndex];
+    const pos = table.pos + posInTable + 1;
+    const $pos = tr.doc.resolve(pos);
+    const selection = import_tables5.CellSelection.colSelection($pos);
+    tr = tr.setSelection(cellSelectionToSelection(selection));
+    view.dispatch(tr);
+  }
+);
+var selectTable = onlyTableFound((view, table) => {
+  const map = import_tables5.TableMap.get(table.node);
+  if (map.map.length > 0) {
+    let tr = view.state.tr;
+    const firstCellPosInTable = map.map[0];
+    const lastCellPosInTable = map.map[map.map.length - 1];
+    const firstCellPos = table.pos + firstCellPosInTable + 1;
+    const lastCellPos = table.pos + lastCellPosInTable + 1;
+    const $firstCellPos = tr.doc.resolve(firstCellPos);
+    const $lastCellPos = tr.doc.resolve(lastCellPos);
+    const selection = new import_tables5.CellSelection($firstCellPos, $lastCellPos);
+    tr = tr.setSelection(cellSelectionToSelection(selection));
+    view.dispatch(tr);
+  }
+});
+function setPreselectRow(view, index) {
+  view.dispatch(setControllerPluginMeta(view.state.tr, { preselectRow: index }));
+}
+function setPreselectColumn(view, index) {
+  view.dispatch(setControllerPluginMeta(view.state.tr, { preselectColumn: index }));
+}
+function setPreselectTable(view, value) {
+  view.dispatch(setControllerPluginMeta(view.state.tr, { preselectTable: value }));
+}
+function setPredelete(view, value) {
+  view.dispatch(setControllerPluginMeta(view.state.tr, { predelete: value }));
+}
+function resetPreselection(view) {
+  view.dispatch(resetControllerPluginMeta(view.state.tr));
+}
+function getCellIndex(map, rowIndex, colIndex) {
+  return map.width * rowIndex + colIndex;
+}
+function getCellAxisByMouseEvent(view, event) {
+  const domCell = domCellAround(event.target);
+  if (!domCell) {
+    return null;
+  }
+  const domCellRect = domCell.getBoundingClientRect();
+  return getCellAxisByCoords(view, { left: domCellRect.left + 1, top: domCellRect.top + 1 });
+}
+function getCellAxisByCoords(view, coords) {
+  const cellPos = view.posAtCoords(coords);
+  if (!cellPos) {
+    return null;
+  }
+  const $cell = (0, import_tables5.cellAround)(view.state.doc.resolve(cellPos.pos));
+  if (!$cell) {
+    return null;
+  }
+  const map = import_tables5.TableMap.get($cell.node(-1));
+  const start = $cell.start(-1);
+  const rect = map.findCell($cell.pos - start);
+  const { left: col, top: row } = rect;
+  return { col, row };
+}
+function getCellSelectionType(selection) {
+  if (selection.isRowSelection()) {
+    if (selection.isColSelection()) {
+      return 3 /* table */;
+    }
+    return 1 /* row */;
+  } else if (selection.isColSelection()) {
+    return 2 /* col */;
+  }
+  return 4 /* other */;
+}
+
+// packages/remirror__extension-react-tables/src/components/table-delete-row-column-button.tsx
+function createDeleteButtonPositioner() {
+  return import_extension_positioner2.Positioner.create({
+    hasChanged: import_extension_positioner2.hasStateChanged,
+    getActive(props) {
+      const { state } = props;
+      const { selection } = state;
+      if ((0, import_tables6.isCellSelection)(selection)) {
+        const cellSelectionType = getCellSelectionType(selection);
+        if (cellSelectionType === 2 /* col */ || cellSelectionType === 1 /* row */) {
+          const tableResult = (0, import_core5.findParentNodeOfType)({ types: "table", selection });
+          if (tableResult) {
+            const positionerData = {
+              tableResult,
+              cellSelectionType,
+              anchorCellPos: selection.$anchorCell.pos,
+              headCellPos: selection.$headCell.pos
+            };
+            return [positionerData];
+          }
+        }
+      }
+      return import_extension_positioner2.Positioner.EMPTY;
+    },
+    getPosition(props) {
+      const { view, data } = props;
+      const anchorCellDOM = view.nodeDOM(data.anchorCellPos);
+      const headCellDOM = view.nodeDOM(data.headCellPos);
+      if (!anchorCellDOM || !headCellDOM || !(0, import_core5.isElementDomNode)(anchorCellDOM) || !(0, import_core5.isElementDomNode)(headCellDOM)) {
+        return import_extension_positioner2.defaultAbsolutePosition;
+      }
+      const map = import_tables6.TableMap.get(data.tableResult.node);
+      if (data.cellSelectionType === 2 /* col */ && map.width <= 2) {
+        return import_extension_positioner2.defaultAbsolutePosition;
+      } else if (data.cellSelectionType === 1 /* row */ && map.height <= 2) {
+        return import_extension_positioner2.defaultAbsolutePosition;
+      }
+      const anchorCellRect = anchorCellDOM.getBoundingClientRect();
+      const headCellRect = headCellDOM.getBoundingClientRect();
+      const rect = (0, import_core5.mergeDOMRects)(anchorCellRect, headCellRect);
+      const editorRect = view.dom.getBoundingClientRect();
+      const height = rect.height;
+      const width = rect.width;
+      const left = view.dom.scrollLeft + rect.left - editorRect.left;
+      const top = view.dom.scrollTop + rect.top - editorRect.top;
+      const visible = (0, import_extension_positioner2.isPositionVisible)(rect, view.dom);
+      const margin = 16;
+      return data.cellSelectionType === 1 /* row */ ? { rect, visible, height: 0, width: 0, x: left - margin, y: top + height / 2 } : { rect, visible, height: 0, width: 0, x: left + width / 2, y: top - margin };
+    }
+  });
+}
+var TableDeleteRowColumnInnerButton = ({
+  position,
+  onClick,
+  onMouseDown,
+  onMouseOver,
+  onMouseOut
+}) => {
+  const size = 18;
+  return /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      ref: position.ref,
+      onClick,
+      onMouseDown,
+      onMouseOver,
+      onMouseOut,
+      style: {
+        "--remirror-table-delete-row-column-button-y": `${position.y}px`,
+        "--remirror-table-delete-row-column-button-x": `${position.x}px`
+      },
+      className: (0, import_core5.cx)(
+        import_theme5.ExtensionTablesTheme.TABLE_DELETE_INNER_BUTTON,
+        import_theme5.ExtensionTablesTheme.TABLE_DELETE_ROW_COLUMN_INNER_BUTTON
+      )
+    },
+    /* @__PURE__ */ import_react2.default.createElement(import_react_components2.Icon, { name: "closeFill", size, color: "#ffffff" })
+  );
+};
+var deleteButtonPositioner = createDeleteButtonPositioner();
+function usePosition() {
+  const position = (0, import_react_hooks2.usePositioner)(deleteButtonPositioner, []);
+  return position;
+}
+function useEvents(view) {
+  const handleClick = (0, import_react2.useCallback)(() => {
+    const selection = view.state.selection;
+    if ((0, import_tables6.isCellSelection)(selection)) {
+      const cellSelectionType = getCellSelectionType(selection);
+      if (cellSelectionType === 1 /* row */) {
+        (0, import_tables6.deleteRow)(view.state, view.dispatch);
+      } else if (cellSelectionType === 2 /* col */) {
+        (0, import_tables6.deleteColumn)(view.state, view.dispatch);
+      }
+    }
+  }, [view]);
+  const handleMouseOver = (0, import_react2.useCallback)(() => setPredelete(view, true), [view]);
+  const handleMouseOut = (0, import_react2.useCallback)(() => setPredelete(view, false), [view]);
+  return { handleClick, handleMouseOver, handleMouseOut };
+}
+var TableDeleteRowColumnButton = ({
+  Component
+}) => {
+  const { view } = (0, import_react_core2.useRemirrorContext)();
+  const position = usePosition();
+  const { handleClick, handleMouseOver, handleMouseOut } = useEvents(view);
+  Component = Component ?? TableDeleteRowColumnInnerButton;
+  const handleMouseDown2 = (0, import_react2.useCallback)((e) => {
+    e.preventDefault();
+  }, []);
+  return /* @__PURE__ */ import_react2.default.createElement(import_react_components2.PositionerPortal, null, /* @__PURE__ */ import_react2.default.createElement(
+    Component,
+    {
+      position,
+      onClick: handleClick,
+      onMouseDown: handleMouseDown2,
+      onMouseOver: handleMouseOver,
+      onMouseOut: handleMouseOut
+    }
+  ));
+};
+
+// packages/remirror__extension-react-tables/src/components/table-delete-table-button.tsx
+var import_react3 = __toESM(require("react"), 1);
+var import_core6 = require("@remirror/core");
+var import_extension_positioner3 = require("@remirror/extension-positioner");
+var import_tables7 = require("@remirror/pm/tables");
+var import_react_components3 = require("@remirror/react-components");
+var import_react_core3 = require("@remirror/react-core");
+var import_react_hooks3 = require("@remirror/react-hooks");
+var import_theme6 = require("@remirror/theme");
+var highlightTable = ({ tr, dispatch }) => {
+  const node = (0, import_core6.findParentNodeOfType)({
+    types: "table",
+    selection: tr.selection
+  });
+  if (!node) {
+    return false;
+  }
+  dispatch?.(setControllerPluginMeta(tr, { preselectTable: true, predelete: true }));
+  return true;
+};
+var unhighlightTable = ({ tr, dispatch }) => {
+  dispatch?.(resetControllerPluginMeta(tr));
+  return true;
+};
+function createDeleteTableButtonPositioner() {
+  return import_extension_positioner3.Positioner.create({
+    hasChanged: import_extension_positioner3.hasStateChanged,
+    getActive(props) {
+      const { selection } = props.state;
+      const tableResult = (0, import_core6.findParentNodeOfType)({ types: "table", selection });
+      if (tableResult) {
+        const positionerData = {
+          tableResult
+        };
+        return [positionerData];
+      }
+      return import_extension_positioner3.Positioner.EMPTY;
+    },
+    getPosition(props) {
+      const { view, data } = props;
+      const { node, pos } = data.tableResult;
+      const map = import_tables7.TableMap.get(node);
+      const firstCellDOM = view.nodeDOM(pos + map.map[0] + 1);
+      const lastCellDOM = view.nodeDOM(pos + (0, import_core6.last)(map.map) + 1);
+      if (!firstCellDOM || !lastCellDOM || !(0, import_core6.isElementDomNode)(firstCellDOM) || !(0, import_core6.isElementDomNode)(lastCellDOM)) {
+        return import_extension_positioner3.defaultAbsolutePosition;
+      }
+      const rect = (0, import_core6.mergeDOMRects)(
+        firstCellDOM.getBoundingClientRect(),
+        lastCellDOM.getBoundingClientRect()
+      );
+      const editorRect = view.dom.getBoundingClientRect();
+      const left = view.dom.scrollLeft + rect.left - editorRect.left;
+      const top = view.dom.scrollTop + rect.top - editorRect.top;
+      const visible = (0, import_extension_positioner3.isPositionVisible)(rect, view.dom);
+      const margin = 16;
+      return {
+        rect,
+        visible,
+        height: 0,
+        width: 0,
+        x: left + rect.width / 2,
+        y: top + rect.height + margin
+      };
+    }
+  });
+}
+var TableDeleteInnerButton = ({
+  position,
+  onClick,
+  onMouseDown,
+  onMouseEnter,
+  onMouseLeave
+}) => {
+  const size = 18;
+  return /* @__PURE__ */ import_react3.default.createElement(
+    "button",
+    {
+      ref: position.ref,
+      onClick,
+      onMouseDown,
+      onMouseEnter,
+      onMouseLeave,
+      style: {
+        "--remirror-table-delete-button-y": `${position.y}px`,
+        "--remirror-table-delete-button-x": `${position.x}px`
+      },
+      className: (0, import_core6.cx)(
+        import_theme6.ExtensionTablesTheme.TABLE_DELETE_INNER_BUTTON,
+        import_theme6.ExtensionTablesTheme.TABLE_DELETE_TABLE_INNER_BUTTON
+      )
+    },
+    /* @__PURE__ */ import_react3.default.createElement(import_react_components3.Icon, { name: "deleteBinLine", size, color: "#ffffff" })
+  );
+};
+var deleteButtonPositioner2 = createDeleteTableButtonPositioner();
+function usePosition2() {
+  const position = (0, import_react_hooks3.usePositioner)(deleteButtonPositioner2, []);
+  return position;
+}
+var TableDeleteButton = ({ Component }) => {
+  const position = usePosition2();
+  const { customDispatch, deleteTable } = (0, import_react_core3.useCommands)();
+  const handleMouseDown2 = (0, import_react3.useCallback)((e) => {
+    e.preventDefault();
+  }, []);
+  const handleMouseEnter = (0, import_react3.useCallback)(() => {
+    customDispatch(highlightTable);
+  }, [customDispatch]);
+  const handleMouseLeave2 = (0, import_react3.useCallback)(() => {
+    customDispatch(unhighlightTable);
+  }, [customDispatch]);
+  const handleClick = (0, import_react3.useCallback)(() => {
+    deleteTable();
+  }, [deleteTable]);
+  Component = Component ?? TableDeleteInnerButton;
+  return /* @__PURE__ */ import_react3.default.createElement(import_react_components3.PositionerPortal, null, /* @__PURE__ */ import_react3.default.createElement(
+    Component,
+    {
+      position,
+      onClick: handleClick,
+      onMouseDown: handleMouseDown2,
+      onMouseEnter: handleMouseEnter,
+      onMouseLeave: handleMouseLeave2
+    }
+  ));
+};
+
+// packages/remirror__extension-react-tables/src/components/table-components.tsx
+var TableComponents = ({
+  enableTableCellMenu = true,
+  enableTableDeleteRowColumnButton = true,
+  enableTableDeleteButton = true,
+  tableCellMenuProps,
+  tableDeleteRowColumnButtonProps,
+  tableDeleteButtonProps
+}) => {
+  const { isViewEditable } = (0, import_react_core4.useHelpers)();
+  if (!isViewEditable()) {
+    return null;
+  }
+  return /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, enableTableCellMenu && /* @__PURE__ */ import_react4.default.createElement(TableCellMenu, { ...tableCellMenuProps }), enableTableDeleteRowColumnButton && /* @__PURE__ */ import_react4.default.createElement(TableDeleteRowColumnButton, { ...tableDeleteRowColumnButtonProps }), enableTableDeleteButton && /* @__PURE__ */ import_react4.default.createElement(TableDeleteButton, { ...tableDeleteButtonProps }));
+};
+
+// packages/remirror__extension-react-tables/src/table-extensions.tsx
+var import_core8 = require("@remirror/core");
+var import_extension_tables = require("@remirror/extension-tables");
+var import_state3 = require("@remirror/pm/state");
+var import_tables8 = require("@remirror/pm/tables");
+
+// packages/remirror__extension-react-tables/src/components/table-controller-cell.ts
+var import_core7 = require("@remirror/core");
+var import_theme9 = require("@remirror/theme");
+
+// packages/remirror__extension-react-tables/src/components/table-insert-button-trigger.ts
+var import_theme7 = require("@remirror/theme");
+function buildInsertButtonAttrs(type, triggerRect, editorDom, cellAxis) {
+  const { row, col } = cellAxis;
+  const relativeCoord = getRelativeCoord(triggerRect, editorDom);
+  switch (type) {
+    case 1 /* ADD_COLUMN_BEFORE */:
+      return {
+        triggerRect,
+        x: relativeCoord.x - borderWidth,
+        y: relativeCoord.y + 12,
+        row: -1,
+        col
+      };
+    case 2 /* ADD_COLUMN_AFTER */:
+      return {
+        triggerRect,
+        x: relativeCoord.x + triggerRect.width,
+        y: relativeCoord.y + 12,
+        row: -1,
+        col: col + 1
+      };
+    case 3 /* ADD_ROW_BEFORE */:
+      return {
+        triggerRect,
+        x: relativeCoord.x + 12,
+        y: relativeCoord.y + 5 - borderWidth,
+        row,
+        col: -1
+      };
+    default:
+      return {
+        triggerRect,
+        x: relativeCoord.x + 12,
+        y: relativeCoord.y + 5 + triggerRect.height,
+        row: row + 1,
+        col: -1
+      };
+  }
+}
+function showButton(trigger, findTable, type, axis, view) {
+  const triggerRect = trigger?.getBoundingClientRect();
+  if (!triggerRect || !(triggerRect.width || triggerRect.height)) {
+    return;
+  }
+  const tableResult = findTable();
+  if (!tableResult) {
+    return;
+  }
+  const insertButtonAttrs = buildInsertButtonAttrs(type, triggerRect, view.dom, axis);
+  view.dispatch(setNodeAttrs(view.state.tr, tableResult.pos, { insertButtonAttrs }));
+}
+var TriggerArea = ({
+  isTopLeft,
+  view,
+  findTable
+}) => {
+  const trigger = h("div", {
+    className: import_theme7.ExtensionTablesTheme.TABLE_CONTROLLER_TRIGGER_AREA,
+    onMouseEnter: (event) => {
+      const axis = getCellAxisByMouseEvent(view, event);
+      if (axis) {
+        let type;
+        if (axis.row > 0) {
+          type = isTopLeft ? 3 /* ADD_ROW_BEFORE */ : 4 /* ADD_ROW_AFTER */;
+        } else if (axis.col > 0) {
+          type = isTopLeft ? 1 /* ADD_COLUMN_BEFORE */ : 2 /* ADD_COLUMN_AFTER */;
+        }
+        if (type) {
+          showButton(trigger, findTable, type, axis, view);
+        }
+      }
+    }
+  });
+  return trigger;
+};
+var TableInsertButtonTrigger = ({
+  view,
+  findTable
+}) => [
+  TriggerArea({ view, findTable, isTopLeft: true }),
+  TriggerArea({ view, findTable, isTopLeft: false })
+];
+var table_insert_button_trigger_default = TableInsertButtonTrigger;
+
+// packages/remirror__extension-react-tables/src/components/table-insert-mark.ts
+var import_theme8 = require("@remirror/theme");
+var TableInsertMark = () => [
+  h("div", { className: import_theme8.ExtensionTablesTheme.TABLE_CONTROLLER_MARK_ROW_CORNER }),
+  h("div", { className: import_theme8.ExtensionTablesTheme.TABLE_CONTROLLER_MARK_COLUMN_CORNER })
+];
+var table_insert_mark_default = TableInsertMark;
+
+// packages/remirror__extension-react-tables/src/components/table-controller-cell.ts
+var TableControllerCell = ({
+  view,
+  getPos,
+  contentDOM
+}) => {
+  const findTable = () => (0, import_core7.findParentNodeOfType)({
+    types: "table",
+    selection: view.state.doc.resolve(getPos())
+  });
+  const events = createControllerEvents({ view, findTable });
+  const childNodes = view.editable ? [...table_insert_button_trigger_default({ view, findTable }), ...table_insert_mark_default()] : [];
+  const wrapper = h(
+    "div",
+    { contentEditable: "false", className: import_theme9.ExtensionTablesTheme.TABLE_CONTROLLER_WRAPPER },
+    contentDOM,
+    ...childNodes
+  );
+  return h(
+    "th",
+    {
+      contentEditable: "false",
+      className: `${import_theme9.ExtensionTablesTheme.TABLE_CONTROLLER} ${import_theme9.ExtensionTablesTheme.CONTROLLERS_TOGGLE}`,
+      dataset: {
+        controllerCell: ""
+      },
+      ...events
+    },
+    wrapper
+  );
+};
+var table_controller_cell_default = TableControllerCell;
+
+// packages/remirror__extension-react-tables/src/views/table-controller-cell-view.tsx
+var TableControllerCellView = class {
+  constructor(node, view, getPos) {
+    this.node = node;
+    this.view = view;
+    this.getPos = getPos;
+    this.contentDOM = h("div", { contentEditable: "false" });
+    this.dom = table_controller_cell_default({
+      view,
+      getPos,
+      contentDOM: this.contentDOM
+    });
+  }
+  dom;
+  contentDOM;
+  // When a DOM mutation happens (eg: the button show or hide), don't let
+  // ProseMirror re-render the view.
+  ignoreMutation() {
+    return true;
+  }
+  // Don't let ProseMirror to handle the dom event (eg: onclick).
+  stopEvent() {
+    return true;
+  }
+};
+
+// packages/remirror__extension-react-tables/src/table-extensions.tsx
+var TableExtension = class extends import_extension_tables.TableExtension {
+  get name() {
+    return "table";
+  }
+  createNodeViews() {
+    return (node, view, getPos, decorations) => new TableView(node, 10, decorations, view, getPos);
+  }
+  /**
+   * Add the table plugins to the editor.
+   */
+  createExternalPlugins() {
+    const plugins = [];
+    if (this.store.isMounted() && this.store.helpers.isViewEditable() === false) {
+      return plugins;
+    }
+    const { resizable, resizeableOptions } = this.options;
+    if (resizable) {
+      plugins.push(columnResizing({ ...resizeableOptions, firstResizableColumn: 1 }));
+    }
+    plugins.push((0, import_tables8.tableEditing)(), createTableControllerPlugin());
+    return plugins;
+  }
+  createNodeSpec(extra) {
+    const spec = {
+      isolating: true,
+      attrs: {
+        ...extra.defaults(),
+        isControllersInjected: { default: false },
+        insertButtonAttrs: { default: null }
+      },
+      content: "tableRow+",
+      tableRole: "table",
+      parseDOM: [
+        {
+          tag: "table",
+          getAttrs: (node) => {
+            if (!(0, import_core8.isElementDomNode)(node)) {
+              return {};
+            }
+            return {
+              ...extra.parse(node),
+              isControllersInjected: node.hasAttribute("data-controllers-injected")
+            };
+          }
+        }
+      ],
+      toDOM(node) {
+        const controllerAttrs = {};
+        if (node.attrs.isControllersInjected) {
+          controllerAttrs["data-controllers-injected"] = "";
+        }
+        return ["table", { ...extra.dom(node), ...controllerAttrs }, ["tbody", 0]];
+      },
+      allowGapCursor: false
+    };
+    return spec;
+  }
+  /**
+   * Create the table extensions. Set the priority to low so that they appear
+   * lower down in the node list.
+   */
+  createExtensions() {
+    return [new TableRowExtension({ priority: import_core8.ExtensionPriority.Low })];
+  }
+  onView(view) {
+    const schema = this.store.schema;
+    schema.cached.tableNodeTypes = {
+      cell: schema.nodes.tableCell,
+      row: schema.nodes.tableRow,
+      table: schema.nodes.table,
+      header_cell: schema.nodes.tableHeaderCell
+    };
+    const {
+      dispatch,
+      state: { doc, tr }
+    } = view;
+    const tableNodes = (0, import_core8.findChildren)({
+      node: doc,
+      predicate: ({ node: { type, attrs } }) => type === schema.nodes.table && attrs.isControllersInjected === false
+    });
+    if (tableNodes.length === 0) {
+      return;
+    }
+    for (const { node: table, pos } of tableNodes) {
+      const controlledTable = injectControllers({
+        schema,
+        getMap: () => import_tables8.TableMap.get(table),
+        table
+      });
+      (0, import_core8.replaceNodeAtPosition)({ pos: tr.mapping.map(pos), tr, content: controlledTable });
+    }
+    dispatch(tr.setMeta("addToHistory", false));
+  }
+  createTable(options = {}) {
+    return (props) => {
+      const { tr, dispatch, state } = props;
+      if (!tr.selection.empty) {
+        return false;
+      }
+      const { schema } = state;
+      const offset = tr.selection.anchor + 1;
+      const table = (0, import_extension_tables.createTable)({ schema, ...options });
+      const controlledTable = injectControllers({
+        schema,
+        getMap: () => import_tables8.TableMap.get(table),
+        table
+      });
+      dispatch?.(
+        tr.replaceSelectionWith(controlledTable).scrollIntoView().setSelection(import_state3.TextSelection.near(tr.doc.resolve(offset)))
+      );
+      return true;
+    };
+  }
+  addTableColumnBefore() {
+    return (0, import_core8.convertCommand)(addColumnBefore);
+  }
+  addTableColumnAfter() {
+    return (0, import_core8.convertCommand)(addColumnAfter);
+  }
+  addTableRowBefore() {
+    return (0, import_core8.convertCommand)(addRowBefore);
+  }
+  addTableRowAfter() {
+    return (0, import_core8.convertCommand)(addRowAfter);
+  }
+  createPlugin() {
+    return {
+      appendTransaction: (transactions, prevState, state) => {
+        const composedTransaction = (0, import_core8.composeTransactionSteps)(transactions, prevState);
+        const { schema, tr } = state;
+        const tableNodes = (0, import_core8.getChangedNodes)(composedTransaction, {
+          predicate: ({ type }) => type === schema.nodes.table
+        });
+        if (tableNodes.length === 0) {
+          return;
+        }
+        for (const { node: table, pos } of tableNodes) {
+          if (table.attrs.isControllersInjected) {
+            continue;
+          }
+          const controlledTable = injectControllers({
+            schema,
+            getMap: () => import_tables8.TableMap.get(table),
+            table
+          });
+          (0, import_core8.replaceNodeAtPosition)({ pos: tr.mapping.map(pos), tr, content: controlledTable });
+        }
+        return tr.steps.length > 0 ? tr : void 0;
+      }
+    };
+  }
+};
+__decorateClass([
+  (0, import_core8.command)(import_extension_tables.createTableOptions)
+], TableExtension.prototype, "createTable", 1);
+__decorateClass([
+  (0, import_core8.command)()
+], TableExtension.prototype, "addTableColumnBefore", 1);
+__decorateClass([
+  (0, import_core8.command)()
+], TableExtension.prototype, "addTableColumnAfter", 1);
+__decorateClass([
+  (0, import_core8.command)()
+], TableExtension.prototype, "addTableRowBefore", 1);
+__decorateClass([
+  (0, import_core8.command)()
+], TableExtension.prototype, "addTableRowAfter", 1);
+var TableRowExtension = class extends import_extension_tables.TableRowExtension {
+  get name() {
+    return "tableRow";
+  }
+  createNodeSpec(extra, override) {
+    const spec = super.createNodeSpec(extra, override);
+    spec.content = "(tableCell | tableHeaderCell | tableControllerCell)*";
+    spec.toDOM = (node) => ["tr", extra.dom(node), 0];
+    spec.allowGapCursor = false;
+    return spec;
+  }
+  /**
+   * Automatically create the `TableCellExtension`,`TableHeaderCellExtension`
+   * and `TableControllerCellExtension`. This is placed here so that this
+   * extension can be tested independently from the `TableExtension`.
+   */
+  createExtensions() {
+    return [
+      new TableCellExtension({ priority: import_core8.ExtensionPriority.Low }),
+      new TableControllerCellExtension({ priority: import_core8.ExtensionPriority.Medium }),
+      new TableHeaderCellExtension({ priority: import_core8.ExtensionPriority.Low })
+    ];
+  }
+};
+var TableHeaderCellExtension = class extends import_extension_tables.TableHeaderCellExtension {
+  get name() {
+    return "tableHeaderCell";
+  }
+  createNodeSpec(extra, override) {
+    const spec = super.createNodeSpec(extra, override);
+    spec.attrs = {
+      ...spec.attrs
+    };
+    spec.allowGapCursor = false;
+    return spec;
+  }
+};
+var TableCellExtension = class extends import_extension_tables.TableCellExtension {
+  get name() {
+    return "tableCell";
+  }
+  createNodeSpec(extra, override) {
+    const spec = super.createNodeSpec(extra, override);
+    spec.allowGapCursor = false;
+    return spec;
+  }
+};
+var TableControllerCellExtension = class extends import_extension_tables.TableControllerCellExtension {
+  createNodeSpec(extra) {
+    const cellAttrs = {
+      ...extra.defaults(),
+      colspan: { default: 1 },
+      rowspan: { default: 1 },
+      colwidth: { default: null },
+      background: { default: null }
+    };
+    return {
+      atom: true,
+      isolating: true,
+      content: "block*",
+      attrs: cellAttrs,
+      tableRole: "header_cell",
+      parseDOM: [{ tag: "th[data-controller-cell]" }],
+      toDOM() {
+        return ["th", { "data-controller-cell": "" }, 0];
+      },
+      allowGapCursor: false
+    };
+  }
+  createNodeViews() {
+    return (node, view, getPos) => new TableControllerCellView(node, view, getPos);
+  }
+  createExtensions() {
+    return [];
+  }
+  createPlugin() {
+    return {
+      filterTransaction: (tr) => {
+        const controllerCellsWithContent = (0, import_core8.getChangedNodes)(tr, {
+          descend: true,
+          predicate: (node) => {
+            if (node.type !== this.type) {
+              return false;
+            }
+            return node.textContent !== "";
+          }
+        });
+        return controllerCellsWithContent.length === 0;
+      }
+    };
+  }
+};
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  TableCellExtension,
+  TableCellMenu,
+  TableComponents,
+  TableControllerCellExtension,
+  TableDeleteButton,
+  TableDeleteInnerButton,
+  TableDeleteRowColumnButton,
+  TableDeleteRowColumnInnerButton,
+  TableExtension,
+  TableHeaderCellExtension,
+  TableRowExtension,
+  tableControllerPluginKey
+});

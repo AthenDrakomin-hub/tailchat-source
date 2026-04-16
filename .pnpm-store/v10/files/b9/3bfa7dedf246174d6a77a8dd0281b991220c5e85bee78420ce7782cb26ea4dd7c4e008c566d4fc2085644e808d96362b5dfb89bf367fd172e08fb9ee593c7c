@@ -1,0 +1,12 @@
+import { CommandFunction } from '@remirror/pm';
+import { Transaction } from '@remirror/pm/state';
+/**
+ * A helper function to indent selected list items.
+ *
+ * @beta
+ */
+export declare function indentList(tr: Transaction): boolean;
+/**
+ * @internal
+ */
+export declare const indentListCommand: CommandFunction;

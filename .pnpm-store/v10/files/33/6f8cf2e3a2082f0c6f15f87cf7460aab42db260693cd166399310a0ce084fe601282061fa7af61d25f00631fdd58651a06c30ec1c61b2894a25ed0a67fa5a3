@@ -1,0 +1,52 @@
+{
+  "name": "@remirror/extension-placeholder",
+  "version": "2.0.14",
+  "description": "TEMPLATE_DESCRIPTION",
+  "keywords": [
+    "remirror",
+    "extension"
+  ],
+  "homepage": "https://github.com/remirror/remirror/tree/HEAD/packages/remirror__extension-placeholder",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remirror/remirror.git",
+    "directory": "packages/remirror__extension-placeholder"
+  },
+  "license": "MIT",
+  "contributors": [
+    "Ifiok Jr. <ifiokotung@gmail.com>"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/remirror-extension-placeholder.d.ts",
+      "import": "./dist/remirror-extension-placeholder.js",
+      "require": "./dist/remirror-extension-placeholder.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/remirror-extension-placeholder.cjs",
+  "module": "./dist/remirror-extension-placeholder.js",
+  "types": "./dist/remirror-extension-placeholder.d.ts",
+  "files": [
+    "dist",
+    "dist-types",
+    "style"
+  ],
+  "dependencies": {
+    "@babel/runtime": "^7.21.0",
+    "@remirror/core": "^2.0.13",
+    "@remirror/messages": "^2.0.3",
+    "@remirror/theme": "^2.0.7"
+  },
+  "devDependencies": {
+    "@remirror/pm": "^2.0.5"
+  },
+  "peerDependencies": {
+    "@remirror/pm": "^2.0.5"
+  },
+  "@remirror": {
+    "sizeLimit": "5 KB"
+  }
+}

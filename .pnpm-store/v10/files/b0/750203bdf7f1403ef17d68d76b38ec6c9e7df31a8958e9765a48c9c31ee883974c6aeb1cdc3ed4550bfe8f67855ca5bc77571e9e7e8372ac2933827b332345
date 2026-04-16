@@ -1,0 +1,2 @@
+// packages/remirror__i18n/src/plurals.ts
+export * from "make-plural/plurals";

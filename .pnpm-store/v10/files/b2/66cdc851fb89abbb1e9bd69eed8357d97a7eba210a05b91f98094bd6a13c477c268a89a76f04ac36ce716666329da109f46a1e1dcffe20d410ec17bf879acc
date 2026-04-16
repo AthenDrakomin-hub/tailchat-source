@@ -1,0 +1,320 @@
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp(target, key, result);
+  return result;
+};
+
+// packages/remirror__extension-search/src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  SearchExtension: () => SearchExtension,
+  rotateHighlightedIndex: () => rotateHighlightedIndex
+});
+module.exports = __toCommonJS(src_exports);
+
+// packages/remirror__extension-search/src/search-extension.ts
+var import_escape_string_regexp = __toESM(require("escape-string-regexp"), 1);
+var import_core = require("@remirror/core");
+var import_view = require("@remirror/pm/view");
+var SearchExtension = class extends import_core.PlainExtension {
+  constructor() {
+    super(...arguments);
+    this._updating = false;
+    this._results = [];
+    this._activeIndex = 0;
+  }
+  get name() {
+    return "search";
+  }
+  /**
+   * This plugin is responsible for adding something decorations to the
+   */
+  createPlugin() {
+    return {
+      state: {
+        init() {
+          return import_view.DecorationSet.empty;
+        },
+        apply: (tr, old) => {
+          if (this._updating || this.options.searching || tr.docChanged && this.options.alwaysSearch) {
+            return this.createDecoration(tr.doc);
+          }
+          if (tr.docChanged) {
+            return old.map(tr.mapping, tr.doc);
+          }
+          return old;
+        }
+      },
+      props: {
+        decorations: (state) => {
+          return this.getPluginState(state);
+        }
+      }
+    };
+  }
+  search(searchTerm, direction) {
+    return this.find(searchTerm, direction);
+  }
+  searchNext() {
+    return this.find(this._searchTerm, "next");
+  }
+  searchPrevious() {
+    return this.find(this._searchTerm, "previous");
+  }
+  replaceSearchResult(replacement, index) {
+    return this.replace(replacement, index);
+  }
+  replaceAllSearchResults(replacement) {
+    return this.replaceAll(replacement);
+  }
+  clearSearch() {
+    return this.clear();
+  }
+  searchForwardShortcut(props) {
+    return this.createSearchKeyBinding("next")(props);
+  }
+  searchBackwardShortcut(props) {
+    return this.createSearchKeyBinding("previous")(props);
+  }
+  escapeShortcut(_) {
+    if (!(0, import_core.isString)(this._searchTerm)) {
+      return false;
+    }
+    this.clearSearch();
+    return true;
+  }
+  createSearchKeyBinding(direction) {
+    return ({ state }) => {
+      let searchTerm;
+      if ((0, import_core.isSelectionEmpty)(state)) {
+        if (!this._searchTerm) {
+          return false;
+        }
+        searchTerm = this._searchTerm;
+      }
+      this.find(searchTerm, direction);
+      return true;
+    };
+  }
+  findRegExp() {
+    return new RegExp(this._searchTerm ?? "", !this.options.caseSensitive ? "gui" : "gu");
+  }
+  getDecorations() {
+    return this._results.map(
+      (deco, index) => import_view.Decoration.inline(deco.from, deco.to, {
+        class: (0, import_core.cx)(
+          this.options.searchClass,
+          index === this._activeIndex && this.options.highlightedClass
+        )
+      })
+    );
+  }
+  gatherSearchResults(doc) {
+    this._results = [];
+    const mergedTextNodes = [];
+    let index = 0;
+    if (!this._searchTerm) {
+      return;
+    }
+    doc.descendants((node, pos) => {
+      const mergedTextNode = mergedTextNodes[index];
+      if (!node.isText && mergedTextNode) {
+        index += 1;
+        return;
+      }
+      if (mergedTextNode) {
+        mergedTextNodes[index] = {
+          text: `${mergedTextNode.text}${node.text ?? ""}`,
+          pos: mergedTextNode.pos + (index === 0 ? 1 : 0)
+        };
+        return;
+      }
+      mergedTextNodes[index] = {
+        text: node.text ?? "",
+        pos
+      };
+    });
+    for (const { text, pos } of mergedTextNodes) {
+      const search = this.findRegExp();
+      (0, import_core.findMatches)(text, search).forEach((match) => {
+        this._results.push({
+          from: pos + match.index,
+          to: pos + match.index + (0, import_core.assertGet)(match, 0).length
+        });
+      });
+    }
+  }
+  replace(replacement, index) {
+    return (props) => {
+      const { tr, dispatch } = props;
+      const result = this._results[(0, import_core.isNumber)(index) ? index : this._activeIndex];
+      if (!result) {
+        return false;
+      }
+      if (!dispatch) {
+        return true;
+      }
+      tr.insertText(replacement, result.from, result.to);
+      return this.searchNext()(props);
+    };
+  }
+  rebaseNextResult({ replacement, index, lastOffset = 0 }) {
+    const nextIndex = index + 1;
+    if (!this._results[nextIndex]) {
+      return;
+    }
+    const current = (0, import_core.assertGet)(this._results, index);
+    const offset = current.to - current.from - replacement.length + lastOffset;
+    const next = (0, import_core.assertGet)(this._results, nextIndex);
+    this._results[nextIndex] = {
+      to: next.to - offset,
+      from: next.from - offset
+    };
+    return offset;
+  }
+  replaceAll(replacement) {
+    return (props) => {
+      const { tr, dispatch } = props;
+      let offset;
+      if ((0, import_core.isEmptyArray)(this._results)) {
+        return false;
+      }
+      if (!dispatch) {
+        return true;
+      }
+      this._results.forEach(({ from, to }, index) => {
+        tr.insertText(replacement, from, to);
+        offset = this.rebaseNextResult({ replacement, index, lastOffset: offset });
+      });
+      return this.find(this._searchTerm)(props);
+    };
+  }
+  find(searchTerm, direction) {
+    return ({ tr, dispatch }) => {
+      const range = (0, import_core.isSelectionEmpty)(tr) ? (0, import_core.getSelectedWord)(tr) : tr.selection;
+      let actualSearch = "";
+      if (searchTerm) {
+        actualSearch = searchTerm;
+      } else if (range) {
+        const { from, to } = range;
+        actualSearch = tr.doc.textBetween(from, to);
+      }
+      this._searchTerm = this.options.disableRegex ? (0, import_escape_string_regexp.default)(actualSearch) : actualSearch;
+      this._activeIndex = !direction ? 0 : rotateHighlightedIndex({
+        direction,
+        previousIndex: this._activeIndex,
+        resultsLength: this._results.length
+      });
+      return this.updateView(tr, dispatch);
+    };
+  }
+  clear() {
+    return ({ tr, dispatch }) => {
+      this._searchTerm = void 0;
+      this._activeIndex = 0;
+      return this.updateView(tr, dispatch);
+    };
+  }
+  /**
+   * Dispatch an empty transaction to trigger an update of the decoration.
+   */
+  updateView(tr, dispatch) {
+    this._updating = true;
+    if (dispatch) {
+      dispatch(tr);
+    }
+    this._updating = false;
+    return true;
+  }
+  createDecoration(doc) {
+    this.gatherSearchResults(doc);
+    const decorations = this.getDecorations();
+    return decorations ? import_view.DecorationSet.create(doc, decorations) : [];
+  }
+};
+__decorateClass([
+  (0, import_core.command)()
+], SearchExtension.prototype, "search", 1);
+__decorateClass([
+  (0, import_core.command)()
+], SearchExtension.prototype, "searchNext", 1);
+__decorateClass([
+  (0, import_core.command)()
+], SearchExtension.prototype, "searchPrevious", 1);
+__decorateClass([
+  (0, import_core.command)()
+], SearchExtension.prototype, "replaceSearchResult", 1);
+__decorateClass([
+  (0, import_core.command)()
+], SearchExtension.prototype, "replaceAllSearchResults", 1);
+__decorateClass([
+  (0, import_core.command)()
+], SearchExtension.prototype, "clearSearch", 1);
+__decorateClass([
+  (0, import_core.keyBinding)({ shortcut: import_core.NamedShortcut.Find })
+], SearchExtension.prototype, "searchForwardShortcut", 1);
+__decorateClass([
+  (0, import_core.keyBinding)({ shortcut: import_core.NamedShortcut.FindBackwards })
+], SearchExtension.prototype, "searchBackwardShortcut", 1);
+__decorateClass([
+  (0, import_core.keyBinding)({ shortcut: "Escape", isActive: (options) => options.clearOnEscape })
+], SearchExtension.prototype, "escapeShortcut", 1);
+SearchExtension = __decorateClass([
+  (0, import_core.extension)({
+    defaultOptions: {
+      autoSelectNext: true,
+      searchClass: "search",
+      highlightedClass: "highlighted-search",
+      searching: false,
+      caseSensitive: false,
+      disableRegex: true,
+      alwaysSearch: false,
+      clearOnEscape: true
+    },
+    handlerKeys: ["onSearch"],
+    staticKeys: ["searchClass", "highlightedClass"]
+  })
+], SearchExtension);
+var rotateHighlightedIndex = (props) => {
+  const { direction, resultsLength, previousIndex } = props;
+  if (direction === "next") {
+    return previousIndex + 1 > resultsLength - 1 ? 0 : previousIndex + 1;
+  }
+  return previousIndex - 1 < 0 ? resultsLength - 1 : previousIndex - 1;
+};
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  SearchExtension,
+  rotateHighlightedIndex
+});
