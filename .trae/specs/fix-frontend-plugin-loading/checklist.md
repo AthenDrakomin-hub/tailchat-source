@@ -1,0 +1,3 @@
+- [ ] 前端页面中加载 `hls.js` 不再抛出 `SyntaxError: Unexpected token '<'`。
+- [ ] 前端插件 `@plugins/com.msgbyte.meeting` 能够被正确获取并加载，返回类型为 JavaScript 代码。
+- [ ] 核心 API 路由 `/api` 与前台网页路由 `/` 不冲突，静态资源请求不会 fallback 到单页应用 `index.html`。
