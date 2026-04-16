@@ -87,6 +87,8 @@ export const TcMinioService = {
      * Virtual hosted style: <Schema>://<Bucket>.<S3 Endpoint>/<Object>
      */
     pathStyle: true,
+    /** @type {String?} The BucketName minio uses for ping check */
+    bucketName: undefined,
   },
 
   methods: {
@@ -118,7 +120,10 @@ export const TcMinioService = {
      */
     ping({ timeout = 5000 } = {}) {
       return this.Promise.race([
-        this.client.listBuckets().then(() => true),
+        (this.settings.bucketName
+          ? this.client.bucketExists(this.settings.bucketName)
+          : this.client.listBuckets()
+        ).then(() => true),
         this.Promise.delay(timeout).then(() => {
           throw new MinioPingError();
         }),
