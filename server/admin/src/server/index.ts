@@ -54,6 +54,8 @@ if (process.env.NODE_ENV === 'production') {
   ViteExpress.config({
     mode: 'production',
   });
+  // Fix for ViteExpress ignoring base path: manually serve the dist folder at /admin
+  app.use('/admin', express.static(path.resolve(__dirname, '../../..')));
 }
 
 ViteExpress.listen(app, port, () => {
