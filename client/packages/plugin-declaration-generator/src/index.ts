@@ -30,7 +30,7 @@ export async function generateFunctionDeclare(options: Options) {
     });
   });
 
-  const code = generate(program(_.flatten(astList))).code;
+  const code = generate(program(_.flatten(astList)) as any).code;
 
   return code;
 }
