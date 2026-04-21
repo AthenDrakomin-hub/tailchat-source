@@ -7,7 +7,7 @@ services:
       context: ../
     image: tailchat
     restart: unless-stopped
-    env_file: docker-compose.env
+    env_file: ../docker-compose.env
     environment:
       LIVEKIT_WEBHOOK_PORT: 3000
     depends_on:

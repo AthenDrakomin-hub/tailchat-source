@@ -4,9 +4,9 @@ data:
   JWT_SECRET: ""
   LOGGER: "true"
   LOGLEVEL: info
-  MINIO_PASS: com.msgbyte.tailchat
+  MINIO_PASS: GDragon19888..
   MINIO_URL: minio:9000
-  MINIO_USER: tailchat
+  MINIO_USER: yefeng
   MONGO_URL: mongodb://mongo/moleculer-test
   NAMESPACE: ""
   REDIS_URL: redis://redis:6379
