@@ -36,11 +36,11 @@ export const config = {
     /**
      * 文件上传限制
      * 单位byte
-     * 默认 1m
+     * 默认 100m
      */
     limit: process.env.FILE_LIMIT
       ? Number(process.env.FILE_LIMIT)
-      : 1 * 1024 * 1024,
+      : 100 * 1024 * 1024,
   },
   apiUrl,
   staticUrl,

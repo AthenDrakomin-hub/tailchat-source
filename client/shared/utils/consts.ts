@@ -20,7 +20,7 @@ export const SYSTEM_USERID = '000000000000000000000000';
 
 export const defaultGlobalConfig: GlobalConfig = {
   tianji: {},
-  uploadFileLimit: 1 * 1024 * 1024,
+  uploadFileLimit: 100 * 1024 * 1024,
   emailVerification: false,
   serverName: '财富会客厅',
   disableMsgpack: false,
