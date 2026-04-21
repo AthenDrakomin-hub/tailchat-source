@@ -37,7 +37,7 @@ RUN pnpm install --no-frozen-lockfile
 # Build and cleanup (client and server)
 ENV NODE_ENV=production
 ENV VERSION=$VERSION
-ENV NODE_OPTIONS="--max-old-space-size=2048"
+ENV NODE_OPTIONS="--max-old-space-size=3072"
 RUN pnpm build
 
 # Fix missing public files by ensuring client/web/dist is fully copied to server/dist/public
