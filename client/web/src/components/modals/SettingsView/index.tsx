@@ -10,8 +10,6 @@ import { isDevelopment, t } from 'tailchat-shared';
 import { SettingsAbout } from './About';
 import { SettingsAccount } from './Account';
 import { SettingsDebug } from './Debug';
-import { SettingsPerformance } from './Performance';
-import { SettingsStatus } from './Status';
 import { SettingsSystem } from './System';
 
 interface SettingsViewProps {

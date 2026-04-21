@@ -180,9 +180,7 @@ export const TcMinioService = {
         bucketName: { type: 'string' },
       },
       handler(ctx) {
-        return this.client.bucketExists(
-          ctx.params.bucketName || 'tailchat'
-        );
+        return this.client.bucketExists(ctx.params.bucketName || 'tailchat');
       },
     },
     /**
@@ -807,7 +805,12 @@ export const TcMinioService = {
           await this.ping();
           return;
         } catch (e) {
-          this.logger.warn(`Minio backend ping failed, retrying in ${delayMs}ms... (${i + 1}/${retries})`, e.message);
+          this.logger.warn(
+            `Minio backend ping failed, retrying in ${delayMs}ms... (${
+              i + 1
+            }/${retries})`,
+            e.message
+          );
           if (i === retries - 1) {
             throw e;
           }

@@ -2,7 +2,6 @@ import {
   getMessageTextDecorators,
   pluginChatInputPasteHandler,
 } from '@/plugin/common';
-import { t } from 'tailchat-shared';
 
 export interface ChatInputPasteHandlerData {
   files: FileList;
@@ -36,18 +35,7 @@ export class ClipboardHelper {
   }
 
   get builtinHandlers(): ChatInputPasteHandler[] {
-    const pasteUrl: ChatInputPasteHandler = {
-      name: 'pasteUrl',
-      label: t('转为Url富文本'),
-      match: (e) => e.clipboardData.getData('text/plain').startsWith('http'),
-      handler: (data, { applyMessage }) => {
-        applyMessage(getMessageTextDecorators().url(data.text));
-      },
-    };
-
-    return [
-      // pasteUrl
-    ];
+    return [];
   }
 
   get pasteHandlers(): ChatInputPasteHandler[] {

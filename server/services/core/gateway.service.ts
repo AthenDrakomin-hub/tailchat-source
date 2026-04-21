@@ -324,7 +324,10 @@ export default class ApiService extends TcService {
               res.setHeader('Access-Control-Allow-Origin', '*'); // 允许跨域
               if (path.endsWith('index.html')) {
                 // disable cache for index.html
-                res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+                res.setHeader(
+                  'Cache-Control',
+                  'no-cache, no-store, must-revalidate'
+                );
               }
             },
           }),
@@ -337,7 +340,10 @@ export default class ApiService extends TcService {
           ) {
             // 如果没有找到, 则返回index.html(for spa)
             this.logger.info('fallback to fe entry file');
-            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            res.setHeader(
+              'Cache-Control',
+              'no-cache, no-store, must-revalidate'
+            );
             send(req, './public/index.html', { root: process.cwd() }).pipe(res);
           }
         },

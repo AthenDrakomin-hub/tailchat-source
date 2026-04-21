@@ -44,10 +44,7 @@ export interface TcDbService<
   /**
    * 转换fetch出来的文档, 变成一个json
    */
-  transformDocuments: MoleculerDB<
-    // @ts-ignore
-    MongooseDbAdapter<T>
-  >['methods']['transformDocuments'];
+  transformDocuments: MoleculerDBMethods['transformDocuments'];
 }
 
 export type TcDbModel = ReturnModelType<AnyParamConstructor<any>, BeAnObject>;

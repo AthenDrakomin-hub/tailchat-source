@@ -216,8 +216,7 @@ class GithubSubscribeService extends TcService {
 
       let message = `[url=${userUrl}]${name}[/url] updated Issue in [url=${repoUrl}]${repo}[/url]:\n${title}\n\nURL: ${url}`;
       if (event.action === 'opened') {
-        // @ts-ignore 这里不知道为什么判断issue为never 跳过
-        const body = event.issue.body;
+        const body = (event as any).issue.body;
         message = `[url=${userUrl}]${name}[/url] created an Issue in [url=${repoUrl}]${repo}[/url]:\n${title}\n[markdown]${
           body ?? ''
         }[/markdown]\nURL: ${url}`;

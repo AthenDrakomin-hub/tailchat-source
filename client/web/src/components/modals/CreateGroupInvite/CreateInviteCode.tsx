@@ -1,7 +1,7 @@
 import { InviteCodeExpiredAt } from '@/components/InviteCodeExpiredAt';
 import { closeModal, openModal } from '@/components/Modal';
 import { generateInviteCodeUrl } from '@/utils/url-helper';
-import { Menu, Typography, Dropdown, MenuProps, Button } from 'antd';
+import { Typography, Dropdown, MenuProps, Button } from 'antd';
 import React, { useState } from 'react';
 import {
   useAsyncRequest,

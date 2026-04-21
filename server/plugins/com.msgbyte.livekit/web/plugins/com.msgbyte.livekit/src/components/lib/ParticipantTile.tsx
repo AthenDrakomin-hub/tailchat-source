@@ -70,9 +70,8 @@ export function useParticipantTile<T extends HTMLDivElement>({
     const { className } = setupParticipantTile();
     return mergeProps(htmlProps, {
       className,
-      onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        // @ts-ignore
-        htmlProps.onClick?.(event);
+      onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        htmlProps.onClick?.(event as any);
         if (typeof onParticipantClick === 'function') {
           const track = publication ?? p.getTrack(source);
           onParticipantClick({ participant: p, track });

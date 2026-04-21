@@ -95,12 +95,7 @@ export class AppSocket {
     this.socket.disconnect();
     showToasts('reconnect after 5s');
     setTimeout(() => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.socket.io.skipReconnect = false;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.socket.io.reconnect();
+      this.socket.connect();
     }, 5 * 1000);
   }
 

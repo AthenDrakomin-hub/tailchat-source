@@ -19,7 +19,9 @@ export const SettingsAbout: React.FC = React.memo(() => {
         <Text className="font-bold text-xl">财富会客厅</Text>
       </Paragraph>
       <Paragraph>{t('您的专属财富管家与交流平台')}</Paragraph>
-      <Paragraph>{t('在这里，对话首席经济学家，洞察宏观趋势，前瞻投资机遇。')}</Paragraph>
+      <Paragraph>
+        {t('在这里，对话首席经济学家，洞察宏观趋势，前瞻投资机遇。')}
+      </Paragraph>
 
       <Paragraph>
         <div className="font-bold">{t('核心功能')}:</div>

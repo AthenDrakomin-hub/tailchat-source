@@ -29,7 +29,9 @@ class FileService extends TcService {
   }
 
   get bucketName(): string {
-    return config.storage.bucketName || process.env.MINIO_BUCKET_NAME || 'tailchat';
+    return (
+      config.storage.bucketName || process.env.MINIO_BUCKET_NAME || 'tailchat'
+    );
   }
 
   onInit(): void {

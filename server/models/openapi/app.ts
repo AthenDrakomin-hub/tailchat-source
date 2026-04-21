@@ -16,7 +16,7 @@ const openAppCapability = [
   'oauth', // 第三方登录
 ] as const;
 
-type OpenAppCapability = typeof openAppCapability[number];
+type OpenAppCapability = (typeof openAppCapability)[number];
 
 /**
  * 确保输出类型为应用能力

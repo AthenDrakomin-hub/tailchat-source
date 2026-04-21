@@ -27,8 +27,7 @@ export const Emoji: React.FC<Props> = React.memo((props) => {
       }
     }
 
-    // @ts-ignore
-    const emoji = SearchIndex.get(id);
+    const emoji = (SearchIndex as any).get(id);
     if (!emoji) {
       // not found emoji
       return <span />;

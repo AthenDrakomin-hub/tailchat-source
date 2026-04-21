@@ -4,7 +4,7 @@ const openAppCapability = [
   'oauth', // 第三方登录
 ] as const;
 
-export type OpenAppCapability = typeof openAppCapability[number];
+export type OpenAppCapability = (typeof openAppCapability)[number];
 
 export interface OpenAppOAuth {
   redirectUrls: string[];

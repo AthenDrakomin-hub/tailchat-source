@@ -1,6 +1,6 @@
 {
   "name": "@plugins/com.msgbyte.sentry",
-  "main": "src/index.tsx",
+  "main": "src/lazy.tsx",
   "version": "0.0.0",
   "description": "Sentry 错误处理",
   "private": true,

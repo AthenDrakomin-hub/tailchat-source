@@ -16,8 +16,7 @@ import {
   WebMetaForm,
 } from 'tailchat-design';
 import { ModalWrapper } from '../Modal';
-import { Button, Input } from 'antd';
-import _compact from 'lodash/compact';
+import { Button } from 'antd';
 import { Problem } from '../Problem';
 
 interface Values {

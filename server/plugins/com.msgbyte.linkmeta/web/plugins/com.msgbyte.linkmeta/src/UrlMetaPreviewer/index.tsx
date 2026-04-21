@@ -2,11 +2,10 @@ import React from 'react';
 import { useAsync } from '@capital/common';
 import { LoadingSpinner } from '@capital/component';
 import { request } from '../request';
-import _get from 'lodash/get';
-import { UrlMetaBase } from './Base';
 import type { LinkMeta } from './types';
 import './index.less';
 import { UrlMetaRender } from './render';
+import { ErrorBoundary } from 'tailchat-design';
 
 const metaCache: Record<string, LinkMeta | null> = {};
 

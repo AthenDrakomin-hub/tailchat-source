@@ -8,9 +8,11 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import './render.less';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const ReactMarkdown = Loadable(() => import('react-markdown'));
+import type { ReactMarkdownOptions } from 'react-markdown/lib/react-markdown';
+
+const ReactMarkdown = Loadable<ReactMarkdownOptions>(
+  () => import('react-markdown') as any
+);
 
 export const Markdown: React.FC<{
   raw: string;

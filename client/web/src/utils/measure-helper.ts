@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useLayoutEffect } from 'react';
 import { Metric, onCLS, onFCP, onFID, onINP, onLCP, onTTFB } from 'web-vitals';
 
@@ -48,9 +47,9 @@ export const measure = {
   getVitals: () => ({ ...vitals }),
   getRecord: () => ({ ...records }),
   getTimeUsage() {
-    let t = performance.timing;
+    const t = performance.timing;
 
-    const usage = {
+    const usage: Record<string, number> = {
       // DNS查询耗时
       dnsUsage: t.domainLookupEnd - t.domainLookupStart,
 
@@ -73,11 +72,10 @@ export const measure = {
       onloadTime: t.loadEventEnd - t.navigationStart,
     };
 
-    // @ts-ignore
-    if ((t = performance.memory)) {
+    const memory = (performance as any).memory;
+    if (memory) {
       // js内存使用占比
-      // @ts-ignore
-      usage['jsHeapRatio'] = t.usedJSHeapSize / t.totalJSHeapSize;
+      usage['jsHeapRatio'] = memory.usedJSHeapSize / memory.totalJSHeapSize;
     }
 
     return usage;

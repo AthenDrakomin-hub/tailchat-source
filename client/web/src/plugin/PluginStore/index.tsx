@@ -3,7 +3,7 @@
  */
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { PillTabPane, PillTabs } from '@/components/PillTabs';
+import { PillTabs } from '@/components/PillTabs';
 import { Divider } from 'antd';
 import React from 'react';
 import { t, useAsync } from 'tailchat-shared';
