@@ -1,9 +1,7 @@
 services:
-  # Tailchat Core Services
+  # Tailchat Core services:
   service-core:
-    image: caifu-chat:latest
-    build:
-      context: .
+    image: ghcr.io/athendrakomin-hub/tailchat-source:latest
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -24,9 +22,7 @@ services:
 
   # Open Platform
   service-openapi:
-    image: caifu-chat:latest
-    build:
-      context: .
+    image: ghcr.io/athendrakomin-hub/tailchat-source:latest
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -46,9 +42,7 @@ services:
 
   # Plugin Service (All Plugins)
   service-all-plugins:
-    image: caifu-chat:latest
-    build:
-      context: .
+    image: ghcr.io/athendrakomin-hub/tailchat-source:latest
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
