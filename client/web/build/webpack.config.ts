@@ -252,7 +252,7 @@ const config: Configuration = {
     minimizer: [
       new CssMinimizerPlugin(),
       new TerserPlugin({
-        parallel: 2, // Limit parallel workers to save memory
+        parallel: process.env.CI ? false : 2, // Limit parallel workers to save memory
       }),
     ],
   },
