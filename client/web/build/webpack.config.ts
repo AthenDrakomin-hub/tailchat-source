@@ -252,7 +252,7 @@ const config: Configuration = {
     minimizer: [
       new CssMinimizerPlugin(),
       new TerserPlugin({
-        parallel: process.env.CI ? false : 2, // Limit parallel workers to save memory
+        parallel: false, // 禁用并行压缩，防止低配服务器（如 4GB 内存）编译 OOM
       }),
     ],
   },
