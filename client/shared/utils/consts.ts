@@ -1,4 +1,5 @@
 import type { GlobalConfig } from '../model/config';
+import { BRAND_NAME_SHORT } from './brand';
 
 /**
  * 昵称合法性匹配
@@ -22,7 +23,7 @@ export const defaultGlobalConfig: GlobalConfig = {
   tianji: {},
   uploadFileLimit: 100 * 1024 * 1024,
   emailVerification: false,
-  serverName: '财富会客厅',
+  serverName: BRAND_NAME_SHORT,
   disableMsgpack: false,
   disableUserRegister: false,
   disableGuestLogin: false,

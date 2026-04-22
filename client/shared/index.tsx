@@ -242,6 +242,7 @@ export { useGlobalConfigStore } from './store/globalConfig';
 
 // utils
 export { joinArray } from './utils/array-helper';
+export * from './utils/brand';
 export { NAME_REGEXP, SYSTEM_USERID } from './utils/consts';
 export {
   shouldShowMessageTime,

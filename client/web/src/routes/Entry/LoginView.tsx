@@ -5,6 +5,8 @@ import {
   t,
   useAsyncFn,
   useGlobalConfigStore,
+  BRAND_NAME_FULL,
+  getDailyQuote,
 } from 'tailchat-shared';
 import React, { useEffect, useState } from 'react';
 import { string } from 'yup';
@@ -21,7 +23,7 @@ import { EntryInput } from './components/Input';
 import { SecondaryBtn } from './components/SecondaryBtn';
 import { PrimaryBtn } from './components/PrimaryBtn';
 import { pluginLoginAction } from '@/plugin/common';
-import logoUrl from '../../assets/images/logo.png';
+import { BrandLogo } from '@/components/BrandLogo';
 
 /**
  * 登录视图
@@ -33,12 +35,13 @@ export const LoginView: React.FC = React.memo(() => {
   const navigate = useNavigate();
   const navRedirect = useSearchParam('redirect');
   const { pathname } = useLocation();
-  const { serverName, disableGuestLogin, disableUserRegister } =
-    useGlobalConfigStore((state) => ({
-      serverName: state.serverName,
+  const { disableGuestLogin, disableUserRegister } = useGlobalConfigStore(
+    (state) => ({
       disableGuestLogin: state.disableGuestLogin,
       disableUserRegister: state.disableUserRegister,
-    }));
+    })
+  );
+  const entryQuote = getDailyQuote('entry');
 
   useEffect(() => {
     tryAutoLogin()
@@ -74,11 +77,14 @@ export const LoginView: React.FC = React.memo(() => {
   return (
     <div className="w-full relative">
       <div className="mb-8 flex justify-center">
-        <img
-          src={logoUrl}
-          alt="Logo"
-          className="max-h-24 max-w-[80%] object-contain"
-        />
+        <BrandLogo alt="Logo" className="max-h-24 max-w-[80%]" />
+      </div>
+
+      <div className="text-center mb-6">
+        <div className="font-bold text-xl tracking-wide">{BRAND_NAME_FULL}</div>
+        <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+          “{entryQuote.text}”
+        </div>
       </div>
 
       <div className="flex bg-gray-100 rounded-md p-1 mb-6">

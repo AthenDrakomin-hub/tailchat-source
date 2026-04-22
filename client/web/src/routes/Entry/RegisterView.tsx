@@ -2,12 +2,18 @@ import {
   isValidStr,
   model,
   registerWithEmail,
+  showErrorToasts,
   showSuccessToasts,
   t,
   useAsyncFn,
   useAsyncRequest,
   getGlobalConfig,
   useWatch,
+  BRAND_NAME_FULL,
+  getDailyQuote,
+  RISK_AGREE_LABEL,
+  RISK_DECLARATION_FULL,
+  RISK_DECLARATION_TITLE,
 } from 'tailchat-shared';
 import React, { useState } from 'react';
 import { string } from 'yup';
@@ -21,7 +27,8 @@ import { EntryInput } from './components/Input';
 import { SecondaryBtn } from './components/SecondaryBtn';
 import { PrimaryBtn } from './components/PrimaryBtn';
 import { TipIcon } from '@/components/TipIcon';
-import logoUrl from '../../assets/images/logo.png';
+import { BrandLogo } from '@/components/BrandLogo';
+import { openModal, ModalWrapper } from '@/components/Modal';
 
 /**
  * 注册视图
@@ -35,10 +42,16 @@ export const RegisterView: React.FC = React.memo(() => {
   const [emailOTP, setEmailOTP] = useState('');
   const [sendedEmail, setSendedEmail] = useState(false);
   const [customNickname, setCustomNickname] = useState(false);
+  const [agreeRisk, setAgreeRisk] = useState(false);
   const navigate = useNavigate();
   const navRedirect = useSearchParam('redirect');
 
   const [{ loading, error }, handleRegister] = useAsyncFn(async () => {
+    if (!agreeRisk) {
+      showErrorToasts('请先阅读并同意《投资风险安全宣言》');
+      return;
+    }
+
     await string()
       .required(t('账号不能为空'))
       .max(40, t('账号最长限制40个字符'))
@@ -66,7 +79,7 @@ export const RegisterView: React.FC = React.memo(() => {
     } else {
       navigate('/main');
     }
-  }, [email, nickname, password, emailOTP, orgCode, navRedirect]);
+  }, [agreeRisk, email, nickname, password, emailOTP, orgCode, navRedirect]);
 
   const [{ loading: sendEmailLoading }, handleSendEmail] =
     useAsyncRequest(async () => {
@@ -82,15 +95,29 @@ export const RegisterView: React.FC = React.memo(() => {
   });
 
   const navToView = useNavToView();
+  const entryQuote = getDailyQuote('entry');
+  const openRiskDeclaration = () => {
+    openModal(
+      <ModalWrapper title={RISK_DECLARATION_TITLE}>
+        <div className="whitespace-pre-line text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
+          {RISK_DECLARATION_FULL}
+        </div>
+      </ModalWrapper>,
+      { closable: true }
+    );
+  };
 
   return (
     <div className="w-full">
       <div className="mb-8 flex justify-center">
-        <img
-          src={logoUrl}
-          alt="Logo"
-          className="max-h-24 max-w-[80%] object-contain"
-        />
+        <BrandLogo alt="Logo" className="max-h-24 max-w-[80%]" />
+      </div>
+
+      <div className="text-center mb-6">
+        <div className="font-bold text-xl tracking-wide">{BRAND_NAME_FULL}</div>
+        <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+          “{entryQuote.text}”
+        </div>
       </div>
 
       <div className="flex bg-gray-100 rounded-md p-1 mb-6">
@@ -183,6 +210,25 @@ export const RegisterView: React.FC = React.memo(() => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+
+        <label className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-300 mb-4 select-none">
+          <input
+            type="checkbox"
+            className="mt-0.5"
+            checked={agreeRisk}
+            onChange={(e) => setAgreeRisk(e.target.checked)}
+          />
+          <span>
+            {RISK_AGREE_LABEL}
+            <button
+              type="button"
+              className="ml-2 underline opacity-90 hover:opacity-100"
+              onClick={openRiskDeclaration}
+            >
+              查看
+            </button>
+          </span>
+        </label>
 
         {error && <p className="text-red-500 text-sm mb-4">{error.message}</p>}
 

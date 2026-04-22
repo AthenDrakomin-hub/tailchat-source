@@ -41,7 +41,7 @@ function App() {
   return (
     <Tushan
       basename="/admin"
-      header={'财富会客厅 Admin'}
+      header={'日斗投资财富交流会 Admin'}
       footer={'Build with MsgByte'}
       dashboard={<Dashboard />}
       dataProvider={dataProvider}
