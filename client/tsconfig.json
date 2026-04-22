@@ -6,7 +6,6 @@
     "jsx": "react",
     "module": "ESNext",
     "moduleResolution": "node",
-    "ignoreDeprecations": "5.0",
     "resolveJsonModule": true,
     "typeRoots": ["./node_modules/@types", "../node_modules/@types", "./types"]
   }

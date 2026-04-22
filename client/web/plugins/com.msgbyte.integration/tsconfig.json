@@ -2,7 +2,6 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "jsx": "react",
-    "ignoreDeprecations": "5.0",
     "paths": {
       "@capital/*": ["../../src/plugin/*"],
     }

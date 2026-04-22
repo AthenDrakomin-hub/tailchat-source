@@ -3,6 +3,5 @@
     "esModuleInterop": true,
     "jsx": "react",
     "resolveJsonModule": true,
-    "ignoreDeprecations": "5.0"
   }
 }
