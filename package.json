@@ -85,7 +85,9 @@
       "mongodb": "4.2.1",
       "mongoose@~6.0.14": "6.1.1",
       "mongoose@^6.0.0": "6.1.1",
-      "mongoose-findorcreate": "3.0.0"
+      "mongoose-findorcreate": "3.0.0",
+      "@types/estree": "1.0.8",
+      "@types/eslint-scope": "3.7.7"
     },
     "patchedDependencies": {
       "moleculer@0.14.23": "patches/moleculer@0.14.23.patch"

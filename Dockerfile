@@ -32,7 +32,7 @@ RUN pnpm install --no-frozen-lockfile
 
 # Copy all source
 COPY . .
-RUN pnpm install --no-frozen-lockfile
+RUN rm -f pnpm-lock.yaml && pnpm install --no-frozen-lockfile
 
 # Build and cleanup (client and server)
 ENV NODE_ENV=production
