@@ -40,7 +40,6 @@ ENV VERSION=$VERSION
 ENV NODE_OPTIONS="--max-old-space-size=3072"
 
 RUN find . -name "*.tsbuildinfo" -type f -delete
-RUN sed -i '1s/^import /import type /' server/plugins/com.msgbyte.discover/models/discover.ts
 RUN pnpm build
 
 # Fix missing public files by ensuring client/web/dist is fully copied to server/dist/public

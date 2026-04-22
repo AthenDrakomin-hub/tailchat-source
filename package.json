@@ -91,6 +91,18 @@
     },
     "patchedDependencies": {
       "moleculer@0.14.23": "patches/moleculer@0.14.23.patch"
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "@trpgengine/react-native-storage",
+      "core-js",
+      "core-js-pure",
+      "es5-ext"
+    ],
+    "onlyBuiltDependencies": [
+      "cpu-features",
+      "esbuild",
+      "protobufjs",
+      "ssh2"
+    ]
   }
 }

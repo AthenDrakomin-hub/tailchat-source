@@ -3,7 +3,8 @@ services:
   tailchat-admin:
     image: caifu-chat:latest
     build:
-      context: ../
+      context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
     env_file: docker-compose.env
     depends_on:

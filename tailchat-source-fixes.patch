@@ -1,0 +1,131 @@
+diff --git a/Dockerfile b/Dockerfile
+index b7cf6d8..0a8bf52 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -40,7 +40,6 @@ ENV VERSION=$VERSION
+ ENV NODE_OPTIONS="--max-old-space-size=3072"
+ 
+ RUN find . -name "*.tsbuildinfo" -type f -delete
+-RUN sed -i '1s/^import /import type /' server/plugins/com.msgbyte.discover/models/discover.ts
+ RUN pnpm build
+ 
+ # Fix missing public files by ensuring client/web/dist is fully copied to server/dist/public
+diff --git a/docker/admin.yml b/docker/admin.yml
+index 1498fda..bfd8299 100644
+--- a/docker/admin.yml
++++ b/docker/admin.yml
+@@ -3,7 +3,8 @@ services:
+   tailchat-admin:
+     image: caifu-chat:latest
+     build:
+-      context: ../
++      context: .
++      dockerfile: Dockerfile
+     restart: unless-stopped
+     env_file: docker-compose.env
+     depends_on:
+diff --git a/server/packages/sdk/src/services/base.ts b/server/packages/sdk/src/services/base.ts
+index a01db28..b4a64d2 100644
+--- a/server/packages/sdk/src/services/base.ts
++++ b/server/packages/sdk/src/services/base.ts
+@@ -66,6 +66,13 @@ type ServiceActionSchema = Pick<
+   disableSocket?: boolean;
+ };
+ 
++type LocalE2EActionSchema = Omit<ServiceActionSchema, 'name'> & {
++  /**
++   * action handler
++   */
++  handler: ServiceActionHandler;
++};
++
+ /**
+  * 生成AfterHook唯一键
+  */
+@@ -280,6 +287,19 @@ export abstract class TcService extends Service {
+     };
+   }
+ 
++  /**
++   * 注册本地 E2E Action
++   *
++   * 说明：
++   * - 该方法用于兼容部分插件（例如 com.msgbyte.syncplayer）对 `registerLocalE2EAction` 的调用
++   * - 默认不做特殊鉴权/路由暴露逻辑，仅作为 `registerAction` 的语法糖
++   * - 如需限制仅在测试环境可用，可在插件侧或网关侧做额外控制
++   */
++  registerLocalE2EAction(name: string, schema: LocalE2EActionSchema) {
++    const { handler, ...restSchema } = schema;
++    this.registerAction(name, handler, restSchema);
++  }
++
+   /**
+    * 注册一个内部方法
+    */
+diff --git a/server/services/core/file.service.ts b/server/services/core/file.service.ts
+index 1c0c268..6069cee 100644
+--- a/server/services/core/file.service.ts
++++ b/server/services/core/file.service.ts
+@@ -84,28 +84,44 @@ class FileService extends TcService {
+       return;
+     }
+ 
+-    const isExists = await this.actions['bucketExists'](
+-      {
+-        bucketName: this.bucketName,
+-      },
+-      {
+-        timeout: 20000, // 20s
++    try {
++      const isExists = await this.actions['bucketExists'](
++        {
++          bucketName: this.bucketName,
++        },
++        {
++          timeout: 20000, // 20s
++        }
++      );
++      if (isExists === false) {
++        // bucket不存在，创建新的
++        this.logger.info(
++          '[File]',
++          'Bucket 不存在, 创建新的Bucket',
++          this.bucketName
++        );
++        await this.actions['makeBucket']({
++          bucketName: this.bucketName,
++        });
+       }
+-    );
+-    if (isExists === false) {
+-      // bucket不存在，创建新的
+-      this.logger.info(
+-        '[File]',
+-        'Bucket 不存在, 创建新的Bucket',
+-        this.bucketName
++    } catch (err) {
++      // 避免 MinIO 初始化阶段出现未捕获异常导致进程不稳定
++      this.logger.warn(
++        '[File] Minio bucket check failed, will continue without blocking startup:',
++        err
+       );
+-      await this.actions['makeBucket']({
+-        bucketName: this.bucketName,
+-      });
+     }
+ 
+-    const buckets = await this.actions['listBuckets']();
+-    this.logger.info(`[File] MinioInfo: | buckets: ${JSON.stringify(buckets)}`);
++    // listBuckets 在部分 MinIO/SDK 组合下可能触发未捕获异常（例如 bucketName 被判定为 undefined）
++    // 这里降级为可选信息日志，失败不影响主流程启动
++    try {
++      const buckets = await this.actions['listBuckets']();
++      this.logger.info(
++        `[File] MinioInfo: | buckets: ${JSON.stringify(buckets)}`
++      );
++    } catch (err) {
++      this.logger.warn('[File] Minio listBuckets failed:', err);
++    }
+   }
+ 
+   /**
