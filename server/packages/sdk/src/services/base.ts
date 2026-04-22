@@ -66,6 +66,13 @@ type ServiceActionSchema = Pick<
   disableSocket?: boolean;
 };
 
+type LocalE2EActionSchema = Omit<ServiceActionSchema, 'name'> & {
+  /**
+   * action handler
+   */
+  handler: ServiceActionHandler;
+};
+
 /**
  * 生成AfterHook唯一键
  */
@@ -278,6 +285,17 @@ export abstract class TcService extends Service {
         return handler.call(this, ctx);
       },
     };
+  }
+
+  /**
+   * 注册本地 E2E Action
+   *
+   * 用途：兼容部分插件（例如 com.msgbyte.syncplayer）对 registerLocalE2EAction 的调用
+   * 默认行为：作为 registerAction 的语法糖（不额外做鉴权/暴露逻辑）
+   */
+  registerLocalE2EAction(name: string, schema: LocalE2EActionSchema) {
+    const { handler, ...restSchema } = schema;
+    this.registerAction(name, handler, restSchema);
   }
 
   /**
