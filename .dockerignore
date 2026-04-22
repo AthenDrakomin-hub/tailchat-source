@@ -8,3 +8,6 @@ client/desktop
 client/desktop-old
 client/mobile
 apps
+*.tsbuildinfo
+**/*.tsbuildinfo
+.rollup.cache\n.eslintcache\n.stylelintcache

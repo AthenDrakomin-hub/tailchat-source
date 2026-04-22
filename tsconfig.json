@@ -6,5 +6,6 @@
     "pretty": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
+    "importsNotUsedAsValues": "remove"
   }
 }

@@ -38,6 +38,8 @@ RUN pnpm install --no-frozen-lockfile
 ENV NODE_ENV=production
 ENV VERSION=$VERSION
 ENV NODE_OPTIONS="--max-old-space-size=3072"
+
+RUN find . -name "*.tsbuildinfo" -type f -delete
 RUN pnpm build
 
 # Fix missing public files by ensuring client/web/dist is fully copied to server/dist/public

@@ -13,6 +13,7 @@
     "target": "ES2019",
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
+    "importsNotUsedAsValues": "remove",
     "experimentalDecorators": true,
     "noEmit": false
   }
