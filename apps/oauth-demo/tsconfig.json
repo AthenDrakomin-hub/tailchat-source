@@ -3,7 +3,7 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "strict": true,
-    "importsNotUsedAsValues": "error",
+    "ignoreDeprecations": "5.0",
     "experimentalDecorators": true,
   }
 }

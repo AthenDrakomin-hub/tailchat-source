@@ -5,7 +5,7 @@
     "strict": true,
     "pretty": true,
     "skipLibCheck": true,
-    "importsNotUsedAsValues": "error",
+    "ignoreDeprecations": "5.0",
     "experimentalDecorators": true,
   }
 }

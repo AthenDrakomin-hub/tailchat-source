@@ -11,7 +11,7 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "strict": true,
-    "importsNotUsedAsValues": "error",
+    "ignoreDeprecations": "5.0",
     "typeRoots": ["./node_modules/@types"]
   },
   "include": ["./src/*"]
