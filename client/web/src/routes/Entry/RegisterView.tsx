@@ -10,7 +10,6 @@ import {
   getGlobalConfig,
   useWatch,
   BRAND_NAME_FULL,
-  getDailyQuote,
   RISK_AGREE_LABEL,
   RISK_DECLARATION_FULL,
   RISK_DECLARATION_TITLE,
@@ -95,7 +94,6 @@ export const RegisterView: React.FC = React.memo(() => {
   });
 
   const navToView = useNavToView();
-  const entryQuote = getDailyQuote('entry');
   const openRiskDeclaration = () => {
     openModal(
       <ModalWrapper title={RISK_DECLARATION_TITLE}>
@@ -109,15 +107,12 @@ export const RegisterView: React.FC = React.memo(() => {
 
   return (
     <div className="w-full">
-      <div className="mb-8 flex justify-center">
+      <div className="mb-6 flex justify-center">
         <BrandLogo alt="Logo" className="max-h-24 max-w-[80%]" />
       </div>
 
-      <div className="text-center mb-6">
-        <div className="font-bold text-xl tracking-wide">{BRAND_NAME_FULL}</div>
-        <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-          “{entryQuote.text}”
-        </div>
+      <div className="text-center mb-8">
+        <div className="font-bold text-2xl tracking-wider text-[#d4af37]">{BRAND_NAME_FULL}</div>
       </div>
 
       <div className="flex bg-gray-100 rounded-md p-1 mb-6">
@@ -218,16 +213,19 @@ export const RegisterView: React.FC = React.memo(() => {
             checked={agreeRisk}
             onChange={(e) => setAgreeRisk(e.target.checked)}
           />
-          <span>
-            {RISK_AGREE_LABEL}
-            <button
-              type="button"
-              className="ml-2 underline opacity-90 hover:opacity-100"
-              onClick={openRiskDeclaration}
-            >
-              查看
-            </button>
-          </span>
+          <div className="flex flex-col">
+            <span>
+              {RISK_AGREE_LABEL}
+              <button
+                type="button"
+                className="ml-2 underline opacity-90 hover:opacity-100 text-[#d4af37]"
+                onClick={openRiskDeclaration}
+              >
+                查看
+              </button>
+            </span>
+            <span className="block mt-1 text-gray-500 font-medium">日斗投资财富交流会学习名额注册仅限特邀内部成员</span>
+          </div>
         </label>
 
         {error && <p className="text-red-500 text-sm mb-4">{error.message}</p>}

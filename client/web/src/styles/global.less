@@ -10,15 +10,16 @@ body {
 #tailchat-app {
   @apply text-typography-light bg-content-light;
 
-  --tc-background-image: url(../../assets/images/bg.png);
+  --tc-background-image: url("https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Luxury%20financial%20cityscape%20background,%20dark%20blue%20gradient%20with%20glowing%20gold%20lines,%20bokeh%20city%20lights,%20abstract%20wealth%20and%20investment%20concept,%20high-end%20aesthetic,%20cinematic%20lighting,%208k%20resolution&image_size=landscape_16_9");
   --tc-content-background-image: '';
   --tc-content-background-image-opacity: 0.2;
   --tc-content-background-color: rgba(243, 244, 246, 1); // copy from bg-content-light
 
   .tc-background {
     @apply bg-center bg-no-repeat;
-    background-size: 100% 100%;
-    background-image: var(--tc-background-image);
+    background-size: cover;
+    background-color: #0b192c;
+    background-image: var(--tc-background-image), linear-gradient(135deg, #0b192c 0%, #1a2942 100%);
   }
 
   .tc-content-background {

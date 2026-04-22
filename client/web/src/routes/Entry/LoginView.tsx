@@ -6,7 +6,6 @@ import {
   useAsyncFn,
   useGlobalConfigStore,
   BRAND_NAME_FULL,
-  getDailyQuote,
 } from 'tailchat-shared';
 import React, { useEffect, useState } from 'react';
 import { string } from 'yup';
@@ -41,7 +40,6 @@ export const LoginView: React.FC = React.memo(() => {
       disableUserRegister: state.disableUserRegister,
     })
   );
-  const entryQuote = getDailyQuote('entry');
 
   useEffect(() => {
     tryAutoLogin()
@@ -76,15 +74,12 @@ export const LoginView: React.FC = React.memo(() => {
 
   return (
     <div className="w-full relative">
-      <div className="mb-8 flex justify-center">
+      <div className="mb-6 flex justify-center">
         <BrandLogo alt="Logo" className="max-h-24 max-w-[80%]" />
       </div>
 
-      <div className="text-center mb-6">
-        <div className="font-bold text-xl tracking-wide">{BRAND_NAME_FULL}</div>
-        <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-          “{entryQuote.text}”
-        </div>
+      <div className="text-center mb-8">
+        <div className="font-bold text-2xl tracking-wider text-[#d4af37]">{BRAND_NAME_FULL}</div>
       </div>
 
       <div className="flex bg-gray-100 rounded-md p-1 mb-6">
