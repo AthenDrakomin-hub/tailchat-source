@@ -1,5 +1,6 @@
 import { db } from 'tailchat-server-sdk';
-import { Group } from '../../../models/group/group';
+import type { Group } from '../../../models/group/group';
+
 const { getModelForClass, prop, modelOptions, TimeStamps } = db;
 
 @modelOptions({
@@ -11,7 +12,7 @@ export class Discover extends TimeStamps implements db.Base {
   _id: db.Types.ObjectId;
   id: string;
 
-  @prop({ ref: () => Group })
+  @prop({ ref: 'Group' })
   groupId: db.Ref<Group>;
 
   @prop({ default: true })
