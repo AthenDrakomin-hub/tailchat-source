@@ -41,9 +41,29 @@ services:
   # Plugin Service (All Plugins)
   service-all-plugins:
     <<: *tailchat-base
+    depends_on:
+      - mongo
+      - redis
+      - minio
+      - livekit
     environment:
       SERVICEDIR: plugins
+      # 只加载“免费且必需”的插件服务，避免无关插件缺少 env 或不兼容导致容器反复重启
+      SERVICES: plugins/com.msgbyte.pseudolive/services/*.service.js,plugins/com.msgbyte.livekit/services/*.service.js
 
+  # LiveKit Server (Open Source)
+  # - 提供 WebRTC SFU，用于私信语音通话
+  # - 说明：若要在复杂网络/移动网络更稳定，通常还需要 TURN（可后续增加）
+  livekit:
+    image: livekit/livekit-server:latest
+    restart: unless-stopped
+    networks:
+      - internal
+    env_file: docker-compose.env
+    ports:
+      - "7880:7880"
+      - "7881:7881/tcp"
+      - "50000-50100:50000-50100/udp"
   # Database
   mongo:
     image: mongo:4

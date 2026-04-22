@@ -10,7 +10,6 @@ import {
   isMobile,
 } from '@capital/common';
 import { Loadable } from '@capital/component';
-import { usePersionPanelIsShow } from './navbar/useIconIsShow';
 import { Translate } from './translate';
 import React from 'react';
 import { useLivekitState } from './store/useLivekitState';
@@ -49,7 +48,7 @@ regCustomPanel({
   name: `${PLUGIN_ID}/livekitPersonMeeting`,
   label: Translate.voiceChannel,
   render: LivekitMeetingPanel,
-  useIsShow: usePersionPanelIsShow,
+  useIsShow: () => false,
 });
 
 // 发起私信会议

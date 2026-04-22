@@ -1,5 +1,7 @@
 # Tailchat
 
+[本仓库精简定制版说明（伪直播 + 私信语音 + 机器人小号）](./README.custom.md)
+
 [![Docker Publish](https://github.com/msgbyte/tailchat/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/msgbyte/tailchat/actions/workflows/docker-publish.yml)
 ![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/moonrailgun/tailchat/latest)
 ![Docker Pulls](https://img.shields.io/docker/pulls/moonrailgun/tailchat)

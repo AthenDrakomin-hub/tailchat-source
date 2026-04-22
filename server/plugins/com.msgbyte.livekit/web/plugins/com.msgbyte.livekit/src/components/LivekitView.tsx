@@ -92,7 +92,7 @@ export const PureLivekitView: React.FC<PureLivekitViewProps> = React.memo(
               onError={handleError}
               defaults={{
                 videoEnabled: false,
-                audioEnabled: false,
+                audioEnabled: true,
               }}
               onSubmit={handleJoin}
             />

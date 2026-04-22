@@ -26,6 +26,15 @@ class LivekitService extends TcService {
     return process.env.LIVEKIT_URL;
   }
 
+  /**
+   * 给客户端返回的 LiveKit 连接地址（应为公网可访问的 WSS/HTTPS）
+   * - 示例：wss://chat.yefeng.us.cc/livekit
+   * - 若未配置，则回退使用 LIVEKIT_URL
+   */
+  get livekitPublicUrl() {
+    return process.env.LIVEKIT_PUBLIC_URL || this.livekitUrl;
+  }
+
   get apiKey() {
     return process.env.LIVEKIT_API_KEY;
   }
@@ -83,7 +92,7 @@ class LivekitService extends TcService {
 
   async url(ctx: TcContext) {
     return {
-      url: this.livekitUrl,
+      url: this.livekitPublicUrl,
     };
   }
 
