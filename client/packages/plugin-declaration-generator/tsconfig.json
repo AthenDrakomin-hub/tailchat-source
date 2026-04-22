@@ -9,6 +9,7 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "strict": true,
+    "skipLibCheck": true
   },
   "include": ["./src/*"]
 }
