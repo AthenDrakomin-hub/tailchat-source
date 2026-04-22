@@ -18,7 +18,6 @@
     "analysis": "cross-env ANALYSIS=true pnpm build:webpack",
     "check:type": "tsc --noEmit --skipLibCheck",
     "preinstall": "npx only-allow pnpm",
-    "postinstall": "pnpm plugins:all",
     "plugins:new": "tailchat create client-plugin",
     "plugins:all": "ministar buildPlugin all",
     "plugins:watch": "ministar watchPlugin all",
