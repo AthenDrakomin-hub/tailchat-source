@@ -7,7 +7,6 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "prepare": "tsc",
     "test": "ts-node ./test/index.ts",
     "test:parser": "ts-node ./test/parser.ts",
     "test:parser:debug": "node -r ts-node/register --inspect-brk ./test/parser.ts"
