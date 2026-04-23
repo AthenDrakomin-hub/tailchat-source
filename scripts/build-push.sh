@@ -15,7 +15,7 @@ TAG="$(date +%Y%m%d-%H%M)"
 FULL_IMAGE_NAME="$DOCKERHUB_USER/$IMAGE:$TAG"
 
 echo "=== [2/3] Building new image ==="
-docker compose build --no-cache
+docker build -t athendrakomin/caifu-chat:latest --no-cache .
 
 echo "=== [3/3] Tagging and pushing to Docker Hub ==="
 docker tag athendrakomin/caifu-chat:latest "$FULL_IMAGE_NAME"
