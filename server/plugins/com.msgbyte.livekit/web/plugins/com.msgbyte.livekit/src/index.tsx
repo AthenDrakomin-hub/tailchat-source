@@ -37,17 +37,17 @@ const InviteCallNotification = Loadable(
   }
 );
 
-const ExternalMeeting = Loadable(
-  () => import('./components/ExternalMeeting'),
+const ExternalCallView = Loadable(
+  () => import('./components/ExternalCallView'),
   {
-    componentName: `${PLUGIN_ID}:ExternalMeeting`,
+    componentName: `${PLUGIN_ID}:ExternalCallView`,
   }
 );
 
 regPluginRootRoute({
   name: `${PLUGIN_ID}/externalMeeting`,
   path: `/${PLUGIN_ID}/meeting/:meetingId`,
-  component: ExternalMeeting,
+  component: ExternalCallView,
 });
 
 regPluginPanelRoute({
