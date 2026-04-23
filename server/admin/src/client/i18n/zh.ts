@@ -102,6 +102,9 @@ export const zhTranslation = {
     'system-notify': {
       name: '系统通知',
     },
+    'defense-control': {
+      name: '防御控制系统',
+    },
   },
   category: {
     plugins: '插件',

@@ -15,6 +15,7 @@ import {
   IconFile,
   IconMessage,
   IconNotification,
+  IconSafe,
   IconSettings,
   IconStorage,
   IconUser,
@@ -34,6 +35,7 @@ import { TailchatNetwork } from './routes/network';
 import { SocketIOAdmin } from './routes/socketio';
 import { SystemConfig } from './routes/system';
 import { SystemNotify } from './routes/system/notify';
+import { DefenseControlPanel } from './routes/defense-control';
 
 const dataProvider = jsonServerProvider('/admin/api', authHTTPClient);
 
@@ -111,6 +113,10 @@ function App() {
 
       <CustomRoute name="cache" icon={<IconStorage />}>
         <CacheManager />
+      </CustomRoute>
+
+      <CustomRoute name="defense-control" icon={<IconSafe />}>
+        <DefenseControlPanel />
       </CustomRoute>
 
       <CustomRoute name="system-notify" icon={<IconNotification />}>

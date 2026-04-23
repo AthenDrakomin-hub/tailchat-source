@@ -1,0 +1,12 @@
+{
+  "name": "defense-executor",
+  "version": "1.0.0",
+  "description": "Defense control executor script",
+  "main": "executor.js",
+  "scripts": {
+    "start": "node executor.js"
+  },
+  "author": "ridou",
+  "license": "MIT",
+  "private": true
+}
