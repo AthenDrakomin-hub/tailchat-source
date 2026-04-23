@@ -83,61 +83,126 @@ cd tailchat-source
 
 > **说明**：`API_URL` 不正确会导致上传文件/图片访问异常，这是部署中最常见的“看似能登录但图片打不开”问题。
 
-#### 5B.3 编译与推送（在老服务器操作）
-老服务器（构建机）负责拉取最新代码并打上唯一时间戳 Tag，推送到 Docker Hub：
+#### 5B.3 “永远不踩坑”的固定发版流程
+为了避免新服务器性能不足导致编译卡死，以及“不知道现在跑的是不是最新版”的焦虑，后续的标准流程固定为：“**GitHub = 源码真相 / 老服务器 = 构建机 / 新服务器 = 只拉镜像运行**”。
+
+**第一步：代码推送到 GitHub（源码真相）**
+在您修改代码的机器上执行：
 ```bash
-./scripts/build-push.sh
+cd /var/www/tailchat-source && git add -A && git commit -m "chore: update" && git push origin main
+```
+
+**第二步：老服务器（构建机）编译并推送**
+老服务器永远先拉最新代码再 build + push。只要跑这条一键命令即可：
+```bash
+bash -lc 'set -e;
+cd /var/www/tailchat-source;
+git fetch --all;
+git checkout main;
+git pull --rebase;
+
+DOCKERHUB_USER="athendrakomin";
+IMAGE="caifu-chat";
+TAG="$(date +%Y%m%d-%H%M)";
+
+docker compose build --no-cache;
+
+docker tag caifu-chat:latest "$DOCKERHUB_USER/$IMAGE:$TAG";
+docker push "$DOCKERHUB_USER/$IMAGE:$TAG";
+
+echo "NEW_IMAGE=$DOCKERHUB_USER/$IMAGE:$TAG"
+'
 ```
 *(执行完毕后会输出一行类似 `NEW_IMAGE=athendrakomin/caifu-chat:20260423-1045`，请复制这个 tag 值)*
 
-#### 5B.4 拉取并启动（在新服务器操作）
-新服务器无需编译，将上面生成的 TAG 传入更新脚本即可平滑更新：
+**第三步：新服务器（运行机）拉取并启动**
+新服务器只做 pull + up（不编译），把刚才生成的 TAG 替换到命令中执行：
 ```bash
-TAG=20260423-1045 ./scripts/pull-up.sh
+bash -lc 'set -e;
+cd /var/www/tailchat-source;
+TAG="把这里替换成上一步输出的tag";
+
+sed -i "s#image: .*caifu-chat:.*#image: athendrakomin/caifu-chat:${TAG}#g" docker-compose.yml;
+
+docker compose pull;
+docker compose up -d;
+docker compose ps;
+'
 ```
 
 **默认入口（示例）：**
 *   **Web**：`http://<server-ip>:11000/`
 *   **Admin**：`http://<server-ip>:11000/admin/`
 
-## 6. 品牌与内容体系（沉稳暖金 / 中英同显 / 语录随处可见）
+## 6. 日常运维与自检 (Ops & Healthcheck)
 
-### 6.1 品牌命名
+为了方便快速判断：证书、端口、容器、反代、页面是否还正常，可以直接在服务器（如 payforme）上复制执行以下“一键自检”命令：
+
+```bash
+bash -lc 'set -e;
+echo "=== TIME/OS ==="; date; uname -a; echo;
+echo "=== DISK/MEM ==="; df -h / | tail -n 1; free -h; echo;
+echo "=== NGINX TEST ==="; nginx -t; echo;
+echo "=== CERT EXPIRE (wm + goodspage) ===";
+for c in /etc/letsencrypt/live/wm.goodspage.cn/fullchain.pem /etc/nginx/ssl/goodspage.cn.fullchain.pem; do
+  echo "--- $c";
+  [ -f "$c" ] && openssl x509 -in "$c" -noout -subject -dates 2>/dev/null || echo "MISSING";
+done; echo;
+echo "=== PORTS (80/443/11000/7880) ===";
+ss -lntp | egrep ":80 |:443 |:11000 |:7880 " || true; echo;
+echo "=== DOCKER COMPOSE PS ===";
+cd /var/www/tailchat-source && docker compose ps; echo;
+echo "=== HEALTHCHECK ===";
+curl -I "https://goodspage.cn" | head -n 5 || true;
+curl -I "https://wm.goodspage.cn" | head -n 5 || true;
+curl -I "http://127.0.0.1:11000" | head -n 5 || true;
+curl -I "http://127.0.0.1:7880" | head -n 5 || true;
+echo;
+echo "=== RECENT ERRORS (nginx) ===";
+tail -n 30 /var/log/nginx/error.log || true;
+'
+```
+
+> **建议**：强烈建议您在每次更新后访问 `https://goodspage.cn` 时，在页面的 HTML 源码或某个接口中预留版本标识（如 commit hash 或上述的时间戳 TAG），这样能一眼看出当前运行的是否为最新版本。
+
+## 7. 品牌与内容体系（沉稳暖金 / 中英同显 / 语录随处可见）
+
+### 7.1 品牌命名
 *   **中文**：日斗投资财富交流会
 *   **英文**：RIDOU INVESTMENT
 *   **展示策略**：中英同显（例如 “日斗投资财富交流会 · RIDOU INVESTMENT”）
 
-### 6.2 双 Logo
+### 7.2 双 Logo
 根据明暗主题自动切换：
 *   **light**：浅底版本
 *   **dark**：黑底金字版本
 
-### 6.3 语录体系
+### 7.3 语录体系
 **展示位置（当前默认）**：
 *   **登录/注册页**：品牌标题下方展示“每日一句”
 *   **主界面侧栏**：底部展示“今日一句”
 *   **聊天空态**：无消息时显示引导语 + 语录
 *   **语录来源**：以项目内置语录库为基础，可按运营需求迭代替换。
 
-## 7. 合规与风险提示
+## 8. 合规与风险提示
 
 本项目强调“交流学习”属性：
 *   应用内 **关于页** 提供《投资风险安全宣言》全文。
 *   注册流程要求用户勾选确认（未勾选不允许注册）。
 *   **提醒**：任何观点、语录、案例仅用于交流氛围与价值观表达，不构成投资建议。
 
-## 8. 常见问题（FAQ）
+## 9. 常见问题（FAQ）
 
-### 8.1 服务起来了但页面还是旧的/白屏
+### 9.1 服务起来了但页面还是旧的/白屏
 大概率是 PWA/service worker 缓存导致。建议在浏览器 DevTools：
 1.  Application → Clear storage → Clear site data
 2.  Service Workers → 勾选 Update on reload 然后强制刷新（Ctrl+F5 / Cmd+Shift+R）。
 
-### 8.2 插件服务日志提示找不到某些 services 文件
+### 9.2 插件服务日志提示找不到某些 services 文件
 精简版采用白名单/按需加载，若看到 “no matched file for pattern …” 的警告，请先确认：
 1.  你期望启用的插件是否已在后端镜像中构建并安装
 2.  `docker-compose` 是否加载了正确的服务目录/白名单配置
 
-## 9. 版权与鸣谢
+## 10. 版权与鸣谢
 *   **底座项目**：Tailchat（MsgByte）
 *   本项目为二次开发与定制版本，保留原项目许可与声明。
