@@ -8,15 +8,29 @@ import { LANGUAGE_KEY } from '../utils/consts';
 export const defaultLanguage = 'zh-CN';
 
 function getNavigatorLanguage(): AllowedLanguage {
-  return 'zh-CN';
+  try {
+    const lang = (navigator.languages?.[0] ?? navigator.language ?? '').toLowerCase();
+    if (lang.startsWith('en')) {
+      return 'en-US';
+    }
+    return 'zh-CN';
+  } catch (err) {
+    return 'zh-CN';
+  }
 }
 
 /**
  * Get current language
  */
 async function getLanguage(): Promise<string> {
-  // Ignore local storage and navigator language to force zh-CN
-  return 'zh-CN';
+  try {
+    const stored = await getStorage().get(LANGUAGE_KEY);
+    if (stored === 'zh-CN' || stored === 'en-US') {
+      return stored;
+    }
+  } catch (err) {}
+
+  return getNavigatorLanguage();
 }
 
 /**
