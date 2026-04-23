@@ -7,7 +7,6 @@ import { RegisterView } from './RegisterView';
 import { useRecordMeasure } from '@/utils/measure-helper';
 import { GuestView } from './GuestView';
 import { ForgetPasswordView } from './ForgetPasswordView';
-import { LanguageSelect } from '@/components/LanguageSelect';
 import { BeidouStars } from './components/BeidouStars';
 
 const EntryRoute = React.memo(() => {
@@ -21,9 +20,6 @@ const EntryRoute = React.memo(() => {
           'entry-left relative overflow-hidden w-[560px] mobile:w-full px-10 mobile:px-6 bg-[rgba(11,25,44,0.96)] text-slate-100 min-h-full flex items-center justify-center z-10 border-r border-[rgba(255,255,255,0.10)]'
         )}
       >
-        <div className="absolute top-6 right-6 z-20">
-          <LanguageSelect />
-        </div>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[rgba(255,255,255,0.05)] via-transparent to-[rgba(0,0,0,0.40)]" />
         <div className="pointer-events-none absolute -top-48 -left-48 w-[640px] h-[640px] rounded-full bg-[rgba(212,175,55,0.16)] blur-3xl" />
         <div className="pointer-events-none absolute -bottom-56 -right-56 w-[720px] h-[720px] rounded-full bg-[rgba(255,255,255,0.05)] blur-3xl" />
@@ -41,7 +37,7 @@ const EntryRoute = React.memo(() => {
         </div>
       </div>
 
-      <div className="flex-1 mobile:hidden tc-background relative overflow-hidden">
+      <div className="flex-1 mobile:hidden tc-background relative overflow-hidden bg-[#060b14]">
         <BeidouStars />
       </div>
     </div>

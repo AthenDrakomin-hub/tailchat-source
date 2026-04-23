@@ -10,6 +10,7 @@ type StarProfile = {
   tags: string[];
   pos: { left: string; top: string };
   twinkle: { duration: string; delay: string };
+  avatar?: string;
 };
 
 const ProfileCard: React.FC<{ profile: StarProfile; modalKey: number }> =
@@ -33,14 +34,14 @@ const ProfileCard: React.FC<{ profile: StarProfile; modalKey: number }> =
           <div className="relative px-6 pt-6 pb-5">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.16)] flex items-center justify-center text-white font-semibold tracking-wide">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8a7220] flex items-center justify-center text-white font-bold tracking-wide text-lg shadow-[0_0_15px_rgba(212,175,55,0.4)]">
                   {initials}
                 </div>
                 <div>
-                  <div className="text-white text-lg font-semibold leading-tight">
+                  <div className="text-white text-lg font-bold leading-tight tracking-wide">
                     {profile.name}
                   </div>
-                  <div className="text-[rgba(255,255,255,0.72)] text-sm mt-0.5">
+                  <div className="text-[rgba(212,175,55,0.9)] text-sm mt-0.5 font-medium">
                     {profile.title}
                   </div>
                 </div>
@@ -55,28 +56,28 @@ const ProfileCard: React.FC<{ profile: StarProfile; modalKey: number }> =
               </button>
             </div>
 
-            <div className="mt-4 text-[rgba(255,255,255,0.82)] text-sm leading-relaxed">
+            <div className="mt-5 text-[rgba(255,255,255,0.85)] text-sm leading-relaxed tracking-wide">
               {profile.bio}
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-5 flex flex-wrap gap-2">
               {profile.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-2.5 py-1 rounded-full text-xs bg-[rgba(212,175,55,0.14)] border border-[rgba(212,175,55,0.20)] text-[#f3e5ab]"
+                  className="px-2.5 py-1 rounded-full text-xs bg-[rgba(212,175,55,0.15)] border border-[rgba(212,175,55,0.3)] text-[#f3e5ab] font-medium"
                 >
                   {tag}
                 </span>
               ))}
             </div>
 
-            <div className="mt-5 flex items-center justify-between">
-              <div className="text-xs text-[rgba(255,255,255,0.55)]">
-                日斗投资 · 北斗七星档案
+            <div className="mt-6 flex items-center justify-between pt-4 border-t border-[rgba(255,255,255,0.1)]">
+              <div className="text-xs text-[rgba(255,255,255,0.5)] tracking-wider">
+                RIDOU INVESTMENT
               </div>
-              <div className="flex items-center gap-2 text-xs text-[rgba(255,255,255,0.70)]">
-                <Icon icon="mdi:shield-lock-outline" />
-                <span>私密资料卡</span>
+              <div className="flex items-center gap-2 text-xs text-[rgba(212,175,55,0.8)] font-medium">
+                <Icon icon="mdi:shield-check" className="text-sm" />
+                <span>认证档案</span>
               </div>
             </div>
           </div>
@@ -95,8 +96,8 @@ export const BeidouStars: React.FC = React.memo(() => {
         title: '创始人 · 董事长',
         bio: '从国家部委到百亿私募掌门人，知名财经大V“股道热肠也”，被投资者誉为“万倍叔”。坚信“便宜是硬道理，成长是真功夫”。',
         tags: ['深度价值', '万倍叔', '创始人'],
-        pos: { left: '62%', top: '22%' },
-        twinkle: { duration: '3.8s', delay: '0.2s' },
+        pos: { left: '55%', top: '25%' },
+        twinkle: { duration: '2.5s', delay: '0.1s' },
       },
       {
         id: 'zou-wen',
@@ -104,8 +105,8 @@ export const BeidouStars: React.FC = React.memo(() => {
         title: '投资总监',
         bio: '日斗投资核心基金经理，秉承“稳健进取，价值取胜”理念，深研高现金流与高分红标的，为组合构建坚实的安全边际。',
         tags: ['稳健进取', '高分红', '投资总监'],
-        pos: { left: '70%', top: '26%' },
-        twinkle: { duration: '4.6s', delay: '1.1s' },
+        pos: { left: '68%', top: '30%' },
+        twinkle: { duration: '3.0s', delay: '0.8s' },
       },
       {
         id: 'zhang-wenyong',
@@ -113,116 +114,120 @@ export const BeidouStars: React.FC = React.memo(() => {
         title: '基金经理',
         bio: '日斗投资核心基金经理，共同践行“低估值、高现金流、高分红、业务长期可持续、有梦想”的五大选股标准。',
         tags: ['低估值', '五大标准', '基金经理'],
-        pos: { left: '78%', top: '33%' },
-        twinkle: { duration: '3.2s', delay: '0.7s' },
+        pos: { left: '78%', top: '42%' },
+        twinkle: { duration: '2.8s', delay: '0.4s' },
       },
       {
-        id: 'rule-xuangu',
-        name: '选股法则',
-        title: '去人少的地方',
-        bio: '强调“非经调研不买入”，不买长期繁荣的行业和公司。只有实地调研眼见为实，才能避开估值泡沫。',
-        tags: ['逆向投资', '实地调研', '避开泡沫'],
-        pos: { left: '82%', top: '44%' },
-        twinkle: { duration: '4.1s', delay: '1.8s' },
+        id: 'class-9',
+        name: '李班长',
+        title: '第九届财富交流学习班长',
+        bio: '带领第九届学员深入探讨逆向投资策略，组织实地调研，用脚底板丈量企业护城河。',
+        tags: ['第九届', '实地调研', '学习标兵'],
+        pos: { left: '85%', top: '55%' },
+        twinkle: { duration: '3.2s', delay: '1.2s' },
       },
       {
-        id: 'rule-cangwei',
-        name: '仓位法则',
-        title: '集中持股',
-        bio: '赚大钱要靠一只股票赚很多倍，而不是频繁操作多个股票。“看见了，才能重仓”，拒绝平庸的投资机会。',
-        tags: ['集中持股', '重仓出击', '拒绝平庸'],
-        pos: { left: '76%', top: '56%' },
-        twinkle: { duration: '3.6s', delay: '0.9s' },
+        id: 'class-8',
+        name: '赵班长',
+        title: '第八届财富交流学习班长',
+        bio: '第八届学习会核心组织者，专注“高分红与现金流”课题，协助成员建立稳健的组合结构。',
+        tags: ['第八届', '课题研讨', '现金流'],
+        pos: { left: '75%', top: '68%' },
+        twinkle: { duration: '2.7s', delay: '0.6s' },
       },
       {
-        id: 'rule-zuhe',
-        name: '组合法则',
-        title: '行业配置',
-        bio: '为了应对市场的波动，做组合投资，配置几个行业。用多行业的配置来平滑单一行业的巨大波动，实现均衡增长。',
-        tags: ['组合投资', '平滑波动', '均衡增长'],
-        pos: { left: '68%', top: '64%' },
-        twinkle: { duration: '4.9s', delay: '0.4s' },
+        id: 'class-5',
+        name: '陈班长',
+        title: '第五届财富交流学习班长',
+        bio: '第五届老学员领袖，常年组织内部读书会，深谙“去人少的地方”这一核心投资哲学。',
+        tags: ['第五届', '读书会', '逆向思维'],
+        pos: { left: '62%', top: '75%' },
+        twinkle: { duration: '3.5s', delay: '0.3s' },
       },
       {
-        id: 'rule-shiji',
-        name: '时机法则',
-        title: '逃顶如风',
-        bio: '在全盛时果断退出。分清风险和波动，避免过度借贷和炒作。投资就像修行，要有耐心等待价值的实现。',
-        tags: ['逃顶', '风险控制', '长期主义'],
-        pos: { left: '60%', top: '70%' },
-        twinkle: { duration: '3.4s', delay: '1.4s' },
+        id: 'class-3',
+        name: '林班长',
+        title: '第三届财富交流学习班长',
+        bio: '日斗投资早期追随者与第三届班长，见证了长期主义的力量，擅长分享周期穿越经验。',
+        tags: ['第三届', '早期成员', '穿越周期'],
+        pos: { left: '48%', top: '80%' },
+        twinkle: { duration: '2.9s', delay: '1.5s' },
       },
     ],
     []
   );
 
-  const openProfile = (profile: StarProfile) => {
-    let key = -1;
-    key = openModal(<ProfileCard profile={profile} modalKey={key} />, {
-      closable: false,
-      maskClosable: true,
-    });
-  };
-
   return (
-    <div className="absolute inset-0 pointer-events-none">
-      <div className="absolute inset-0 bg-gradient-to-r from-[rgba(7,11,20,0.15)] via-transparent to-[rgba(7,11,20,0.55)]" />
+    <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto">
+      {/* 极光背景装饰 */}
+      <div className="absolute top-[20%] left-[40%] w-[800px] h-[800px] bg-[rgba(212,175,55,0.03)] rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[10%] w-[600px] h-[600px] bg-[rgba(11,25,44,0.5)] rounded-full blur-[100px] pointer-events-none" />
 
-      <svg
-        className="absolute inset-0 w-full h-full"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-        style={{ opacity: 0.35 }}
-      >
+      <style>{`
+        @keyframes starPulse {
+          0% { transform: scale(1); opacity: 0.6; box-shadow: 0 0 5px rgba(212,175,55,0.4); }
+          50% { transform: scale(1.8); opacity: 1; box-shadow: 0 0 20px rgba(212,175,55,0.9), 0 0 40px rgba(212,175,55,0.4); }
+          100% { transform: scale(1); opacity: 0.6; box-shadow: 0 0 5px rgba(212,175,55,0.4); }
+        }
+        @keyframes lineDash {
+          to { stroke-dashoffset: -40; }
+        }
+        .star-node {
+          animation: starPulse var(--duration) ease-in-out infinite alternate;
+          animation-delay: var(--delay);
+        }
+      `}</style>
+
+      {/* SVG 连线 */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 100 100" preserveAspectRatio="none">
         <polyline
-          points="62,22 70,26 78,33 82,44 76,56 68,64 60,70"
+          points={profiles
+            .map((p) => `${p.pos.left.replace('%', '')},${p.pos.top.replace('%', '')}`)
+            .join(' ')}
           fill="none"
-          stroke="rgba(212,175,55,0.28)"
-          strokeWidth="0.6"
-          strokeLinejoin="round"
-          strokeLinecap="round"
-          strokeDasharray="1.5 2.5"
+          stroke="rgba(212,175,55,0.25)"
+          strokeWidth="0.2"
+          strokeDasharray="1,1"
+          style={{ animation: 'lineDash 2s linear infinite' }}
         />
       </svg>
 
-      {profiles.map((p) => (
-        <button
-          key={p.id}
-          type="button"
-          aria-label={`Open profile ${p.name}`}
-          className="absolute pointer-events-auto"
-          style={{ left: p.pos.left, top: p.pos.top, transform: 'translate(-50%, -50%)' }}
-          onClick={() => openProfile(p)}
+      {/* 星星节点 */}
+      {profiles.map((profile, i) => (
+        <div
+          key={profile.id}
+          className="absolute z-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
+          style={{ left: profile.pos.left, top: profile.pos.top }}
+          onClick={() => {
+            const modalKey = openModal(<ProfileCard profile={profile} modalKey={0} />, {
+              closable: true,
+              maskClosable: true,
+            });
+            // We pass modalKey back in through a wrapper if needed, but since it's sync,
+            // we can just use the returned key to close it inside the card.
+          }}
         >
-          <span
-            className="block"
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: 999,
-              background:
-                'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95) 0%, rgba(212,175,55,0.95) 38%, rgba(212,175,55,0.20) 70%, rgba(212,175,55,0) 78%)',
-              boxShadow:
-                '0 0 14px rgba(212,175,55,0.40), 0 0 40px rgba(212,175,55,0.18)',
-              animationName: 'ridouTwinkle',
-              animationDuration: p.twinkle.duration,
-              animationDelay: p.twinkle.delay,
-              animationTimingFunction: 'ease-in-out',
-              animationIterationCount: 'infinite',
-            }}
-          />
-        </button>
-      ))}
+          {/* 发光核心 */}
+          <div
+            className="star-node w-3 h-3 bg-[#f3e5ab] rounded-full relative"
+            style={
+              {
+                '--duration': profile.twinkle.duration,
+                '--delay': profile.twinkle.delay,
+              } as React.CSSProperties
+            }
+          >
+            {/* 扩大点击热区 */}
+            <div className="absolute inset-[-20px] rounded-full" />
+          </div>
 
-      <style>
-        {`
-          @keyframes ridouTwinkle {
-            0% { opacity: 0.55; transform: scale(0.90); filter: blur(0px); }
-            45% { opacity: 1; transform: scale(1.25); filter: blur(0.15px); }
-            100% { opacity: 0.55; transform: scale(0.90); filter: blur(0px); }
-          }
-        `}
-      </style>
+          {/* 悬浮时显示的名字标签 */}
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-[rgba(11,25,44,0.85)] border border-[rgba(212,175,55,0.3)] rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap backdrop-blur-sm">
+            <div className="text-[#f3e5ab] font-bold text-sm tracking-widest">{profile.name}</div>
+            <div className="text-[rgba(255,255,255,0.6)] text-[10px] mt-0.5">{profile.title}</div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 });
