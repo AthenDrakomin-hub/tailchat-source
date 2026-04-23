@@ -1,14 +1,30 @@
-
-<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
   <defs>
-    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#d4af37" />
-      <stop offset="100%" stop-color="#b8952b" />
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f3e5ab" />
+      <stop offset="50%" stop-color="#d4af37" />
+      <stop offset="100%" stop-color="#8a7220" />
+    </linearGradient>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="120" fill="#0b192c"/>
-  <!-- stylized "财富" icon -->
-  <path d="M156 356 L256 156 L356 356" stroke="url(#logoGrad)" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <path d="M186 256 L326 256" stroke="url(#logoGrad)" stroke-width="40" stroke-linecap="round" fill="none"/>
-  <circle cx="256" cy="116" r="30" fill="url(#logoGrad)"/>
+  <rect width="120" height="120" rx="24" fill="url(#bg)"/>
+  
+  <!-- Outer decorative circle -->
+  <circle cx="60" cy="60" r="46" fill="none" stroke="url(#gold)" stroke-width="1.5" stroke-dasharray="4 2" opacity="0.6"/>
+  <circle cx="60" cy="60" r="42" fill="none" stroke="url(#gold)" stroke-width="0.5" opacity="0.4"/>
+  
+  <!-- Wreath/Leaves left -->
+  <path d="M 28 60 C 28 40 40 24 60 20 C 35 24 22 45 22 60 C 22 75 35 96 60 100 C 40 96 28 80 28 60 Z" fill="url(#gold)" opacity="0.8"/>
+  <!-- Wreath/Leaves right -->
+  <path d="M 92 60 C 92 40 80 24 60 20 C 85 24 98 45 98 60 C 98 75 85 96 60 100 C 80 96 92 80 92 60 Z" fill="url(#gold)" opacity="0.8"/>
+  
+  <!-- The letter R -->
+  <text x="60" y="76" font-family="Georgia, serif" font-size="48" font-weight="bold" fill="url(#gold)" text-anchor="middle">R</text>
+  
+  <!-- Inner subtle decoration -->
+  <path d="M 60 14 L 63 18 L 60 22 L 57 18 Z" fill="url(#gold)"/>
+  <path d="M 60 106 L 63 102 L 60 98 L 57 102 Z" fill="url(#gold)"/>
 </svg>

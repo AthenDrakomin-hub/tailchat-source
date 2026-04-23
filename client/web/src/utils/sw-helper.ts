@@ -73,21 +73,13 @@ function handleRegistration(registration: ServiceWorkerRegistration) {
  */
 export function installServiceWorker() {
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker
-        .register('/service-worker.js')
-        .then((registration) => {
-          console.log('SW registered: ', registration);
-
-          _serviceWorkerRegistration = registration;
-
-          handleRegistration(registration);
-        })
-        .catch((registrationError) => {
-          console.log('SW registration failed: ', registrationError);
-        });
+    // TEMPORARILY DISABLED: aggressively unregistering to prevent old cached UI issues for users.
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for(let registration of registrations) {
+        registration.unregister();
+      }
     });
-
+    
     window.addEventListener('beforeinstallprompt', (e) => {
       beforeinstallprompt = e as any;
     });

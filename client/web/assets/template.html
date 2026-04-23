@@ -13,8 +13,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=100" />
     <meta property="og:site_name" content="日斗投资财富交流会 · RIDOU INVESTMENT">
     <meta property="og:image" content="/images/logo/logo@512.png">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <link rel="manifest" href="/pwa.webmanifest">
     <script>
+      // Force clear old service workers on load to prevent aggressive PWA caching
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+          }
+        });
+      }
+      
       // vConsole DEBUG
       if(location.search.indexOf('vconsole') >= 0) {
         // 开启vconsole

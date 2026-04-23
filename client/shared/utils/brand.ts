@@ -1,6 +1,6 @@
 export const BRAND_NAME_FULL = '日斗投资财富交流会 · RIDOU INVESTMENT';
-export const BRAND_NAME_SHORT = '日斗投资';
-export const BRAND_NAME_ADMIN = '日斗投资财富交流会 Admin';
+export const BRAND_NAME_SHORT = '日斗投资财富交流会';
+export const BRAND_NAME_ADMIN = '财富中心';
 
 export type Quote = {
   text: string;

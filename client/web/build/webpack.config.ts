@@ -58,7 +58,6 @@ const plugins: Configuration['plugins'] = [
   new HtmlWebpackPlugin({
     inject: 'body',
     hash: false,
-    favicon: path.resolve(ROOT_PATH, './assets/images/favicon.ico'),
     template: path.resolve(ROOT_PATH, './assets/template.html'),
     preloadImage: `data:image/svg+xml;base64,${Buffer.from(
       fs.readFileSync(path.resolve(ROOT_PATH, './assets/images/ripple.svg'), {
@@ -87,6 +86,10 @@ const plugins: Configuration['plugins'] = [
       {
         from: path.resolve(ROOT_PATH, './assets/_redirects'),
         to: './', // for netlify
+      },
+      {
+        from: path.resolve(ROOT_PATH, './assets/images/logo.svg'),
+        to: 'logo.svg',
       },
       {
         from: path.resolve(ROOT_PATH, './assets/images/logo/'),

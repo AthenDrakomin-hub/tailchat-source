@@ -128,8 +128,8 @@ export const zhTranslation = {
       newUserCount: '用户新增',
       messageCount: '消息数',
       tip: {
-        github: 'Tailchat 是在你私有空间内的下一代noIM应用',
-        tushan: 'Tailchat Admin后台 由 tushan 提供技术支持',
+        github: '日斗投资财富交流会是您专属的内部交流平台',
+        tushan: '财富中心后台',
       },
     },
     file: {
@@ -152,9 +152,13 @@ export const zhTranslation = {
       actionList: '操作列表',
       eventList: '事件列表',
     },
+    login: {
+      tip1: '仅限特邀内部成员使用',
+      tip2: '账号密码为财富中心的管理员账号密码',
+    },
     socketio: {
       tip1: '服务器URL为:',
-      tip2: '账号密码为Tailchat后台的账号密码',
+      tip2: '账号密码为财富中心的管理员账号密码',
       tip3: '注意: 请打开 "Advanced options" 并选中 "websocket only" 与 "MessagePack parser"',
       btn: '打开管理平台',
     },
