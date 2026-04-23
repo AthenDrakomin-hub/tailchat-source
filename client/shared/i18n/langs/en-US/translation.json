@@ -1,4 +1,11 @@
 {
+  "手机号": "Phone Number",
+  "邮箱": "Email",
+  "请输入手机号": "Please enter your phone number",
+  "请输入邮箱": "Please enter your email",
+  "组织代码": "Organization Code",
+  "请输入组织代码": "Please enter organization code",
+  "向邮箱发送OTP": "Send OTP to Email",
   "k10416951": "Unable to remove everyone permission",
   "k1096add": "Create permanent invite code",
   "k10c018fe": "Teamwork",
