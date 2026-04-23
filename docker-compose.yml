@@ -51,6 +51,18 @@ services:
       # 只加载“免费且必需”的插件服务，避免无关插件缺少 env 或不兼容导致容器反复重启
       SERVICES: plugins/com.msgbyte.pseudolive/services/*.service.js,plugins/com.msgbyte.livekit/services/*.service.js
 
+  # Admin Panel
+  tailchat-admin:
+    <<: *tailchat-base
+    command: pnpm start:admin
+    environment:
+      PORT: 3000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.admin.rule=PathPrefix(`/admin`)"
+      - "traefik.http.routers.admin.priority=100"
+      - "traefik.http.services.admin.loadbalancer.server.port=3000"
+
   # LiveKit Server (Open Source)
   # - 提供 WebRTC SFU，用于私信语音通话
   # - 说明：若要在复杂网络/移动网络更稳定，通常还需要 TURN（可后续增加）
