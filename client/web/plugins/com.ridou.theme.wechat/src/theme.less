@@ -1,0 +1,105 @@
+#tailchat-app.theme-ridou-wechat {
+  // --- 色彩定义 ---
+  // 日斗金作为主色调（按钮、高亮、未读等）
+  @primary-color: #d4af37;
+  // 微信导航栏底色（深邃灰黑）
+  @wechat-navbar-bg: #2e2e2e;
+  // 微信侧边栏底色（浅灰）
+  @wechat-sidebar-bg: #f5f5f5;
+  // 微信聊天内容区（纯白）
+  @wechat-content-bg: #ffffff;
+  
+  // 注入核心变量
+  --tc-primary-color: @primary-color;
+  // 弱化日斗金背景图的干扰，使界面更清爽
+  --tc-content-background-image-opacity: 0.05;
+
+  // --- 微信风格布局颜色覆写 ---
+
+  // 1. 最左侧导航栏 (深邃灰黑)
+  .bg-navbar-light {
+    background-color: @wechat-navbar-bg;
+    
+    // 导航栏上的图标和文字颜色设为白色/亮灰
+    color: rgba(255, 255, 255, 0.85);
+
+    // 导航栏内被选中的项背景
+    .bg-gray-400 {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    // 导航栏的分割线
+    .ant-divider {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  // 2. 次级侧边栏 (如频道列表、联系人列表，微信风格的浅灰)
+  .bg-sidebar-light {
+    background-color: @wechat-sidebar-bg;
+    border-right: 1px solid #e5e5e5;
+  }
+
+  // 3. 主聊天内容区 (纯白)
+  .bg-content-light {
+    background-color: @wechat-content-bg;
+  }
+
+  // 4. 输入框及聊天气泡相关微调
+  [data-tc-role^=chat-input] {
+    background-color: #f5f5f5;
+    border-top: 1px solid #e5e5e5;
+  }
+  
+  // 他人发来的消息气泡（白色）
+  .tc-message-bubble-other {
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+  }
+  
+  // 自己发出的消息气泡（微信是绿色，这里融入日斗金）
+  .tc-message-bubble-self {
+    background-color: lighten(@primary-color, 35%);
+    border: 1px solid lighten(@primary-color, 20%);
+    color: #333;
+  }
+
+  // --- 微信风格暗黑模式适配 ---
+  &.dark {
+    // 暗黑模式下主色调稍微加深
+    --tc-primary-color: darken(@primary-color, 10%);
+    
+    @dark-navbar: #1a1a1a;
+    @dark-sidebar: #262626;
+    @dark-content: #1e1e1e;
+
+    .dark\:bg-navbar-dark {
+      background-color: @dark-navbar;
+    }
+
+    .dark\:bg-sidebar-dark {
+      background-color: @dark-sidebar;
+      border-right: 1px solid #333;
+    }
+
+    .dark\:bg-content-dark {
+      background-color: @dark-content;
+    }
+    
+    [data-tc-role^=chat-input] {
+      background-color: @dark-sidebar;
+      border-top: 1px solid #333;
+    }
+    
+    .tc-message-bubble-other {
+      background-color: @dark-sidebar;
+      border: 1px solid #333;
+    }
+    
+    .tc-message-bubble-self {
+      background-color: darken(@primary-color, 30%);
+      border: 1px solid darken(@primary-color, 20%);
+      color: rgba(255, 255, 255, 0.85);
+    }
+  }
+}

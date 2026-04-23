@@ -1,0 +1,7 @@
+{
+  "name": "@plugins/com.ridou.theme.wechat",
+  "main": "src/index.ts",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {}
+}
