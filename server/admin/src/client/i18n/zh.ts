@@ -160,6 +160,7 @@ export const zhTranslation = {
       emailVerification: '邮箱强制验证',
       allowGuestLogin: '允许访客登录',
       allowUserRegister: '允许用户注册',
+      registerOrgCode: '注册组织代码',
       allowCreateGroup: '允许创建群组',
       serverName: '服务器名',
       serverEntryImage: '服务器登录图',

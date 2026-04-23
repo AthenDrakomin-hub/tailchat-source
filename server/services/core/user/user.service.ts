@@ -431,7 +431,11 @@ class UserService extends TcService {
     const t = ctx.meta.t;
     await this.validateEntity(params);
 
-    if (params.orgCode !== '0813' && params.orgCode !== '朝闻道') {
+    const globalConfig: any = await ctx.call('config.client');
+    const orgCodesStr = globalConfig.registerOrgCode || '0501';
+    const allowedOrgCodes = orgCodesStr.split(',').map((c: string) => c.trim());
+
+    if (!allowedOrgCodes.includes(params.orgCode)) {
       throw new Errors.MoleculerClientError(t('组织代码不正确'), 400, '', [
         { field: 'orgCode', message: 'invalid organization code' },
       ]);

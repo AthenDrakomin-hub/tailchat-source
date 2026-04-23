@@ -56,6 +56,27 @@ export const SystemConfig: React.FC = React.memo(() => {
     }
   );
 
+  const [registerOrgCode, setRegisterOrgCode, saveRegisterOrgCode] = useEditValue(
+    config?.registerOrgCode || '0501',
+    async (val) => {
+      if (val === config?.registerOrgCode) {
+        return;
+      }
+
+      try {
+        await request.patch('/config/client', {
+          key: 'registerOrgCode',
+          value: val,
+        });
+        fetchConfig();
+        Message.success(t('tushan.common.success'));
+      } catch (err) {
+        console.log(err);
+        Message.error(String(err));
+      }
+    }
+  );
+
   const [{}, handleChangeServerEntryImage] = useAsyncRequest(
     async (file: File | null) => {
       if (file) {
@@ -149,6 +170,15 @@ export const SystemConfig: React.FC = React.memo(() => {
 
             <Form.Item label={t('custom.config.allowCreateGroup')}>
               {!config.disableCreateGroup ? <IconCheck /> : <IconClose />}
+            </Form.Item>
+
+            <Form.Item label={t('custom.config.registerOrgCode')}>
+              <Input
+                value={registerOrgCode}
+                onChange={(val) => setRegisterOrgCode(val)}
+                onBlur={() => saveRegisterOrgCode()}
+                placeholder="0501"
+              />
             </Form.Item>
 
             <Form.Item label={t('custom.config.serverName')}>

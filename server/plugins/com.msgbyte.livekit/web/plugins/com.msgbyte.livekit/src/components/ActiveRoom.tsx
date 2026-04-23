@@ -35,7 +35,7 @@ type ActiveRoomProps = {
 export const ActiveRoom: React.FC<ActiveRoomProps> = React.memo((props) => {
   const { roomName, userChoices, autoInviteIds, onLeave, hq } = props;
 
-  const token = useToken(roomName);
+  const token = useToken(roomName, { userInfo: { name: userChoices.username } });
   const liveKitUrl = useServerUrl();
 
   const roomOptions = useMemo((): RoomOptions => {

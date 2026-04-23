@@ -9,12 +9,13 @@ import {
   TrackToggle,
   useLocalParticipantPermissions,
   useMaybeLayoutContext,
+  useRoomContext,
 } from '@livekit/components-react';
 import { Translate } from '../../translate';
 import { useMediaQuery } from '../../utils/useMediaQuery';
 import { useMeetingContextState } from '../../context/MeetingContext';
 import { Icon } from '@capital/component';
-import { useIsMobile } from '@capital/common';
+import { copyToClipboard, showToasts, useIsMobile } from '@capital/common';
 import { useEffect, useState } from 'react';
 
 /** @public */
@@ -101,8 +102,20 @@ export function ControlBar({ variation, controls, ...props }: ControlBarProps) {
     setIsScreenShareEnabled(enabled);
   };
 
+  const room = useRoomContext();
+  const handleShare = () => {
+    const link = `${window.location.origin}/plugin/com.msgbyte.livekit/meeting/${room.name}`;
+    copyToClipboard(link);
+    showToasts(Translate.shareLinkCopied || '已复制分享链接', 'success');
+  };
+
   return (
     <div className="lk-control-bar" {...props}>
+      <button className="lk-button" onClick={handleShare}>
+        {showIcon && <Icon icon="mdi:share-variant" />}
+        {showText && (Translate.shareLink || '复制分享链接')}
+      </button>
+
       {visibleControls.microphone && (
         <div className="lk-button-group">
           <TrackToggle source={Track.Source.Microphone} showIcon={showIcon}>

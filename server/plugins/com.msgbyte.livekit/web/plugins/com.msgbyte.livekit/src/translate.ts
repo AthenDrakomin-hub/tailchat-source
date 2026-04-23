@@ -93,4 +93,16 @@ export const Translate = {
     'zh-CN': '没有找到会议',
     'en-US': 'Not found meeting',
   }),
+  shareLink: localTrans({
+    'zh-CN': '复制分享链接',
+    'en-US': 'Copy Share Link',
+  }),
+  shareLinkCopied: localTrans({
+    'zh-CN': '已复制分享链接',
+    'en-US': 'Share link copied',
+  }),
+  pleaseEnterName: localTrans({
+    'zh-CN': '请输入您的昵称 / Enter your name',
+    'en-US': 'Please enter your name',
+  }),
 };

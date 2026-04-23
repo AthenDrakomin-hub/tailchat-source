@@ -2,6 +2,7 @@ import {
   regCustomPanel,
   regPluginPanelAction,
   regPluginPanelRoute,
+  regPluginRootRoute,
   panelWindowManager,
   regSocketEventListener,
   getGlobalState,
@@ -35,6 +36,19 @@ const InviteCallNotification = Loadable(
     componentName: `${PLUGIN_ID}:InviteCallNotification`,
   }
 );
+
+const ExternalMeeting = Loadable(
+  () => import('./components/ExternalMeeting'),
+  {
+    componentName: `${PLUGIN_ID}:ExternalMeeting`,
+  }
+);
+
+regPluginRootRoute({
+  name: `${PLUGIN_ID}/externalMeeting`,
+  path: `/${PLUGIN_ID}/meeting/:meetingId`,
+  component: ExternalMeeting,
+});
 
 regPluginPanelRoute({
   name: `${PLUGIN_ID}/livekitPanel`,

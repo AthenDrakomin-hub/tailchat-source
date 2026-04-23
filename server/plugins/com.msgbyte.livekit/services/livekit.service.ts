@@ -76,6 +76,13 @@ class LivekitService extends TcService {
         roomName: 'string',
       },
     });
+    this.registerAction('generateGuestToken', this.generateGuestToken, {
+      params: {
+        roomName: 'string',
+        nickname: 'string',
+      },
+    });
+    this.registerAuthWhitelist(['/generateGuestToken']);
     this.registerAction('roomMembers', this.roomMembers, {
       params: {
         roomName: 'string',
@@ -109,6 +116,39 @@ class LivekitService extends TcService {
 
     const at = new AccessToken(this.apiKey, this.apiSecret, {
       identity: userId,
+      name: nickname,
+    });
+    at.addGrant({
+      room: roomName,
+      roomJoin: true,
+      canPublish: true,
+      canPublishData: true,
+      canSubscribe: true,
+    });
+    const accessToken = at.toJwt();
+
+    return {
+      identity,
+      accessToken,
+    };
+  }
+
+  async generateGuestToken(
+    ctx: TcContext<{
+      roomName: string;
+      nickname: string;
+    }>
+  ) {
+    const { roomName, nickname } = ctx.params;
+
+    if (!nickname) {
+      throw new Error('Nickname is required');
+    }
+
+    const identity = `guest_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+    const at = new AccessToken(this.apiKey, this.apiSecret, {
+      identity,
       name: nickname,
     });
     at.addGrant({

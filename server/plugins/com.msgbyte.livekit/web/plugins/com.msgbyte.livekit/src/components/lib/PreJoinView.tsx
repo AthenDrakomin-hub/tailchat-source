@@ -1,5 +1,5 @@
-import { useEvent, useCurrentUserInfo } from '@capital/common';
-import { Avatar, Button } from '@capital/component';
+import { useEvent, useCurrentUserInfo, showToasts } from '@capital/common';
+import { Avatar, Button, Input } from '@capital/component';
 import { MediaDeviceMenu, TrackToggle } from '@livekit/components-react';
 import type {
   CreateLocalTracksOptions,
@@ -90,6 +90,8 @@ export const PreJoinView: React.FC<PreJoinProps> = React.memo(
     ...htmlProps
   }) => {
     const { nickname, avatar } = useCurrentUserInfo();
+    const [guestNickname, setGuestNickname] = useState('');
+    const finalNickname = nickname || guestNickname;
     const [userChoices, setUserChoices] = useState(DEFAULT_USER_CHOICES);
     const videoEnabled = false;
     const videoDeviceId = DEFAULT_USER_CHOICES.videoDeviceId;
@@ -169,16 +171,27 @@ export const PreJoinView: React.FC<PreJoinProps> = React.memo(
       setIsValid(handleValidation(newUserChoices));
     }, [handleValidation, audioEnabled, audioDeviceId, nickname]);
 
-    function handleSubmit(event: React.FormEvent) {
+    const handleSubmit = useEvent((event: React.FormEvent) => {
       event.preventDefault();
-      if (handleValidation(userChoices)) {
+      if (!finalNickname) {
+        showToasts(Translate.pleaseEnterName || '请输入您的昵称 / Enter your name', 'warning');
+        return;
+      }
+      const choices = {
+        username: finalNickname,
+        videoEnabled,
+        audioEnabled,
+        videoDeviceId,
+        audioDeviceId,
+      };
+      if (handleValidation(choices)) {
         if (typeof onSubmit === 'function') {
-          onSubmit(userChoices);
+          onSubmit(choices);
         }
       } else {
-        log.warn('Validation failed with: ', userChoices);
+        log.warn('Validation failed with: ', choices);
       }
-    }
+    });
 
     return (
       <div className="lk-prejoin" {...htmlProps}>
@@ -219,6 +232,17 @@ export const PreJoinView: React.FC<PreJoinProps> = React.memo(
             </div>
           </div>
         </div>
+
+        {!nickname && (
+          <div style={{ marginBottom: 16, width: '100%', maxWidth: 300, alignSelf: 'center' }}>
+            <Input
+              placeholder={Translate.pleaseEnterName || '请输入您的昵称 / Enter your name'}
+              value={guestNickname}
+              onChange={(e) => setGuestNickname(e.target.value)}
+              style={{ width: '100%' }}
+            />
+          </div>
+        )}
 
         <Button
           size="large"

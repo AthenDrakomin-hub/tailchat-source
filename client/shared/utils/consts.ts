@@ -32,4 +32,5 @@ export const defaultGlobalConfig: GlobalConfig = {
   disableAddFriend: false,
   disableTelemetry: false,
   announcement: false,
+  registerOrgCode: '0501',
 };

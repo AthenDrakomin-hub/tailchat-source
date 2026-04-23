@@ -76,6 +76,8 @@ export interface GlobalConfig {
         text: string;
         link?: string;
       };
+
+  registerOrgCode?: string;
 }
 
 export function getGlobalConfig(): GlobalConfig {
