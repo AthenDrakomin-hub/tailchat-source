@@ -72,7 +72,6 @@ services:
     restart: unless-stopped
     networks:
       - internal
-    env_file: docker-compose.env
     ports:
       - "7880:7880"
       - "7881:7881/tcp"
