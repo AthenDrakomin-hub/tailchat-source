@@ -9,15 +9,6 @@
 
 > 手机 App：移动端为 **React Native WebView 壳**，加载同一个 Web 站点，因此 Web 端功能可直接在 App 使用（无需额外原生 SDK 集成）。
 
-## 一键部署（Docker Compose）
-
-```bash
-docker compose build --no-cache
-docker compose up -d
-docker compose ps
-curl -i http://127.0.0.1:11000/health
-```
-
 ## LiveKit（语音通话）
 
 关键环境变量（`docker-compose.env`）：
