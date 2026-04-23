@@ -83,22 +83,17 @@ cd tailchat-source
 
 > **说明**：`API_URL` 不正确会导致上传文件/图片访问异常，这是部署中最常见的“看似能登录但图片打不开”问题。
 
-#### 5B.3 编译与推送（在高性能老服务器操作）
-为了避免新服务器性能不足导致编译卡死，推荐在高性能服务器上进行编译，并推送到镜像仓库：
+#### 5B.3 编译与推送（在老服务器操作）
+老服务器（构建机）负责拉取最新代码并打上唯一时间戳 Tag，推送到 Docker Hub：
 ```bash
-# 编译并构建镜像
-docker compose build --no-cache
-
-# 推送镜像到 Docker Hub
-docker push athendrakomin/caifu-chat:latest
+./scripts/build-push.sh
 ```
+*(执行完毕后会输出一行类似 `NEW_IMAGE=athendrakomin/caifu-chat:20260423-1045`，请复制这个 tag 值)*
 
-#### 5B.4 拉取并启动（在目标新服务器操作）
-新服务器无需编译，直接拉取镜像即可快速稳定运行：
+#### 5B.4 拉取并启动（在新服务器操作）
+新服务器无需编译，将上面生成的 TAG 传入更新脚本即可平滑更新：
 ```bash
-docker compose pull
-docker compose up -d
-docker compose ps
+TAG=20260423-1045 ./scripts/pull-up.sh
 ```
 
 **默认入口（示例）：**
