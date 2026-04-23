@@ -27,7 +27,7 @@ const EntryRoute = React.memo(() => {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[rgba(255,255,255,0.05)] via-transparent to-[rgba(0,0,0,0.40)]" />
         <div className="pointer-events-none absolute -top-48 -left-48 w-[640px] h-[640px] rounded-full bg-[rgba(212,175,55,0.16)] blur-3xl" />
         <div className="pointer-events-none absolute -bottom-56 -right-56 w-[720px] h-[720px] rounded-full bg-[rgba(255,255,255,0.05)] blur-3xl" />
-        <div className="relative z-10 w-full max-w-[420px] pb-14">
+        <div className="relative z-20 w-full max-w-[420px] pb-14">
           <Routes>
             <Route path="/login" element={<LoginView />} />
             <Route path="/register" element={<RegisterView />} />
