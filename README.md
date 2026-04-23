@@ -61,7 +61,7 @@ curl -fsSL https://raw.githubusercontent.com/AthenDrakomin-hub/tailchat-source/m
 ```bash
 nano /var/www/tailchat-source/docker-compose.env
 ```
-填好 `API_URL` / `SECRET` / `ADMIN` / `MINIO` / `LIVEKIT_*` 后再启动：
+填好 API_URL / SECRET / ADMIN / MINIO / LIVEKIT_* 后再启动：
 ```bash
 cd /var/www/tailchat-source && docker compose up -d && docker compose ps
 ```
@@ -69,14 +69,14 @@ cd /var/www/tailchat-source && docker compose up -d && docker compose ps
 ### 5B. 手动拉取与配置部署
 #### 5B.1 拉取代码
 ```bash
-git clone https://github.com/AthenDrakomin-hub/tailchat-source.git
+git clone "https://github.com/AthenDrakomin-hub/tailchat-source.git"
 cd tailchat-source
 ```
 
 #### 5B.2 配置环境变量
-编辑根目录 `docker-compose.env`（至少确认这些字段）：
-*   `SECRET`：JWT 签名密钥（建议随机长字符串）
-*   `API_URL`：外部访问地址（例如 `https://chat.example.com` 或 `http://<server-ip>:11000`）
+编辑根目录 docker-compose.env（至少确认这些字段）：
+*   SECRET：JWT 签名密钥（建议随机长字符串）
+*   API_URL：外部访问地址（例如 "https://chat.example.com" 或 "http://<server-ip>:11000"）
 *   `ADMIN_USER` / `ADMIN_PASS`：管理端账号密码
 *   `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD`：MinIO 管理账号密码
 *   `LiveKit` 相关（如启用私信语音）：`LIVEKIT_URL` / `LIVEKIT_PUBLIC_URL` / `LIVEKIT_KEYS` 等
@@ -92,47 +92,22 @@ cd tailchat-source
 cd /var/www/tailchat-source && git add -A && git commit -m "chore: update" && git push origin main
 ```
 
-**第二步：老服务器（构建机）编译并推送**
+**第二步：老服务器（构建并推镜像）**
 老服务器永远先拉最新代码再 build + push。只要跑这条一键命令即可：
 ```bash
-bash -lc 'set -e;
-cd /var/www/tailchat-source;
-git fetch --all;
-git checkout main;
-git pull --rebase;
-
-DOCKERHUB_USER="athendrakomin";
-IMAGE="caifu-chat";
-TAG="$(date +%Y%m%d-%H%M)";
-
-docker compose build --no-cache;
-
-docker tag caifu-chat:latest "$DOCKERHUB_USER/$IMAGE:$TAG";
-docker push "$DOCKERHUB_USER/$IMAGE:$TAG";
-
-echo "NEW_IMAGE=$DOCKERHUB_USER/$IMAGE:$TAG"
-'
+cd /var/www/tailchat-source && git pull --rebase && bash scripts/build-push.sh
 ```
-*(执行完毕后会输出一行类似 `NEW_IMAGE=athendrakomin/caifu-chat:20260423-1045`，请复制这个 tag 值)*
+*(执行完毕后会输出一行类似 NEW_IMAGE=athendrakomin/caifu-chat:20260423-1045，请复制这个 tag 值)*
 
-**第三步：新服务器（运行机）拉取并启动**
+**第三步：新服务器（换 tag 并拉起）**
 新服务器只做 pull + up（不编译），把刚才生成的 TAG 替换到命令中执行：
 ```bash
-bash -lc 'set -e;
-cd /var/www/tailchat-source;
-TAG="把这里替换成上一步输出的tag";
-
-sed -i "s#image: .*caifu-chat:.*#image: athendrakomin/caifu-chat:${TAG}#g" docker-compose.yml;
-
-docker compose pull;
-docker compose up -d;
-docker compose ps;
-'
+cd /var/www/tailchat-source && IMAGE_TAG="20260423-1045" bash scripts/pull-up.sh
 ```
 
 **默认入口（示例）：**
-*   **Web**：`http://<server-ip>:11000/`
-*   **Admin**：`http://<server-ip>:11000/admin/`
+*   **Web**：http://<server-ip>:11000/
+*   **Admin**：http://<server-ip>:11000/admin/
 
 ## 6. 日常运维与自检 (Ops & Healthcheck)
 
@@ -163,7 +138,7 @@ tail -n 30 /var/log/nginx/error.log || true;
 '
 ```
 
-> **建议**：强烈建议您在每次更新后访问 `https://goodspage.cn` 时，在页面的 HTML 源码或某个接口中预留版本标识（如 commit hash 或上述的时间戳 TAG），这样能一眼看出当前运行的是否为最新版本。
+> **建议**：强烈建议您在每次更新后访问 "https://goodspage.cn" 时，在页面的 HTML 源码或某个接口中预留版本标识（如 commit hash 或上述的时间戳 TAG），这样能一眼看出当前运行的是否为最新版本。
 
 ## 7. 品牌与内容体系（沉稳暖金 / 中英同显 / 语录随处可见）
 
