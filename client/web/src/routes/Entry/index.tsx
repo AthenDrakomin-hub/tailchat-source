@@ -8,6 +8,7 @@ import { useRecordMeasure } from '@/utils/measure-helper';
 import { GuestView } from './GuestView';
 import { ForgetPasswordView } from './ForgetPasswordView';
 import { LanguageSelect } from '@/components/LanguageSelect';
+import { BeidouStars } from './components/BeidouStars';
 
 const EntryRoute = React.memo(() => {
   useRecordMeasure('appEntryRenderStart');
@@ -40,7 +41,9 @@ const EntryRoute = React.memo(() => {
         </div>
       </div>
 
-      <div className="flex-1 mobile:hidden tc-background" />
+      <div className="flex-1 mobile:hidden tc-background relative overflow-hidden">
+        <BeidouStars />
+      </div>
     </div>
   );
 });
