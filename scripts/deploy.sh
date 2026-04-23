@@ -48,8 +48,8 @@ if [ ! -f docker-compose.env ]; then
   fi
 fi
 
-echo "[4/6] Build images..."
-docker compose build --no-cache
+echo "[4/6] Pull images..."
+docker compose pull
 
 echo "[5/6] Up..."
 docker compose up -d

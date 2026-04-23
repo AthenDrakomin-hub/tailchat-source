@@ -1,6 +1,6 @@
 # 提取出多个服务共用的基础镜像和构建配置
 x-tailchat-base: &tailchat-base
-  image: caifu-chat:latest
+  image: athendrakomin/caifu-chat:latest
   build:
     context: .
   restart: unless-stopped
