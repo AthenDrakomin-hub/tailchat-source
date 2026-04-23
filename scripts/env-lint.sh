@@ -9,7 +9,7 @@ if [ ! -f "$ENV_FILE" ]; then
   exit 0
 fi
 
-if grep -q '\`' "$ENV_FILE"; then
+if grep -Fq '`' "$ENV_FILE"; then
   echo "❌ ERROR: Found backticks (\`) in $ENV_FILE!"
   echo "   This will break docker-compose variable interpolation."
   echo "   Please remove or replace them (e.g. use single/double quotes)."
