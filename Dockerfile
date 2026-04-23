@@ -43,7 +43,7 @@ RUN find . -name "*.tsbuildinfo" -type f -delete
 RUN pnpm build
 
 # Fix missing public files by ensuring client/web/dist is fully copied to server/dist/public
-RUN mkdir -p server/dist/public && cp -r client/web/dist/* server/dist/public/
+RUN mkdir -p server/dist/public && cp -r client/web/dist/* server/dist/public && mkdir -p server/dist/public/admin && cp -r server/admin/dist/* server/dist/public/admin/
 
 # web static service port
 EXPOSE 3000
