@@ -12,7 +12,7 @@ import { useNavToView } from './utils';
 import { EntryInput } from './components/Input';
 import { SecondaryBtn } from './components/SecondaryBtn';
 import { PrimaryBtn } from './components/PrimaryBtn';
-import logoUrl from '../../assets/images/logo.png';
+import { BrandLogo } from '@/components/BrandLogo';
 
 /**
  * 登录视图
@@ -54,21 +54,17 @@ export const ForgetPasswordView: React.FC = React.memo(() => {
 
   return (
     <div className="w-full">
-      <div className="mb-8 flex justify-center">
-        <img
-          src={logoUrl}
-          alt="Logo"
-          className="max-h-24 max-w-[80%] object-contain"
-        />
+      <div className="mb-6 flex justify-center">
+        <BrandLogo alt="Logo" className="max-h-24 max-w-[80%]" />
       </div>
 
-      <div className="flex bg-gray-100 rounded-md p-1 mb-6">
+      <div className="flex rounded-lg p-1 mb-6 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.10)] backdrop-blur">
         <button
           type="button"
-          className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${
+          className={`flex-1 py-2 text-sm rounded-md transition-all ${
             loginMethod === 'phone'
-              ? 'bg-[#0b192c] text-white'
-              : 'text-gray-500 hover:text-gray-800'
+              ? 'bg-gradient-to-r from-[#d4af37] to-[#f3e5ab] text-[#0b192c] font-semibold shadow-sm'
+              : 'text-[rgba(255,255,255,0.75)] hover:text-white'
           }`}
           onClick={() => {
             setLoginMethod('phone');
@@ -79,10 +75,10 @@ export const ForgetPasswordView: React.FC = React.memo(() => {
         </button>
         <button
           type="button"
-          className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${
+          className={`flex-1 py-2 text-sm rounded-md transition-all ${
             loginMethod === 'email'
-              ? 'bg-[#0b192c] text-white'
-              : 'text-gray-500 hover:text-gray-800'
+              ? 'bg-gradient-to-r from-[#d4af37] to-[#f3e5ab] text-[#0b192c] font-semibold shadow-sm'
+              : 'text-[rgba(255,255,255,0.75)] hover:text-white'
           }`}
           onClick={() => {
             setLoginMethod('email');
@@ -95,7 +91,7 @@ export const ForgetPasswordView: React.FC = React.memo(() => {
 
       <div>
         <div className="mb-4">
-          <div className="mb-2">
+          <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
             {loginMethod === 'phone' ? t('手机号') : t('邮箱')}
           </div>
           <EntryInput
@@ -118,7 +114,9 @@ export const ForgetPasswordView: React.FC = React.memo(() => {
         {sendedEmail && (
           <>
             <div className="mb-4">
-              <div className="mb-2">{t('OTP')}</div>
+              <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
+                {t('OTP')}
+              </div>
               <EntryInput
                 name="forget-otp"
                 type="text"
@@ -128,7 +126,9 @@ export const ForgetPasswordView: React.FC = React.memo(() => {
             </div>
 
             <div className="mb-4">
-              <div className="mb-2">{t('新密码')}</div>
+              <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
+                {t('新密码')}
+              </div>
               <EntryInput
                 name="forget-password"
                 type="password"

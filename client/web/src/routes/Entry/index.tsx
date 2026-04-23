@@ -16,10 +16,13 @@ const EntryRoute = React.memo(() => {
       <div
         className={clsx(
           styles.entryLeft,
-          'entry-left w-[640px] mobile:w-full px-10 bg-white/90 dark:bg-black/80 backdrop-blur-md text-gray-800 dark:text-white min-h-full flex items-center justify-center z-10 shadow-2xl'
+          'entry-left relative overflow-hidden w-[560px] mobile:w-full px-10 mobile:px-6 bg-[rgba(11,25,44,0.96)] text-slate-100 min-h-full flex items-center justify-center z-10 border-r border-[rgba(255,255,255,0.10)]'
         )}
       >
-        <div className="w-full pb-20">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[rgba(255,255,255,0.05)] via-transparent to-[rgba(0,0,0,0.40)]" />
+        <div className="pointer-events-none absolute -top-48 -left-48 w-[640px] h-[640px] rounded-full bg-[rgba(212,175,55,0.16)] blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-56 -right-56 w-[720px] h-[720px] rounded-full bg-[rgba(255,255,255,0.05)] blur-3xl" />
+        <div className="relative z-10 w-full max-w-[420px] pb-14">
           <Routes>
             <Route path="/login" element={<LoginView />} />
             <Route path="/register" element={<RegisterView />} />

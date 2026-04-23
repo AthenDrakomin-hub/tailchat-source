@@ -16,7 +16,7 @@ import { useNavToView } from './utils';
 import { EntryInput } from './components/Input';
 import { PrimaryBtn } from './components/PrimaryBtn';
 import { SecondaryBtn } from './components/SecondaryBtn';
-import logoUrl from '../../assets/images/logo.png';
+import { BrandLogo } from '@/components/BrandLogo';
 
 export const GuestView: React.FC = React.memo(() => {
   const navigate = useNavigate();
@@ -41,17 +41,15 @@ export const GuestView: React.FC = React.memo(() => {
 
   return (
     <div className="w-full">
-      <div className="mb-8 flex justify-center">
-        <img
-          src={logoUrl}
-          alt="Logo"
-          className="max-h-24 max-w-[80%] object-contain"
-        />
+      <div className="mb-6 flex justify-center">
+        <BrandLogo alt="Logo" className="max-h-24 max-w-[80%]" />
       </div>
 
       <div>
         <div className="mb-4">
-          <div className="mb-2">{t('昵称')}</div>
+          <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
+            {t('昵称')}
+          </div>
           <EntryInput
             placeholder={t('想要让大家如何称呼你')}
             type="text"

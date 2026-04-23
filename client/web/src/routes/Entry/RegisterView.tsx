@@ -112,16 +112,21 @@ export const RegisterView: React.FC = React.memo(() => {
       </div>
 
       <div className="text-center mb-8">
-        <div className="font-bold text-2xl tracking-wider text-[#d4af37]">{BRAND_NAME_FULL}</div>
+        <div className="font-extrabold text-2xl mobile:text-xl tracking-wide text-white">
+          {BRAND_NAME_FULL}
+        </div>
+        <div className="mt-2 text-sm text-[rgba(255,255,255,0.72)]">
+          注册仅限特邀内部成员
+        </div>
       </div>
 
-      <div className="flex bg-gray-100 rounded-md p-1 mb-6">
+      <div className="flex rounded-lg p-1 mb-6 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.10)] backdrop-blur">
         <button
           type="button"
-          className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${
+          className={`flex-1 py-2 text-sm rounded-md transition-all ${
             loginMethod === 'phone'
-              ? 'bg-[#0b192c] text-white'
-              : 'text-gray-500 hover:text-gray-800'
+              ? 'bg-gradient-to-r from-[#d4af37] to-[#f3e5ab] text-[#0b192c] font-semibold shadow-sm'
+              : 'text-[rgba(255,255,255,0.75)] hover:text-white'
           }`}
           onClick={() => {
             setLoginMethod('phone');
@@ -132,10 +137,10 @@ export const RegisterView: React.FC = React.memo(() => {
         </button>
         <button
           type="button"
-          className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${
+          className={`flex-1 py-2 text-sm rounded-md transition-all ${
             loginMethod === 'email'
-              ? 'bg-[#0b192c] text-white'
-              : 'text-gray-500 hover:text-gray-800'
+              ? 'bg-gradient-to-r from-[#d4af37] to-[#f3e5ab] text-[#0b192c] font-semibold shadow-sm'
+              : 'text-[rgba(255,255,255,0.75)] hover:text-white'
           }`}
           onClick={() => {
             setLoginMethod('email');
@@ -148,7 +153,7 @@ export const RegisterView: React.FC = React.memo(() => {
 
       <div>
         <div className="mb-4">
-          <div className="mb-2">
+          <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
             {loginMethod === 'phone' ? t('手机号') : t('邮箱')}
           </div>
           <EntryInput
@@ -163,7 +168,9 @@ export const RegisterView: React.FC = React.memo(() => {
         </div>
 
         <div className="mb-4 relative">
-          <div className="mb-2">{t('组织代码')}</div>
+          <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
+            {t('组织代码')}
+          </div>
           <EntryInput
             name="reg-orgcode"
             placeholder={t('请输入组织代码')}
@@ -174,7 +181,7 @@ export const RegisterView: React.FC = React.memo(() => {
         </div>
 
         <div className="mb-4 relative">
-          <div className="mb-2 flex items-center">
+          <div className="mb-2 flex items-center text-sm font-medium text-[rgba(255,255,255,0.82)]">
             <span className="mr-1">{t('昵称')}</span>
             <TipIcon content={t('后续在用户设置中可以随时修改')} />
           </div>
@@ -187,7 +194,7 @@ export const RegisterView: React.FC = React.memo(() => {
           />
 
           <Icon
-            className="absolute bottom-1 right-1 w-8 h-8 p-2 rounded cursor-pointer bg-gray-200 hover:bg-gray-300 text-gray-600 z-10 transition-colors"
+            className="absolute bottom-1.5 right-1.5 w-9 h-9 p-2 rounded cursor-pointer bg-[rgba(255,255,255,0.10)] hover:bg-[rgba(255,255,255,0.16)] text-[rgba(255,255,255,0.70)] z-10 transition-colors"
             icon={customNickname ? 'mdi:pencil-off' : 'mdi:pencil'}
             onClick={() =>
               setCustomNickname((customNickname) => !customNickname)
@@ -196,7 +203,9 @@ export const RegisterView: React.FC = React.memo(() => {
         </div>
 
         <div className="mb-4">
-          <div className="mb-2">{t('密码')}</div>
+          <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
+            {t('密码')}
+          </div>
           <EntryInput
             name="reg-password"
             type="password"
@@ -206,7 +215,7 @@ export const RegisterView: React.FC = React.memo(() => {
           />
         </div>
 
-        <label className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-300 mb-4 select-none">
+        <label className="flex items-start gap-2 text-xs text-[rgba(255,255,255,0.75)] mb-4 select-none">
           <input
             type="checkbox"
             className="mt-0.5"
@@ -224,11 +233,13 @@ export const RegisterView: React.FC = React.memo(() => {
                 查看
               </button>
             </span>
-            <span className="block mt-1 text-gray-500 font-medium">日斗投资财富交流会学习名额注册仅限特邀内部成员</span>
+            <span className="block mt-1 text-[rgba(255,255,255,0.60)] font-medium">
+              日斗投资财富交流会学习名额注册仅限特邀内部成员
+            </span>
           </div>
         </label>
 
-        {error && <p className="text-red-500 text-sm mb-4">{error.message}</p>}
+        {error && <p className="text-red-300 text-sm mb-4">{error.message}</p>}
 
         <PrimaryBtn loading={loading} onClick={handleRegister}>
           {t('注册账号')}
