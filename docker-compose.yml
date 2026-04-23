@@ -68,6 +68,7 @@ services:
   # - 说明：若要在复杂网络/移动网络更稳定，通常还需要 TURN（可后续增加）
   livekit:
     image: livekit/livekit-server:latest
+    command: --dev
     restart: unless-stopped
     networks:
       - internal

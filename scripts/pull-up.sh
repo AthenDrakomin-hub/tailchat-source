@@ -13,6 +13,8 @@ docker compose ps
 
 echo "========================================="
 echo "✅ Update to 'latest' Successful!"
+echo "Waiting 15 seconds for services to initialize before healthcheck..."
+sleep 15
 echo "Running healthcheck..."
 curl -I "https://goodspage.cn" | head -n 5 || true
 echo "========================================="
