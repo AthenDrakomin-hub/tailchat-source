@@ -12,7 +12,7 @@ cd /var/www/tailchat-source
 
 echo "=== [1/3] Updating docker-compose.yml to use new TAG: ${IMAGE_TAG} ==="
 # 只精确替换 athendrakomin/caifu-chat 相关的 image tag
-perl -0777 -pi -e "s/image:\s*athendrakomin\/caifu-chat:[^\s]+/image: athendrakomin\/caifu-chat:$ENV{IMAGE_TAG}/g" docker-compose.yml
+perl -0777 -pi -e "s|image:\s*athendrakomin/caifu-chat:[^\s]+|image: athendrakomin/caifu-chat:${IMAGE_TAG}|g" docker-compose.yml
 
 echo "=== [2/3] Pulling new image ==="
 docker compose pull
