@@ -14,10 +14,18 @@ export function extractPluginIdFromActionName(actionName: string): string | null
   return null;
 }
 
+export function extractPluginIdFromHttpPath(pathname: string): string | null {
+  const match = pathname.match(/\/plugin:([^/]+)/);
+  if (match) {
+    return match[1];
+  }
+  return null;
+}
+
 export function isRoleAllowedForPlugin(
+  config: EnabledPluginsConfig | null,
   pluginId: string,
-  userRole: string,
-  config: EnabledPluginsConfig | null
+  userRole: string
 ): boolean {
   if (!config || config[pluginId] === undefined) {
     return true; // Default allow if not specified
