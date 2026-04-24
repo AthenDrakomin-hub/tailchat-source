@@ -64,20 +64,20 @@ class ConfigService extends TcService {
     if (config.env === 'development') {
       this.cleanActionCache('client'); // 初始化时清理缓存
     }
+  }
 
+  async started(): Promise<void> {
     // 将 clientPersistConfig 合并到内存配置中（用于后端权限判断/功能开关）。
-    // 注意：这里不阻塞启动，失败时仅记录日志。
-    this.adapter.model
-      .getAllClientPersistConfig()
-      .then((persistConfig) => {
-        this.config = {
-          ...this.config,
-          ...persistConfig,
-        };
-      })
-      .catch((err) => {
-        this.logger.warn('[config] load clientPersistConfig failed:', err);
-      });
+    // 注意：在 started 生命周期中 adapter 才初始化完毕。
+    try {
+      const persistConfig = await this.adapter.model.getAllClientPersistConfig();
+      this.config = {
+        ...this.config,
+        ...persistConfig,
+      };
+    } catch (err) {
+      this.logger.warn('[config] load clientPersistConfig failed:', err);
+    }
   }
 
   /**
