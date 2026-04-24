@@ -1,11 +1,13 @@
 import { openModal } from '@/components/Modal';
-import { getUserJWT } from '@/utils/jwt-helper';
+import { getUserJWT, setUserJWT } from '@/utils/jwt-helper';
+import { setGlobalUserLoginInfo } from '@/utils/user-helper';
 import { Button } from 'antd';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
   applyGroupInvite,
   checkTokenValid,
+  createTemporaryUser,
   getCachedGroupInviteInfo,
   model,
   showErrorToasts,
@@ -32,13 +34,32 @@ export const JoinBtn: React.FC<Props> = React.memo((props) => {
   });
   const [isJoined, setIsJoined] = useState(false);
 
-  const handleLogin = useCallback(() => {
-    navigate(`/entry/login?redirect=${encodeURIComponent(location.pathname)}`);
-  }, []);
-
   const { value: invite } = useAsync(() => {
     return getCachedGroupInviteInfo(props.inviteCode);
   }, [props.inviteCode]);
+
+  const [{ loading: autoJoinLoading }, handleAutoJoinGroup] = useAsyncRequest(
+    async () => {
+      // 1) 创建临时账号并登录
+      const nickname = `访客${Math.floor(1000 + Math.random() * 9000)}`;
+      const data = await createTemporaryUser(nickname);
+      setGlobalUserLoginInfo(data);
+      await setUserJWT(data.token);
+
+      // 2) 使用邀请码加入群组
+      await applyGroupInvite(props.inviteCode);
+
+      if (!invite) {
+        showErrorToasts(t('未找到邀请码信息'));
+        return;
+      }
+      openModal(<SuccessModal groupId={invite.groupId} />, {
+        maskClosable: false,
+      });
+      setIsJoined(true);
+    },
+    [props.inviteCode, invite]
+  );
 
   useAsync(async () => {
     // 检查用户是否已经加入
@@ -117,8 +138,14 @@ export const JoinBtn: React.FC<Props> = React.memo((props) => {
       {t('加入群组')}
     </Button>
   ) : (
-    <Button block={true} type="primary" size="large" onClick={handleLogin}>
-      {t('尚未登录, 立即登录')}
+    <Button
+      block={true}
+      type="primary"
+      size="large"
+      loading={autoJoinLoading}
+      onClick={handleAutoJoinGroup}
+    >
+      {t('一键加入群组')}
     </Button>
   );
 });

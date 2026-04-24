@@ -16,7 +16,11 @@ import { isObjectId } from '../utils/string-helper';
 
 export type { UserBaseInfo };
 
-export interface UserLoginInfo extends UserBaseInfo {
+export type UserBaseInfoWithRole = UserBaseInfo & {
+  systemRole?: 'student' | 'monitor' | 'teacher';
+};
+
+export interface UserLoginInfo extends UserBaseInfoWithRole {
   token: string;
   createdAt: string;
 }
@@ -48,7 +52,7 @@ export interface UserSettings {
   [key: string]: any;
 }
 
-export function pickUserBaseInfo(userInfo: UserLoginInfo): UserBaseInfo {
+export function pickUserBaseInfo(userInfo: UserLoginInfo): UserBaseInfoWithRole {
   return _pick(userInfo, [
     '_id',
     'email',
@@ -57,13 +61,14 @@ export function pickUserBaseInfo(userInfo: UserLoginInfo): UserBaseInfo {
     'avatar',
     'temporary',
     'type',
+    'systemRole',
     'emailVerified',
     'banned',
   ]);
 }
 
 // 内置用户信息
-const builtinUserInfo: Record<string, () => UserBaseInfo> = {
+const builtinUserInfo: Record<string, () => UserBaseInfoWithRole> = {
   [SYSTEM_USERID]: () => ({
     _id: SYSTEM_USERID,
     email: 'admin@msgbyte.com',
@@ -72,6 +77,7 @@ const builtinUserInfo: Record<string, () => UserBaseInfo> = {
     avatar: null,
     temporary: false,
     type: 'normalUser',
+    systemRole: 'teacher',
     emailVerified: false,
     banned: false,
   }),

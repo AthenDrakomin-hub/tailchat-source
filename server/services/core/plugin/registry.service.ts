@@ -4,6 +4,10 @@ import type {
   PluginManifestModel,
 } from '../../../models/plugin/manifest';
 import { TcService, TcContext, TcDbService } from 'tailchat-server-sdk';
+import {
+  isPluginPublished,
+  type EnabledPluginsConfig,
+} from './plugin-permission';
 
 interface PluginRegistryService
   extends TcService,
@@ -37,8 +41,17 @@ class PluginRegistryService extends TcService {
   async getPluginList(ctx: TcContext): Promise<{
     list: PluginManifest[];
   }> {
+    const enabledPlugins =
+      (await ctx.call('config.get', {
+        key: 'enabledPlugins',
+      })) as EnabledPluginsConfig | null;
+
     const docs = await this.adapter.find({});
-    return await this.transformDocuments(ctx, {}, docs);
+    const publishedDocs = docs.filter((doc: any) =>
+      isPluginPublished(enabledPlugins, doc.name)
+    );
+
+    return await this.transformDocuments(ctx, {}, publishedDocs);
   }
 }
 

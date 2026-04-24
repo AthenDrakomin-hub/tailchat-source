@@ -9,7 +9,7 @@ const isOffical = [
 /**
  * 内置插件列表
  *
- * 该列表中的插件会被强制安装
+ * 该列表用于“可用插件”展示。是否可见/可用由服务端 enabledPlugins + 用户角色控制。
  */
 export const builtinPlugins: PluginManifest[] = _compact([
   {
@@ -181,3 +181,22 @@ export const builtinPlugins: PluginManifest[] = _compact([
   //   requireRestart: false,
   // },
 ]);
+
+/**
+ * 地基插件：保证客户端基础能力可用
+ * - 永远启用
+ * - 不参与运营发布/权限控制
+ * - 会被强制安装
+ */
+export const requiredBuiltinPluginIds = [
+  'com.msgbyte.webview',
+  'com.msgbyte.bbcode',
+  'com.msgbyte.notify',
+  'com.msgbyte.intro',
+  'com.msgbyte.mdpanel',
+  'com.msgbyte.offline-icons',
+];
+
+export const requiredBuiltinPlugins: PluginManifest[] = builtinPlugins.filter(
+  (p) => requiredBuiltinPluginIds.includes(p.name)
+);

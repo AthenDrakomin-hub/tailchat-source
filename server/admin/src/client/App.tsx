@@ -8,7 +8,6 @@ import {
   Tushan,
 } from 'tushan';
 import {
-  IconCompass,
   IconDashboard,
   IconEmail,
   IconExperiment,
@@ -24,7 +23,7 @@ import {
 } from 'tushan/icon';
 import { authHTTPClient, authProvider } from './auth';
 import { Dashboard } from './components/Dashboard';
-import { discoverFields, mailFields, messageFields } from './fields';
+import { mailFields, messageFields } from './fields';
 import { i18n } from './i18n';
 import { GroupList } from './resources/group';
 import { UserList } from './resources/user';
@@ -36,6 +35,7 @@ import { SocketIOAdmin } from './routes/socketio';
 import { SystemConfig } from './routes/system';
 import { SystemNotify } from './routes/system/notify';
 import { DefenseControlPanel } from './routes/defense-control';
+import { PluginPermissions } from './routes/plugin-permissions';
 
 const dataProvider = jsonServerProvider('/admin/api', authHTTPClient);
 
@@ -91,16 +91,9 @@ function App() {
       />
 
       <Category name="plugins">
-        <Resource
-          name="p_discover"
-          icon={<IconCompass />}
-          list={
-            <ListTable
-              fields={discoverFields}
-              action={{ create: true, detail: true, delete: true }}
-            />
-          }
-        />
+        <CustomRoute name="plugin-permissions" icon={<IconExperiment />}>
+          <PluginPermissions />
+        </CustomRoute>
       </Category>
 
       <CustomRoute name="network" icon={<IconWifi />}>

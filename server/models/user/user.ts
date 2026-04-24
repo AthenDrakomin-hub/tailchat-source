@@ -101,6 +101,19 @@ export class User extends TimeStamps implements Base {
   type: UserType;
 
   /**
+   * 全局系统角色（用于全站权限控制，如运营插件可见性/创建群组权限等）
+   * - student: 普通成员（默认）
+   * - monitor: 班长/管理员
+   * - teacher: 导师
+   */
+  @prop({
+    type: () => String,
+    enum: ['student', 'monitor', 'teacher'],
+    default: 'student',
+  })
+  systemRole: 'student' | 'monitor' | 'teacher';
+
+  /**
    * 邮箱是否可用
    */
   @prop({

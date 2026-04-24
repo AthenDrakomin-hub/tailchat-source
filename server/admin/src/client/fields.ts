@@ -10,6 +10,7 @@ import {
   createNumberField,
   createReferenceField,
   createTextAreaField,
+  createSelectField,
 } from 'tushan';
 import { createFileSizeField } from './components/field/filesize';
 import { createUserField } from './components/field/user';
@@ -56,6 +57,16 @@ export const userFields = [
     edit: {
       hidden: true,
     },
+  }),
+  createSelectField('systemRole', {
+    edit: {
+      default: 'student',
+    },
+    items: [
+      { label: '普通成员', value: 'student' },
+      { label: '班长/管理员', value: 'monitor' },
+      { label: '导师', value: 'teacher' },
+    ],
   }),
   createBooleanField('emailVerified'),
   createBooleanField('banned', {
@@ -205,24 +216,4 @@ export const mailFields = [
   createJSONField('data'),
   createTextField('error'),
   createDateTimeField('createdAt'),
-];
-
-export const discoverFields = [
-  createReferenceField('groupId', {
-    reference: 'groups',
-    displayField: 'name',
-  }),
-  createBooleanField('active', {
-    edit: {
-      default: true,
-    },
-  }),
-  createNumberField('order', {
-    edit: {
-      default: 0,
-    },
-    list: {
-      sort: true,
-    },
-  }),
 ];

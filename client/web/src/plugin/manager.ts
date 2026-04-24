@@ -8,7 +8,7 @@ import {
 } from 'tailchat-shared';
 import { initMiniStar, loadSinglePlugin } from 'mini-star';
 import _once from 'lodash/once';
-import { builtinPlugins } from './builtin';
+import { requiredBuiltinPlugins } from './builtin';
 import { showPluginLoadError } from './showPluginLoadError';
 import { injectTailchatGlobalValue } from '@/utils/global-helper';
 import _uniqBy from 'lodash/uniqBy';
@@ -25,7 +25,7 @@ class PluginManager {
    */
   initPlugins = _once(async () => {
     const installedPlugins = _uniqBy(
-      [...builtinPlugins, ...(await this.getInstalledPlugins())],
+      [...requiredBuiltinPlugins, ...(await this.getInstalledPlugins())],
       'name'
     ); // 基于名称去重，确保不会重复安装插件
 

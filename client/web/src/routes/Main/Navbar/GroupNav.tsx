@@ -11,6 +11,7 @@ import {
   useGlobalConfigStore,
   useGroupAck,
   useSingleUserSetting,
+  useUserInfo,
 } from 'tailchat-shared';
 import { NavbarNavItem } from './NavItem';
 import { Dropdown } from 'antd';
@@ -103,6 +104,7 @@ function useGroupList() {
 export const GroupNav: React.FC = React.memo(() => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { groupList, handleSortEnd } = useGroupList();
+  const userInfo = useUserInfo();
 
   const handleCreateGroup = useEvent(() => {
     openModal(<ModalCreateGroup />);
@@ -111,6 +113,10 @@ export const GroupNav: React.FC = React.memo(() => {
   const { disableCreateGroup } = useGlobalConfigStore((state) => ({
     disableCreateGroup: state.disableCreateGroup,
   }));
+
+  const systemRole = (userInfo as any)?.systemRole ?? 'student';
+  const canCreateGroup =
+    disableCreateGroup !== true && userInfo != null && systemRole !== 'student';
 
   return (
     <div className="space-y-2" data-tc-role="navbar-groups" ref={containerRef}>
@@ -131,7 +137,7 @@ export const GroupNav: React.FC = React.memo(() => {
         </SortableList>
       )}
 
-      {!disableCreateGroup && (
+      {canCreateGroup && (
         <NavbarNavItem
           className="bg-green-500"
           name={t('创建群组')}

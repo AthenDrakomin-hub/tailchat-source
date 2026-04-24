@@ -303,6 +303,14 @@ class GroupService extends TcService {
       throw new NoPermissionError(t('创建群组功能已被管理员禁用'));
     }
 
+    // 按全局角色限制创建群组：普通成员(student)禁止创建
+    if (userId !== SYSTEM_USERID) {
+      const systemRole = _.get(ctx.meta, ['user', 'systemRole'], 'student');
+      if (systemRole === 'student') {
+        throw new NoPermissionError(t('只有班长/导师可以创建群组'));
+      }
+    }
+
     const group = await this.adapter.model.createGroup({
       name,
       panels,

@@ -20,6 +20,12 @@ import accepts from 'accepts';
 import send from 'send';
 import path from 'path';
 import mime from 'mime';
+import {
+  extractPluginIdFromHttpPath,
+  isRoleAllowedForPlugin,
+  type EnabledPluginsConfig,
+  type SystemRole,
+} from './plugin/plugin-permission';
 
 export default class ApiService extends TcService {
   authWhitelist = [];
@@ -398,9 +404,31 @@ export default class ApiService extends TcService {
       if (user && user._id) {
         this.logger.info('[Web] Authenticated via JWT: ', user.nickname);
         // Reduce user fields (it will be transferred to other nodes)
-        ctx.meta.user = _.pick(user, ['_id', 'nickname', 'email', 'avatar']);
+        ctx.meta.user = _.pick(user, [
+          '_id',
+          'nickname',
+          'email',
+          'avatar',
+          'systemRole',
+        ]);
         ctx.meta.token = token;
         ctx.meta.userId = user._id;
+
+        // 插件权限：对 /api/plugin:<pluginId>/... 做后端硬拦截（防止绕过前端隐藏）
+        const pathname = String(req.url ?? '').split('?')[0];
+        const pluginId = extractPluginIdFromHttpPath(pathname);
+        if (pluginId) {
+          const enabledPlugins =
+            (await ctx.call('config.get', {
+              key: 'enabledPlugins',
+            })) as EnabledPluginsConfig | null;
+          const role =
+            ((ctx.meta.user as any)?.systemRole as SystemRole) ?? 'student';
+
+          if (!isRoleAllowedForPlugin(enabledPlugins, pluginId, role)) {
+            throw new ApiGatewayErrors.ForbiddenError('Forbidden');
+          }
+        }
       } else {
         throw new Error(t('Token不合规'));
       }

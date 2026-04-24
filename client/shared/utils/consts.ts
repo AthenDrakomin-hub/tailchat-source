@@ -33,4 +33,5 @@ export const defaultGlobalConfig: GlobalConfig = {
   disableTelemetry: false,
   announcement: false,
   registerOrgCode: '0501',
+  enabledPlugins: {},
 };

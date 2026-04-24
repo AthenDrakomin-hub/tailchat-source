@@ -78,6 +78,19 @@ export interface GlobalConfig {
       };
 
   registerOrgCode?: string;
+
+  /**
+   * 运营插件发布与权限配置
+   * - 未配置的插件视为未发布（不可见不可用）
+   * - 已配置的插件按 allowRoles 控制可见=可用
+   */
+  enabledPlugins?: Record<
+    string,
+    {
+      enabled: boolean;
+      allowRoles: Array<'student' | 'monitor' | 'teacher'>;
+    }
+  >;
 }
 
 export function getGlobalConfig(): GlobalConfig {

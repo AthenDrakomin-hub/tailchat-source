@@ -19,6 +19,12 @@ import { ServiceUnavailableError } from 'tailchat-server-sdk';
 import { isValidStr } from '../lib/utils';
 import bcrypt from 'bcryptjs';
 import msgpackParser from 'socket.io-msgpack-parser';
+import {
+  extractPluginIdFromActionName,
+  isRoleAllowedForPlugin,
+  type EnabledPluginsConfig,
+  type SystemRole,
+} from '../services/core/plugin/plugin-permission';
 
 const blacklist: (string | RegExp)[] = ['gateway.*'];
 
@@ -230,6 +236,32 @@ export const TcSocketIOService = (
                 message,
               });
               return;
+            }
+
+            // 插件权限：未发布/无权限的插件 action 直接拒绝（防止绕过前端隐藏）
+            // 注意：admin.socket.io 调试连接不做权限限制
+            if (socket.handshake.headers['origin'] !== 'https://admin.socket.io') {
+              const pluginId = extractPluginIdFromActionName(eventName);
+              if (pluginId) {
+                const enabledPlugins =
+                  (await this.broker.call('config.get', {
+                    key: 'enabledPlugins',
+                  })) as EnabledPluginsConfig | null;
+
+                const role =
+                  ((socket.data.user as any)?.systemRole as SystemRole) ??
+                  'student';
+
+                if (!isRoleAllowedForPlugin(enabledPlugins, pluginId, role)) {
+                  const message = 'Forbidden';
+                  this.logger.warn(
+                    '[SocketIO]',
+                    `plugin ${pluginId} forbidden for role=${role}`
+                  );
+                  cb({ result: false, message });
+                  return;
+                }
+              }
             }
 
             // 接受任意消息, 并调用action

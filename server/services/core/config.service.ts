@@ -64,6 +64,20 @@ class ConfigService extends TcService {
     if (config.env === 'development') {
       this.cleanActionCache('client'); // 初始化时清理缓存
     }
+
+    // 将 clientPersistConfig 合并到内存配置中（用于后端权限判断/功能开关）。
+    // 注意：这里不阻塞启动，失败时仅记录日志。
+    this.adapter.model
+      .getAllClientPersistConfig()
+      .then((persistConfig) => {
+        this.config = {
+          ...this.config,
+          ...persistConfig,
+        };
+      })
+      .catch((err) => {
+        this.logger.warn('[config] load clientPersistConfig failed:', err);
+      });
   }
 
   /**
@@ -109,6 +123,10 @@ class ConfigService extends TcService {
     );
     await this.cleanActionCache('client', []);
     this.broadcastNotify(ctx, 'updateClientConfig', newConfig);
+
+    // 同步到内存配置，便于后端通过 config.get 读取（例如插件权限）。
+    _.set(this.config, key, value);
+    await this.broker.broadcast('config.updated', { config: this.config });
   }
 
   async all(ctx: TcContext) {

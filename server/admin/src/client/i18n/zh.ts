@@ -79,13 +79,8 @@ export const zhTranslation = {
         createdAt: '创建时间',
       },
     },
-    p_discover: {
-      name: '探索',
-      fields: {
-        groupId: '群组ID',
-        active: '是否活跃',
-        order: '排序',
-      },
+    'plugin-permissions': {
+      name: '插件发布与权限',
     },
     system: {
       name: '系统设置',

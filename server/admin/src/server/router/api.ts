@@ -15,9 +15,9 @@ import {
   virtualId,
 } from '../middleware/express-mongoose-ra-json-server';
 import { cacheRouter } from './cache';
-import discoverModel from '../../../../plugins/com.msgbyte.discover/models/discover';
 import { analyticsRouter } from './analytics';
 import _ from 'lodash';
+import { pluginPermissionsRouter } from './plugin-permissions';
 
 const router = Router();
 
@@ -371,6 +371,6 @@ router.use(
   auth(),
   raExpressMongoose(require('../../../../models/user/mail').default)
 );
-router.use('/p_discover', auth(), raExpressMongoose(discoverModel));
+router.use('/plugin-permissions', auth(), pluginPermissionsRouter);
 
 export { router as apiRouter };

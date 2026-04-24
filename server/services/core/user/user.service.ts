@@ -57,6 +57,7 @@ class UserService extends TcService {
       'temporary',
       'avatar',
       'type',
+      'systemRole',
       'emailVerified',
       'banned',
       'extra',
