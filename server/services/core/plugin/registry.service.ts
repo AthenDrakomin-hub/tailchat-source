@@ -47,7 +47,7 @@ class PluginRegistryService extends TcService {
       })) as EnabledPluginsConfig | null;
 
     const docs = await this.adapter.find({});
-    const publishedDocs = docs.filter((doc: any) =>
+    const publishedDocs = (docs as any[]).filter((doc: any) =>
       isPluginPublished(enabledPlugins, doc.name)
     );
 
