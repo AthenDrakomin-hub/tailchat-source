@@ -62,13 +62,14 @@ export const PersonalSidebar: React.FC = React.memo(() => {
           badge={hasFriendRequest}
         />
 
-        {!disablePluginStore && (
+        {/* 隐藏掉暴露给普通用户的插件中心入口 */}
+        {/* {!disablePluginStore && (
           <SidebarItem
             name={t('插件中心')}
             icon={<Icon icon="mdi:puzzle" />}
             to="/main/personal/plugins"
           />
-        )}
+        )} */}
 
         {/* 插件自定义面板 */}
         {pluginCustomPanel

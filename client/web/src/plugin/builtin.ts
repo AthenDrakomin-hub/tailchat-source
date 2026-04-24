@@ -195,6 +195,9 @@ export const requiredBuiltinPluginIds = [
   'com.msgbyte.intro',
   'com.msgbyte.mdpanel',
   'com.msgbyte.offline-icons',
+  'com.msgbyte.wealth',
+  'com.msgbyte.livekit',
+  'com.msgbyte.agora',
 ];
 
 export const requiredBuiltinPlugins: PluginManifest[] = builtinPlugins.filter(
