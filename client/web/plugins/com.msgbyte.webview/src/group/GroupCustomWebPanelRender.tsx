@@ -24,11 +24,16 @@ const EditModalContent = styled.div`
   }
 `;
 
+const whiteList = getDefaultWhiteList();
+Object.keys(whiteList).forEach((tag) => {
+  whiteList[tag] = [...whiteList[tag], 'style', 'class'];
+});
+
 const xss = new FilterXSS({
   css: false,
-  whiteList: { ...getDefaultWhiteList(), iframe: ['src', 'style', 'class'] },
+  whiteList: { ...whiteList, iframe: ['src', 'style', 'class'] },
   onIgnoreTag: function (tag, html, options) {
-    if (['html', 'body', 'head', 'meta', 'style', 'div'].includes(tag)) {
+    if (['html', 'body', 'head', 'meta', 'style'].includes(tag)) {
       // 不对其属性列表进行过滤
       return html;
     }
