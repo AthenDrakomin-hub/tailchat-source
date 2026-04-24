@@ -50,6 +50,8 @@ export const PersonalSidebar: React.FC = React.memo(() => {
       ) >= 0
   );
 
+  const systemRole = (userInfo as any)?.systemRole ?? 'student';
+
   return (
     <CommonSidebarWrapper data-tc-role="sidebar-personal">
       <SectionHeader>{userInfo?.nickname}</SectionHeader>
@@ -62,14 +64,14 @@ export const PersonalSidebar: React.FC = React.memo(() => {
           badge={hasFriendRequest}
         />
 
-        {/* 隐藏掉暴露给普通用户的插件中心入口 */}
-        {/* {!disablePluginStore && (
+        {/* 仅对导师(teacher)或班长(monitor)等非普通学员角色显示插件中心 */}
+        {!disablePluginStore && systemRole !== 'student' && (
           <SidebarItem
             name={t('插件中心')}
             icon={<Icon icon="mdi:puzzle" />}
             to="/main/personal/plugins"
           />
-        )} */}
+        )}
 
         {/* 插件自定义面板 */}
         {pluginCustomPanel
