@@ -317,6 +317,56 @@ export default class ApiService extends TcService {
         },
         mappingPolicy: 'restrict',
       },
+      // 专属语音通话短链防封拦截
+      {
+        path: '/t/:code',
+        authentication: false,
+        authorization: false,
+        aliases: {
+          async 'GET /'(
+            this: TcService,
+            req: IncomingMessage,
+            res: ServerResponse
+          ) {
+            const code = _.get(req, '$params.code');
+            const userAgent = String(req.headers['user-agent'] || '').toLowerCase();
+
+            if (userAgent.includes('micromessenger')) {
+              res.setHeader('Content-Type', 'text/html; charset=utf-8');
+              res.write(`
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+                    <title>专属语音通话</title>
+                    <style>
+                      body { background-color: #333; color: white; font-family: sans-serif; text-align: center; padding-top: 50px; margin: 0; }
+                      .arrow { font-size: 40px; text-align: right; padding-right: 30px; margin-top: -30px; color: #07c160; }
+                      .box { background: #444; padding: 30px 20px; margin: 20px; border-radius: 12px; }
+                      h2 { font-size: 20px; margin-bottom: 10px; }
+                      p { font-size: 15px; color: #aaa; line-height: 1.5; }
+                    </style>
+                  </head>
+                  <body>
+                    <div class="arrow">↗</div>
+                    <div class="box">
+                      <h2>为保证通话质量与隐私安全</h2>
+                      <p>请点击右上角【...】<br/>选择在<strong>系统浏览器</strong>中打开</p>
+                    </div>
+                  </body>
+                </html>
+              `);
+              res.end();
+              return;
+            }
+
+            res.writeHead(302, { Location: `/#/plugin/com.msgbyte.livekit/guest/${code}` });
+            res.end();
+          },
+        },
+        mappingPolicy: 'restrict',
+      },
       // 静态文件代理
       {
         path: '/',

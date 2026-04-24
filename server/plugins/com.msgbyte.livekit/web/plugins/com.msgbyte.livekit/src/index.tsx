@@ -44,10 +44,23 @@ const ExternalCallView = Loadable(
   }
 );
 
+const GuestCallView = Loadable(
+  () => import('./components/GuestCallView'),
+  {
+    componentName: `${PLUGIN_ID}:GuestCallView`,
+  }
+);
+
 regPluginRootRoute({
   name: `${PLUGIN_ID}/externalMeeting`,
   path: `/${PLUGIN_ID}/meeting/:meetingId`,
   component: ExternalCallView,
+});
+
+regPluginRootRoute({
+  name: 'guest-call',
+  path: `/${PLUGIN_ID}/guest/:code`,
+  component: GuestCallView,
 });
 
 regPluginPanelRoute({

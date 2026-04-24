@@ -1,11 +1,12 @@
 import type { TcContext } from 'tailchat-server-sdk';
-import { TcService, TcDbService, call } from 'tailchat-server-sdk';
+import { TcService, TcDbService, call, config } from 'tailchat-server-sdk';
 import type { LivekitDocument, LivekitModel } from '../models/livekit';
 import {
   AccessToken,
   RoomServiceClient,
   WebhookEvent,
 } from 'livekit-server-sdk';
+import Redis from 'ioredis';
 
 /**
  * livekit
@@ -17,6 +18,7 @@ interface LivekitService
     TcDbService<LivekitDocument, LivekitModel> {}
 class LivekitService extends TcService {
   // roomServiceClient: RoomServiceClient = null;
+  redisClient: Redis.Redis;
 
   get serviceName() {
     return 'plugin:com.msgbyte.livekit';
@@ -59,6 +61,10 @@ class LivekitService extends TcService {
   }
 
   onInit() {
+    this.redisClient = new Redis(config.redisUrl, {
+      keyPrefix: 'tailchat:livekit:shortlink:',
+    });
+
     this.registerAvailableAction(() => this.serverAvailable);
 
     if (!this.serverAvailable) {
@@ -82,7 +88,20 @@ class LivekitService extends TcService {
         nickname: 'string',
       },
     });
-    this.registerAuthWhitelist(['/generateGuestToken']);
+    this.registerAction('generateShortLink', this.generateShortLink, {
+      params: {
+        roomId: 'string',
+      },
+    });
+    this.registerAction('getAndBurnShortLink', this.getAndBurnShortLink, {
+      params: {
+        code: 'string',
+      },
+    });
+    this.registerAuthWhitelist([
+      '/generateGuestToken',
+      '/getAndBurnShortLink',
+    ]);
     this.registerAction('roomMembers', this.roomMembers, {
       params: {
         roomName: 'string',
@@ -164,6 +183,35 @@ class LivekitService extends TcService {
       identity,
       accessToken,
     };
+  }
+
+  async generateShortLink(ctx: TcContext<{ roomId: string }>) {
+    const { roomId } = ctx.params;
+    const userId = ctx.meta.userId;
+
+    const user = await call(ctx).getUserInfo(userId);
+    const inviterName = user?.nickname || '未知用户';
+    const inviterAvatar = user?.avatar || '';
+
+    const code = Math.random().toString(36).substring(2, 8);
+    const data = JSON.stringify({ roomId, inviterName, inviterAvatar });
+
+    await this.redisClient.set(code, data, 'EX', 24 * 60 * 60);
+
+    return { code };
+  }
+
+  async getAndBurnShortLink(ctx: TcContext<{ code: string }>) {
+    const { code } = ctx.params;
+
+    const data = await this.redisClient.get(code);
+    if (!data) {
+      throw new Error('通话链接已失效或已被他人接听');
+    }
+
+    await this.redisClient.del(code);
+
+    return JSON.parse(data);
   }
 
   async roomMembers(ctx: TcContext<{ roomName: string }>) {

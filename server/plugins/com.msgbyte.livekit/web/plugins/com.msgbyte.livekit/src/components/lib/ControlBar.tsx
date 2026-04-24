@@ -15,7 +15,7 @@ import { Translate } from '../../translate';
 import { useMediaQuery } from '../../utils/useMediaQuery';
 import { useMeetingContextState } from '../../context/MeetingContext';
 import { Icon } from '@capital/component';
-import { copyToClipboard, showToasts, useIsMobile } from '@capital/common';
+import { copyToClipboard, showToasts, useIsMobile, request } from '@capital/common';
 import { useEffect, useState } from 'react';
 
 /** @public */
@@ -103,17 +103,32 @@ export function ControlBar({ variation, controls, ...props }: ControlBarProps) {
   };
 
   const room = useRoomContext();
-  const handleShare = () => {
-    const link = `${window.location.origin}/plugin/com.msgbyte.livekit/meeting/${room.name}`;
-    copyToClipboard(link);
-    showToasts(Translate.shareLinkCopied || '已复制分享链接', 'success');
+  const handleShareShortLink = async () => {
+    try {
+      const { data } = await request.post(
+        'plugin:com.msgbyte.livekit/generateShortLink',
+        { roomId: room.name }
+      );
+      const link = `${window.location.origin}/t/${data.code}`;
+      copyToClipboard(link);
+      showToasts(
+        Translate.shareLinkCopied || '专属通话链接(单次有效)已复制！',
+        'success'
+      );
+    } catch (err: any) {
+      showToasts('生成短链失败: ' + (err.message || String(err)), 'error');
+    }
   };
 
   return (
     <div className="lk-control-bar" {...props}>
-      <button className="lk-button" onClick={handleShare}>
-        {showIcon && <Icon icon="mdi:share-variant" />}
-        {showText && (Translate.shareLink || '复制分享链接')}
+      <button
+        className="lk-button"
+        onClick={handleShareShortLink}
+        title="生成阅后即焚通话链接"
+      >
+        {showIcon && <Icon icon="mdi:link-variant" />}
+        {showText && '专属通话链接'}
       </button>
 
       {visibleControls.microphone && (
