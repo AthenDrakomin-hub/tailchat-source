@@ -6,7 +6,7 @@ import {
 import { openModal } from '@/components/Modal';
 import { closeModal, pluginUserExtraInfo } from '@/plugin/common';
 import { setUserJWT } from '@/utils/jwt-helper';
-import { Button, Divider, message, Tag, Typography } from 'antd';
+import { Button, Divider, Tag, Typography } from 'antd';
 import React, { useCallback } from 'react';
 import { Avatar } from 'tailchat-design';
 import {
@@ -22,9 +22,7 @@ import {
   userActions,
   useUserInfo,
 } from 'tailchat-shared';
-import { EmailVerify } from '../EmailVerify';
 import { ModifyPassword } from '../ModifyPassword';
-import { isBuiltinEmail } from '@/utils/user-helper';
 
 export const SettingsAccount: React.FC = React.memo(() => {
   const userInfo = useUserInfo();
@@ -114,40 +112,13 @@ export const SettingsAccount: React.FC = React.memo(() => {
           />
 
           <FullModalField
-            title={t('邮箱')}
+            title={t('账号')}
             content={
               <div>
                 <span className="mr-1">{userInfo.email}</span>
-                {isBuiltinEmail(userInfo.email) ? (
-                  <Tag color="default" className="select-none">
-                    {t('内置邮箱')}
-                  </Tag>
-                ) : userInfo.emailVerified ? (
-                  <Tag color="success" className="select-none">
-                    {t('已认证')}
-                  </Tag>
-                ) : (
-                  <Tag
-                    color="warning"
-                    className="cursor-pointer"
-                    onClick={() => {
-                      if (userInfo.temporary) {
-                        message.warning(
-                          t('临时用户无法认证邮箱, 请先认领账号')
-                        );
-                        return;
-                      }
-
-                      const key = openModal(
-                        <EmailVerify
-                          onSuccess={() => {
-                            closeModal(key);
-                          }}
-                        />
-                      );
-                    }}
-                  >
-                    {t('未认证')}
+                {userInfo.temporary && (
+                  <Tag color="warning" className="select-none">
+                    {t('临时账号')}
                   </Tag>
                 )}
               </div>

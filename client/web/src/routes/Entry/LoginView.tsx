@@ -40,8 +40,7 @@ const QUOTES = [
  */
 export const LoginView: React.FC = React.memo(() => {
   const dailyQuote = useMemo(() => QUOTES[Math.floor(Math.random() * QUOTES.length)], []);
-  const [loginMethod, setLoginMethod] = useState<'phone' | 'email'>('phone');
-  const [email, setEmail] = useState('');
+  const [account, setAccount] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const navRedirect = useSearchParam('redirect');
@@ -62,14 +61,14 @@ export const LoginView: React.FC = React.memo(() => {
   }, []);
 
   const [{ loading, error }, handleLogin] = useAsyncFn(async () => {
-    await string().required(t('账号不能为空')).validate(email);
+    await string().required(t('账号不能为空')).validate(account);
 
     await string()
       .min(6, t('密码不能低于6位'))
       .required(t('密码不能为空'))
       .validate(password);
 
-    const data = await loginWithEmail(email, password);
+    const data = await loginWithEmail(account, password);
 
     setGlobalUserLoginInfo(data);
     await setUserJWT(data.token);
@@ -80,7 +79,7 @@ export const LoginView: React.FC = React.memo(() => {
     } else {
       navigate('/main');
     }
-  }, [email, password, navRedirect, pathname, navigate]);
+  }, [account, password, navRedirect, pathname, navigate]);
 
   const navToView = useNavToView();
 
@@ -99,50 +98,17 @@ export const LoginView: React.FC = React.memo(() => {
         </div>
       </div>
 
-      <div className="flex rounded-lg p-1 mb-6 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.10)] backdrop-blur">
-        <button
-          type="button"
-          className={`flex-1 py-2 text-sm rounded-md transition-all ${
-            loginMethod === 'phone'
-              ? 'bg-gradient-to-r from-[#d4af37] to-[#f3e5ab] text-[#0b192c] font-semibold shadow-sm'
-              : 'text-[rgba(255,255,255,0.75)] hover:text-white'
-          }`}
-          onClick={() => {
-            setLoginMethod('phone');
-            setEmail('');
-          }}
-        >
-          {t('手机号')}
-        </button>
-        <button
-          type="button"
-          className={`flex-1 py-2 text-sm rounded-md transition-all ${
-            loginMethod === 'email'
-              ? 'bg-gradient-to-r from-[#d4af37] to-[#f3e5ab] text-[#0b192c] font-semibold shadow-sm'
-              : 'text-[rgba(255,255,255,0.75)] hover:text-white'
-          }`}
-          onClick={() => {
-            setLoginMethod('email');
-            setEmail('');
-          }}
-        >
-          {t('邮箱')}
-        </button>
-      </div>
-
       <div>
         <div className="mb-4">
           <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
-            {loginMethod === 'phone' ? t('手机号') : t('邮箱')}
+            {t('账号')}
           </div>
           <EntryInput
             name="login-email"
-            placeholder={
-              loginMethod === 'phone' ? t('请输入手机号') : t('请输入邮箱')
-            }
+            placeholder={t('请输入账号')}
             type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={account}
+            onChange={(e) => setAccount(e.target.value)}
           />
         </div>
         <div className="mb-4">

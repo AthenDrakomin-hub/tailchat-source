@@ -1,13 +1,9 @@
 import {
   isValidStr,
-  model,
   registerWithEmail,
   showErrorToasts,
-  showSuccessToasts,
   t,
   useAsyncFn,
-  useAsyncRequest,
-  getGlobalConfig,
   useWatch,
   BRAND_NAME_FULL,
   RISK_AGREE_LABEL,
@@ -45,13 +41,10 @@ const QUOTES = [
  */
 export const RegisterView: React.FC = React.memo(() => {
   const dailyQuote = useMemo(() => QUOTES[Math.floor(Math.random() * QUOTES.length)], []);
-  const [loginMethod, setLoginMethod] = useState<'phone' | 'email'>('phone');
-  const [email, setEmail] = useState('');
+  const [account, setAccount] = useState('');
   const [orgCode, setOrgCode] = useState('');
   const [nickname, setNickname] = useState('');
   const [password, setPassword] = useState('');
-  const [emailOTP, setEmailOTP] = useState('');
-  const [sendedEmail, setSendedEmail] = useState(false);
   const [customNickname, setCustomNickname] = useState(false);
   const [agreeRisk, setAgreeRisk] = useState(false);
   const navigate = useNavigate();
@@ -66,7 +59,7 @@ export const RegisterView: React.FC = React.memo(() => {
     await string()
       .required(t('账号不能为空'))
       .max(40, t('账号最长限制40个字符'))
-      .validate(email);
+      .validate(account);
 
     await string()
       .min(6, t('密码不能低于6位'))
@@ -75,10 +68,9 @@ export const RegisterView: React.FC = React.memo(() => {
       .validate(password);
 
     const data = await registerWithEmail({
-      email,
+      email: account,
       password,
       nickname,
-      emailOTP,
       orgCode,
     });
 
@@ -90,18 +82,11 @@ export const RegisterView: React.FC = React.memo(() => {
     } else {
       navigate('/main');
     }
-  }, [agreeRisk, email, nickname, password, emailOTP, orgCode, navRedirect]);
+  }, [agreeRisk, account, nickname, password, orgCode, navRedirect]);
 
-  const [{ loading: sendEmailLoading }, handleSendEmail] =
-    useAsyncRequest(async () => {
-      await model.user.verifyEmail(email);
-      showSuccessToasts(t('发送成功, 请检查你的邮箱。'));
-      setSendedEmail(true);
-    }, [email]);
-
-  useWatch([email, customNickname], () => {
+  useWatch([account, customNickname], () => {
     if (!customNickname) {
-      setNickname(getEmailAddress(email));
+      setNickname(getEmailAddress(account));
     }
   });
 
@@ -132,60 +117,27 @@ export const RegisterView: React.FC = React.memo(() => {
         </div>
       </div>
 
-      <div className="flex rounded-lg p-1 mb-6 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.10)] backdrop-blur">
-        <button
-          type="button"
-          className={`flex-1 py-2 text-sm rounded-md transition-all ${
-            loginMethod === 'phone'
-              ? 'bg-gradient-to-r from-[#d4af37] to-[#f3e5ab] text-[#0b192c] font-semibold shadow-sm'
-              : 'text-[rgba(255,255,255,0.75)] hover:text-white'
-          }`}
-          onClick={() => {
-            setLoginMethod('phone');
-            setEmail('');
-          }}
-        >
-          {t('手机号')}
-        </button>
-        <button
-          type="button"
-          className={`flex-1 py-2 text-sm rounded-md transition-all ${
-            loginMethod === 'email'
-              ? 'bg-gradient-to-r from-[#d4af37] to-[#f3e5ab] text-[#0b192c] font-semibold shadow-sm'
-              : 'text-[rgba(255,255,255,0.75)] hover:text-white'
-          }`}
-          onClick={() => {
-            setLoginMethod('email');
-            setEmail('');
-          }}
-        >
-          {t('邮箱')}
-        </button>
-      </div>
-
       <div>
         <div className="mb-4">
           <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
-            {loginMethod === 'phone' ? t('手机号') : t('邮箱')}
+            {t('账号')}
           </div>
           <EntryInput
             name="reg-email"
-            placeholder={
-              loginMethod === 'phone' ? t('请输入手机号') : t('请输入邮箱')
-            }
+            placeholder={t('请输入账号')}
             type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={account}
+            onChange={(e) => setAccount(e.target.value)}
           />
         </div>
 
         <div className="mb-4 relative">
           <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
-            {t('组织代码')}
+            {t('机构邀请码')}
           </div>
           <EntryInput
             name="reg-orgcode"
-            placeholder={t('请输入组织代码')}
+            placeholder={t('请输入机构邀请码')}
             type="text"
             value={orgCode}
             onChange={(e) => setOrgCode(e.target.value)}
