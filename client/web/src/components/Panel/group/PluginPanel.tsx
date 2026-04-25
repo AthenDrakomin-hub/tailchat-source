@@ -41,31 +41,36 @@ export const GroupPluginPanel: React.FC<GroupPluginPanelProps> = React.memo(
     }, [panelInfo.name]);
 
     if (!pluginPanelInfo) {
-      // TODO: 如果没有安装, 引导用户安装插件
       return (
-        <Alert
-          className="w-full text-center"
-          message={
-            <div>
-              <p>{t('该面板由插件提供')}</p>
-              <p>
-                {t('插件名')}: {panelInfo.provider}
-              </p>
-              <p>
-                {t('面板名')}: {panelInfo.pluginPanelName}
-              </p>
-            </div>
-          }
-        />
+        <div className="w-full h-full flex justify-center pt-20">
+          <Alert
+            className="w-[400px] max-w-[90vw] shadow-sm"
+            type="warning"
+            showIcon
+            message={t('未安装或加载对应插件')}
+            description={
+              <div className="mt-2 text-sm opacity-80">
+                <p>{t('该面板需要依赖特定插件才能正常显示。')}</p>
+                <div className="mt-2 space-y-1">
+                  <p>
+                    {t('插件提供者')}: <span className="font-mono bg-black/5 dark:bg-white/10 px-1 rounded">{panelInfo.provider}</span>
+                  </p>
+                  <p>
+                    {t('面板标识')}: <span className="font-mono bg-black/5 dark:bg-white/10 px-1 rounded">{panelInfo.pluginPanelName}</span>
+                  </p>
+                </div>
+                <p className="mt-4 font-medium">{t('请联系管理员或前往「我-插件中心」安装该插件，安装后刷新页面生效。')}</p>
+              </div>
+            }
+          />
+        </div>
       );
     }
 
     const Component = pluginPanelInfo.render;
 
     if (!Component) {
-      // 没有找到插件组件
-      // TODO: Fallback
-      return <Problem text={t('插件渲染函数不存在')} />;
+      return <Problem text={t('插件组件加载失败，请尝试重新安装该插件或联系开发者。')} />;
     }
 
     return <Component panelInfo={panelInfo} />;

@@ -112,7 +112,7 @@ services:
     image: traefik:v2.11
     restart: unless-stopped
     command:
-      - "--api.insecure=true" # Don't do that in production!
+      # - "--api.insecure=true" # Don't do that in production! Disabled for security.
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.web.address=:80"

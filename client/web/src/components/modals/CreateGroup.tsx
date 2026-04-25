@@ -3,6 +3,8 @@ import React, { Fragment, useCallback, useRef, useState } from 'react';
 import {
   createGroup,
   GroupPanelType,
+  isValidStr,
+  showToasts,
   t,
   useAppDispatch,
   useAsyncRequest,
@@ -14,6 +16,7 @@ import { Slides, SlidesRef } from '../Slides';
 import { useNavigate } from 'react-router';
 import { applyDefaultFallbackGroupPermission } from 'tailchat-shared';
 import { Avatar } from 'tailchat-design';
+import { AvatarUploader } from '../ImageUploader';
 
 const panelTemplate: {
   key: string;
@@ -77,6 +80,7 @@ export const ModalCreateGroup: React.FC = React.memo(() => {
   const slidesRef = useRef<SlidesRef>(null);
   const [panels, setPanels] = useState<GroupPanel[]>([]);
   const [name, setName] = useState('');
+  const [avatar, setAvatar] = useState('');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -91,6 +95,12 @@ export const ModalCreateGroup: React.FC = React.memo(() => {
 
   const [{ loading }, handleCreate] = useAsyncRequest(async () => {
     const data = await createGroup(name, panels);
+
+    if (avatar) {
+      const { modifyGroupField } = await import('tailchat-shared');
+      await modifyGroupField(data._id, 'avatar', avatar);
+      data.avatar = avatar;
+    }
 
     dispatch(groupActions.appendGroups([data]));
 
@@ -141,8 +151,17 @@ export const ModalCreateGroup: React.FC = React.memo(() => {
           </Typography.Paragraph>
 
           <div className="text-center mb-2">
-            {/* TODO: upload avatar */}
-            <Avatar className="mx-auto" size={80} name={name} />
+            <AvatarUploader
+              usage="group"
+              onUploadSuccess={(fileInfo) => setAvatar(fileInfo.url)}
+            >
+              <Avatar
+                className="mx-auto cursor-pointer"
+                size={80}
+                src={avatar}
+                name={name}
+              />
+            </AvatarUploader>
           </div>
 
           <div>
