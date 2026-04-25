@@ -15,12 +15,14 @@ interface ProblemProps {
 export const Problem: React.FC<ProblemProps> = React.memo((props) => {
   return (
     <div
-      className={clsx('text-center w-full', props.className)}
+      className={clsx('text-center w-full flex flex-col items-center justify-center pt-20', props.className)}
       style={props.style}
     >
-      <img className="w-32 h-32 m-auto mb-2" src={problemSvg} />
+      <img className="w-48 h-48 m-auto mb-6 opacity-80" src={problemSvg} />
 
-      <div>{props.text ?? t('出现了一些问题')}</div>
+      <div className="text-lg font-medium text-gray-700 dark:text-gray-300 px-6 max-w-md">
+        {props.text ?? t('出现了一些问题')}
+      </div>
     </div>
   );
 });

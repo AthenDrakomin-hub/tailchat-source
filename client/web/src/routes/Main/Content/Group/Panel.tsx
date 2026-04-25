@@ -3,7 +3,7 @@ import { TextPanel } from '@/components/Panel/group/TextPanel';
 import { Problem } from '@/components/Problem';
 import { GroupPanelContext } from '@/context/GroupPanelContext';
 import { useUserSessionPreference } from '@/hooks/useUserPreference';
-import { Alert } from 'antd';
+import { Alert, Button } from 'antd';
 import React, { useEffect, useMemo } from 'react';
 import {
   GroupInfoContextProvider,
@@ -15,6 +15,7 @@ import {
   useHasGroupPanelPermission,
 } from 'tailchat-shared';
 import { useGroupPanelParams } from './utils';
+import { Icon } from 'tailchat-design';
 
 /**
  * 记录下最后访问的面板id
@@ -68,7 +69,22 @@ export const GroupPanelRender: React.FC<GroupPanelRenderProps> = React.memo(
     }
 
     if (!viewPanelPermission) {
-      return <Problem text={t('没有面板访问权限')} />;
+      return (
+        <Problem
+          text={
+            <div className="flex flex-col items-center">
+              <Icon icon="mdi:shield-lock-outline" className="text-6xl text-gray-400 mb-4" />
+              <div className="text-xl font-semibold mb-2">{t('无权访问该面板')}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                {t('此面板已被设置为私密，或者您当前的身份组不满足访问条件。')}
+              </div>
+              <Button type="primary" onClick={() => window.history.back()}>
+                {t('返回上一页')}
+              </Button>
+            </div>
+          }
+        />
+      );
     }
 
     if (panelInfo.type === GroupPanelType.TEXT) {
