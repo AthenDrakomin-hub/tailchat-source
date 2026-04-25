@@ -6,6 +6,10 @@ const isOffical = [
   //'localhost:11011'
 ].includes(location.host);
 
+// 生产环境允许通过构建期开关启用统计/错误上报（不再仅限官方域名）
+const enablePosthog = process.env.ENABLE_POSTHOG_PLUGIN === 'true';
+const enableSentry = process.env.ENABLE_SENTRY_PLUGIN === 'true';
+
 /**
  * 内置插件列表
  *
@@ -122,8 +126,8 @@ export const builtinPlugins: PluginManifest[] = _compact([
     'description.zh-CN': '为Tailchat提供音视频通讯的服务',
     requireRestart: true,
   },
-  // isOffical
-  isOffical && {
+  // analytics & error reporting (build-time controlled)
+  (isOffical || enablePosthog) && {
     label: 'Posthog',
     name: 'com.msgbyte.posthog',
     url: '/plugins/com.msgbyte.posthog/index.js',
@@ -134,7 +138,7 @@ export const builtinPlugins: PluginManifest[] = _compact([
     'description.zh-CN': 'Posthog 数据统计',
     requireRestart: true,
   },
-  isOffical && {
+  (isOffical || enableSentry) && {
     label: 'Sentry',
     name: 'com.msgbyte.sentry',
     url: '/plugins/com.msgbyte.sentry/index.js',

@@ -54,6 +54,16 @@ const plugins: Configuration['plugins'] = [
     'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
     'process.env.SERVICE_URL': JSON.stringify(SERVICE_URL),
     'process.env.VERSION': JSON.stringify(VERSION),
+    // Build-time feature switches (string values)
+    'process.env.ENABLE_SENTRY_PLUGIN': JSON.stringify(
+      process.env.ENABLE_SENTRY_PLUGIN ?? ''
+    ),
+    'process.env.ENABLE_POSTHOG_PLUGIN': JSON.stringify(
+      process.env.ENABLE_POSTHOG_PLUGIN ?? ''
+    ),
+    'process.env.DISABLE_SERVICE_WORKER': JSON.stringify(
+      process.env.DISABLE_SERVICE_WORKER ?? ''
+    ),
   }),
   new HtmlWebpackPlugin({
     inject: 'body',
