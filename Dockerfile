@@ -2,6 +2,9 @@ FROM node:18.18.0-alpine
 
 # use with --build-arg VERSION=xxxx
 ARG VERSION
+ARG ENABLE_SENTRY_PLUGIN
+ARG ENABLE_POSTHOG_PLUGIN
+ARG DISABLE_SERVICE_WORKER
 
 # Working directory
 WORKDIR /app/tailchat
@@ -38,6 +41,9 @@ RUN pnpm install --no-frozen-lockfile
 ENV NODE_ENV=production
 ENV VERSION=$VERSION
 ENV NODE_OPTIONS="--max-old-space-size=3072"
+ENV ENABLE_SENTRY_PLUGIN=$ENABLE_SENTRY_PLUGIN
+ENV ENABLE_POSTHOG_PLUGIN=$ENABLE_POSTHOG_PLUGIN
+ENV DISABLE_SERVICE_WORKER=$DISABLE_SERVICE_WORKER
 
 RUN find . -name "*.tsbuildinfo" -type f -delete
 RUN pnpm build

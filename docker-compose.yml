@@ -20,6 +20,9 @@ services:
     environment:
       SERVICES: core/gateway,core/user/*.service.js,core/group/*.service.js,core/chat/*.service.js,core/file,core/plugin/registry,core/config
       PORT: 3000
+    # 可观测性：Prometheus metrics（仅本机暴露，需配合 docker-compose.env: PROMETHEUS=true）
+    ports:
+      - "127.0.0.1:13030:13030"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-gw.rule=PathPrefix(`/`)"
@@ -113,7 +116,10 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.web.address=:80"
-      - "--entryPoints.web.forwardedHeaders.insecure" # Not good
+      # 生产建议：只信任你自己的反代（默认仅 localhost）
+      # 如使用 Cloudflare/Nginx 等，可在 docker-compose.env 中设置：
+      #   TRAEFIK_TRUSTED_PROXIES=127.0.0.1/32,10.0.0.0/8
+      - "--entryPoints.web.forwardedHeaders.trustedIPs=${TRAEFIK_TRUSTED_PROXIES:-127.0.0.1/32}"
     ports:
       - 11000:80
       - 127.0.0.1:11001:8080

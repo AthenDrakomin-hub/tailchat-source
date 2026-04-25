@@ -14,6 +14,10 @@ import type { UserLoginRes } from '../../../models/user/user';
 const PORT = process.env.OPENAPI_PORT || config.port + 1;
 const ISSUER = config.apiUrl;
 const IS_PROXY = process.env.OPENAPI_UNDER_PROXY === 'true';
+const REQUIRE_PKCE =
+  process.env.OIDC_REQUIRE_PKCE !== undefined
+    ? process.env.OIDC_REQUIRE_PKCE === '1' || process.env.OIDC_REQUIRE_PKCE === 'true'
+    : process.env.NODE_ENV === 'production';
 
 const configuration: Configuration = {
   adapter: TcOIDCAdapter,
@@ -21,7 +25,7 @@ const configuration: Configuration = {
   clients: [],
   pkce: {
     methods: ['S256'],
-    required: () => false, // TODO: false in test
+    required: () => REQUIRE_PKCE,
   },
   claims: {
     profile: ['nickname', 'discriminator', 'avatar'],

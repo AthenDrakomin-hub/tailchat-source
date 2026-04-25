@@ -5,9 +5,15 @@ import crypto from 'crypto';
 import http from 'http';
 
 const EXECUTOR_PORT = process.env.EXECUTOR_PORT || 9099;
-const SHARED_SECRET = process.env.DEFENSE_SHARED_SECRET || 'defense-secret-key';
+// 生产环境必须显式配置，否则 HMAC 校验形同虚设
+const SHARED_SECRET = process.env.DEFENSE_SHARED_SECRET;
 
 async function callExecutor(toState: string, config: any): Promise<any> {
+  if (!SHARED_SECRET) {
+    throw new Error(
+      'DEFENSE_SHARED_SECRET is not set. Refuse to call executor in production mode.'
+    );
+  }
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({ toState, config });
     const hmac = crypto.createHmac('sha256', SHARED_SECRET);
@@ -57,6 +63,13 @@ class DefenseControlService extends TcService {
   }
 
   onInit() {
+    if (!process.env.DEFENSE_SHARED_SECRET) {
+      this.logger.warn(
+        '[defense-control] DEFENSE_SHARED_SECRET is not configured. ' +
+          'Defense executor integration will be disabled until you set it.'
+      );
+    }
+
     this.registerLocalDb(require('../models/defense').default);
     this.registerLocalDb(require('../models/defense').DefenseAuditLogModel);
 

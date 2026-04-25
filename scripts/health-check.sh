@@ -22,6 +22,13 @@ if [ -d "$PROJECT_DIR" ]; then
 fi
 echo
 
+#
+# NOTE:
+# - 强制重建容器后，Traefik/后端服务会有一个短暂启动期；
+# - 探活太早可能出现 404/502（通常等待几十秒后会恢复）。
+#
+sleep "${SLEEP_BEFORE_CHECK:-6}"
+
 echo "=== ENV LINT ==="
 if [ -d "$PROJECT_DIR" ] && [ -f "$PROJECT_DIR/scripts/env-lint.sh" ]; then
   (cd "$PROJECT_DIR" && bash scripts/env-lint.sh "$ENV_FILE") || true
@@ -78,7 +85,6 @@ sleep "${SLEEP_BEFORE_CHECK:-6}"
 
 wait_traefik_router "api-gw@docker" 30 1 || true
 wait_traefik_router "admin@docker" 30 1 || true
-
 wait_http "http://127.0.0.1:11000/health" "^(200|204)$" 60 2 || true
 wait_http "http://127.0.0.1:11000/" "^(200|301|302|401|403)$" 60 2 || true
 wait_http "http://127.0.0.1:11000/admin/" "^(200|301|302|401|403)$" 60 2 || true

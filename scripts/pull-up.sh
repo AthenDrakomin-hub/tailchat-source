@@ -25,6 +25,17 @@ echo "========================================="
 echo "✅ Update Successful!"
 echo "Waiting services to be ready..."
 
+#
+# NOTE:
+# - 首次拉起/强制重建后，Traefik 需要一点时间从 Docker 读取 labels 并生成路由；
+# - service-core 也需要时间完成启动并开始监听 3000 端口；
+# - 若探活太早，可能出现短暂的 404/502（并不代表最终启动失败）。
+#
+# 可通过环境变量调整等待时间：
+#   SLEEP_BEFORE_CHECK=10 IMAGE_TAG=xxxx bash scripts/pull-up.sh
+#
+sleep "${SLEEP_BEFORE_CHECK:-8}"
+
 wait_http() {
   local url="$1"
   local ok_re="$2"
@@ -44,6 +55,7 @@ wait_http() {
   return 1
 }
 
+# 等待 Traefik 加载到关键路由（避免“路由尚未加载完成”导致的误判）
 wait_traefik_router() {
   local router_name="$1"     # e.g. api-gw@docker
   local tries="${2:-30}"     # 30 * 1s = 30s
@@ -62,12 +74,13 @@ wait_traefik_router() {
   done
 
   echo "❌ traefik router not found: $router_name" >&2
+  echo "   Hint: check traefik routers and logs:" >&2
+  echo "     curl -s http://127.0.0.1:11001/api/http/routers | head -n 200" >&2
+  echo "     docker logs --tail=200 tailchat-source-traefik-1" >&2
   return 1
 }
 
-sleep "${SLEEP_BEFORE_CHECK:-8}"
-
-# 内部探活（绕过 nginx，避免外网 502 误判）
+# 先等路由加载完成（即使失败也不阻断后续探活输出，便于定位）
 wait_traefik_router "api-gw@docker" 30 1 || true
 wait_traefik_router "admin@docker" 30 1 || true
 

@@ -4,7 +4,8 @@ const https = require('https');
 const { execSync } = require('child_process');
 
 const PORT = process.env.EXECUTOR_PORT || 9099;
-const SHARED_SECRET = process.env.DEFENSE_SHARED_SECRET || 'defense-secret-key';
+// 生产环境必须显式配置，否则签名校验形同虚设
+const SHARED_SECRET = process.env.DEFENSE_SHARED_SECRET;
 
 const STATES = {
   IDLE: 'IDLE',
@@ -19,6 +20,9 @@ let currentState = STATES.IDLE;
 let currentConfig = {};
 
 function verifySignature(rawBody, signature) {
+  if (!SHARED_SECRET) {
+    return false;
+  }
   const hmac = crypto.createHmac('sha256', SHARED_SECRET);
   hmac.update(rawBody);
   const expected = hmac.digest('hex');

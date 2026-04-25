@@ -15,7 +15,12 @@ TAG="$(date +%Y%m%d-%H%M)"
 FULL_IMAGE_NAME="$DOCKERHUB_USER/$IMAGE:$TAG"
 
 echo "=== [2/3] Building new image ==="
-docker build -t athendrakomin/caifu-chat:latest --no-cache .
+docker build -t athendrakomin/caifu-chat:latest --no-cache \
+  --build-arg VERSION="$TAG" \
+  --build-arg ENABLE_SENTRY_PLUGIN="${ENABLE_SENTRY_PLUGIN:-}" \
+  --build-arg ENABLE_POSTHOG_PLUGIN="${ENABLE_POSTHOG_PLUGIN:-}" \
+  --build-arg DISABLE_SERVICE_WORKER="${DISABLE_SERVICE_WORKER:-}" \
+  .
 
 echo "=== [3/3] Tagging and pushing to Docker Hub ==="
 docker tag athendrakomin/caifu-chat:latest "$FULL_IMAGE_NAME"

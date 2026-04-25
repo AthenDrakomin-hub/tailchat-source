@@ -571,11 +571,33 @@ export const TcSocketIOService = (
             'Need to use with [ApiGatewayMixin]'
           );
         }
+
+        /**
+         * 生产环境收敛 Socket.IO CORS：
+         * - 默认仅允许主站域名（避免被第三方站点滥用发起连接）
+         * - 可通过 SOCKETIO_CORS_ORIGINS 逗号分隔扩展
+         * - 开发环境默认允许 '*'
+         */
+        const originsEnv = process.env.SOCKETIO_CORS_ORIGINS;
+        const defaultOrigins =
+          process.env.NODE_ENV === 'production' ? ['https://goodspage.cn'] : ['*'];
+        const allowedOrigins = originsEnv
+          ? originsEnv
+              .split(',')
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : defaultOrigins;
+
+        const origin =
+          allowedOrigins.includes('*')
+            ? '*'
+            : (allowedOrigins as unknown as string[]);
+
         this.io = new SocketServer(this.server, {
           serveClient: false,
           transports: ['websocket'],
           cors: {
-            origin: '*',
+            origin,
             methods: ['GET', 'POST'],
           },
           parser: options.disableMsgpack ? undefined : msgpackParser,

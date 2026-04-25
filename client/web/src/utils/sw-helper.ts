@@ -73,13 +73,21 @@ function handleRegistration(registration: ServiceWorkerRegistration) {
  */
 export function installServiceWorker() {
   if ('serviceWorker' in navigator) {
-    // TEMPORARILY DISABLED: aggressively unregistering to prevent old cached UI issues for users.
-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-      for(let registration of registrations) {
-        registration.unregister();
-      }
-    });
-    
+    // 可通过构建期开关紧急禁用（例如遇到缓存相关线上事故）
+    if (process.env.DISABLE_SERVICE_WORKER === 'true') {
+      console.warn('[sw] service worker disabled by DISABLE_SERVICE_WORKER');
+    } else {
+      navigator.serviceWorker
+        .register('/service-worker.js')
+        .then((registration) => {
+          _serviceWorkerRegistration = registration;
+          handleRegistration(registration);
+        })
+        .catch((err) => {
+          console.error('[sw] register failed', err);
+        });
+    }
+
     window.addEventListener('beforeinstallprompt', (e) => {
       beforeinstallprompt = e as any;
     });
