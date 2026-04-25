@@ -104,7 +104,7 @@ const AppContainer: React.FC<PropsWithChildren> = React.memo((props) => {
       id="tailchat-app"
       className={clsx(
         'tailchat-app',
-        'absolute inset-0 select-none overflow-hidden',
+        'absolute inset-0 overflow-hidden',
         {
           dark: isDarkMode,
         },
