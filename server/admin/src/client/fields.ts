@@ -23,20 +23,29 @@ export const userFields = [
       sort: true,
     },
   }),
-  createEmailField('email', {
+  createTextField('username', {
     edit: {
       rules: [
         {
           required: true,
         },
+      ],
+    },
+  }),
+  createTextField('email', {
+    edit: {
+      rules: [
         {
-          validator: emailValidator,
+          required: false,
         },
       ],
     },
   }),
   createTextField('nickname'),
   createTextField('discriminator', {
+    list: {
+      hidden: true,
+    },
     edit: {
       rules: [
         {
@@ -48,7 +57,14 @@ export const userFields = [
       ],
     },
   }),
-  createBooleanField('temporary'),
+  createBooleanField('temporary', {
+    list: {
+      hidden: true,
+    },
+    edit: {
+      hidden: true,
+    },
+  }),
   createAvatarField('avatar', {
     preRenderTransform: (val) =>
       typeof val === 'string' ? parseUrlStr(val) : val,
@@ -68,7 +84,14 @@ export const userFields = [
       { label: '导师', value: 'teacher' },
     ],
   }),
-  createBooleanField('emailVerified'),
+  createBooleanField('emailVerified', {
+    edit: {
+      hidden: true,
+    },
+    list: {
+      hidden: true,
+    },
+  }),
   createBooleanField('banned', {
     edit: {
       hidden: true,
@@ -76,7 +99,10 @@ export const userFields = [
   }),
   createJSONField('settings', {
     list: {
-      width: 200,
+      hidden: true,
+    },
+    edit: {
+      hidden: true,
     },
   }),
   createDateTimeField('createdAt', {

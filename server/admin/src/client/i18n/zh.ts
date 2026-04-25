@@ -10,9 +10,9 @@ export const zhTranslation = {
       name: '用户管理',
       fields: {
         id: '用户ID',
-        email: '邮箱',
+        email: '绑定邮箱/手机',
         avatar: '头像',
-        username: '用户名',
+        username: '登录账号',
         password: '密码',
         nickname: '昵称',
         discriminator: '标识符',
@@ -22,6 +22,7 @@ export const zhTranslation = {
         settings: '用户设置',
         banned: '是否被封禁',
         createdAt: '创建时间',
+        systemRole: '系统角色',
       },
     },
     messages: {
