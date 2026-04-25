@@ -1,0 +1,43 @@
+diff --git a/Dockerfile b/Dockerfile
+index 39f8811..346349d 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -2,6 +2,9 @@ FROM node:18.18.0-alpine
+
+ # use with --build-arg VERSION=xxxx
+ ARG VERSION
++ARG ENABLE_SENTRY_PLUGIN
++ARG ENABLE_POSTHOG_PLUGIN
++ARG DISABLE_SERVICE_WORKER
+
+ # Working directory
+ WORKDIR /app/tailchat
+@@ -38,6 +41,9 @@ RUN pnpm install --no-frozen-lockfile
+ ENV NODE_ENV=production
+ ENV VERSION=$VERSION
+ ENV NODE_OPTIONS="--max-old-space-size=3072"
++ENV ENABLE_SENTRY_PLUGIN=$ENABLE_SENTRY_PLUGIN
++ENV ENABLE_POSTHOG_PLUGIN=$ENABLE_POSTHOG_PLUGIN
++ENV DISABLE_SERVICE_WORKER=$DISABLE_SERVICE_WORKER
+
+ RUN find . -name "*.tsbuildinfo" -type f -delete
+ RUN pnpm build
+diff --git a/scripts/build-push.sh b/scripts/build-push.sh
+index abb40e5..a3c53f5 100755
+--- a/scripts/build-push.sh
++++ b/scripts/build-push.sh
+@@ -15,7 +15,12 @@ TAG="$(date +%Y%m%d-%H%M)"
+ FULL_IMAGE_NAME="$DOCKERHUB_USER/$IMAGE:$TAG"
+
+ echo "=== [2/3] Building new image ==="
+-docker build -t athendrakomin/caifu-chat:latest --no-cache .
++docker build -t athendrakomin/caifu-chat:latest --no-cache \
++  --build-arg VERSION="$TAG" \
++  --build-arg ENABLE_SENTRY_PLUGIN="${ENABLE_SENTRY_PLUGIN:-}" \
++  --build-arg ENABLE_POSTHOG_PLUGIN="${ENABLE_POSTHOG_PLUGIN:-}" \
++  --build-arg DISABLE_SERVICE_WORKER="${DISABLE_SERVICE_WORKER:-}" \
++  .
+
+ echo "=== [3/3] Tagging and pushing to Docker Hub ==="
+ docker tag athendrakomin/caifu-chat:latest "$FULL_IMAGE_NAME"
+

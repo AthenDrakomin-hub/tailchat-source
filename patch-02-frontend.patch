@@ -1,0 +1,87 @@
+diff --git a/client/web/build/webpack.config.ts b/client/web/build/webpack.config.ts
+index 5901289..d5b903b 100644
+--- a/client/web/build/webpack.config.ts
++++ b/client/web/build/webpack.config.ts
+@@ -54,6 +54,16 @@ const plugins: Configuration['plugins'] = [
+     'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
+     'process.env.SERVICE_URL': JSON.stringify(SERVICE_URL),
+     'process.env.VERSION': JSON.stringify(VERSION),
++    // Build-time feature switches (string values)
++    'process.env.ENABLE_SENTRY_PLUGIN': JSON.stringify(
++      process.env.ENABLE_SENTRY_PLUGIN ?? ''
++    ),
++    'process.env.ENABLE_POSTHOG_PLUGIN': JSON.stringify(
++      process.env.ENABLE_POSTHOG_PLUGIN ?? ''
++    ),
++    'process.env.DISABLE_SERVICE_WORKER': JSON.stringify(
++      process.env.DISABLE_SERVICE_WORKER ?? ''
++    ),
+   }),
+   new HtmlWebpackPlugin({
+     inject: 'body',
+diff --git a/client/web/src/plugin/builtin.ts b/client/web/src/plugin/builtin.ts
+index e147b92..1b6c4c8 100644
+--- a/client/web/src/plugin/builtin.ts
++++ b/client/web/src/plugin/builtin.ts
+@@ -6,6 +6,10 @@ const isOffical = [
+   //'localhost:11011'
+ ].includes(location.host);
+
++// 生产环境允许通过构建期开关启用统计/错误上报（不再仅限官方域名）
++const enablePosthog = process.env.ENABLE_POSTHOG_PLUGIN === 'true';
++const enableSentry = process.env.ENABLE_SENTRY_PLUGIN === 'true';
++
+ /**
+  * 内置插件列表
+  *
+@@ -122,8 +126,8 @@ export const builtinPlugins: PluginManifest[] = _compact([
+     'description.zh-CN': '为Tailchat提供音视频通讯的服务',
+     requireRestart: true,
+   },
+-  // isOffical
+-  isOffical && {
++  // analytics & error reporting (build-time controlled)
++  (isOffical || enablePosthog) && {
+     label: 'Posthog',
+     name: 'com.msgbyte.posthog',
+     url: '/plugins/com.msgbyte.posthog/index.js',
+@@ -134,7 +138,7 @@ export const builtinPlugins: PluginManifest[] = _compact([
+     'description.zh-CN': 'Posthog 数据统计',
+     requireRestart: true,
+   },
+-  isOffical && {
++  (isOffical || enableSentry) && {
+     label: 'Sentry',
+     name: 'com.msgbyte.sentry',
+     url: '/plugins/com.msgbyte.sentry/index.js',
+diff --git a/client/web/src/utils/sw-helper.ts b/client/web/src/utils/sw-helper.ts
+index 92b976d..b102aa6 100644
+--- a/client/web/src/utils/sw-helper.ts
++++ b/client/web/src/utils/sw-helper.ts
+@@ -73,12 +73,20 @@ function handleRegistration(registration: ServiceWorkerRegistration) {
+  */
+ export function installServiceWorker() {
+   if ('serviceWorker' in navigator) {
+-    // TEMPORARILY DISABLED: aggressively unregistering to prevent old cached UI issues for users.
+-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+-      for(let registration of registrations) {
+-        registration.unregister();
+-      }
+-    });
++    // 可通过构建期开关紧急禁用（例如遇到缓存相关线上事故）
++    if (process.env.DISABLE_SERVICE_WORKER === 'true') {
++      console.warn('[sw] service worker disabled by DISABLE_SERVICE_WORKER');
++    } else {
++      navigator.serviceWorker
++        .register('/service-worker.js')
++        .then((registration) => {
++          _serviceWorkerRegistration = registration;
++          handleRegistration(registration);
++        })
++        .catch((err) => {
++          console.error('[sw] register failed', err);
++        });
++    }
+
+     window.addEventListener('beforeinstallprompt', (e) => {
+       beforeinstallprompt = e as any;
