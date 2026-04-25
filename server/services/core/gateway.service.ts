@@ -321,11 +321,11 @@ export default class ApiService extends TcService {
       },
       // 专属语音通话短链防封拦截
       {
-        path: '/t/:code',
+        path: '/t',
         authentication: false,
         authorization: false,
         aliases: {
-          async 'GET /'(
+          async 'GET /:code'(
             this: TcService,
             req: IncomingMessage,
             res: ServerResponse
