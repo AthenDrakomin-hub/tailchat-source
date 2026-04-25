@@ -28,9 +28,9 @@ import { i18n } from './i18n';
 import { GroupList } from './resources/group';
 import { UserList } from './resources/user';
 import { FileList } from './resources/file';
-import { TailchatAnalytics } from './routes/analytics';
+import { Analytics } from './routes/analytics';
 import { CacheManager } from './routes/cache';
-import { TailchatNetwork } from './routes/network';
+import { Network } from './routes/network';
 import { SocketIOAdmin } from './routes/socketio';
 import { SystemConfig } from './routes/system';
 import { SystemNotify } from './routes/system/notify';
@@ -44,16 +44,15 @@ function App() {
     <Tushan
       basename="/admin"
       header={'日斗投资财富交流会 Admin'}
-      footer={'Build with MsgByte'}
+      footer={'Build with Ridou'}
       dashboard={<Dashboard />}
       dataProvider={dataProvider}
       authProvider={authProvider}
       i18n={i18n}
     >
       <CustomRoute name="analytics" icon={<IconExperiment />}>
-        <TailchatAnalytics />
+        <Analytics />
       </CustomRoute>
-
       <Resource name="users" icon={<IconUser />} list={<UserList />} />
 
       <Resource
@@ -97,7 +96,7 @@ function App() {
       </Category>
 
       <CustomRoute name="network" icon={<IconWifi />}>
-        <TailchatNetwork />
+        <Network />
       </CustomRoute>
 
       <CustomRoute name="socketio" icon={<IconDashboard />}>

@@ -18,7 +18,7 @@ import {
 } from 'tushan/chart';
 import { request } from '../../request';
 
-export const TailchatAnalytics: React.FC = React.memo(() => {
+export const Analytics: React.FC = React.memo(() => {
   const { t } = useTranslation();
 
   return (
@@ -69,7 +69,7 @@ export const TailchatAnalytics: React.FC = React.memo(() => {
     </div>
   );
 });
-TailchatAnalytics.displayName = 'TailchatAnalytics';
+Analytics.displayName = 'Analytics';
 
 const ActiveGroupChart: React.FC = React.memo(() => {
   const { value } = useAsync(async () => {

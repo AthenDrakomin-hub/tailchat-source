@@ -14,7 +14,7 @@ import {
 /**
  * Tailchat 网络状态
  */
-export const TailchatNetwork: React.FC = React.memo(() => {
+export const Network: React.FC = React.memo(() => {
   const { value: data, loading } = useAsync(async () => {
     const { data } = await request('/network/all');
 
@@ -91,4 +91,4 @@ export const TailchatNetwork: React.FC = React.memo(() => {
     </Card>
   );
 });
-TailchatNetwork.displayName = 'TailchatNetwork';
+Network.displayName = 'Network';

@@ -34,17 +34,18 @@ export const enTranslation = {
       messageCount: 'Message Count',
       tip: {
         github:
-          'Tailchat: The next-generation noIM Application in your own workspace',
+          'Ridou Investment Wealth Exchange is your exclusive internal communication platform',
+        tushan: 'Wealth Center Backend',
       },
     },
     file: {
-      fileTotalSize: 'File Total Size',
+      fileTotalSize: 'Total Size',
     },
     analytics: {
-      activeGroupTop5: 'Active Group Top 5',
-      activeUserTop5: 'Active User Top 5',
-      largeGroupTop5: 'Large Group Top 5',
-      fileStorageUserTop5: 'File Storage User Top 5',
+      activeGroupTop5: 'Top 5 Active Groups',
+      activeUserTop5: 'Top 5 Active Users',
+      largeGroupTop5: 'Top 5 Large Groups',
+      fileStorageUserTop5: 'Top 5 File Storage Usage Users',
     },
     network: {
       nodeList: 'Node List',
@@ -57,9 +58,13 @@ export const enTranslation = {
       actionList: 'Action List',
       eventList: 'Event List',
     },
+    login: {
+      tip1: 'For invited internal members only',
+      tip2: 'The account password is the account password of Wealth Center Admin',
+    },
     socketio: {
-      tip1: 'The server URL is:',
-      tip2: 'The account password is the account password of Tailchat Admin',
+      tip1: 'Server URL is:',
+      tip2: 'The account password is the account password of Wealth Center Admin',
       tip3: 'NOTICE: please check "Advanced options" then select "websocket only" and "MessagePack parser"',
       btn: 'Open the Admin platform',
     },
