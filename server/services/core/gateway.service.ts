@@ -363,7 +363,7 @@ export default class ApiService extends TcService {
               return;
             }
 
-            res.writeHead(302, { Location: `/#/plugin/com.msgbyte.livekit/guest/${code}` });
+            res.writeHead(302, { Location: `/plugin/com.msgbyte.livekit/guest/${code}` });
             res.end();
           },
         },
