@@ -22,8 +22,8 @@ const ProfileCard: React.FC<{ profile: StarProfile; modalKey: number }> =
       .join('');
 
     return (
-      <ModalWrapper
-        className="p-0 overflow-hidden"
+      <div
+        className="p-0 overflow-hidden rounded-xl"
         style={{ minWidth: 360, maxWidth: 460 }}
       >
         <div className="relative">
@@ -82,7 +82,7 @@ const ProfileCard: React.FC<{ profile: StarProfile; modalKey: number }> =
             </div>
           </div>
         </div>
-      </ModalWrapper>
+      </div>
     );
   });
 ProfileCard.displayName = 'ProfileCard';

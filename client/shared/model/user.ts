@@ -109,11 +109,12 @@ export interface UserDMList {
  * @param password 密码
  */
 export async function loginWithEmail(
-  email: string,
+  account: string,
   password: string
 ): Promise<UserLoginInfo> {
+  const isEmail = account.includes('@');
   const { data } = await request.post('/api/user/login', {
-    email,
+    ...(isEmail ? { email: account } : { username: account }),
     password,
   });
 

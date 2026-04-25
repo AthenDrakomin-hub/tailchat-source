@@ -1,10 +1,11 @@
 import { PageHeader, useAsync, Table } from 'tushan';
-import { request } from '../request';
+import axios from 'axios';
 
 export const PluginPermissions: React.FC = () => {
   const { value: registryData, loading } = useAsync(async () => {
     try {
-      const { data } = await request.get('/registry-be.json');
+      // 必须用绝对路径或原始 axios 绕过 /admin/api 的 baseUrl 限制
+      const { data } = await axios.get('/registry-be.json');
       return Array.isArray(data) ? data : [];
     } catch (err) {
       return [];
