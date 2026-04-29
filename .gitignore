@@ -120,6 +120,5 @@ dist
 .tern-port
 
 # local artifacts
-pnpm-lock.yaml
 tailchat-source-fixes.patch
 server/plugins/*.disabled/
