@@ -72,7 +72,7 @@ export default class ApiService extends TcService {
       // Configures the Access-Control-Allow-Origin CORS header.
       origin: process.env.CORS_ORIGIN
         ? process.env.CORS_ORIGIN.split(',')
-        : ['https://goodpage.cn', 'http://localhost:11000', 'http://127.0.0.1:11000'],
+        : ['https://goodspage.cn', 'http://localhost:11000', 'http://127.0.0.1:11000'],
       // Configures the Access-Control-Allow-Methods CORS header.
       methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'DELETE'],
       // Configures the Access-Control-Allow-Headers CORS header.

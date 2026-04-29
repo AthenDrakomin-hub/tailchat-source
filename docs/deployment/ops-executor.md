@@ -18,7 +18,7 @@ nano /var/www/tailchat-source/docker-compose.env
 
 - `EXECUTOR_SHARED_SECRET=一段长随机字符串(>=32位)`
 - `DEFENSE_SHARED_SECRET=一段长随机字符串(>=32位)`
-- `API_URL=https://goodpage.cn`（不要反引号）
+- `API_URL=https://goodspage.cn`（不要反引号）
 
 然后跑校验：
 
@@ -95,7 +95,7 @@ docker compose ps
 
 访问：
 
-`https://goodpage.cn/admin/`
+`https://goodspage.cn/admin/`
 
 你会看到新增的「系统控制台」：
 

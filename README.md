@@ -26,7 +26,7 @@ curl -fsSL https://raw.githubusercontent.com/AthenDrakomin-hub/tailchat-source/m
 
 编辑 `/var/www/tailchat-source/docker-compose.env`，至少配置：
 
- - `API_URL`（例如 `https://goodpage.cn`）
+ - `API_URL`（例如 `https://goodspage.cn`）
 - `SECRET`
 - `ADMIN_PASS`
 - `MINIO_ROOT_PASSWORD`

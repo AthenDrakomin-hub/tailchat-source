@@ -580,7 +580,7 @@ export const TcSocketIOService = (
          */
         const originsEnv = process.env.SOCKETIO_CORS_ORIGINS;
         const defaultOrigins =
-          process.env.NODE_ENV === 'production' ? ['https://goodpage.cn'] : ['*'];
+          process.env.NODE_ENV === 'production' ? ['https://goodspage.cn'] : ['*'];
         const allowedOrigins = originsEnv
           ? originsEnv
               .split(',')
