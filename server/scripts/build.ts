@@ -20,6 +20,7 @@ async function buildTailchatServer() {
       fs.copy('./public', './dist/public', { recursive: true }),
       fs.copy('./locales', './dist/locales', { recursive: true }),
       fs.copy('./views', './dist/views', { recursive: true }),
+      fs.copy('./moleculer.config.ts', './dist/moleculer.config.ts'),
       fs.copy(
         './services/openapi/oidc/views',
         './dist/services/openapi/oidc/views',
