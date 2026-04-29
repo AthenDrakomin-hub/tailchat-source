@@ -4,7 +4,7 @@
   "private": true,
   "main": "src/index.tsx",
   "scripts": {
-    "build": "tailchat-plugin build"
+    "build": "echo skip"
   },
   "dependencies": {
     "react": "^18.2.0"

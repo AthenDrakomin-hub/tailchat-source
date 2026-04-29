@@ -9,6 +9,8 @@ class OpsBotService extends TcService {
     return 'plugin:com.ridou.ops-bot';
   }
 
+  onInit() {}
+
   async started(): Promise<void> {
     this.setupTimer();
   }
@@ -75,4 +77,3 @@ class OpsBotService extends TcService {
 }
 
 export default OpsBotService as unknown as ServiceSchema;
-
