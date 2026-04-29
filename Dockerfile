@@ -2,7 +2,7 @@ FROM node:18.18.0-alpine
 
 # use with --build-arg VERSION=xxxx
 ARG VERSION
-ARG NODE_MAX_OLD_SPACE=1536
+ARG NODE_OPTIONS="--max-old-space-size=1536"
 ARG TAILCHAT_CLI_VERSION=1.5.14
 ARG ENABLE_SENTRY_PLUGIN
 ARG ENABLE_POSTHOG_PLUGIN
@@ -16,7 +16,7 @@ RUN ulimit -n 10240
 RUN apk add --no-cache ffmpeg
 
 # Install dependencies
-RUN npm install -g pnpm@8.15.8
+RUN npm install -g pnpm@10.28.1
 RUN npm install -g tailchat-cli@${TAILCHAT_CLI_VERSION}
 
 # Add mc for minio
@@ -42,8 +42,7 @@ COPY . .
 # Build and cleanup (client and server)
 ENV NODE_ENV=production
 ENV VERSION=$VERSION
-ENV NODE_MAX_OLD_SPACE=$NODE_MAX_OLD_SPACE
-ENV NODE_OPTIONS="--max-old-space-size=${NODE_MAX_OLD_SPACE}"
+ENV NODE_OPTIONS=$NODE_OPTIONS
 ENV ENABLE_SENTRY_PLUGIN=$ENABLE_SENTRY_PLUGIN
 ENV ENABLE_POSTHOG_PLUGIN=$ENABLE_POSTHOG_PLUGIN
 ENV DISABLE_SERVICE_WORKER=$DISABLE_SERVICE_WORKER

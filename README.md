@@ -67,7 +67,7 @@ docker compose ps
 ### Docker 构建参数
 
 - `TAILCHAT_CLI_VERSION`：固定 `tailchat-cli` 版本（默认 `1.5.14`），如需升级请在构建时显式指定
-- `NODE_MAX_OLD_SPACE`：Node.js `--max-old-space-size`（默认 `1536`，4GB 机器建议 1536~2048）
+- `NODE_OPTIONS`：Node.js 启动参数（默认 `--max-old-space-size=1536`，4GB 机器建议 1536~2048）
 
 ## 开发（各端）
 
