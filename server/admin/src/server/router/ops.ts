@@ -8,17 +8,21 @@ const router = Router();
 const OPS_EXECUTOR_URL = process.env.OPS_EXECUTOR_URL || '';
 const EXECUTOR_SHARED_SECRET = process.env.EXECUTOR_SHARED_SECRET || '';
 
-function requireExecutorEnv() {
-  if (!OPS_EXECUTOR_URL) {
-    throw new Error('Missing OPS_EXECUTOR_URL');
-  }
-  if (!EXECUTOR_SHARED_SECRET) {
-    throw new Error('Missing EXECUTOR_SHARED_SECRET');
-  }
+function isExecutorConfigured() {
+  return Boolean(OPS_EXECUTOR_URL && EXECUTOR_SHARED_SECRET);
+}
+
+function respondExecutorUnavailable(res: any, err: any) {
+  res.status(503).json({
+    ok: false,
+    error: err?.message ? String(err.message) : 'executor unreachable',
+  });
 }
 
 async function callExecutor(path: string) {
-  requireExecutorEnv();
+  if (!isExecutorConfigured()) {
+    throw new Error('executor not configured');
+  }
   const url = `${OPS_EXECUTOR_URL.replace(/\/+$/, '')}${path}`;
   const { data } = await axios.request({
     method: 'POST',
@@ -32,7 +36,9 @@ async function callExecutor(path: string) {
 }
 
 async function getExecutor(path: string) {
-  requireExecutorEnv();
+  if (!isExecutorConfigured()) {
+    throw new Error('executor not configured');
+  }
   const url = `${OPS_EXECUTOR_URL.replace(/\/+$/, '')}${path}`;
   const { data } = await axios.request({
     method: 'GET',
@@ -202,7 +208,7 @@ router.get('/livekit/ps', auth(), async (req, res, next) => {
     const data = await getExecutor('/livekit/ps');
     res.json(data);
   } catch (err) {
-    next(err);
+    respondExecutorUnavailable(res, err);
   }
 });
 
@@ -211,7 +217,7 @@ router.get('/livekit/status', auth(), async (req, res, next) => {
     const data = await getExecutor('/livekit/status');
     res.json(data);
   } catch (err) {
-    next(err);
+    respondExecutorUnavailable(res, err);
   }
 });
 
@@ -220,7 +226,7 @@ router.post('/livekit/start', auth(), async (req, res, next) => {
     const data = await callExecutor('/livekit/start');
     res.json(data);
   } catch (err) {
-    next(err);
+    respondExecutorUnavailable(res, err);
   }
 });
 
@@ -229,7 +235,7 @@ router.post('/livekit/stop', auth(), async (req, res, next) => {
     const data = await callExecutor('/livekit/stop');
     res.json(data);
   } catch (err) {
-    next(err);
+    respondExecutorUnavailable(res, err);
   }
 });
 
@@ -238,7 +244,7 @@ router.post('/livekit/restart', auth(), async (req, res, next) => {
     const data = await callExecutor('/livekit/restart');
     res.json(data);
   } catch (err) {
-    next(err);
+    respondExecutorUnavailable(res, err);
   }
 });
 
@@ -247,7 +253,7 @@ router.get('/executor/health', auth(), async (req, res, next) => {
     const data = await getExecutor('/health');
     res.json(data);
   } catch (err) {
-    next(err);
+    respondExecutorUnavailable(res, err);
   }
 });
 
