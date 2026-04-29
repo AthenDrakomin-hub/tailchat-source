@@ -1,17 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import md5 from 'md5';
-
-declare module 'express-serve-static-core' {
-  interface Request {
-    adminAuthPayload?: {
-      username: string;
-      platform: string;
-      iat?: number;
-      exp?: number;
-    };
-  }
-}
+import type { AdminRequest } from '../types/express';
 
 export const adminAuth = {
   username: process.env.ADMIN_USER,
@@ -42,7 +32,7 @@ export function auth() {
         return;
       }
 
-      req.adminAuthPayload = payload as any;
+      (req as AdminRequest).adminAuthPayload = payload as any;
       next();
     } catch (err) {
       res.status(401).end(String(err));
