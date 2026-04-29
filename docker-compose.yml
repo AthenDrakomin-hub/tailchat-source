@@ -1,9 +1,14 @@
 # 提取出多个服务共用的基础镜像和构建配置
 x-tailchat-base: &tailchat-base
-  # 运行机只允许 pull 镜像，不允许 build（避免新服务器“又开始编译”）
-  # 可通过环境变量 IMAGE_TAG 指定版本，不指定则默认 latest：
-  #   IMAGE_TAG=20260423-1816 docker compose up -d
-  image: athendrakomin/caifu-chat:${IMAGE_TAG:-latest}
+  image: ${IMAGE_REPO:-tailchat-local/caifu-chat}:${IMAGE_TAG:-local}
+  build:
+    context: .
+    dockerfile: Dockerfile
+    args:
+      VERSION: ${IMAGE_TAG:-local}
+      ENABLE_SENTRY_PLUGIN: ${ENABLE_SENTRY_PLUGIN:-}
+      ENABLE_POSTHOG_PLUGIN: ${ENABLE_POSTHOG_PLUGIN:-}
+      DISABLE_SERVICE_WORKER: ${DISABLE_SERVICE_WORKER:-}
   restart: unless-stopped
   env_file: docker-compose.env
   depends_on:
