@@ -1,271 +1,85 @@
-# ⭐️⭐️ 日斗投资财富交流会（2.0.0 版本） ⭐️⭐️
+# Tailchat Source（二次开发版本）
 
-全新升级的面向价值投资交流的私密社区系统：移除了冗余插件，细节打磨，专注于核心插件【伪直播授课模式】【机器人小号活跃群】【语音视频选股诊股个性主体化】【web网页端/PWA多端】【插件扩展】集成构建。
+这是一个基于 Tailchat 的二次开发仓库，包含：
 
-本项目基于开源即时通讯底座 Tailchat 深度定制与精简，目标是“可长期维护、可从仓库一键复现部署、功能聚焦、合规表达清晰”。经过 2026.04 版本深度生产级加固，本项目现已具备极高的运维稳健性、自动化部署能力和优雅的用户端体验。
+- Web 客户端（含 PWA）：`client/web`
+- 桌面端（Electron）：`client/desktop`
+- 原生移动端（React Native）：`client/mobile`
+- 服务端（含 Admin）：`server`
 
-## 1. 项目定位（你能用它做什么）
+## 部署（生产推荐：单一路径）
 
-搭建一个「价值投资/宏观/风控」主题的交流社区：群组（Guild）+ 频道（Panel）+ 私信（DM）。
-*   **用“语录/金句”塑造氛围**：登录/注册、侧栏、聊天空态都会出现“今日一句/每日一句”。
-*   **把合规提醒放在正确位置**：应用内 **关于页** 提供《投资风险安全宣言》全文；注册时必须勾选确认（不勾选无法注册）。
-*   **免验证便捷注册与组织代码管理**：为降低门槛并兼顾社群运营私密性（通过组织代码拦截），本项目默认**不做邮箱强制验证，也不做手机号强制验证**，用户填入账号和密码即可快速加入。允许注册的“组织代码”可在管理后台可视化配置（默认：0501），无需修改代码即可灵活调整。
+本仓库只保留一种生产部署方式：
 
-## 2. 精简版保留的核心能力（免费方案优先）
+- 服务端通过 Docker Compose 在服务器本机构建镜像并启动
+- 对外 HTTPS/域名由宿主机 Nginx 负责反代到 `127.0.0.1:11000`（Traefik 的 HTTP 入口）
 
-### 2.1 语音通话与外链分享（LiveKit）
-使用开源免费方案 LiveKit 作为 RTC 能力基础，并且**已全局强制静默安装**给所有用户。
-*   **系统内通话**：偏“语音沟通”，避免变成视频会议（可配置强制语音/禁用摄像头入口）。
-*   **外部独立来电分享**：突破系统账号限制，支持为任意语音通话生成外部专属邀请链接。访客（如微信好友）点击链接后，无需下载 App、无需注册账号、无需输入昵称，直接在移动端浏览器内看到极简的“沉浸式来电呼叫”界面，点击“接听”即可建立一对一的高级加密语音通话（WebRTC），完美适应社交软件内直接沟通的场景。
+### 一键部署
 
-### 2.2 伪直播（MP4 → HLS）
-管理员/运营可发起“伪直播”：上传 MP4 后转为 HLS 分片流推送观看。
-*   **异步任务化改造**：通过全新的队列机制（`p_pseudolive_tasks`），将高耗时的 ffmpeg 转码逻辑置于后台异步执行，彻底告别阻塞界面，并且带“准备中”的交互提示。
-*   **适用场景**：复盘讲解、课程回放、固定时段直播间等场景。
+在新服务器执行：
 
-### 2.3 机器人小号（Bot）
-支持机器人接入与小号运营（强调：不强绑付费 AI，不走烧钱路线）。
-
-### 2.4 零成本高逼格“AI 财富助手”
-*   利用纯前端技术（跨域 JSONP 实时拉取腾讯/新浪行情接口）获取真实的股票秒级涨跌数据。
-*   配合本地内置的业务规则引擎，动态生成类似“大模型分析”的专业诊断术语，在**完全不耗费服务器资源、不消耗任何 API Token 成本**的情况下，为用户提供极高商业包装价值的“智能财富诊断”功能。
-*   该插件已**全局强制静默安装**。
-
-### 2.5 插件业务场景的权限隔离 (RBAC)
-项目内置了非常完善的**可见性控制**与**基于角色（RBAC）的权限隔离机制**，并非所有插件默认都对所有人可见或可用：
-*   **插件中心深度隔离**：学生/普通用户不可见“插件中心”入口，防止普通学员随意折腾插件；导师/管理员则保留对全局扩展和设置的掌控权。
-*   **群组创建隔离**：普通学员不具备新建群组权限，从而保障官方圈子的唯一性和管理秩序。
-
----
-
-## 3. 自动化部署与运维加固指南
-
-本项目配备了极度强壮的运维脚本，实现了一键安全发版、智能健康检查与容灾自愈。
-
-### 3.1 环境变量配置 (`docker-compose.env`)
-
-在生产机器的 `/var/www/tailchat-source/` 目录下，除了基础服务配置外，**必须配置或关注以下增强型安全变量**：
-
-```env
-# 核心安全与异常自愈配置
-SOCKETIO_CORS_ORIGINS=https://goodspage.cn
-OIDC_REQUIRE_PKCE=true
-EXIT_ON_UNCAUGHT=true
-DEFENSE_SHARED_SECRET=YOUR_SECURE_RANDOM_STRING # 必须设置，否则防御脚本无法认证
-
-# 可选：开启监控指标暴露
-PROMETHEUS=true
-```
-
-> **注意**：`.env` 文件中配置 URL（如 `API_URL`）时，**切勿**使用反引号（`\``）包裹，否则会导致后端解析出错引发致命崩溃。
-
-### 3.2 编译与镜像推送 (构建机)
-
-在开发或编译机（如 `root@test`）执行：
-
-```bash
-cd /var/www/tailchat-source
-bash scripts/build-push.sh
-```
-
-**支持的构建期（Build-Args）开关：**
-你可以在编译时动态注入以下环境变量来开启特定功能或紧急回滚 PWA：
-*   `ENABLE_SENTRY_PLUGIN=true` （开启前端 Sentry 错误追踪）
-*   `ENABLE_POSTHOG_PLUGIN=true` （开启前端 PostHog 统计）
-*   `DISABLE_SERVICE_WORKER=true` （**紧急救火**：若遇到 Service Worker 导致客户端死缓存等线上事故，打此包可强制卸载用户端的 SW）
-
-示例：
-```bash
-DISABLE_SERVICE_WORKER=true bash scripts/build-push.sh
-```
-
-### 3.3 生产环境拉取与启动 (生产机)
-
-在生产机器（如 `root@payforme`）执行：
-
-```bash
-cd /var/www/tailchat-source
-# 强制使用指定 TAG 绕过本地 docker cache
-IMAGE_TAG=20260425-0742 bash scripts/pull-up.sh
-```
-
-**关于健康检查：**
-我们的 `pull-up.sh` 和 `health-check.sh` 脚本内置了 **Traefik 动态路由就绪等待逻辑**。
-脚本会优雅地等待 `api-gw@docker` 等路由挂载成功后，再进行真实探活，有效避免了微服务启动延迟导致的 `404` 或 `502` 误判。
-如机器性能较弱，可通过环境变量延长探活前的缓冲时间：
-```bash
-SLEEP_BEFORE_CHECK=15 IMAGE_TAG=xxx bash scripts/pull-up.sh
-```
-
-## 4. 详细设计文档与变更追溯
-
-关于架构升级、加固逻辑与自动化实施计划的详细技术说明，请参阅：
-- `docs/superpowers/plans/2026-04-25-tailchat-prod-hardening-and-automation.md`
-- `docs/superpowers/specs/2026-04-25-tailchat-prod-hardening-and-automation-design.md`
-* **业务场景赋能**：例如，您可以让“普通成员”只能看到聊天与观看“伪直播”，而仅将“开启伪直播”、“配置机器人”、“创建语音诊股房间”等高级插件功能精准分配给“讲师组”或“运营组”。
-* **后端强制拦截**：核心插件功能向系统注册了专属权限点，后端微服务在执行时会强制校验角色。未获授权的用户即使绕过前端页面，也会被后端拦截。
-
-## 3. 混合防御控制系统（Defense Control）
-项目实现了“源站永远不暴露真实 IP”的混合防御体系，支持按成本与风险动态切换防护等级（L0~L3），并保证“不锁自己”：
-* **动态多档位**：平时低成本运行（L0/L1），遇到攻击一键启用 Cloudflare (L2) 或自建边缘节点 (L3)。
-* **防呆与自动回滚**：切换网络防火墙策略前，系统会强制执行预检与试运行（DryRun）。若网络收口后关键服务探活失败，控制器将在 15 秒内自动闪电回滚至安全快照，避免源站失联。
-* **应用自保**：在最低档位（L0），也可一键开启“禁止注册”、“禁止上传”等业务降级策略。
-
-## 4. 项目已做过的关键工程治理（从“能跑”到“稳定可复现”）
-
-以下是本项目迭代过程中真实发生过的工程问题与处理方向（便于维护者理解“为什么这样改”）。
-
-*   **MinIO / 文件服务启动期异常**：对启动期 bucket 检查做了容错处理，避免未捕获异常导致服务退出。
-*   **插件容器反复重启**：对 SDK 与插件版本兼容问题做了向后兼容补齐，保证精简版仍能稳定启动。
-*   **精简插件体系**：移除不需要/付费/三方依赖重的插件；采用白名单方式加载需要的插件服务，降低维护面。
-*   **反代与静态资源链路**：修复过静态 chunk 缓存/缺失导致的白屏问题；部署层面支持 Traefik/Nginx 组合反代。
-
-## 4. 技术架构概览
-
-*   **后端**：Node.js + TypeScript + Moleculer 微服务
-*   **缓存/通信**：Redis (Transporter / Cacher)
-*   **数据库**：MongoDB (主数据存储)
-*   **对象存储**：MinIO (文件/上传)
-*   **前端**：Web（Tailchat Web 客户端），支持 PWA（manifest、icons、service worker）
-*   **主题**：沉稳暖金（支持 light/dark 两套 Logo 自动切换）
-*   **音视频**：LiveKit Server（开源）
-
-## 5. 快速开始（Docker Compose 推荐）
-
-### 5.1 服务器环境要求
-*   Docker & Docker Compose
-*   建议 **2C4G** 起（首次构建前端/后端镜像时更稳）
-
-### 5A. 一键部署（从 GitHub 拉取即部署）
-**目标**：新服务器只需要复制一条命令，即可完成：安装 Docker（Ubuntu/Debian）→ 拉取仓库 → 构建镜像 → 启动服务。
-**原则**：代码进 GitHub，敏感配置不进 GitHub（真实密钥只放在服务器的 `docker-compose.env`）。
-
-**在新服务器上一键部署（复制以下命令执行）：**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/AthenDrakomin-hub/tailchat-source/main/scripts/deploy.sh | bash
 ```
 
-如果脚本提示你需要编辑 `docker-compose.env`，请执行：
-```bash
-nano /var/www/tailchat-source/docker-compose.env
-```
-填好 API_URL / SECRET / ADMIN / MINIO / LIVEKIT_* 后再启动：
-```bash
-cd /var/www/tailchat-source && docker compose up -d && docker compose ps
-```
+### 必填环境变量（docker-compose.env）
 
-### 5B. 手动拉取与配置部署
-#### 5B.1 拉取代码
-```bash
-git clone "https://github.com/AthenDrakomin-hub/tailchat-source.git"
-cd tailchat-source
-```
+编辑 `/var/www/tailchat-source/docker-compose.env`，至少配置：
 
-#### 5B.2 配置环境变量
-编辑根目录 docker-compose.env（至少确认这些字段）：
-*   SECRET：JWT 签名密钥（建议随机长字符串）
-*   API_URL：外部访问地址（例如 "https://chat.example.com" 或 "http://<server-ip>:11000"）
-*   `ADMIN_USER` / `ADMIN_PASS`：管理端账号密码
-*   `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD`：MinIO 管理账号密码
-*   `LiveKit` 相关（如启用私信语音）：`LIVEKIT_URL` / `LIVEKIT_PUBLIC_URL` / `LIVEKIT_KEYS` 等
+- `API_URL`（例如 `https://goodpages.cn`）
+- `SECRET`
+- `ADMIN_PASS`
+- `MINIO_ROOT_PASSWORD`
+- `DEFENSE_SHARED_SECRET`
 
-> **说明**：`API_URL` 不正确会导致上传文件/图片访问异常，这是部署中最常见的“看似能登录但图片打不开”问题。
+### 域名与自有证书（Nginx）
 
-#### 5B.3 “永远不踩坑”的固定发版流程
-为了避免新服务器性能不足导致编译卡死，以及“不知道现在跑的是不是最新版”的焦虑，后续的标准流程固定为：“**GitHub = 源码真相 / 老服务器 = 构建机 / 新服务器 = 只拉镜像运行**”。
+- 配置指南：[goodpages-domain-https.md](file:///workspace/docs/deployment/goodpages-domain-https.md)
+- Nginx 示例配置：[nginx.goodpages.cn.example.conf](file:///workspace/docs/nginx.goodpages.cn.example.conf)
 
-**第一步：代码推送到 GitHub（源码真相）**
-在您修改代码的机器上执行：
-```bash
-cd /var/www/tailchat-source && git add -A && git commit -m "chore: update" && git push origin main
-```
-
-**第二步：老服务器（构建并推镜像）**
-老服务器永远先拉最新代码再 build + push。只要跑这条一键命令即可：
-```bash
-cd /var/www/tailchat-source && git pull --rebase && bash scripts/build-push.sh
-```
-*(执行完毕后会输出一行类似 NEW_IMAGE=athendrakomin/caifu-chat:20260423-1045，请复制这个 tag 值)*
-
-**第三步：新服务器（换 tag 并拉起）**
-新服务器只做 pull + up（不编译），把刚才生成的 TAG 替换到命令中执行：
-```bash
-cd /var/www/tailchat-source && IMAGE_TAG="20260423-1045" bash scripts/pull-up.sh
-```
-
-**默认入口（示例）：**
-*   **Web**：http://<server-ip>:11000/
-*   **Admin**：http://<server-ip>:11000/admin/
-
-## 6. 日常运维与自检 (Ops & Healthcheck)
-
-为了方便快速判断：证书、端口、容器、反代、页面是否还正常，可以直接在服务器（如 payforme）上复制执行以下“一键自检”命令：
+### 更新/发版
 
 ```bash
-bash -lc 'set -e;
-echo "=== TIME/OS ==="; date; uname -a; echo;
-echo "=== DISK/MEM ==="; df -h / | tail -n 1; free -h; echo;
-echo "=== NGINX TEST ==="; nginx -t; echo;
-echo "=== CERT EXPIRE (wm + goodspage) ===";
-for c in /etc/letsencrypt/live/wm.goodspage.cn/fullchain.pem /etc/nginx/ssl/goodspage.cn.fullchain.pem; do
-  echo "--- $c";
-  [ -f "$c" ] && openssl x509 -in "$c" -noout -subject -dates 2>/dev/null || echo "MISSING";
-done; echo;
-echo "=== PORTS (80/443/11000/7880) ===";
-ss -lntp | egrep ":80 |:443 |:11000 |:7880 " || true; echo;
-echo "=== DOCKER COMPOSE PS ===";
-cd /var/www/tailchat-source && docker compose ps; echo;
-echo "=== HEALTHCHECK ===";
-curl -I "https://goodspage.cn" | head -n 5 || true;
-curl -I "https://wm.goodspage.cn" | head -n 5 || true;
-curl -I "http://127.0.0.1:11000" | head -n 5 || true;
-curl -I "http://127.0.0.1:7880" | head -n 5 || true;
-echo;
-echo "=== RECENT ERRORS (nginx) ===";
-tail -n 30 /var/log/nginx/error.log || true;
-'
+cd /var/www/tailchat-source
+git pull --rebase
+docker compose build --pull
+docker compose up -d --remove-orphans
+docker compose ps
 ```
 
-> **建议**：强烈建议您在每次更新后访问 "https://goodspage.cn" 时，在页面的 HTML 源码或某个接口中预留版本标识（如 commit hash 或上述的时间戳 TAG），这样能一眼看出当前运行的是否为最新版本。
+## 开发（各端）
 
-## 7. 品牌与内容体系（沉稳暖金 / 中英同显 / 语录随处可见）
+### Web（含 PWA）+ Server（推荐本地联调）
 
-### 7.1 品牌命名
-*   **中文**：日斗投资财富交流会
-*   **英文**：RIDOU INVESTMENT
-*   **展示策略**：中英同显（例如 “日斗投资财富交流会 · RIDOU INVESTMENT”）
+```bash
+pnpm install
+pnpm dev
+```
 
-### 7.2 双 Logo
-根据明暗主题自动切换：
-*   **light**：浅底版本
-*   **dark**：黑底金字版本
+### Admin（本地开发）
 
-### 7.3 语录体系
-**展示位置（当前默认）**：
-*   **登录/注册页**：品牌标题下方展示“每日一句”
-*   **主界面侧栏**：底部展示“今日一句”
-*   **聊天空态**：无消息时显示引导语 + 语录
-*   **语录来源**：以项目内置语录库为基础，可按运营需求迭代替换。
+```bash
+pnpm dev:admin
+```
 
-## 8. 合规与风险提示
+### 桌面端（Electron）
 
-本项目强调“交流学习”属性：
-*   应用内 **关于页** 提供《投资风险安全宣言》全文。
-*   注册流程要求用户勾选确认（未勾选不允许注册）。
-*   **提醒**：任何观点、语录、案例仅用于交流氛围与价值观表达，不构成投资建议。
+参考目录：[client/desktop](file:///workspace/client/desktop)
 
-## 9. 常见问题（FAQ）
+### 原生移动端（React Native）
 
-### 9.1 服务起来了但页面还是旧的/白屏
-大概率是 PWA/service worker 缓存导致。建议在浏览器 DevTools：
-1.  Application → Clear storage → Clear site data
-2.  Service Workers → 勾选 Update on reload 然后强制刷新（Ctrl+F5 / Cmd+Shift+R）。
+参考目录：[client/mobile](file:///workspace/client/mobile)
 
-### 9.2 插件服务日志提示找不到某些 services 文件
-精简版采用白名单/按需加载，若看到 “no matched file for pattern …” 的警告，请先确认：
-1.  你期望启用的插件是否已在后端镜像中构建并安装
-2.  `docker-compose` 是否加载了正确的服务目录/白名单配置
+## 目录导航
 
-## 10. 版权与鸣谢
-*   **底座项目**：Tailchat（MsgByte）
-*   本项目为二次开发与定制版本，保留原项目许可与声明。
+- 部署脚本：`scripts/`
+- Docker Compose：`docker-compose.yml`、`docker-compose.env.example`
+- 服务端：`server/`
+- Web：`client/web/`
+- Desktop：`client/desktop/`
+- Mobile：`client/mobile/`
+- 文档（部署/Nginx）：`docs/`
+
+## License
+
+遵循上游 Tailchat 相关开源许可与声明。

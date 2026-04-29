@@ -7,23 +7,14 @@ title: 常见问题
 
 ### 如何更新版本？
 
-和部署时获取镜像一样
-
 ```bash
-docker pull moonrailgun/tailchat
-docker tag moonrailgun/tailchat tailchat
+cd /var/www/tailchat-source
+git pull --rebase
+docker compose build --pull
+docker compose up -d --remove-orphans
 ```
 
-然后重启应用即可, 如 `docker compose up -d`
-
-### 如何使用指定版本?
-
-```bash
-docker pull moonrailgun/tailchat:1.8.4
-docker tag moonrailgun/tailchat:1.8.4 tailchat
-```
-
-在拉取镜像的时候指定版本号即可
+如需固定版本，请 checkout 指定 git tag/commit 后再重新构建。
 
 ## 服务端相关
 
