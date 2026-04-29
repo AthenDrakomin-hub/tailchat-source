@@ -35,8 +35,8 @@ curl -fsSL https://raw.githubusercontent.com/AthenDrakomin-hub/tailchat-source/m
 
 ### 域名与自有证书（Nginx）
 
-- 配置指南：[goodpage-domain-https.md](file:///workspace/docs/deployment/goodpage-domain-https.md)
-- Nginx 示例配置：[nginx.goodpage.cn.example.conf](file:///workspace/docs/nginx.goodpage.cn.example.conf)
+- 配置指南：[goodspage-domain-https.md](file:///workspace/docs/deployment/goodspage-domain-https.md)
+- Nginx 示例配置：[nginx.goodspage.cn.example.conf](file:///workspace/docs/nginx.goodspage.cn.example.conf)
 
 ### 系统控制台（运营面板 + 一键启停 LiveKit）
 
@@ -49,6 +49,11 @@ curl -fsSL https://raw.githubusercontent.com/AthenDrakomin-hub/tailchat-source/m
 
 受控执行器安装说明：`docs/deployment/ops-executor.md`
 
+### LiveKit 生产建议
+
+- 不建议使用 `livekit/livekit-server:latest` 与 `--dev`（升级不受控、配置不完整）
+- 建议固定镜像版本并使用配置文件启动，生产网络环境建议配套 TURN
+
 ### 更新/发版
 
 ```bash
@@ -58,6 +63,11 @@ docker compose build --pull
 docker compose up -d --remove-orphans
 docker compose ps
 ```
+
+### Docker 构建参数
+
+- `TAILCHAT_CLI_VERSION`：固定 `tailchat-cli` 版本（默认 `1.5.14`），如需升级请在构建时显式指定
+- `NODE_MAX_OLD_SPACE`：Node.js `--max-old-space-size`（默认 `1536`，4GB 机器建议 1536~2048）
 
 ## 开发（各端）
 

@@ -2,6 +2,8 @@ FROM node:18.18.0-alpine
 
 # use with --build-arg VERSION=xxxx
 ARG VERSION
+ARG NODE_MAX_OLD_SPACE=1536
+ARG TAILCHAT_CLI_VERSION=1.5.14
 ARG ENABLE_SENTRY_PLUGIN
 ARG ENABLE_POSTHOG_PLUGIN
 ARG DISABLE_SERVICE_WORKER
@@ -15,7 +17,7 @@ RUN apk add --no-cache ffmpeg
 
 # Install dependencies
 RUN npm install -g pnpm@8.15.8
-RUN npm install -g tailchat-cli@latest
+RUN npm install -g tailchat-cli@${TAILCHAT_CLI_VERSION}
 
 # Add mc for minio
 RUN wget https://dl.min.io/client/mc/release/linux-amd64/mc -O /usr/local/bin/mc
@@ -40,7 +42,8 @@ COPY . .
 # Build and cleanup (client and server)
 ENV NODE_ENV=production
 ENV VERSION=$VERSION
-ENV NODE_OPTIONS="--max-old-space-size=3072"
+ENV NODE_MAX_OLD_SPACE=$NODE_MAX_OLD_SPACE
+ENV NODE_OPTIONS="--max-old-space-size=${NODE_MAX_OLD_SPACE}"
 ENV ENABLE_SENTRY_PLUGIN=$ENABLE_SENTRY_PLUGIN
 ENV ENABLE_POSTHOG_PLUGIN=$ENABLE_POSTHOG_PLUGIN
 ENV DISABLE_SERVICE_WORKER=$DISABLE_SERVICE_WORKER

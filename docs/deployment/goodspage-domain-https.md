@@ -36,12 +36,12 @@
 
 仓库已提供示例配置：
 
-- [nginx.goodpage.cn.example.conf](file:///workspace/docs/nginx.goodpage.cn.example.conf)
+- [nginx.goodspage.cn.example.conf](file:///workspace/docs/nginx.goodspage.cn.example.conf)
 
 在服务器上执行（以 Debian/Ubuntu 的常见目录结构为例）：
 
 ```bash
-cp /var/www/tailchat-source/docs/nginx.goodpage.cn.example.conf /etc/nginx/sites-available/tailchat.conf
+cp /var/www/tailchat-source/docs/nginx.goodspage.cn.example.conf /etc/nginx/sites-available/tailchat.conf
 ln -sf /etc/nginx/sites-available/tailchat.conf /etc/nginx/sites-enabled/tailchat.conf
 ```
 
@@ -73,3 +73,4 @@ systemctl reload nginx
 - 对公网开放：`80`、`443`
 - `11000` 建议仅本机访问（`127.0.0.1:11000`），由 Nginx 反代对外提供 HTTPS
 - 不建议将 `11000` 直接暴露到公网，避免绕过 Nginx/HTTPS/域名策略并扩大攻击面
+
