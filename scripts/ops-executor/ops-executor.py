@@ -5,6 +5,8 @@ import os
 import subprocess
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+from ops_executor import get_livekit_status
+
 
 HOST = os.environ.get("OPS_EXECUTOR_HOST", "127.0.0.1")
 PORT = int(os.environ.get("OPS_EXECUTOR_PORT", "9110"))
@@ -56,6 +58,12 @@ class Handler(BaseHTTPRequestHandler):
             self._json(200, {"ok": code == 0, "output": out})
             return
 
+        if self.path == "/livekit/status":
+            if not self._check_auth():
+                return
+            self._json(200, get_livekit_status())
+            return
+
         self._json(404, {"ok": False, "error": "Not Found"})
 
     def do_POST(self):
@@ -88,4 +96,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -130,6 +130,15 @@ router.get('/livekit/ps', auth(), async (req, res, next) => {
   }
 });
 
+router.get('/livekit/status', auth(), async (req, res, next) => {
+  try {
+    const data = await getExecutor('/livekit/status');
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post('/livekit/start', auth(), async (req, res, next) => {
   try {
     const data = await callExecutor('/livekit/start');
@@ -167,4 +176,3 @@ router.get('/executor/health', auth(), async (req, res, next) => {
 });
 
 export { router as opsRouter };
-

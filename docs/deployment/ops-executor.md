@@ -70,6 +70,12 @@ curl -s http://127.0.0.1:9110/health
 {"ok": true}
 ```
 
+## 执行器接口（摘要）
+
+- `GET /health`：健康检查（无需鉴权）
+- `GET /livekit/status`：LiveKit 结构化状态（需要 Header：`X-Executor-Secret`）
+- `POST /livekit/start|stop|restart`：LiveKit 启停/重启（需要 Header：`X-Executor-Secret`）
+
 强烈建议加防火墙限制 9110（不要对公网开放）。如果你用 ufw：
 
 ```bash

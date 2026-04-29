@@ -8,6 +8,7 @@ import {
   InputNumber,
   Message,
   Switch,
+  Table,
   Typography,
   useAsyncRequest,
 } from 'tushan';
@@ -15,7 +16,7 @@ import { request } from '../../request';
 
 export const OpsControlPanel: React.FC = React.memo(() => {
   const [form] = Form.useForm();
-  const [livekitPs, setLivekitPs] = useState<any>(null);
+  const [livekitStatus, setLivekitStatus] = useState<any>(null);
 
   const [{ loading: loadingConfig }, fetchConfig] = useAsyncRequest(async () => {
     const { data } = await request.get('/ops/config');
@@ -26,9 +27,9 @@ export const OpsControlPanel: React.FC = React.memo(() => {
     await request.post('/ops/config', values);
   });
 
-  const [{ loading: loadingPs }, refreshLivekitPs] = useAsyncRequest(async () => {
-    const { data } = await request.get('/ops/livekit/ps');
-    setLivekitPs(data);
+  const [{ loading: loadingStatus }, refreshLivekitStatus] = useAsyncRequest(async () => {
+    const { data } = await request.get('/ops/livekit/status');
+    setLivekitStatus(data);
     return data;
   });
 
@@ -42,12 +43,28 @@ export const OpsControlPanel: React.FC = React.memo(() => {
     await request.post('/ops/livekit/restart');
   });
 
-  const livekitText = useMemo(() => {
-    if (!livekitPs) return '';
-    if (typeof livekitPs === 'string') return livekitPs;
-    if (typeof livekitPs?.output === 'string') return livekitPs.output;
-    return JSON.stringify(livekitPs, null, 2);
-  }, [livekitPs]);
+  const livekitErrorText = useMemo(() => {
+    if (!livekitStatus) return '';
+    if (typeof livekitStatus?.error === 'string') return livekitStatus.error;
+    if (livekitStatus?.ok === false) return JSON.stringify(livekitStatus, null, 2);
+    return '';
+  }, [livekitStatus]);
+
+  const livekitRows = useMemo(() => {
+    if (!livekitStatus) return [];
+    if (livekitStatus?.ok === false) return [];
+    return [livekitStatus];
+  }, [livekitStatus]);
+
+  const copyText = async (text: string) => {
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      Message.success('已复制');
+    } catch (err) {
+      Message.error(String(err));
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -67,7 +84,7 @@ export const OpsControlPanel: React.FC = React.memo(() => {
       } catch (err) {
         Message.error(String(err));
       }
-      refreshLivekitPs().catch(() => {});
+      refreshLivekitStatus().catch(() => {});
     })();
   }, []);
 
@@ -111,7 +128,7 @@ export const OpsControlPanel: React.FC = React.memo(() => {
             try {
               await startLivekit();
               Message.success('已发送启动指令');
-              refreshLivekitPs();
+              refreshLivekitStatus();
             } catch (err) {
               Message.error(String(err));
             }
@@ -126,7 +143,7 @@ export const OpsControlPanel: React.FC = React.memo(() => {
             try {
               await stopLivekit();
               Message.success('已发送停止指令');
-              refreshLivekitPs();
+              refreshLivekitStatus();
             } catch (err) {
               Message.error(String(err));
             }
@@ -140,7 +157,7 @@ export const OpsControlPanel: React.FC = React.memo(() => {
             try {
               await restartLivekit();
               Message.success('已发送重启指令');
-              refreshLivekitPs();
+              refreshLivekitStatus();
             } catch (err) {
               Message.error(String(err));
             }
@@ -149,16 +166,64 @@ export const OpsControlPanel: React.FC = React.memo(() => {
           重启 LiveKit
         </Button>
         <Button
-          loading={loadingPs}
+          loading={loadingStatus}
           onClick={() => {
-            refreshLivekitPs().catch((err) => Message.error(String(err)));
+            refreshLivekitStatus().catch((err) => Message.error(String(err)));
           }}
         >
           刷新状态
         </Button>
       </div>
 
-      <Input.TextArea value={livekitText} rows={6} readOnly />
+      <Table
+        columns={[
+          {
+            title: '运行状态',
+            dataIndex: 'state',
+            render: (val) => {
+              const v = String(val || '');
+              const type = v === 'running' ? 'success' : v === 'exited' ? 'danger' : 'secondary';
+              return <Typography.Text type={type}>{v || '-'}</Typography.Text>;
+            },
+          },
+          { title: '容器名', dataIndex: 'containerName' },
+          { title: '镜像', dataIndex: 'image' },
+          {
+            title: '端口',
+            dataIndex: 'ports',
+            render: (val) => {
+              if (!Array.isArray(val)) return '-';
+              return <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{val.join('\n')}</pre>;
+            },
+          },
+          { title: '运行时长', dataIndex: 'uptime' },
+          {
+            title: '最近日志入口',
+            dataIndex: 'logCommand',
+            render: (val) => (
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                <Typography.Text style={{ maxWidth: 520 }} ellipsis>
+                  {String(val || '-')}
+                </Typography.Text>
+                <Button size="small" onClick={() => copyText(String(val || ''))}>
+                  复制
+                </Button>
+              </div>
+            ),
+          },
+        ]}
+        data={livekitRows}
+        rowKey={(row: any) => row.containerName || 'livekit'}
+        pagination={false}
+      />
+
+      {livekitErrorText ? (
+        <>
+          <Divider />
+          <Typography.Title heading={6}>错误信息</Typography.Title>
+          <Input.TextArea value={livekitErrorText} rows={4} readOnly />
+        </>
+      ) : null}
 
       <Divider />
       <Form form={form} layout="vertical" onSubmit={onSubmit} disabled={loadingConfig}>
@@ -199,4 +264,3 @@ export const OpsControlPanel: React.FC = React.memo(() => {
 });
 
 OpsControlPanel.displayName = 'OpsControlPanel';
-
