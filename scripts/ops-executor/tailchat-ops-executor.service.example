@@ -8,7 +8,7 @@ Type=simple
 WorkingDirectory=/var/www/tailchat-source
 Environment=OPS_PROJECT_DIR=/var/www/tailchat-source
 Environment=OPS_COMPOSE_FILE=docker-compose.yml
-Environment=OPS_EXECUTOR_HOST=127.0.0.1
+Environment=OPS_EXECUTOR_HOST=0.0.0.0
 Environment=OPS_EXECUTOR_PORT=9110
 Environment=EXECUTOR_SHARED_SECRET=CHANGE_ME_LONG_RANDOM
 ExecStart=/usr/bin/python3 /var/www/tailchat-source/scripts/ops-executor/ops-executor.py

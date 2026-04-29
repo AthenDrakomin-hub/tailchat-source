@@ -59,24 +59,27 @@ router.put('/upload', auth(), async (req, res) => {
 });
 
 router.get('/filesizeSum', auth(), async (req, res) => {
-  const ret = await fileModel.aggregate([
-    {
-      $group: {
-        _id: '$objectName' as any,
-        size: { $first: '$size' },
+  try {
+    const ret = await fileModel.aggregate([
+      {
+        $group: {
+          _id: '$objectName' as any,
+          size: { $first: '$size' },
+        },
       },
-    },
-    {
-      $group: {
-        _id: null,
-        totalSize: { $sum: '$size' },
+      {
+        $group: {
+          _id: null,
+          totalSize: { $sum: '$size' },
+        },
       },
-    },
-  ]);
+    ]);
 
-  const totalSize = ret[0].totalSize;
-
-  res.json({ totalSize });
+    const totalSize = (ret?.[0]?.totalSize as number | undefined) ?? 0;
+    res.json({ totalSize });
+  } catch {
+    res.json({ totalSize: 0 });
+  }
 });
 
 export { router as fileRouter };

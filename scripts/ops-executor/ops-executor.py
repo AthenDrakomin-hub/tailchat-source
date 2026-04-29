@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from ops_executor import get_livekit_status
 
 
-HOST = os.environ.get("OPS_EXECUTOR_HOST", "127.0.0.1")
+HOST = os.environ.get("OPS_EXECUTOR_HOST", "0.0.0.0")
 PORT = int(os.environ.get("OPS_EXECUTOR_PORT", "9110"))
 PROJECT_DIR = os.environ.get("OPS_PROJECT_DIR", "/var/www/tailchat-source")
 COMPOSE_FILE = os.environ.get("OPS_COMPOSE_FILE", "docker-compose.yml")

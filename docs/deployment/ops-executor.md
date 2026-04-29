@@ -4,7 +4,7 @@
 
 - LiveKit 一键启动 / 停止 / 重启
 
-执行器默认只监听：`127.0.0.1:9110`，强烈建议不要对公网开放。
+执行器默认监听：`0.0.0.0:9110`（用于让 `tailchat-admin` 容器通过 `host.docker.internal:9110` 访问），强烈建议不要对公网开放。
 
 ## A. 配置环境变量（docker-compose.env）
 
@@ -76,10 +76,14 @@ curl -s http://127.0.0.1:9110/health
 - `GET /livekit/status`：LiveKit 结构化状态（需要 Header：`X-Executor-Secret`）
 - `POST /livekit/start|stop|restart`：LiveKit 启停/重启（需要 Header：`X-Executor-Secret`）
 
-强烈建议加防火墙限制 9110（不要对公网开放）。如果你用 ufw：
+强烈建议加防火墙限制 9110（不要对公网开放，只允许本机与 Docker 网桥访问）。
+
+如果你用 ufw（常见 docker0 网段为 `172.17.0.0/16`，如不同请以 `ip route` 为准）：
 
 ```bash
 sudo ufw deny 9110/tcp
+sudo ufw allow from 127.0.0.1 to any port 9110 proto tcp
+sudo ufw allow from 172.17.0.0/16 to any port 9110 proto tcp
 ```
 
 ## C. 重建并启动 Tailchat（让 Admin 能调用执行器）

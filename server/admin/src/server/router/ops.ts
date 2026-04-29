@@ -51,61 +51,117 @@ async function getExecutor(path: string) {
   return data;
 }
 
-router.get('/config', auth(), async (req, res, next) => {
-  try {
-    const pseudoliveEnabled = await broker.call('config.get', {
-      key: 'ops.pseudolive.enabled',
-    });
-    const botEnabled = await broker.call('config.get', { key: 'ops.bot.enabled' });
-    const botIntervalSec = await broker.call('config.get', {
-      key: 'ops.bot.intervalSec',
-    });
-    const botUserId = await broker.call('config.get', { key: 'ops.bot.userId' });
-    const botGroupId = await broker.call('config.get', { key: 'ops.bot.groupId' });
-    const botPanelId = await broker.call('config.get', { key: 'ops.bot.panelId' });
-    const botMessages = await broker.call('config.get', { key: 'ops.bot.messages' });
+async function getOpsConfig() {
+  const pseudoliveEnabled = await broker.call('config.get', {
+    key: 'ops.pseudolive.enabled',
+  });
+  const botEnabled = await broker.call('config.get', { key: 'ops.bot.enabled' });
+  const botIntervalSec = await broker.call('config.get', {
+    key: 'ops.bot.intervalSec',
+  });
+  const botUserId = await broker.call('config.get', { key: 'ops.bot.userId' });
+  const botGroupId = await broker.call('config.get', { key: 'ops.bot.groupId' });
+  const botPanelId = await broker.call('config.get', { key: 'ops.bot.panelId' });
+  const botMessages = await broker.call('config.get', { key: 'ops.bot.messages' });
 
-    res.json({
-      pseudoliveEnabled: typeof pseudoliveEnabled === 'boolean' ? pseudoliveEnabled : true,
-      bot: {
-        enabled: typeof botEnabled === 'boolean' ? botEnabled : false,
-        intervalSec: typeof botIntervalSec === 'number' ? botIntervalSec : 30,
-        userId: typeof botUserId === 'string' ? botUserId : '',
-        groupId: typeof botGroupId === 'string' ? botGroupId : '',
-        panelId: typeof botPanelId === 'string' ? botPanelId : '',
-        messages: Array.isArray(botMessages) ? botMessages : [],
-      },
-    });
+  return {
+    pseudoliveEnabled: typeof pseudoliveEnabled === 'boolean' ? pseudoliveEnabled : true,
+    bot: {
+      enabled: typeof botEnabled === 'boolean' ? botEnabled : false,
+      intervalSec: typeof botIntervalSec === 'number' ? botIntervalSec : 30,
+      userId: typeof botUserId === 'string' ? botUserId : '',
+      groupId: typeof botGroupId === 'string' ? botGroupId : '',
+      panelId: typeof botPanelId === 'string' ? botPanelId : '',
+      messages: Array.isArray(botMessages) ? botMessages : [],
+    },
+  };
+}
+
+async function getExecutorStatus() {
+  if (!isExecutorConfigured()) {
+    return { configured: false, ok: false, error: 'executor not configured' };
+  }
+
+  try {
+    const [health, livekit] = await Promise.all([
+      getExecutor('/health'),
+      getExecutor('/livekit/status'),
+    ]);
+    return { configured: true, ok: true, health, livekit };
+  } catch (err: any) {
+    return {
+      configured: true,
+      ok: false,
+      error: err?.message ? String(err.message) : 'executor unreachable',
+    };
+  }
+}
+
+async function getOpsStatus() {
+  const [cfg, executor] = await Promise.all([getOpsConfig(), getExecutorStatus()]);
+  return { ...cfg, executor };
+}
+
+router.get('/status', auth(), async (req, res, next) => {
+  try {
+    res.json(await getOpsStatus());
   } catch (err) {
     next(err);
   }
 });
 
-router.get('/status', auth(), async (req, res, next) => {
+router.get('/config', auth(), async (req, res, next) => {
   try {
-    const pseudoliveEnabled = await broker.call('config.get', {
-      key: 'ops.pseudolive.enabled',
-    });
-    const botEnabled = await broker.call('config.get', { key: 'ops.bot.enabled' });
-    const botIntervalSec = await broker.call('config.get', {
-      key: 'ops.bot.intervalSec',
-    });
-    const botUserId = await broker.call('config.get', { key: 'ops.bot.userId' });
-    const botGroupId = await broker.call('config.get', { key: 'ops.bot.groupId' });
-    const botPanelId = await broker.call('config.get', { key: 'ops.bot.panelId' });
-    const botMessages = await broker.call('config.get', { key: 'ops.bot.messages' });
+    res.json(await getOpsStatus());
+  } catch (err) {
+    next(err);
+  }
+});
 
-    res.json({
-      pseudoliveEnabled: typeof pseudoliveEnabled === 'boolean' ? pseudoliveEnabled : true,
-      bot: {
-        enabled: typeof botEnabled === 'boolean' ? botEnabled : false,
-        intervalSec: typeof botIntervalSec === 'number' ? botIntervalSec : 30,
-        userId: typeof botUserId === 'string' ? botUserId : '',
-        groupId: typeof botGroupId === 'string' ? botGroupId : '',
-        panelId: typeof botPanelId === 'string' ? botPanelId : '',
-        messages: Array.isArray(botMessages) ? botMessages : [],
-      },
+async function setOpsConfig(body: any) {
+  const { pseudoliveEnabled, bot } = body ?? {};
+  if (typeof pseudoliveEnabled === 'boolean') {
+    await broker.call('config.set', {
+      key: 'ops.pseudolive.enabled',
+      value: pseudoliveEnabled,
     });
+  }
+
+  if (bot && typeof bot === 'object') {
+    if (typeof bot.enabled === 'boolean') {
+      await broker.call('config.set', { key: 'ops.bot.enabled', value: bot.enabled });
+    }
+    if (typeof bot.intervalSec === 'number') {
+      await broker.call('config.set', {
+        key: 'ops.bot.intervalSec',
+        value: bot.intervalSec,
+      });
+    }
+    if (typeof bot.userId === 'string') {
+      await broker.call('config.set', { key: 'ops.bot.userId', value: bot.userId });
+    }
+    if (typeof bot.groupId === 'string') {
+      await broker.call('config.set', { key: 'ops.bot.groupId', value: bot.groupId });
+    }
+    if (typeof bot.panelId === 'string') {
+      await broker.call('config.set', { key: 'ops.bot.panelId', value: bot.panelId });
+    }
+    if (typeof bot.messages === 'string') {
+      const lines = bot.messages
+        .split('\n')
+        .map((s: string) => s.trim())
+        .filter(Boolean);
+      await broker.call('config.set', { key: 'ops.bot.messages', value: lines });
+    } else if (Array.isArray(bot.messages)) {
+      await broker.call('config.set', { key: 'ops.bot.messages', value: bot.messages });
+    }
+  }
+}
+
+router.post('/status', auth(), async (req, res, next) => {
+  try {
+    await setOpsConfig(req.body);
+    res.json({ success: true });
   } catch (err) {
     next(err);
   }
@@ -113,90 +169,7 @@ router.get('/status', auth(), async (req, res, next) => {
 
 router.post('/config', auth(), async (req, res, next) => {
   try {
-    const { pseudoliveEnabled, bot } = req.body ?? {};
-    if (typeof pseudoliveEnabled === 'boolean') {
-      await broker.call('config.set', {
-        key: 'ops.pseudolive.enabled',
-        value: pseudoliveEnabled,
-      });
-    }
-
-    if (bot && typeof bot === 'object') {
-      if (typeof bot.enabled === 'boolean') {
-        await broker.call('config.set', { key: 'ops.bot.enabled', value: bot.enabled });
-      }
-      if (typeof bot.intervalSec === 'number') {
-        await broker.call('config.set', {
-          key: 'ops.bot.intervalSec',
-          value: bot.intervalSec,
-        });
-      }
-      if (typeof bot.userId === 'string') {
-        await broker.call('config.set', { key: 'ops.bot.userId', value: bot.userId });
-      }
-      if (typeof bot.groupId === 'string') {
-        await broker.call('config.set', { key: 'ops.bot.groupId', value: bot.groupId });
-      }
-      if (typeof bot.panelId === 'string') {
-        await broker.call('config.set', { key: 'ops.bot.panelId', value: bot.panelId });
-      }
-      if (typeof bot.messages === 'string') {
-        const lines = bot.messages
-          .split('\n')
-          .map((s: string) => s.trim())
-          .filter(Boolean);
-        await broker.call('config.set', { key: 'ops.bot.messages', value: lines });
-      } else if (Array.isArray(bot.messages)) {
-        await broker.call('config.set', { key: 'ops.bot.messages', value: bot.messages });
-      }
-    }
-
-    res.json({ success: true });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post('/status', auth(), async (req, res, next) => {
-  try {
-    const { pseudoliveEnabled, bot } = req.body ?? {};
-    if (typeof pseudoliveEnabled === 'boolean') {
-      await broker.call('config.set', {
-        key: 'ops.pseudolive.enabled',
-        value: pseudoliveEnabled,
-      });
-    }
-
-    if (bot && typeof bot === 'object') {
-      if (typeof bot.enabled === 'boolean') {
-        await broker.call('config.set', { key: 'ops.bot.enabled', value: bot.enabled });
-      }
-      if (typeof bot.intervalSec === 'number') {
-        await broker.call('config.set', {
-          key: 'ops.bot.intervalSec',
-          value: bot.intervalSec,
-        });
-      }
-      if (typeof bot.userId === 'string') {
-        await broker.call('config.set', { key: 'ops.bot.userId', value: bot.userId });
-      }
-      if (typeof bot.groupId === 'string') {
-        await broker.call('config.set', { key: 'ops.bot.groupId', value: bot.groupId });
-      }
-      if (typeof bot.panelId === 'string') {
-        await broker.call('config.set', { key: 'ops.bot.panelId', value: bot.panelId });
-      }
-      if (typeof bot.messages === 'string') {
-        const lines = bot.messages
-          .split('\n')
-          .map((s: string) => s.trim())
-          .filter(Boolean);
-        await broker.call('config.set', { key: 'ops.bot.messages', value: lines });
-      } else if (Array.isArray(bot.messages)) {
-        await broker.call('config.set', { key: 'ops.bot.messages', value: bot.messages });
-      }
-    }
-
+    await setOpsConfig(req.body);
     res.json({ success: true });
   } catch (err) {
     next(err);
