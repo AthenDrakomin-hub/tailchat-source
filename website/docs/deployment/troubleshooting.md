@@ -7,23 +7,14 @@ title: Troubleshooting
 
 ### How to update the version?
 
-It is the same as getting the image when deploying
-
 ```bash
-docker pull moonrailgun/tailchat
-docker tag moonrailgun/tailchat tailchat
+cd /var/www/tailchat-source
+git pull --rebase
+docker compose build --pull
+docker compose up -d --remove-orphans
 ```
 
-Then restart the application, such as `docker compose up -d`
-
-### How to use the specified version?
-
-```bash
-docker pull moonrailgun/tailchat:1.8.4
-docker tag moonrailgun/tailchat:1.8.4 tailchat
-```
-
-Just specify the version number when pulling the image
+If you need to pin a version, checkout a git tag/commit and rebuild.
 
 ## Server related
 

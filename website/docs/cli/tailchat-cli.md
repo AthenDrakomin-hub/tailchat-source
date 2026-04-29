@@ -25,7 +25,6 @@ Commands:
   tailchat connect               Connect to Tailchat network
   tailchat bench                 Benchmark
   tailchat declaration <source>  Tailchat plugin type declaration
-  tailchat docker                Tailchat image management
   tailchat usage [pid]           View Tailchat process usage
 
 Options:

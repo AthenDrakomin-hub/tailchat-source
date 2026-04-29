@@ -59,42 +59,21 @@ PROMETHEUS=true
 
 > **注意**：`.env` 文件中配置 URL（如 `API_URL`）时，**切勿**使用反引号（`\``）包裹，否则会导致后端解析出错引发致命崩溃。
 
-### 3.2 编译与镜像推送 (构建机)
+### 3.2 构建与启动（服务器本机）
 
-在开发或编译机（如 `root@test`）执行：
+本项目仅保留一种部署方式：**Docker Compose 在服务器本机 build + up**（由 `scripts/deploy.sh` 一键完成）。
 
+**支持的构建期开关：**
+你可以在构建时注入以下环境变量来开启特定能力或紧急回滚 PWA：
+*   `ENABLE_SENTRY_PLUGIN=true`（开启前端 Sentry 错误追踪）
+*   `ENABLE_POSTHOG_PLUGIN=true`（开启前端 PostHog 统计）
+*   `DISABLE_SERVICE_WORKER=true`（紧急处理 Service Worker 缓存问题）
+
+示例（服务器上直接执行）：
 ```bash
 cd /var/www/tailchat-source
-bash scripts/build-push.sh
-```
-
-**支持的构建期（Build-Args）开关：**
-你可以在编译时动态注入以下环境变量来开启特定功能或紧急回滚 PWA：
-*   `ENABLE_SENTRY_PLUGIN=true` （开启前端 Sentry 错误追踪）
-*   `ENABLE_POSTHOG_PLUGIN=true` （开启前端 PostHog 统计）
-*   `DISABLE_SERVICE_WORKER=true` （**紧急救火**：若遇到 Service Worker 导致客户端死缓存等线上事故，打此包可强制卸载用户端的 SW）
-
-示例：
-```bash
-DISABLE_SERVICE_WORKER=true bash scripts/build-push.sh
-```
-
-### 3.3 生产环境拉取与启动 (生产机)
-
-在生产机器（如 `root@payforme`）执行：
-
-```bash
-cd /var/www/tailchat-source
-# 强制使用指定 TAG 绕过本地 docker cache
-IMAGE_TAG=20260425-0742 bash scripts/pull-up.sh
-```
-
-**关于健康检查：**
-我们的 `pull-up.sh` 和 `health-check.sh` 脚本内置了 **Traefik 动态路由就绪等待逻辑**。
-脚本会优雅地等待 `api-gw@docker` 等路由挂载成功后，再进行真实探活，有效避免了微服务启动延迟导致的 `404` 或 `502` 误判。
-如机器性能较弱，可通过环境变量延长探活前的缓冲时间：
-```bash
-SLEEP_BEFORE_CHECK=15 IMAGE_TAG=xxx bash scripts/pull-up.sh
+DISABLE_SERVICE_WORKER=true docker compose build --pull
+docker compose up -d --remove-orphans
 ```
 
 ## 4. 详细设计文档与变更追溯
@@ -171,26 +150,14 @@ cd tailchat-source
 
 > **说明**：`API_URL` 不正确会导致上传文件/图片访问异常，这是部署中最常见的“看似能登录但图片打不开”问题。
 
-#### 5B.3 “永远不踩坑”的固定发版流程
-为了避免新服务器性能不足导致编译卡死，以及“不知道现在跑的是不是最新版”的焦虑，后续的标准流程固定为：“**GitHub = 源码真相 / 老服务器 = 构建机 / 新服务器 = 只拉镜像运行**”。
-
-**第一步：代码推送到 GitHub（源码真相）**
-在您修改代码的机器上执行：
+#### 5B.3 更新/发版流程
+本项目默认只保留“服务器本机 build + up”的发版流程：
 ```bash
-cd /var/www/tailchat-source && git add -A && git commit -m "chore: update" && git push origin main
-```
-
-**第二步：老服务器（构建并推镜像）**
-老服务器永远先拉最新代码再 build + push。只要跑这条一键命令即可：
-```bash
-cd /var/www/tailchat-source && git pull --rebase && bash scripts/build-push.sh
-```
-*(执行完毕后会输出一行类似 NEW_IMAGE=athendrakomin/caifu-chat:20260423-1045，请复制这个 tag 值)*
-
-**第三步：新服务器（换 tag 并拉起）**
-新服务器只做 pull + up（不编译），把刚才生成的 TAG 替换到命令中执行：
-```bash
-cd /var/www/tailchat-source && IMAGE_TAG="20260423-1045" bash scripts/pull-up.sh
+cd /var/www/tailchat-source
+git pull --rebase
+docker compose build --pull
+docker compose up -d --remove-orphans
+docker compose ps
 ```
 
 **默认入口（示例）：**

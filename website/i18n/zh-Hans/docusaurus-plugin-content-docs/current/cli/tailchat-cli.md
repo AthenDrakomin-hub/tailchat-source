@@ -25,7 +25,6 @@ Commands:
   tailchat app                   Tailchat cli 版本(WIP)
   tailchat bench                 压力测试
   tailchat declaration <source>  Tailchat 插件类型声明
-  tailchat docker                Tailchat 镜像管理
 
 Options:
       --version  Show version number                                   [boolean]

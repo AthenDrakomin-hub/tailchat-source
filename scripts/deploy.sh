@@ -5,8 +5,6 @@ REPO_URL="https://github.com/AthenDrakomin-hub/tailchat-source.git"
 APP_DIR="/var/www/tailchat-source"
 BRANCH="main"
 
-DEPLOY_MODE="${DEPLOY_MODE:-build}"
-
 echo "[1/6] Ensure docker..."
 if ! command -v docker >/dev/null 2>&1; then
   if [ -f /etc/os-release ]; then . /etc/os-release; fi
@@ -109,14 +107,8 @@ require_env "ADMIN_PASS"
 require_env "MINIO_ROOT_PASSWORD"
 require_env "DEFENSE_SHARED_SECRET"
 
-echo "[4/6] Build or Pull..."
-if [ "$DEPLOY_MODE" = "pull" ]; then
-  echo "DEPLOY_MODE=pull -> docker compose pull"
-  docker compose pull
-else
-  echo "DEPLOY_MODE=build -> docker compose build"
-  docker compose build --pull
-fi
+echo "[4/6] Build..."
+docker compose build --pull
 
 echo "[5/6] Up..."
 docker compose up -d --remove-orphans

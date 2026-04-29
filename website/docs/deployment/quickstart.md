@@ -17,10 +17,6 @@ It is highly recommended to use `docker-compose` to deploy `tailchat`
 
 Please refer to the tutorial: [Docker Compose Deployment](./docker-compose.mdx)
 
-### Kubernetes
-
-Please refer to the tutorial: [Kubernetes Simple Deployment](./other-way/kubernetes/simple.md)
-
 ## System Structure
 
 See [System Architecture](../architecture.md)

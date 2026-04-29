@@ -1,6 +1,6 @@
 # 提取出多个服务共用的基础镜像和构建配置
 x-tailchat-base: &tailchat-base
-  image: ${IMAGE_REPO:-tailchat-local/caifu-chat}:${IMAGE_TAG:-local}
+  image: ${IMAGE_NAME:-tailchat-local/caifu-chat}:${IMAGE_TAG:-local}
   build:
     context: .
     dockerfile: Dockerfile

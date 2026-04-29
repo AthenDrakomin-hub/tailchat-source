@@ -15,7 +15,7 @@
 **Modify**
 - `docker-compose.yml`
 - `docker-compose.env.example`（同步新增 env 示例）
-- `scripts/pull-up.sh`
+- `scripts/deploy.sh`
 - `scripts/health-check.sh`
 - `scripts/env-lint.sh`（增强校验与提示）
 - `server/mixins/socketio.mixin.ts`
@@ -37,16 +37,16 @@
 ## Task 1: 运维脚本健壮性（避免 404/502 短暂误判）
 
 **Files:**
-- Modify: `scripts/pull-up.sh`
+- Modify: `scripts/deploy.sh`
 - Modify: `scripts/health-check.sh`
 
-- [ ] Step 1: 在 `pull-up.sh` 增加启动缓冲 `SLEEP_BEFORE_CHECK` 与 Traefik router 就绪等待（`api-gw@docker`/`admin@docker`）
+- [ ] Step 1: 在 `deploy.sh` 与 `health-check.sh` 增加启动缓冲 `SLEEP_BEFORE_CHECK` 与 Traefik router 就绪等待（`api-gw@docker`/`admin@docker`）
 - [ ] Step 2: 在 `health-check.sh` 同步增加启动缓冲与 router 等待
 - [ ] Step 3: Shell 语法检查
 
 Run:
 ```bash
-bash -n scripts/pull-up.sh
+bash -n scripts/deploy.sh
 bash -n scripts/health-check.sh
 ```
 
@@ -188,4 +188,3 @@ pnpm -C server check:type || true
 ## 交付与回滚策略
 - 每个 Task 形成独立 commit（虽然最终合并为单 PR，但 commit 粒度便于回滚）
 - docker-compose 与服务端变更均提供 env 开关，线上出现问题可快速关闭（例如 DISABLE_SERVICE_WORKER、EXIT_ON_UNCAUGHT）
-
