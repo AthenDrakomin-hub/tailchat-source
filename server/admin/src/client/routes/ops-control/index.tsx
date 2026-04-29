@@ -19,12 +19,12 @@ export const OpsControlPanel: React.FC = React.memo(() => {
   const [livekitStatus, setLivekitStatus] = useState<any>(null);
 
   const [{ loading: loadingConfig }, fetchConfig] = useAsyncRequest(async () => {
-    const { data } = await request.get('/ops/config');
+    const { data } = await request.get('/ops/status');
     return data;
   });
 
   const [{ loading: saving }, saveConfig] = useAsyncRequest(async (values) => {
-    await request.post('/ops/config', values);
+    await request.post('/ops/status', values);
   });
 
   const [{ loading: loadingStatus }, refreshLivekitStatus] = useAsyncRequest(async () => {

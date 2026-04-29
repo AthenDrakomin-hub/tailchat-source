@@ -27,6 +27,8 @@ async function buildTailchatServer() {
       ),
     ]);
 
+    await fs.remove('./dist/moleculer.config.ts');
+
     if (process.platform !== 'win32' || (await isAdmin())) {
       spinner.info('Building plugin dependent symlink');
       const nodeModulesList = await glob('./plugins/*/node_modules/*');

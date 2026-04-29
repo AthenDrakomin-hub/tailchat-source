@@ -75,7 +75,83 @@ router.get('/config', auth(), async (req, res, next) => {
   }
 });
 
+router.get('/status', auth(), async (req, res, next) => {
+  try {
+    const pseudoliveEnabled = await broker.call('config.get', {
+      key: 'ops.pseudolive.enabled',
+    });
+    const botEnabled = await broker.call('config.get', { key: 'ops.bot.enabled' });
+    const botIntervalSec = await broker.call('config.get', {
+      key: 'ops.bot.intervalSec',
+    });
+    const botUserId = await broker.call('config.get', { key: 'ops.bot.userId' });
+    const botGroupId = await broker.call('config.get', { key: 'ops.bot.groupId' });
+    const botPanelId = await broker.call('config.get', { key: 'ops.bot.panelId' });
+    const botMessages = await broker.call('config.get', { key: 'ops.bot.messages' });
+
+    res.json({
+      pseudoliveEnabled: typeof pseudoliveEnabled === 'boolean' ? pseudoliveEnabled : true,
+      bot: {
+        enabled: typeof botEnabled === 'boolean' ? botEnabled : false,
+        intervalSec: typeof botIntervalSec === 'number' ? botIntervalSec : 30,
+        userId: typeof botUserId === 'string' ? botUserId : '',
+        groupId: typeof botGroupId === 'string' ? botGroupId : '',
+        panelId: typeof botPanelId === 'string' ? botPanelId : '',
+        messages: Array.isArray(botMessages) ? botMessages : [],
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post('/config', auth(), async (req, res, next) => {
+  try {
+    const { pseudoliveEnabled, bot } = req.body ?? {};
+    if (typeof pseudoliveEnabled === 'boolean') {
+      await broker.call('config.set', {
+        key: 'ops.pseudolive.enabled',
+        value: pseudoliveEnabled,
+      });
+    }
+
+    if (bot && typeof bot === 'object') {
+      if (typeof bot.enabled === 'boolean') {
+        await broker.call('config.set', { key: 'ops.bot.enabled', value: bot.enabled });
+      }
+      if (typeof bot.intervalSec === 'number') {
+        await broker.call('config.set', {
+          key: 'ops.bot.intervalSec',
+          value: bot.intervalSec,
+        });
+      }
+      if (typeof bot.userId === 'string') {
+        await broker.call('config.set', { key: 'ops.bot.userId', value: bot.userId });
+      }
+      if (typeof bot.groupId === 'string') {
+        await broker.call('config.set', { key: 'ops.bot.groupId', value: bot.groupId });
+      }
+      if (typeof bot.panelId === 'string') {
+        await broker.call('config.set', { key: 'ops.bot.panelId', value: bot.panelId });
+      }
+      if (typeof bot.messages === 'string') {
+        const lines = bot.messages
+          .split('\n')
+          .map((s: string) => s.trim())
+          .filter(Boolean);
+        await broker.call('config.set', { key: 'ops.bot.messages', value: lines });
+      } else if (Array.isArray(bot.messages)) {
+        await broker.call('config.set', { key: 'ops.bot.messages', value: bot.messages });
+      }
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/status', auth(), async (req, res, next) => {
   try {
     const { pseudoliveEnabled, bot } = req.body ?? {};
     if (typeof pseudoliveEnabled === 'boolean') {

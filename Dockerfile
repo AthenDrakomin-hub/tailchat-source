@@ -49,6 +49,7 @@ RUN find . -name "*.tsbuildinfo" -type f -delete
 RUN pnpm --filter tailchat-types build
 RUN pnpm --filter tailchat-server-sdk build
 RUN pnpm build
+RUN rm -f server/dist/moleculer.config.ts
 
 # Fix missing public files by ensuring client/web/dist is fully copied to server/dist/public
 RUN mkdir -p server/dist/public && cp -r client/web/dist/* server/dist/public && mkdir -p server/dist/public/admin && cp -r server/admin/dist/* server/dist/public/admin/
