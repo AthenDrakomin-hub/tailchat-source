@@ -26,7 +26,7 @@ curl -fsSL https://raw.githubusercontent.com/AthenDrakomin-hub/tailchat-source/m
 
 编辑 `/var/www/tailchat-source/docker-compose.env`，至少配置：
 
-- `API_URL`（例如 `https://goodpages.cn`）
+ - `API_URL`（例如 `https://goodpage.cn`）
 - `SECRET`
 - `ADMIN_PASS`
 - `MINIO_ROOT_PASSWORD`
@@ -34,8 +34,8 @@ curl -fsSL https://raw.githubusercontent.com/AthenDrakomin-hub/tailchat-source/m
 
 ### 域名与自有证书（Nginx）
 
-- 配置指南：[goodpages-domain-https.md](file:///workspace/docs/deployment/goodpages-domain-https.md)
-- Nginx 示例配置：[nginx.goodpages.cn.example.conf](file:///workspace/docs/nginx.goodpages.cn.example.conf)
+- 配置指南：[goodpage-domain-https.md](file:///workspace/docs/deployment/goodpage-domain-https.md)
+- Nginx 示例配置：[nginx.goodpage.cn.example.conf](file:///workspace/docs/nginx.goodpage.cn.example.conf)
 
 ### 更新/发版
 

@@ -90,7 +90,7 @@ docker compose config >/dev/null
 **Files:**
 - Modify: `server/mixins/socketio.mixin.ts`
 
-- [ ] Step 1: 将 `cors.origin='*'` 改为读取 `SOCKETIO_CORS_ORIGINS`（逗号分隔），默认 `https://goodpages.cn`
+- [ ] Step 1: 将 `cors.origin='*'` 改为读取 `SOCKETIO_CORS_ORIGINS`（逗号分隔），默认 `https://goodpage.cn`
 - [ ] Step 2: 开发环境保留宽松策略（避免本地开发阻断）
 - [ ] Step 3: TypeScript 编译检查并 Commit
 
