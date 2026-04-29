@@ -13,7 +13,7 @@
     "dev:admin": "cd admin && pnpm dev",
     "debug": "node --inspect -r ts-node/register ./runner.ts",
     "build": "ts-node scripts/build.ts && mkdir -p dist/public && cp -r public/* dist/public",
-    "start:service": "cd dist && tailchat-runner --config moleculer.config.js",
+    "start:service": "cd dist && node runner.js --config moleculer.config.js",
     "connect": "tailchat connect",
     "translation": "node ./scripts/scanTranslation.js",
     "check:type": "tsc --noEmit --skipLibCheck",
