@@ -46,6 +46,7 @@ ENV ENABLE_POSTHOG_PLUGIN=$ENABLE_POSTHOG_PLUGIN
 ENV DISABLE_SERVICE_WORKER=$DISABLE_SERVICE_WORKER
 
 RUN find . -name "*.tsbuildinfo" -type f -delete
+RUN pnpm --filter tailchat-types build
 RUN pnpm build
 
 # Fix missing public files by ensuring client/web/dist is fully copied to server/dist/public
