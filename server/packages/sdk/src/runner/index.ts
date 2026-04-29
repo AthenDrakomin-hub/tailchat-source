@@ -53,3 +53,45 @@ export function startDevRunner(options: DevRunnerOptions) {
 
   return runner._run();
 }
+
+interface ProdRunnerOptions {
+  config?: string;
+}
+
+function loadConfigFileStrictJs(configFile: string) {
+  const abs = path.isAbsolute(configFile)
+    ? configFile
+    : path.resolve(process.cwd(), configFile);
+
+  if (abs.endsWith('.ts')) {
+    throw new Error(`Production runner only supports .js config: ${abs}`);
+  }
+
+  const mod = require(abs);
+  return mod?.default ?? mod;
+}
+
+export function startProdRunner(options: ProdRunnerOptions = {}) {
+  const runner = new Runner();
+  runner.flags = {
+    hot: false,
+    repl: false,
+    env: true,
+    config: options.config ?? path.resolve(__dirname, './moleculer.config.js'),
+  };
+
+  (runner as any).loadConfigFile = loadConfigFileStrictJs;
+
+  runner.servicePaths = [
+    'services/**/*.service.js',
+    'services/**/*.service.dev.js',
+    'plugins/**/*.service.js',
+    'plugins/**/*.service.dev.js',
+  ];
+
+  if (runner.flags.instances !== undefined && cluster.isPrimary) {
+    return runner.startWorkers(runner.flags.instances);
+  }
+
+  return runner._run();
+}

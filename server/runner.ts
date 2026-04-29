@@ -1,6 +1,5 @@
 import path from 'path';
-import fs from 'fs';
-import { startDevRunner } from 'tailchat-server-sdk/dist/runner';
+import { startDevRunner, startProdRunner } from 'tailchat-server-sdk/dist/runner';
 
 function resolveConfigFromArgv(argv: string[]) {
   const idx = argv.findIndex((a) => a === '--config');
@@ -10,12 +9,15 @@ function resolveConfigFromArgv(argv: string[]) {
   return null;
 }
 
-function resolveDefaultConfig() {
-  const tsConfig = path.resolve(__dirname, './moleculer.config.ts');
-  if (fs.existsSync(tsConfig)) return tsConfig;
-  return path.resolve(__dirname, './moleculer.config.js');
-}
+const isProd = process.env.NODE_ENV === 'production';
+const configFromArgv = resolveConfigFromArgv(process.argv);
 
-startDevRunner({
-  config: resolveConfigFromArgv(process.argv) ?? resolveDefaultConfig(),
-});
+if (isProd) {
+  startProdRunner({
+    config: configFromArgv ?? path.resolve(__dirname, './moleculer.config.js'),
+  });
+} else {
+  startDevRunner({
+    config: configFromArgv ?? path.resolve(__dirname, './moleculer.config.ts'),
+  });
+}
