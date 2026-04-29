@@ -1,0 +1,19 @@
+[Unit]
+Description=Tailchat Ops Executor (local only)
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=/var/www/tailchat-source
+Environment=OPS_PROJECT_DIR=/var/www/tailchat-source
+Environment=OPS_COMPOSE_FILE=docker-compose.yml
+Environment=OPS_EXECUTOR_HOST=127.0.0.1
+Environment=OPS_EXECUTOR_PORT=9110
+Environment=EXECUTOR_SHARED_SECRET=CHANGE_ME_LONG_RANDOM
+ExecStart=/usr/bin/python3 /var/www/tailchat-source/scripts/ops-executor/ops-executor.py
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

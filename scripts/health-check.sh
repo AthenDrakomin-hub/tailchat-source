@@ -91,8 +91,8 @@ wait_http "http://127.0.0.1:11000/admin/" "^(200|301|302|401|403)$" 60 2 || true
 echo
 
 echo "External (optional):"
-for u in "${CHECK_URL:-https://goodspage.cn}" "${CHECK_WM_URL:-https://wm.goodspage.cn}"; do
-  echo "$u -> $(http_code "$u")"
+for u in "${CHECK_URL:-https://goodpage.cn}" "${CHECK_WM_URL:-}"; do
+  [ -n "${u:-}" ] && echo "$u -> $(http_code "$u")"
 done
 echo
 

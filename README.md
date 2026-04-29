@@ -31,11 +31,23 @@ curl -fsSL https://raw.githubusercontent.com/AthenDrakomin-hub/tailchat-source/m
 - `ADMIN_PASS`
 - `MINIO_ROOT_PASSWORD`
 - `DEFENSE_SHARED_SECRET`
+- `EXECUTOR_SHARED_SECRET`（用于“系统控制台”一键启停 LiveKit）
 
 ### 域名与自有证书（Nginx）
 
 - 配置指南：[goodpage-domain-https.md](file:///workspace/docs/deployment/goodpage-domain-https.md)
 - Nginx 示例配置：[nginx.goodpage.cn.example.conf](file:///workspace/docs/nginx.goodpage.cn.example.conf)
+
+### 系统控制台（运营面板 + 一键启停 LiveKit）
+
+管理后台新增「系统控制台」页面，可在 Web 界面完成：
+
+- LiveKit 一键启动/停止/重启（通过宿主机受控执行器）
+- 伪直播开关（关闭后拒绝 start）
+- 机器人小号轮播（按配置轮播发言）
+- 防御系统总览（更详细切档仍在「防御控制系统」页）
+
+受控执行器安装说明：`docs/deployment/ops-executor.md`
 
 ### 更新/发版
 

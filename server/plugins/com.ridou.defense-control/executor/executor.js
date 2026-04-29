@@ -77,10 +77,10 @@ async function probeUrl(urlStr, isWs = false) {
 
 async function runProbes() {
   const results = await Promise.all([
-    probeUrl('https://goodspage.cn/'),
-    probeUrl('https://goodspage.cn/health'),
-    probeUrl('https://goodspage.cn/admin/'),
-    probeUrl('wss://goodspage.cn/livekit', true)
+    probeUrl('https://goodpage.cn/'),
+    probeUrl('https://goodpage.cn/health'),
+    probeUrl('https://goodpage.cn/admin/'),
+    probeUrl('wss://goodpage.cn/livekit', true)
   ]);
   return {
     main: results[0],

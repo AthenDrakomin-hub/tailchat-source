@@ -18,6 +18,7 @@ import { cacheRouter } from './cache';
 import { analyticsRouter } from './analytics';
 import _ from 'lodash';
 import { pluginPermissionsRouter } from './plugin-permissions';
+import { opsRouter } from './ops';
 
 const router = Router();
 
@@ -57,6 +58,7 @@ router.use('/network', networkRouter);
 router.use('/config', configRouter);
 router.use('/file', fileRouter);
 router.use('/cache', cacheRouter);
+router.use('/ops', opsRouter);
 
 router.post('/callAction', auth(), async (req, res) => {
   const { action, params } = req.body;

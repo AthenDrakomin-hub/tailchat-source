@@ -36,6 +36,7 @@ import { SystemConfig } from './routes/system';
 import { SystemNotify } from './routes/system/notify';
 import { DefenseControlPanel } from './routes/defense-control';
 import { PluginPermissions } from './routes/plugin-permissions';
+import { OpsControlPanel } from './routes/ops-control';
 
 const dataProvider = jsonServerProvider('/admin/api', authHTTPClient);
 
@@ -50,74 +51,74 @@ function App() {
       authProvider={authProvider}
       i18n={i18n}
     >
-      <CustomRoute name="analytics" icon={<IconExperiment />}>
-        <Analytics />
-      </CustomRoute>
-      <Resource name="users" icon={<IconUser />} list={<UserList />} />
+      <Category name="ops">
+        <CustomRoute name="ops-control" icon={<IconDashboard />}>
+          <OpsControlPanel />
+        </CustomRoute>
+      </Category>
 
-      <Resource
-        name="messages"
-        icon={<IconMessage />}
-        list={
-          <ListTable
-            filter={[
-              createTextField('q', {
-                label: 'Search',
-              }),
-            ]}
-            showSizeChanger={true}
-            fields={messageFields}
-            action={{
-              detail: true,
-              edit: true,
-              delete: true,
-              export: true,
-              refresh: true,
-            }}
-            batchAction={{ delete: true }}
-          />
-        }
-      />
+      <Category name="security">
+        <CustomRoute name="defense-control" icon={<IconSafe />}>
+          <DefenseControlPanel />
+        </CustomRoute>
+        <CustomRoute name="network" icon={<IconWifi />}>
+          <Network />
+        </CustomRoute>
+        <CustomRoute name="socketio" icon={<IconDashboard />}>
+          <SocketIOAdmin />
+        </CustomRoute>
+      </Category>
 
-      <Resource name="groups" icon={<IconUserGroup />} list={<GroupList />} />
+      <Category name="operations">
+        <CustomRoute name="analytics" icon={<IconExperiment />}>
+          <Analytics />
+        </CustomRoute>
+        <CustomRoute name="cache" icon={<IconStorage />}>
+          <CacheManager />
+        </CustomRoute>
+        <CustomRoute name="system-notify" icon={<IconNotification />}>
+          <SystemNotify />
+        </CustomRoute>
+      </Category>
 
-      <Resource name="file" icon={<IconFile />} list={<FileList />} />
-
-      <Resource
-        name="mail"
-        icon={<IconEmail />}
-        list={<ListTable fields={mailFields} />}
-      />
+      <Category name="system">
+        <Resource name="users" icon={<IconUser />} list={<UserList />} />
+        <Resource
+          name="messages"
+          icon={<IconMessage />}
+          list={
+            <ListTable
+              filter={[
+                createTextField('q', {
+                  label: 'Search',
+                }),
+              ]}
+              showSizeChanger={true}
+              fields={messageFields}
+              action={{
+                detail: true,
+                edit: true,
+                delete: true,
+                export: true,
+                refresh: true,
+              }}
+              batchAction={{ delete: true }}
+            />
+          }
+        />
+        <Resource name="groups" icon={<IconUserGroup />} list={<GroupList />} />
+        <Resource name="file" icon={<IconFile />} list={<FileList />} />
+        <Resource name="mail" icon={<IconEmail />} list={<ListTable fields={mailFields} />} />
+        <CustomRoute name="system" icon={<IconSettings />}>
+          <SystemConfig />
+        </CustomRoute>
+      </Category>
 
       <Category name="plugins">
         <CustomRoute name="plugin-permissions" icon={<IconExperiment />}>
           <PluginPermissions />
         </CustomRoute>
       </Category>
-
-      <CustomRoute name="network" icon={<IconWifi />}>
-        <Network />
-      </CustomRoute>
-
-      <CustomRoute name="socketio" icon={<IconDashboard />}>
-        <SocketIOAdmin />
-      </CustomRoute>
-
-      <CustomRoute name="cache" icon={<IconStorage />}>
-        <CacheManager />
-      </CustomRoute>
-
-      <CustomRoute name="defense-control" icon={<IconSafe />}>
-        <DefenseControlPanel />
-      </CustomRoute>
-
-      <CustomRoute name="system-notify" icon={<IconNotification />}>
-        <SystemNotify />
-      </CustomRoute>
-
-      <CustomRoute name="system" icon={<IconSettings />}>
-        <SystemConfig />
-      </CustomRoute>
     </Tushan>
   );
 }

@@ -101,8 +101,15 @@ export const zhTranslation = {
     'defense-control': {
       name: '防御控制系统',
     },
+    'ops-control': {
+      name: '系统控制台',
+    },
   },
   category: {
+    ops: '系统控制台',
+    security: '安全与防御',
+    operations: '运营工具',
+    system: '系统管理',
     plugins: '插件',
   },
   custom: {

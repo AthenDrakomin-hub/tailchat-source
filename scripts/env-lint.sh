@@ -38,6 +38,7 @@ check_wrapped_value() {
 check_wrapped_value "API_URL"
 check_wrapped_value "LIVEKIT_URL"
 check_wrapped_value "MINIO_URL"
+check_wrapped_value "EXECUTOR_SHARED_SECRET"
 
 # MINIO_URL 只能是 host:port（例如 minio:9000），不能带 http(s)://
 MINIO_URL="$(awk -F= '/^MINIO_URL=/{print $2}' "$ENV_FILE" | tail -n 1 || true)"
@@ -76,6 +77,13 @@ fi
 MINIO_BUCKET_NAME="$(awk -F= '/^MINIO_BUCKET_NAME=/{print $2}' "$ENV_FILE" | tail -n 1 || true)"
 if [ -z "${MINIO_BUCKET_NAME:-}" ]; then
   echo "⚠️ WARNING: MINIO_BUCKET_NAME is empty. Recommended: MINIO_BUCKET_NAME=tailchat"
+fi
+
+EXECUTOR_SHARED_SECRET="$(awk -F= '/^EXECUTOR_SHARED_SECRET=/{print $2}' "$ENV_FILE" | tail -n 1 || true)"
+if [ -z "${EXECUTOR_SHARED_SECRET:-}" ] || echo "$EXECUTOR_SHARED_SECRET" | grep -Eq '^(CHANGE_ME|CHANGE_ME_.*)$'; then
+  echo "❌ ERROR: EXECUTOR_SHARED_SECRET is missing or using placeholder."
+  echo "   This is required for Admin 系统控制台调用宿主机受控执行器。"
+  exit 1
 fi
 
 echo "✅ env-lint: $ENV_FILE looks good."

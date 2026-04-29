@@ -240,6 +240,18 @@ class PseudoLiveService extends TcService {
     }
   }
 
+  private async isEnabled(): Promise<boolean> {
+    try {
+      const enabled = await this.broker.call('config.get', {
+        key: 'ops.pseudolive.enabled',
+      });
+      if (typeof enabled === 'boolean') return enabled;
+      return true;
+    } catch {
+      return true;
+    }
+  }
+
   async start(
     ctx: TcContext<{
       groupId: string;
@@ -250,6 +262,10 @@ class PseudoLiveService extends TcService {
   ) {
     const { groupId, panelId, title, fileUrl } = ctx.params;
     const { userId, t } = ctx.meta;
+
+    if (!(await this.isEnabled())) {
+      throw new Error(t('当前已关闭伪直播功能'));
+    }
 
     const [hasPermission] = await call(ctx).checkUserPermissions(
       groupId,

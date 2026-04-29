@@ -134,7 +134,7 @@ class ConfigService extends TcService {
   }
 
   async get(ctx: TcContext<{ key: string }>) {
-    return this.config[ctx.params.key] ?? null;
+    return _.get(this.config, ctx.params.key) ?? null;
   }
 
   async set(ctx: TcContext<{ key: string; value: any }>) {
