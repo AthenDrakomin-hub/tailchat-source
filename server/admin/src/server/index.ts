@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import compression from 'compression';
 import morgan from 'morgan';
 import path from 'path';
+import fs from 'fs';
 import dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 import { apiRouter } from './router/api';
@@ -50,8 +51,27 @@ app.use((err: any, req: any, res: any, next: any) => {
   res.json({ error: err.message });
 });
 
+function resolveAdminDistRoot(): string {
+  const candidates = [
+    path.resolve(__dirname, '../../..'),
+    path.resolve(__dirname, '../../../..'),
+    path.resolve(__dirname, '../../../../..'),
+  ];
+
+  for (const p of candidates) {
+    if (
+      fs.existsSync(path.resolve(p, 'index.html')) &&
+      fs.existsSync(path.resolve(p, 'assets'))
+    ) {
+      return p;
+    }
+  }
+
+  return candidates[0];
+}
+
 if (process.env.NODE_ENV === 'production') {
-  const distRoot = path.resolve(__dirname, '../../..');
+  const distRoot = resolveAdminDistRoot();
   const distAssets = path.resolve(distRoot, 'assets');
 
   app.use(

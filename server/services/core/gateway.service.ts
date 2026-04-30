@@ -20,6 +20,7 @@ import accepts from 'accepts';
 import send from 'send';
 import path from 'path';
 import mime from 'mime';
+import fs from 'fs';
 import {
   extractPluginIdFromHttpPath,
   isRoleAllowedForPlugin,
@@ -118,6 +119,24 @@ export default class ApiService extends TcService {
   }
 
   getRoutes() {
+    const publicDir = (() => {
+      const candidates = [
+        path.resolve(process.cwd(), 'dist/public'),
+        path.resolve(process.cwd(), 'public'),
+      ];
+
+      for (const p of candidates) {
+        if (
+          fs.existsSync(path.resolve(p, 'index.html')) &&
+          fs.existsSync(path.resolve(p, 'tailchat.manifest'))
+        ) {
+          return p;
+        }
+      }
+
+      return candidates[candidates.length - 1];
+    })();
+
     return [
       // /api
       {
@@ -375,7 +394,7 @@ export default class ApiService extends TcService {
         authentication: false,
         authorization: false,
         use: [
-          serve('public', {
+          serve(publicDir, {
             cacheControl: true,
             maxAge: '1d', // 1 day for public file, include plugins
             setHeaders(res: ServerResponse, path: string, stat: any) {
@@ -403,7 +422,9 @@ export default class ApiService extends TcService {
               'no-cache, no-store, must-revalidate'
             );
             const isAdmin = String(req.url).startsWith('/admin');
-            send(req, isAdmin ? './public/admin/index.html' : './public/index.html', { root: process.cwd() }).pipe(res);
+            send(req, isAdmin ? './admin/index.html' : './index.html', {
+              root: publicDir,
+            }).pipe(res);
           }
         },
         whitelist: [],
