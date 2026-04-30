@@ -56,6 +56,11 @@ docker compose --env-file docker-compose.env ps
 - 受控执行器 / 系统控制台：[`docs/deployment/ops-executor.md`](docs/deployment/ops-executor.md)
 - Admin 运行时联调基线：[`docs/deployment/admin-runtime-baseline.md`](docs/deployment/admin-runtime-baseline.md)
 
+## 使用说明文档
+
+- 群组内容语法说明：[`docs/usage/group-content-syntax.md`](docs/usage/group-content-syntax.md)
+- 版本变更记录：[`CHANGELOG.md`](CHANGELOG.md)
+
 ## 关键环境变量
 
 生产环境至少应正确配置：
