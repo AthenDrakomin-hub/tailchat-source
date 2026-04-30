@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express';
-import type { LeanDocument } from 'mongoose';
 import statusMessages from './statusMessages';
 import type { ADPBaseModel, ADPBaseSchema } from './utils/baseModel.interface';
 import castFilter from './utils/castFilter';
@@ -167,7 +166,7 @@ export function raExpressMongoose<T extends ADPBaseModel, I>(
           res.set('X-Total-Count', totalCount);
 
           const result = await query.lean();
-          return res.json(virtualId(result as LeanDocument<ADPBaseSchema>));
+          return res.json(virtualId(result));
         } catch (err) {
           console.error('[raExpressMongoose] list failed:', err);
           res.set('X-Total-Count', '0');
