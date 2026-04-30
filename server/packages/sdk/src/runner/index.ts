@@ -58,26 +58,35 @@ interface ProdRunnerOptions {
   config?: string;
 }
 
-function loadConfigFileStrictJs(configFile: string) {
-  const abs = path.isAbsolute(configFile)
-    ? configFile
-    : path.resolve(process.cwd(), configFile);
-
-  if (abs.endsWith('.ts')) {
-    throw new Error(`Production runner only supports .js config: ${abs}`);
-  }
-
-  const mod = require(abs);
-  return mod?.default ?? mod;
-}
-
 export function startProdRunner(options: ProdRunnerOptions = {}) {
   const runner = new Runner();
+  const resolvedConfig =
+    options.config ??
+    path.resolve(process.cwd(), 'moleculer.config.js');
+
   runner.flags = {
     hot: false,
     repl: false,
     env: true,
-    config: options.config ?? path.resolve(__dirname, './moleculer.config.js'),
+    config: resolvedConfig,
+  };
+
+  const loadConfigFileStrictJs = (configFile?: unknown) => {
+    const raw =
+      typeof configFile === 'string'
+        ? configFile
+        : typeof runner.flags?.config === 'string'
+          ? runner.flags.config
+          : resolvedConfig;
+
+    const abs = path.isAbsolute(raw) ? raw : path.resolve(process.cwd(), raw);
+
+    if (abs.endsWith('.ts')) {
+      throw new Error(`Production runner only supports .js config: ${abs}`);
+    }
+
+    const mod = require(abs);
+    return mod?.default ?? mod;
   };
 
   (runner as any).loadConfigFile = loadConfigFileStrictJs;
