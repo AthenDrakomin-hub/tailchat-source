@@ -5,6 +5,7 @@ export function useInjectTianjiScript() {
 
   useDataReady(
     () =>
+      process.env.DISABLE_ANALYTICS !== 'true' &&
       typeof tianji.scriptUrl === 'string' &&
       typeof tianji.websiteId === 'string' &&
       tianji.websiteId.length > 0,

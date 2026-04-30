@@ -9,6 +9,7 @@ x-tailchat-base: &tailchat-base
       ENABLE_SENTRY_PLUGIN: ${ENABLE_SENTRY_PLUGIN:-}
       ENABLE_POSTHOG_PLUGIN: ${ENABLE_POSTHOG_PLUGIN:-}
       DISABLE_SERVICE_WORKER: ${DISABLE_SERVICE_WORKER:-}
+      DISABLE_ANALYTICS: ${DISABLE_ANALYTICS:-}
   restart: unless-stopped
   env_file: docker-compose.env
   environment:

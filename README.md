@@ -45,6 +45,16 @@ DISABLE_SERVICE_WORKER=true
 
 禁用后建议用户在浏览器执行一次“强制刷新”，或到浏览器 Application → Service Workers 手动 Unregister 后再刷新。
 
+### 遥测/统计（可选）
+
+生产环境建议默认关闭遥测/统计注入，避免由于第三方不可用导致的请求超时与控制台噪音（不影响主功能）。
+
+通过构建期开关控制（需要重新构建镜像后生效）：
+
+```bash
+DISABLE_ANALYTICS=true
+```
+
 ### 域名与自有证书（Nginx）
 
 - 配置指南：[goodspage-domain-https.md](file:///workspace/docs/deployment/goodspage-domain-https.md)
@@ -89,9 +99,9 @@ DISABLE_SERVICE_WORKER=true
 ```bash
 cd /var/www/tailchat-source
 git pull --rebase
-docker compose build --pull
-docker compose up -d --remove-orphans
-docker compose ps
+docker compose --env-file docker-compose.env build --pull
+docker compose --env-file docker-compose.env up -d --remove-orphans
+docker compose --env-file docker-compose.env ps
 ```
 
 ### Docker 构建参数

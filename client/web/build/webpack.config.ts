@@ -65,6 +65,9 @@ const plugins: Configuration['plugins'] = [
     'process.env.DISABLE_SERVICE_WORKER': JSON.stringify(
       process.env.DISABLE_SERVICE_WORKER ?? ''
     ),
+    'process.env.DISABLE_ANALYTICS': JSON.stringify(
+      process.env.DISABLE_ANALYTICS ?? ''
+    ),
   }),
   new HtmlWebpackPlugin({
     inject: 'body',

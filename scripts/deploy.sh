@@ -76,6 +76,10 @@ upsert_env "MINIO_BUCKET_NAME" "${MINIO_BUCKET_NAME:-}"
 upsert_env "LIVEKIT_URL" "${LIVEKIT_URL:-}"
 upsert_env "LIVEKIT_PUBLIC_URL" "${LIVEKIT_PUBLIC_URL:-}"
 upsert_env "LIVEKIT_KEYS" "${LIVEKIT_KEYS:-}"
+upsert_env "LIVEKIT_API_KEY" "${LIVEKIT_API_KEY:-}"
+upsert_env "LIVEKIT_API_SECRET" "${LIVEKIT_API_SECRET:-}"
+upsert_env "DISABLE_SERVICE_WORKER" "${DISABLE_SERVICE_WORKER:-}"
+upsert_env "DISABLE_ANALYTICS" "${DISABLE_ANALYTICS:-}"
 upsert_env "TRAEFIK_TRUSTED_PROXIES" "${TRAEFIK_TRUSTED_PROXIES:-}"
 upsert_env "SOCKETIO_CORS_ORIGINS" "${SOCKETIO_CORS_ORIGINS:-}"
 upsert_env "OIDC_REQUIRE_PKCE" "${OIDC_REQUIRE_PKCE:-}"
@@ -108,13 +112,13 @@ require_env "MINIO_ROOT_PASSWORD"
 require_env "DEFENSE_SHARED_SECRET"
 
 echo "[4/6] Build..."
-docker compose build --pull
+docker compose --env-file docker-compose.env build --pull
 
 echo "[5/6] Up..."
-docker compose up -d --remove-orphans
+docker compose --env-file docker-compose.env up -d --remove-orphans
 
 echo "[6/6] Status:"
-docker compose ps
+docker compose --env-file docker-compose.env ps
 
 echo "Healthcheck (optional):"
 if [ -f "scripts/health-check.sh" ]; then

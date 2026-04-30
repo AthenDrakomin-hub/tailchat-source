@@ -17,9 +17,21 @@ function appendScript(script) {
   let template = fs.readFileSync(templatePath, {
     encoding: 'utf-8',
   });
+  if (template.includes(script)) {
+    return;
+  }
   template = template.replace('</head>', script + '</head>');
 
   fs.writeFileSync(templatePath, template);
+}
+
+const disableAnalytics =
+  process.env.DISABLE_ANALYTICS === 'true' ||
+  process.env.ENABLE_ANALYTICS === 'false';
+
+if (disableAnalytics) {
+  console.log('analytics disabled, skip inject');
+  process.exit(0);
 }
 
 // frontjs
