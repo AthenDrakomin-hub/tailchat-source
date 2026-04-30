@@ -60,6 +60,8 @@ docker compose --env-file docker-compose.env ps
 
 - 群组内容语法说明：[`docs/usage/group-content-syntax.md`](docs/usage/group-content-syntax.md)
 - 版本变更记录：[`CHANGELOG.md`](CHANGELOG.md)
+- 已部署服务器重部署：[`docs/deployment/redeploy-existing-server.md`](docs/deployment/redeploy-existing-server.md)
+- 部署排障手册：[`docs/deployment/troubleshooting.md`](docs/deployment/troubleshooting.md)
 
 ## 关键环境变量
 

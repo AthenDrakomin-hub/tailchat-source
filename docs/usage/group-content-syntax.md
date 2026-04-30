@@ -2,7 +2,7 @@
 
 ## 先说结论
 
-如果你想在群组里做一份“公告 / 说明页 / 长文内容”，**不要按 HTML 页面去写**。
+如果你想在群组里做一份“公告 / 说明页 / 长文内容”，不要按 HTML 页面去写。
 
 当前项目里和群组内容相关的几种编辑入口，支持的语法并不一样：
 
@@ -10,12 +10,10 @@
    - 普通文本
    - 不是 Markdown 编辑器
    - 不是 HTML 编辑器
-
 2. 欢迎词插件 `com.msgbyte.welcome`
    - 普通文本框
    - 不是 HTML
    - 支持少量占位符
-
 3. 真正适合写“公告/说明”的入口
    - `Markdown Panel`
    - 使用 Markdown 语法，不是自由 HTML
@@ -122,7 +120,7 @@
 - 表格
 - 代码块
 - 行内代码
-- 任务列表（取决于 GFM 渲染效果）
+- 任务列表
 
 ### 示例
 
@@ -163,17 +161,17 @@
 
 #### 代码块
 
-```md
+````md
 ```bash
 docker compose ps
 ```
-```
+````
 
 ## 五、不建议使用的语法
 
 ### 1. 不要把它当成通用 HTML 编辑器
 
-虽然渲染链中存在 `rehypeRaw` / `sanitize` / `iframe` 相关逻辑，但当前实现同时设置了：
+当前渲染链虽然包含 `rehypeRaw` / `sanitize` / `iframe` 相关处理，但同时设置了：
 
 - `skipHtml={true}`
 
@@ -186,9 +184,9 @@ docker compose ps
 
 所以在实际使用中，最安全的理解是：
 
-- **按 Markdown 用**
-- **不要依赖自定义 HTML**
-- **不要依赖 style / embed / script**
+- 按 Markdown 用
+- 不要依赖自定义 HTML
+- 不要依赖 `style` / `embed` / `script`
 
 ### 2. 不要期待自由 CSS
 
