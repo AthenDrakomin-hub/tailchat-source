@@ -315,3 +315,17 @@ index 695e5affcb21b456ce5b0f69f2c02e776ad4216a..34cc885fd80279b1b91f8013263c522f
  	}
  
  	/**
+diff --git a/src/tracing/span.js b/src/tracing/span.js
+index 2f7701af5f32c7b79f82fa99d8ce2414f31389fd..983c096d564f37bbf27d03a4de0b8f33956ca00b 100644
+--- a/src/tracing/span.js
++++ b/src/tracing/span.js
+@@ -1,6 +1,7 @@
+ "use strict";
+ 
+-const { now } = require("perf_hooks").performance;
++const performance = require("perf_hooks").performance;
++const now = performance.now.bind(performance);
+ 
+ function defProp(instance, propName, value, readOnly = false) {
+ 	Object.defineProperty(instance, propName, {
+ 		value,

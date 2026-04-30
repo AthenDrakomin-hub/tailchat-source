@@ -1,25 +1,46 @@
 import { PageHeader, useAsync, Table } from 'tushan';
 import axios from 'axios';
+import { FeatureStatusCard } from '../components/FeatureStatusCard';
 
 export const PluginPermissions: React.FC = () => {
-  const { value: registryData, loading } = useAsync(async () => {
+  const { value, loading } = useAsync(async () => {
     try {
-      // 必须用绝对路径或原始 axios 绕过 /admin/api 的 baseUrl 限制
       const { data } = await axios.get('/registry-be.json');
-      return Array.isArray(data) ? data : [];
-    } catch (err) {
-      return [];
+      return {
+        registryData: Array.isArray(data) ? data : [],
+        registryUnavailable: false,
+        registryError: '',
+      };
+    } catch (err: any) {
+      return {
+        registryData: [],
+        registryUnavailable: true,
+        registryError: err?.message ? String(err.message) : 'registry-be.json not found',
+      };
     }
   }, []);
 
+  if (value?.registryUnavailable) {
+    return (
+      <FeatureStatusCard
+        title="插件注册表"
+        summary="当前无法读取后端插件注册表，因此此页面只能进入降级态。"
+        actionHint="请确认构建产物中存在 /registry-be.json，并确保 Admin 静态资源路径正确。"
+        detail={value.registryError}
+      />
+    );
+  }
+
   return (
     <div>
-      <PageHeader title="插件权限管理" />
+      <PageHeader title="插件注册表" />
       <div style={{ padding: 20 }}>
-        <p style={{ marginBottom: 16 }}>当前仅展示服务端加载的插件注册表 (registry-be.json)，如需修改权限请直接编辑该文件或通过环境变量控制。</p>
+        <p style={{ marginBottom: 16 }}>
+          当前页面仅用于查看服务端加载的插件注册表，不提供在线发布或权限编辑能力。
+        </p>
         <Table
           loading={loading}
-          data={registryData || []}
+          data={value?.registryData || []}
           rowKey="name"
           columns={[
             {

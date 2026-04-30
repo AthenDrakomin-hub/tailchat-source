@@ -63,8 +63,10 @@ class DefenseControlService extends TcService {
   }
 
   onInit() {
+    const logger = this.logger ?? console;
+
     if (!process.env.DEFENSE_SHARED_SECRET) {
-      this.logger.warn(
+      logger.warn(
         '[defense-control] DEFENSE_SHARED_SECRET is not configured. ' +
           'Defense executor integration will be disabled until you set it.'
       );

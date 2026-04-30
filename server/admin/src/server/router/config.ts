@@ -14,9 +14,17 @@ router.get('/client', auth(), async (req, res, next) => {
 
     res.json({
       config,
+      available: true,
+      actionHint: '',
     });
   } catch (err) {
-    next(err);
+    res.json({
+      config: {},
+      available: false,
+      error: err instanceof Error ? err.message : String(err),
+      actionHint:
+        '请确认主系统 broker 已接通，并且 config.client action 在当前环境可调用。',
+    });
   }
 });
 
@@ -31,7 +39,13 @@ router.patch('/client', auth(), async (req, res, next) => {
       success: true,
     });
   } catch (err) {
-    next(err);
+    res.status(503).json({
+      success: false,
+      error: err instanceof Error ? err.message : String(err),
+      available: false,
+      actionHint:
+        '请确认主系统 broker 已接通，并且 config.setClientConfig action 在当前环境可调用。',
+    });
   }
 });
 

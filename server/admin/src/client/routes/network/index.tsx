@@ -2,6 +2,7 @@ import React from 'react';
 import { request } from '../../request';
 import _uniq from 'lodash/uniq';
 import { TagItems } from '../../components/TagItems';
+import { FeatureStatusCard } from '../../components/FeatureStatusCard';
 import {
   Card,
   Spin,
@@ -16,14 +17,44 @@ import {
  */
 export const Network: React.FC = React.memo(() => {
   const { value: data, loading } = useAsync(async () => {
-    const { data } = await request('/network/all');
+    try {
+      const { data } = await request('/network/all');
 
-    return data;
+      return {
+        ...data,
+        networkUnavailable: data.available === false,
+        networkError: data.error ?? '',
+        actionHint:
+          data.actionHint ??
+          '请确认管理端已连通 broker，并且当前节点可以访问注册表信息。',
+      };
+    } catch (err: any) {
+      return {
+        nodes: [],
+        services: [],
+        actions: [],
+        events: [],
+        networkUnavailable: true,
+        networkError: err?.message ? String(err.message) : 'network unavailable',
+        actionHint: '请确认 /network/all 可访问，并检查 broker 注册表状态。',
+      };
+    }
   });
   const { t } = useTranslation();
 
   if (loading) {
     return <Spin />;
+  }
+
+  if (data?.networkUnavailable) {
+    return (
+      <FeatureStatusCard
+        title="微服务网络"
+        summary="当前无法读取网络注册表信息，因此页面进入降级态。"
+        actionHint={data.actionHint}
+        detail={data.networkError}
+      />
+    );
   }
 
   return (

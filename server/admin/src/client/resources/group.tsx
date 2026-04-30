@@ -11,6 +11,7 @@ import {
 } from 'tushan';
 import { groupFields } from '../fields';
 import { callAction } from '../request';
+import { formatAdminError } from '../utils/admin-error';
 
 export const GroupList: React.FC = React.memo(() => {
   const { t } = useTranslation();
@@ -62,7 +63,7 @@ export const GroupList: React.FC = React.memo(() => {
                       close();
                     } catch (err) {
                       console.error(err);
-                      Message.error(String(err));
+                      Message.error(formatAdminError(err, '群组管理操作失败'));
                     }
                   },
                 });

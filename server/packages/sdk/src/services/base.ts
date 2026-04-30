@@ -463,6 +463,7 @@ export abstract class TcService extends Service {
   async cleanActionCache(actionName: string, keys: string[] = []) {
     if (!this.broker.cacher) {
       console.error('Can not clean cache because no cacher existed.');
+      return;
     }
 
     if (keys.length === 0) {

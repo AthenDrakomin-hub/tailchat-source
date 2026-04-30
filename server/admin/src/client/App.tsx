@@ -64,7 +64,7 @@ function App() {
         <CustomRoute name="network" icon={<IconWifi />}>
           <Network />
         </CustomRoute>
-        <CustomRoute name="socketio" icon={<IconDashboard />}>
+        <CustomRoute name="socketio-diagnostic" icon={<IconDashboard />}>
           <SocketIOAdmin />
         </CustomRoute>
       </Category>
@@ -78,6 +78,9 @@ function App() {
         </CustomRoute>
         <CustomRoute name="system-notify" icon={<IconNotification />}>
           <SystemNotify />
+        </CustomRoute>
+        <CustomRoute name="site-config" icon={<IconSettings />}>
+          <SystemConfig />
         </CustomRoute>
       </Category>
 
@@ -109,13 +112,10 @@ function App() {
         <Resource name="groups" icon={<IconUserGroup />} list={<GroupList />} />
         <Resource name="file" icon={<IconFile />} list={<FileList />} />
         <Resource name="mail" icon={<IconEmail />} list={<ListTable fields={mailFields} />} />
-        <CustomRoute name="system" icon={<IconSettings />}>
-          <SystemConfig />
-        </CustomRoute>
       </Category>
 
       <Category name="plugins">
-        <CustomRoute name="plugin-permissions" icon={<IconExperiment />}>
+        <CustomRoute name="plugin-registry" icon={<IconExperiment />}>
           <PluginPermissions />
         </CustomRoute>
       </Category>

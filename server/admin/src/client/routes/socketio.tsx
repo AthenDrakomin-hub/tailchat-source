@@ -1,20 +1,38 @@
 import React from 'react';
 import { Button, Card, Typography, useTranslation } from 'tushan';
+import { FeatureStatusCard } from '../components/FeatureStatusCard';
 
 /**
  * SocketIO 管理
  */
 export const SocketIOAdmin: React.FC = React.memo(() => {
   const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  const host = window.location.host;
+  const socketUrl = `${protocol}://${host}`;
   const { t } = useTranslation();
+
+  if (!host) {
+    return (
+      <FeatureStatusCard
+        title="Socket.IO 诊断"
+        summary="当前无法生成诊断地址，因此页面进入降级态。"
+        actionHint="请确认管理端运行在正常浏览器环境中。"
+        detail="window.location.host is empty"
+      />
+    );
+  }
 
   return (
     <Card>
+      <Typography.Title heading={4}>Socket.IO 诊断</Typography.Title>
+      <Typography.Paragraph>
+        这是一个外部诊断入口，用于辅助排查 Socket.IO 长连接，不是内嵌式管理后台。
+      </Typography.Paragraph>
       <div>
         <Typography.Paragraph>
           {t('custom.socketio.tip1')}{' '}
           <strong>
-            {protocol}://{window.location.host}
+            {socketUrl}
           </strong>
         </Typography.Paragraph>
         <Typography.Paragraph>{t('custom.socketio.tip2')}</Typography.Paragraph>

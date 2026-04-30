@@ -12,6 +12,7 @@ router.post('/clean', auth(), async (req, res, next) => {
     if (!broker.cacher) {
       res.json({
         success: false,
+        msg: 'Not found cacher',
         message: 'Not found cacher',
       });
       return;

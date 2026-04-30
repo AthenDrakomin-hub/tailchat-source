@@ -11,6 +11,7 @@ import {
 } from 'tushan';
 import { userFields } from '../fields';
 import { request } from '../request';
+import { formatAdminError } from '../utils/admin-error';
 
 export const UserList: React.FC = React.memo(() => {
   const { t } = useTranslation();
@@ -54,7 +55,7 @@ export const UserList: React.FC = React.memo(() => {
                     close();
                   } catch (err) {
                     console.error(err);
-                    Message.error(String(err));
+                    Message.error(formatAdminError(err, '用户管理操作失败'));
                   }
                 },
               });
@@ -78,7 +79,7 @@ export const UserList: React.FC = React.memo(() => {
                         close();
                       } catch (err) {
                         console.error(err);
-                        Message.error(String(err));
+                        Message.error(formatAdminError(err, '用户管理操作失败'));
                       }
                     },
                   });
@@ -101,7 +102,7 @@ export const UserList: React.FC = React.memo(() => {
                         close();
                       } catch (err) {
                         console.error(err);
-                        Message.error(String(err));
+                        Message.error(formatAdminError(err, '用户管理操作失败'));
                       }
                     },
                   });

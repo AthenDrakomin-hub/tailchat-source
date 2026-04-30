@@ -80,17 +80,17 @@ export const zhTranslation = {
         createdAt: '创建时间',
       },
     },
-    'plugin-permissions': {
-      name: '插件发布与权限',
+    'plugin-registry': {
+      name: '插件注册表',
     },
-    system: {
-      name: '系统设置',
+    'site-config': {
+      name: '站点配置',
     },
     network: {
       name: '微服务网络',
     },
-    socketio: {
-      name: 'Socket.IO 长链接',
+    'socketio-diagnostic': {
+      name: 'Socket.IO 诊断',
     },
     cache: {
       name: '缓存管理',

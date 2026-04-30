@@ -16,7 +16,10 @@ export function auth() {
     try {
       const authorization = req.headers.authorization;
       if (!authorization) {
-        res.status(401).end('not found authorization in headers');
+        res.status(401).json({
+          success: false,
+          error: 'not found authorization in headers',
+        });
         return;
       }
 
@@ -24,18 +27,27 @@ export function auth() {
 
       const payload = jwt.verify(token, authSecret);
       if (typeof payload === 'string') {
-        res.status(401).end('payload type error');
+        res.status(401).json({
+          success: false,
+          error: 'payload type error',
+        });
         return;
       }
       if (payload.platform !== 'admin') {
-        res.status(401).end('Payload invalid');
+        res.status(401).json({
+          success: false,
+          error: 'Payload invalid',
+        });
         return;
       }
 
       (req as AdminRequest).adminAuthPayload = payload as any;
       next();
     } catch (err) {
-      res.status(401).end(String(err));
+      res.status(401).json({
+        success: false,
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   };
 }

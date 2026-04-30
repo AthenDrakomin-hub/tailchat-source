@@ -21,8 +21,9 @@ export const CacheManager: React.FC = React.memo(() => {
     });
 
     if (!data.success) {
-      Message.error(t('tushan.common.failed') + ':' + data.msg);
-      throw new Error(data.msg);
+      const errorMessage = data.message ?? data.msg ?? 'Unknown cache error';
+      Message.error(t('tushan.common.failed') + ':' + errorMessage);
+      throw new Error(errorMessage);
     }
 
     Message.success(t('tushan.common.success'));

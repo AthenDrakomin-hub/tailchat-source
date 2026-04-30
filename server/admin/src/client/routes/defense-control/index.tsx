@@ -9,39 +9,51 @@ import {
   InputNumber,
   Button,
   Message,
-  useAsyncRequest,
   Divider,
   Table,
 } from 'tushan';
 import { callAction } from '../../request';
+import { formatAdminError } from '../../utils/admin-error';
 
 export const DefenseControlPanel: React.FC = React.memo(() => {
   const [form] = Form.useForm();
-  
-  const [{ value: config, loading }, fetchConfig] = useAsyncRequest(async () => {
-    const data = await callAction('plugin:com.ridou.defense-control.getConfig', {});
-    return data || {};
-  });
+  const [featureAvailable, setFeatureAvailable] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [config, setConfig] = useState<any>(null);
+  const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [logsLoading, setLogsLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
 
-  const [{ value: auditLogs, loading: logsLoading }, fetchAuditLogs] = useAsyncRequest(async () => {
-    const data = await callAction('plugin:com.ridou.defense-control.getAuditLogs', {});
-    return data || [];
-  });
+  const loadPanelData = async () => {
+    setLoading(true);
+    setLogsLoading(true);
 
-  const [{ loading: updating }, updateConfig] = useAsyncRequest(async (values) => {
     try {
-      await callAction('plugin:com.ridou.defense-control.updateConfig', values);
-      Message.success('配置已更新');
-      fetchConfig();
-      fetchAuditLogs();
+      const [configResult, auditLogsResult] = await Promise.all([
+        callAction('plugin:com.ridou.defense-control.getConfig', {}),
+        callAction('plugin:com.ridou.defense-control.getAuditLogs', {}),
+      ]);
+
+      setConfig(configResult || {});
+      setAuditLogs(Array.isArray(auditLogsResult) ? auditLogsResult : []);
+      setFeatureAvailable(true);
+      setLoadError('');
     } catch (err) {
-      Message.error(String(err));
+      setFeatureAvailable(false);
+      setLoadError(formatAdminError(err, '防御控制插件当前不可用'));
+      setConfig(null);
+      setAuditLogs([]);
+    } finally {
+      setLoading(false);
+      setLogsLoading(false);
     }
-  });
+  };
 
   useEffect(() => {
-    fetchConfig();
-    fetchAuditLogs();
+    (async () => {
+      await loadPanelData();
+    })();
   }, []);
 
   useEffect(() => {
@@ -69,11 +81,34 @@ export const DefenseControlPanel: React.FC = React.memo(() => {
       Message.error('边缘节点列表 JSON 格式错误');
       return;
     }
-    updateConfig({
+    setUpdating(true);
+    callAction('plugin:com.ridou.defense-control.updateConfig', {
       ...values,
-      selfEdges: parsedSelfEdges
-    });
+      selfEdges: parsedSelfEdges,
+    })
+      .then(async () => {
+        Message.success('配置已更新');
+        await loadPanelData();
+      })
+      .catch((err) => {
+        Message.error(formatAdminError(err, '防御控制系统操作失败'));
+      })
+      .finally(() => {
+        setUpdating(false);
+      });
   };
+
+  if (!featureAvailable) {
+    return (
+      <Card>
+        <Typography.Title heading={4}>防御控制系统</Typography.Title>
+        <Typography.Paragraph>
+          当前防御控制插件未安装、未启用或未接入到管理端，因此此页面暂不可用。
+        </Typography.Paragraph>
+        <Input.TextArea value={loadError || 'feature unavailable'} rows={4} readOnly />
+      </Card>
+    );
+  }
 
   return (
     <Card>

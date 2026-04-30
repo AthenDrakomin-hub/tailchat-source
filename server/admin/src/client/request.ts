@@ -1,5 +1,9 @@
 import axios from 'axios';
-import { authStorageKey } from './auth';
+import {
+  authStorageKey,
+  clearAdminAuthStorage,
+  redirectToAdminLogin,
+} from './auth';
 import _set from 'lodash/set';
 
 /**
@@ -15,13 +19,28 @@ function createRequest() {
       const { token } = JSON.parse(
         window.localStorage.getItem(authStorageKey) ?? '{}'
       );
-      _set(val, ['headers', 'Authorization'], `Bearer ${token}`);
+      if (typeof token === 'string' && token) {
+        _set(val, ['headers', 'Authorization'], `Bearer ${token}`);
+      }
 
       return val;
     } catch (err) {
       throw err;
     }
   });
+
+  ins.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const status = error?.response?.status;
+      if (status === 401 || status === 403) {
+        clearAdminAuthStorage();
+        redirectToAdminLogin();
+      }
+
+      throw error;
+    }
+  );
 
   return ins;
 }
@@ -36,6 +55,14 @@ export async function callAction(
     action: actionName,
     params,
   });
+
+  if (data?.success === false) {
+    throw new Error(
+      typeof data?.error === 'string' && data.error
+        ? data.error
+        : 'call action failed'
+    );
+  }
 
   return data;
 }

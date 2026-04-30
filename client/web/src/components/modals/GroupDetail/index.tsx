@@ -103,7 +103,14 @@ export const GroupDetail: React.FC<SettingsViewProps> = React.memo((props) => {
     }
 
     return _menu;
-  }, []);
+  }, [
+    groupId,
+    allowManageConfig,
+    allowManageUser,
+    allowManagePanel,
+    allowManageInvite,
+    allowManageRoles,
+  ]);
 
   return (
     <GroupIdContextProvider value={groupId}>

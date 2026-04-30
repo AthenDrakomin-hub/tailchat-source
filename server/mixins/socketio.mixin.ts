@@ -97,33 +97,35 @@ export const TcSocketIOService = (
       this.logger.info('SocketIO service started');
 
       const io: SocketServer = this.io;
-      if (!config.redisUrl) {
-        throw new Errors.MoleculerClientError(
-          'SocketIO service failed to start, environment variables are required: `REDIS_URL`'
-        );
-      }
       this.socketCloseCallbacks = []; // socketio服务关闭时需要执行的回调
+      let pubClient: RedisClient.Redis | undefined;
 
-      const pubClient = new RedisClient(config.redisUrl, {
-        retryStrategy(times) {
-          const delay = Math.min(times * 50, 2000);
-          return delay;
-        },
-      });
-      const subClient = pubClient.duplicate();
-      io.adapter(
-        createAdapter(pubClient, subClient, {
-          key: 'tailchat-socket',
-        })
-      );
+      if (!config.redisUrl) {
+        this.logger.warn(
+          'SocketIO Redis adapter is disabled because REDIS_URL is not configured'
+        );
+      } else {
+        pubClient = new RedisClient(config.redisUrl, {
+          retryStrategy(times) {
+            const delay = Math.min(times * 50, 2000);
+            return delay;
+          },
+        });
+        const subClient = pubClient.duplicate();
+        io.adapter(
+          createAdapter(pubClient, subClient, {
+            key: 'tailchat-socket',
+          })
+        );
 
-      this.socketCloseCallbacks.push(async () => {
-        pubClient.disconnect(false);
-        subClient.disconnect(false);
-      });
-      this.logger.info('SocketIO is using Redis Adapter');
+        this.socketCloseCallbacks.push(async () => {
+          pubClient?.disconnect(false);
+          subClient.disconnect(false);
+        });
+        this.logger.info('SocketIO is using Redis Adapter');
 
-      this.redis = pubClient;
+        this.redis = pubClient;
+      }
 
       io.use(async (socket, next) => {
         // 授权
@@ -175,11 +177,11 @@ export const TcSocketIOService = (
         );
 
         const userId = socket.data.userId;
-        pubClient
-          .hset(buildUserOnlineKey(userId), socket.id, this.broker.nodeID)
-          .then(() => {
-            pubClient.expire(buildUserOnlineKey(userId), expiredTime);
+        if (pubClient) {
+          pubClient.hset(buildUserOnlineKey(userId), socket.id, this.broker.nodeID).then(() => {
+            pubClient?.expire(buildUserOnlineKey(userId), expiredTime);
           });
+        }
 
         // 加入自己userId所生产的id
         socket.join(buildUserRoomId(userId));
@@ -188,6 +190,10 @@ export const TcSocketIOService = (
          * 离线时移除在线映射
          */
         const removeOnlineMapping = () => {
+          if (!pubClient) {
+            return Promise.resolve(0);
+          }
+
           return pubClient.hdel(buildUserOnlineKey(userId), socket.id);
         };
         this.socketCloseCallbacks.push(removeOnlineMapping);
@@ -551,6 +557,18 @@ export const TcSocketIOService = (
           ctx: PureContext<{ userIds: string[] }>
         ) {
           const userIds = ctx.params.userIds;
+
+          if (!this.redis) {
+            const io: SocketServer = this.io;
+            const status = await Promise.all(
+              userIds.map(async (userId) => {
+                const sockets = await io.in(buildUserRoomId(userId)).fetchSockets();
+                return sockets.length > 0;
+              })
+            );
+
+            return status;
+          }
 
           const status = await Promise.all(
             userIds.map((userId) =>

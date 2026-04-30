@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { request } from '../../request';
+import { formatAdminError } from '../../utils/admin-error';
+import type { FeatureState } from '../../utils/feature-state';
 import {
   useAsyncRequest,
   useEditValue,
@@ -111,7 +113,11 @@ export const SystemConfig: React.FC = React.memo(() => {
     async () => {
       const { data } = await request.get('/config/client');
 
-      return data.config ?? {};
+      return {
+        config: data.config ?? {},
+        available: data.available !== false,
+        error: data.error ? String(data.error) : '',
+      };
     }
   );
   const { t } = useTranslation();
@@ -120,10 +126,25 @@ export const SystemConfig: React.FC = React.memo(() => {
     fetchConfig();
   }, []);
 
+  const configData = config?.config ?? {};
+  const featureState: FeatureState = {
+    available: config?.available !== false,
+    reason: config?.error || '',
+    actionHint:
+      '请确认管理端已接入主系统 broker，并且 config.client / config.setClientConfig 可调用。',
+  };
+  const available = featureState.available;
+  const unavailableReason = featureState.reason || '';
+
   const [serverName, setServerName, saveServerName] = useEditValue(
-    config?.serverName,
+    configData?.serverName,
     async (val) => {
-      if (val === config?.serverName) {
+      if (!available) {
+        Message.error('站点配置服务当前不可用，无法保存');
+        return;
+      }
+
+      if (val === configData?.serverName) {
         return;
       }
 
@@ -136,15 +157,20 @@ export const SystemConfig: React.FC = React.memo(() => {
         Message.success(t('tushan.common.success'));
       } catch (err) {
         console.log(err);
-        Message.error(String(err));
+        Message.error(formatAdminError(err, '保存站点名称失败'));
       }
     }
   );
 
   const [registerOrgCode, setRegisterOrgCode, saveRegisterOrgCode] = useEditValue(
-    config?.registerOrgCode || '0501',
+    configData?.registerOrgCode || '0501',
     async (val) => {
-      if (val === config?.registerOrgCode) {
+      if (!available) {
+        Message.error('站点配置服务当前不可用，无法保存');
+        return;
+      }
+
+      if (val === configData?.registerOrgCode) {
         return;
       }
 
@@ -157,7 +183,7 @@ export const SystemConfig: React.FC = React.memo(() => {
         Message.success(t('tushan.common.success'));
       } catch (err) {
         console.log(err);
-        Message.error(String(err));
+        Message.error(formatAdminError(err, '保存组织代码失败'));
       }
     }
   );
@@ -165,6 +191,10 @@ export const SystemConfig: React.FC = React.memo(() => {
   const [{}, handleChangeServerEntryImage] = useAsyncRequest(
     async (file: File | null) => {
       if (file) {
+        if (!available) {
+          Message.error('站点配置服务当前不可用，无法上传');
+          return;
+        }
         const formdata = new FormData();
         formdata.append('file', file);
         formdata.append('usage', 'server');
@@ -188,6 +218,10 @@ export const SystemConfig: React.FC = React.memo(() => {
         });
         fetchConfig();
       } else {
+        if (!available) {
+          Message.error('站点配置服务当前不可用，无法保存');
+          return;
+        }
         // delete
         await request.patch('/config/client', {
           key: 'serverEntryImage',
@@ -200,23 +234,32 @@ export const SystemConfig: React.FC = React.memo(() => {
 
   const [{}, handleChangeAnnouncement] = useAsyncRequest(
     async (values: { enable: boolean; link: string; text: string }) => {
+      if (!available) {
+        Message.error('站点配置服务当前不可用，无法保存');
+        return;
+      }
       console.log(values);
       const { enable = false, link = '', text = '' } = values;
 
-      if (enable) {
-        await request.patch('/config/client', {
-          key: 'announcement',
-          value: {
-            id: Date.now(),
-            text,
-            link,
-          },
-        });
-      } else {
-        await request.patch('/config/client', {
-          key: 'announcement',
-          value: false,
-        });
+      try {
+        if (enable) {
+          await request.patch('/config/client', {
+            key: 'announcement',
+            value: {
+              id: Date.now(),
+              text,
+              link,
+            },
+          });
+        } else {
+          await request.patch('/config/client', {
+            key: 'announcement',
+            value: false,
+          });
+        }
+      } catch (err) {
+        Message.error(formatAdminError(err, '保存公告配置失败'));
+        return;
       }
 
       Message.success(t('tushan.common.success'));
@@ -225,14 +268,18 @@ export const SystemConfig: React.FC = React.memo(() => {
 
   const [beidouStarsCards, setBeidouStarsCards] = useState<
     BeidouStarCardConfig[]
-  >(() => normalizeBeidouStarsCards(config?.beidouStarsCards));
+  >(() => normalizeBeidouStarsCards(configData?.beidouStarsCards));
 
   useEffect(() => {
-    setBeidouStarsCards(normalizeBeidouStarsCards(config?.beidouStarsCards));
-  }, [config]);
+    setBeidouStarsCards(normalizeBeidouStarsCards(configData?.beidouStarsCards));
+  }, [configData]);
 
   const [{ loading: savingBeidouStars }, saveBeidouStarsCards] = useAsyncRequest(
     async () => {
+      if (!available) {
+        Message.error('站点配置服务当前不可用，无法保存');
+        return;
+      }
       await request.patch('/config/client', {
         key: 'beidouStarsCards',
         value: beidouStarsCards.map((c) => ({
@@ -261,6 +308,10 @@ export const SystemConfig: React.FC = React.memo(() => {
       async (params: { index: number; file: File | null }) => {
         const { index, file } = params;
         if (file) {
+          if (!available) {
+            Message.error('站点配置服务当前不可用，无法上传');
+            return;
+          }
           const formdata = new FormData();
           formdata.append('file', file);
           formdata.append('usage', 'server');
@@ -301,6 +352,26 @@ export const SystemConfig: React.FC = React.memo(() => {
     return <Spin />;
   }
 
+  if (available === false) {
+    return (
+      <Card>
+        <Typography.Title heading={4}>站点配置</Typography.Title>
+        <Typography.Paragraph>
+          当前无法读取站点配置。此页面依赖后端配置服务 `config.client`，如果主系统 broker
+          未接通或配置服务不可用，就会进入降级态。
+        </Typography.Paragraph>
+            <Typography.Paragraph type="secondary">
+              {featureState.actionHint}
+            </Typography.Paragraph>
+        <Input.TextArea
+          value={unavailableReason || 'config service unavailable'}
+          rows={4}
+          readOnly
+        />
+      </Card>
+    );
+  }
+
   if (error) {
     console.log('error', error);
     return <div>{String(error)}</div>;
@@ -312,23 +383,23 @@ export const SystemConfig: React.FC = React.memo(() => {
         <Tabs.TabPane key={0} title={t('custom.config.configPanel')}>
           <Form>
             <Form.Item label={t('custom.config.uploadFileLimit')}>
-              {config.uploadFileLimit}
+              {configData.uploadFileLimit}
             </Form.Item>
 
             <Form.Item label={t('custom.config.emailVerification')}>
-              {config.emailVerification ? <IconCheck /> : <IconClose />}
+              {configData.emailVerification ? <IconCheck /> : <IconClose />}
             </Form.Item>
 
             <Form.Item label={t('custom.config.allowGuestLogin')}>
-              {!config.disableGuestLogin ? <IconCheck /> : <IconClose />}
+              {!configData.disableGuestLogin ? <IconCheck /> : <IconClose />}
             </Form.Item>
 
             <Form.Item label={t('custom.config.allowUserRegister')}>
-              {!config.disableUserRegister ? <IconCheck /> : <IconClose />}
+              {!configData.disableUserRegister ? <IconCheck /> : <IconClose />}
             </Form.Item>
 
             <Form.Item label={t('custom.config.allowCreateGroup')}>
-              {!config.disableCreateGroup ? <IconCheck /> : <IconClose />}
+              {!configData.disableCreateGroup ? <IconCheck /> : <IconClose />}
             </Form.Item>
 
             <Form.Item label={t('custom.config.registerOrgCode')}>
@@ -351,7 +422,7 @@ export const SystemConfig: React.FC = React.memo(() => {
 
             <Form.Item label={t('custom.config.serverEntryImage')}>
               <div>
-                {config?.serverEntryImage ? (
+                {configData?.serverEntryImage ? (
                   <div style={{ marginTop: 10 }}>
                     <div>
                       <TailchatImage
@@ -361,7 +432,7 @@ export const SystemConfig: React.FC = React.memo(() => {
                           overflow: 'hidden',
                           marginBottom: 4,
                         }}
-                        src={config?.serverEntryImage}
+                        src={configData?.serverEntryImage}
                       />
                     </div>
 
@@ -534,11 +605,11 @@ export const SystemConfig: React.FC = React.memo(() => {
         <Tabs.TabPane key={1} title={t('custom.config.announcementPanel')}>
           <Form
             initialValues={
-              config['announcement']
+              configData['announcement']
                 ? {
                     enable: true,
-                    text: _get(config, ['announcement', 'text'], ''),
-                    link: _get(config, ['announcement', 'link'], ''),
+                    text: _get(configData, ['announcement', 'text'], ''),
+                    link: _get(configData, ['announcement', 'link'], ''),
                   }
                 : { enable: false, text: '', link: '' }
             }

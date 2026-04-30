@@ -8,6 +8,7 @@ import filterGetList from './utils/filterGetList';
 import { filterReadOnly } from './utils/filterReadOnly';
 import parseQuery from './utils/parseQuery';
 import virtualId from './utils/virtualId';
+import { isDbReady } from '../../utils/db-ready';
 
 // Export certain helper functions for custom reuse.
 export { default as virtualId } from './utils/virtualId';
@@ -95,72 +96,84 @@ export function raExpressMongoose<T extends ADPBaseModel, I>(
         ? ACLMiddleware(`${aclName}.list`)
         : (req, res, next) => next(),
       async (req, res) => {
-        const filterQuery = {
-          ...listQuery,
-          ...parseQuery(
-            castFilter(
-              convertId(filterGetList(req.query)),
-              model,
-              allowedRegexFields
-            ),
-            model,
-            allowedRegexFields,
-            q
-          ),
-        };
-        let query = model.find(filterQuery);
-
-        if (req.query._sort && req.query._order)
-          query = query.sort({
-            [typeof req.query._sort === 'string'
-              ? req.query._sort === 'id'
-                ? '_id'
-                : req.query._sort
-              : '_id']: req.query._order === 'ASC' ? 1 : -1,
-          });
-
-        if (req.query._start)
-          query = query.skip(
-            parseInt(
-              typeof req.query._start === 'string' ? req.query._start : '0'
-            )
-          );
-
-        if (req.query._end)
-          query = query.limit(
-            Math.min(
-              parseInt(
-                typeof req.query._end === 'string' ? req.query._end : '0'
-              ) -
-                (req.query._start
-                  ? parseInt(
-                      typeof req.query._start === 'string'
-                        ? req.query._start
-                        : '0'
-                    )
-                  : 0),
-              maxRows
-            )
-          );
-        else query = query.limit(maxRows);
-
-        if (extraSelects) query = query.select(extraSelects);
-
-        if (Object.keys(filterQuery).length === 0) {
-          res.set(
-            'X-Total-Count',
-            (await model.estimatedDocumentCount()).toString()
-          );
-        } else {
-          res.set(
-            'X-Total-Count',
-            (await model.countDocuments(filterQuery)).toString()
-          );
+        if (!isDbReady()) {
+          res.set('X-Total-Count', '0');
+          res.set('X-Data-Unavailable', 'true');
+          return res.json([]);
         }
 
-        return res.json(
-          virtualId((await query.lean()) as LeanDocument<ADPBaseSchema>)
-        );
+        try {
+          const filterQuery = {
+            ...listQuery,
+            ...parseQuery(
+              castFilter(
+                convertId(filterGetList(req.query)),
+                model,
+                allowedRegexFields
+              ),
+              model,
+              allowedRegexFields,
+              q
+            ),
+          };
+          let query = model.find(filterQuery);
+
+          if (req.query._sort && req.query._order)
+            query = query.sort({
+              [typeof req.query._sort === 'string'
+                ? req.query._sort === 'id'
+                  ? '_id'
+                  : req.query._sort
+                : '_id']: req.query._order === 'ASC' ? 1 : -1,
+            });
+
+          if (req.query._start)
+            query = query.skip(
+              parseInt(
+                typeof req.query._start === 'string' ? req.query._start : '0'
+              )
+            );
+
+          if (req.query._end)
+            query = query.limit(
+              Math.min(
+                parseInt(
+                  typeof req.query._end === 'string' ? req.query._end : '0'
+                ) -
+                  (req.query._start
+                    ? parseInt(
+                        typeof req.query._start === 'string'
+                          ? req.query._start
+                          : '0'
+                      )
+                    : 0),
+                maxRows
+              )
+            );
+          else query = query.limit(maxRows);
+
+          if (extraSelects) query = query.select(extraSelects);
+
+          let totalCount = '0';
+          try {
+            totalCount =
+              Object.keys(filterQuery).length === 0
+                ? (await model.estimatedDocumentCount()).toString()
+                : (await model.countDocuments(filterQuery)).toString();
+          } catch (err) {
+            console.error('[raExpressMongoose] count failed:', err);
+          }
+
+          res.set('X-Total-Count', totalCount);
+
+          const result = await query.lean();
+          return res.json(virtualId(result as LeanDocument<ADPBaseSchema>));
+        } catch (err) {
+          console.error('[raExpressMongoose] list failed:', err);
+          res.set('X-Total-Count', '0');
+          res.set('X-Data-Unavailable', 'true');
+          return res.json([]);
+        }
       }
     );
 
@@ -172,6 +185,13 @@ export function raExpressMongoose<T extends ADPBaseModel, I>(
         ? ACLMiddleware(`${aclName}.list`)
         : (req, res, next) => next(),
       async (req, res) => {
+        if (!isDbReady()) {
+          return res.status(503).json({
+            success: false,
+            error: 'database not ready',
+          });
+        }
+
         await model
           .findById(req.params.id)
           .select(extraSelects)
@@ -191,6 +211,13 @@ export function raExpressMongoose<T extends ADPBaseModel, I>(
         ? ACLMiddleware(`${aclName}.create`)
         : (req, res, next) => next(),
       async (req, res) => {
+        if (!isDbReady()) {
+          return res.status(503).json({
+            success: false,
+            error: 'database not ready',
+          });
+        }
+
         // eslint-disable-next-line new-cap
         const result = convertId(
           await inputTransformer(filterReadOnly<I>(req.body, readOnlyFields))
@@ -217,6 +244,13 @@ export function raExpressMongoose<T extends ADPBaseModel, I>(
         ? ACLMiddleware(`${aclName}.edit`)
         : (req, res, next) => next(),
       async (req, res) => {
+        if (!isDbReady()) {
+          return res.status(503).json({
+            success: false,
+            error: 'database not ready',
+          });
+        }
+
         const updateData = {
           ...(await convertId(
             await inputTransformer(filterReadOnly<I>(req.body, readOnlyFields))
@@ -246,6 +280,13 @@ export function raExpressMongoose<T extends ADPBaseModel, I>(
         ? ACLMiddleware(`${aclName}.delete`)
         : (req, res, next) => next(),
       async (req, res) => {
+        if (!isDbReady()) {
+          return res.status(503).json({
+            success: false,
+            error: 'database not ready',
+          });
+        }
+
         await model
           .findOneAndDelete({ _id: req.params.id })
           .then((result) => res.json(virtualId(result)))

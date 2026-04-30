@@ -11,6 +11,15 @@ export const enTranslation = {
         order: 'Order',
       },
     },
+    'site-config': {
+      name: 'Site Config',
+    },
+    'plugin-registry': {
+      name: 'Plugin Registry',
+    },
+    'socketio-diagnostic': {
+      name: 'Socket.IO Diagnostic',
+    },
   },
   custom: {
     action: {

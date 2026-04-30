@@ -15,6 +15,7 @@ import {
 import { IconExclamationCircle } from 'tushan/icon';
 import { MarkdownEditor } from '../../components/MarkdownEditor';
 import { request } from '../../request';
+import { formatAdminError } from '../../utils/admin-error';
 
 /**
  * Tailchat 系统通知
@@ -27,16 +28,20 @@ export const SystemNotify: React.FC = React.memo(() => {
   const scope: 'all' | 'specified' = Form.useWatch('scope', form);
 
   const [{ loading }, handleSubmit] = useAsyncRequest(async (values) => {
-    const { data } = await request.post('/users/system/notify', {
-      scope: values.scope,
-      specifiedUser: values.specifiedUser,
-      title: values.title,
-      content: values.content,
-    });
+    try {
+      const { data } = await request.post('/users/system/notify', {
+        scope: values.scope,
+        specifiedUser: values.specifiedUser,
+        title: values.title,
+        content: values.content,
+      });
 
-    Message.success(
-      t('custom.system-notify.notifySuccess', { count: data.userIds.length })
-    );
+      Message.success(
+        t('custom.system-notify.notifySuccess', { count: data.userIds.length })
+      );
+    } catch (err) {
+      Message.error(formatAdminError(err, '系统通知发送失败'));
+    }
   });
 
   return (

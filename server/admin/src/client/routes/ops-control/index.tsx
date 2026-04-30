@@ -13,10 +13,12 @@ import {
   useAsyncRequest,
 } from 'tushan';
 import { request } from '../../request';
+import { formatAdminError } from '../../utils/admin-error';
 
 export const OpsControlPanel: React.FC = React.memo(() => {
   const [form] = Form.useForm();
   const [livekitStatus, setLivekitStatus] = useState<any>(null);
+  const [opsStatus, setOpsStatus] = useState<any>(null);
 
   const [{ loading: loadingConfig }, fetchConfig] = useAsyncRequest(async () => {
     const { data } = await request.get('/ops/status');
@@ -62,7 +64,7 @@ export const OpsControlPanel: React.FC = React.memo(() => {
       await navigator.clipboard.writeText(text);
       Message.success('已复制');
     } catch (err) {
-      Message.error(String(err));
+      Message.error(formatAdminError(err, '复制日志命令失败'));
     }
   };
 
@@ -70,6 +72,7 @@ export const OpsControlPanel: React.FC = React.memo(() => {
     (async () => {
       try {
         const data = await fetchConfig();
+        setOpsStatus(data);
         form.setFieldsValue({
           pseudoliveEnabled: data?.pseudoliveEnabled ?? true,
           botEnabled: data?.bot?.enabled ?? false,
@@ -82,11 +85,15 @@ export const OpsControlPanel: React.FC = React.memo(() => {
             : '',
         });
       } catch (err) {
-        Message.error(String(err));
+        Message.error(formatAdminError(err, '系统控制台初始化失败'));
       }
       refreshLivekitStatus().catch(() => {});
     })();
   }, []);
+
+  const executorConfigured = opsStatus?.executor?.configured !== false;
+  const executorErrorText =
+    typeof opsStatus?.executor?.error === 'string' ? opsStatus.executor.error : '';
 
   const onSubmit = async (values: any) => {
     try {
@@ -103,7 +110,7 @@ export const OpsControlPanel: React.FC = React.memo(() => {
       });
       Message.success('已保存');
     } catch (err) {
-      Message.error(String(err));
+      Message.error(formatAdminError(err, '系统控制台保存失败'));
     }
   };
 
@@ -113,6 +120,19 @@ export const OpsControlPanel: React.FC = React.memo(() => {
       <Typography.Paragraph>
         用于在 Admin 中集中处理常用运维开关与运行状态。LiveKit 的启停通过宿主机受控执行器完成。
       </Typography.Paragraph>
+
+      {!executorConfigured ? (
+        <>
+          <Divider />
+          <Typography.Title heading={6}>执行器状态</Typography.Title>
+          <Typography.Paragraph>
+            当前宿主机执行器未配置，LiveKit 启停与状态查询暂不可用。请先配置
+            `OPS_EXECUTOR_URL` 与 `EXECUTOR_SHARED_SECRET`，再启动宿主机
+            `tailchat-ops-executor` 服务。
+          </Typography.Paragraph>
+          <Input.TextArea value={executorErrorText || 'executor not configured'} rows={4} readOnly />
+        </>
+      ) : null}
 
       <Divider />
       <Typography.Title heading={6}>LiveKit 一键启停</Typography.Title>
@@ -124,13 +144,14 @@ export const OpsControlPanel: React.FC = React.memo(() => {
         <Button
           type="primary"
           loading={starting}
+          disabled={!executorConfigured}
           onClick={async () => {
             try {
               await startLivekit();
               Message.success('已发送启动指令');
               refreshLivekitStatus();
             } catch (err) {
-              Message.error(String(err));
+              Message.error(formatAdminError(err, '启动 LiveKit 失败'));
             }
           }}
         >
@@ -139,13 +160,14 @@ export const OpsControlPanel: React.FC = React.memo(() => {
         <Button
           status="danger"
           loading={stopping}
+          disabled={!executorConfigured}
           onClick={async () => {
             try {
               await stopLivekit();
               Message.success('已发送停止指令');
               refreshLivekitStatus();
             } catch (err) {
-              Message.error(String(err));
+              Message.error(formatAdminError(err, '停止 LiveKit 失败'));
             }
           }}
         >
@@ -153,13 +175,14 @@ export const OpsControlPanel: React.FC = React.memo(() => {
         </Button>
         <Button
           loading={restarting}
+          disabled={!executorConfigured}
           onClick={async () => {
             try {
               await restartLivekit();
               Message.success('已发送重启指令');
               refreshLivekitStatus();
             } catch (err) {
-              Message.error(String(err));
+              Message.error(formatAdminError(err, '重启 LiveKit 失败'));
             }
           }}
         >
@@ -167,8 +190,11 @@ export const OpsControlPanel: React.FC = React.memo(() => {
         </Button>
         <Button
           loading={loadingStatus}
+          disabled={!executorConfigured}
           onClick={() => {
-            refreshLivekitStatus().catch((err) => Message.error(String(err)));
+            refreshLivekitStatus().catch((err) =>
+              Message.error(formatAdminError(err, '刷新 LiveKit 状态失败'))
+            );
           }}
         >
           刷新状态

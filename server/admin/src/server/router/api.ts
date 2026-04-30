@@ -19,12 +19,16 @@ import { analyticsRouter } from './analytics';
 import _ from 'lodash';
 import { pluginPermissionsRouter } from './plugin-permissions';
 import { opsRouter } from './ops';
+import { isDbReady } from '../utils/db-ready';
 
 const router = Router();
 
 router.post('/login', (req, res) => {
   if (!adminAuth.username || !adminAuth.password) {
-    res.status(401).end('Server not set env: ADMIN_USER, ADMIN_PASS');
+    res.status(401).json({
+      success: false,
+      error: 'Server not set env: ADMIN_USER, ADMIN_PASS',
+    });
     return;
   }
 
@@ -49,7 +53,10 @@ router.post('/login', (req, res) => {
       expiredAt: new Date().valueOf() + 2 * 60 * 60 * 1000,
     });
   } else {
-    res.status(401).end('username or password incorrect');
+    res.status(401).json({
+      success: false,
+      error: 'username or password incorrect',
+    });
   }
 });
 
@@ -61,117 +68,168 @@ router.use('/cache', cacheRouter);
 router.use('/ops', opsRouter);
 
 router.post('/callAction', auth(), async (req, res) => {
-  const { action, params } = req.body;
-  const ret = await callBrokerAction(action, params);
+  try {
+    const { action, params } = req.body;
+    const ret = await callBrokerAction(action, params);
 
-  res.json(ret);
+    res.json(ret);
+  } catch (err) {
+    res.status(503).json({
+      success: false,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
 });
 
 router.get('/user/count/summary', auth(), async (req, res) => {
-  // 返回最近14天的用户数统计
-  const day = 14;
-  const aggregateRes: { count: number; date: string }[] = await userModel
-    .aggregate([
-      {
-        $match: {
-          createdAt: {
-            $gte: dayjs().subtract(day, 'd').startOf('d').toDate(),
-            $lt: dayjs().endOf('d').toDate(),
-          },
-        },
-      },
-      {
-        $group: {
-          _id: {
-            createdAt: {
-              $dateToString: {
-                format: '%Y-%m-%d',
-                date: '$createdAt',
-              },
-            },
-          } as any,
-          count: {
-            $sum: 1,
-          },
-        },
-      },
-      {
-        $project: {
-          date: '$_id.createdAt',
-          count: '$count',
-        },
-      },
-    ])
-    .exec();
-
-  const summary = Array.from({ length: day })
-    .map((_, d) => {
-      const date = dayjs().subtract(d, 'd').format('YYYY-MM-DD');
-
-      return {
-        date,
-        count: aggregateRes.find((r) => r.date === date)?.count ?? 0,
-      };
-    })
-    .reverse();
-
-  res.json({ summary });
-});
-router.post('/user/ban', auth(), async (req, res) => {
-  const { userId } = req.body;
-
-  const ret = await broker.call('user.banUser', {
-    userId,
-  });
-
-  res.json({
-    ret,
-  });
-});
-router.post('/user/unban', auth(), async (req, res) => {
-  const { userId } = req.body;
-
-  const ret = await broker.call('user.unbanUser', {
-    userId,
-  });
-
-  res.json({
-    ret,
-  });
-});
-router.post('/users/system/notify', auth(), async (req, res) => {
-  const { scope, specifiedUser, title, content } = req.body;
-
-  let userIds = [];
-
-  if (scope === 'all') {
-    const users = await userModel.find(
-      {
-        // false 或 null(正式用户或者老的用户)
-        temporary: {
-          $ne: true,
-        },
-      },
-      {
-        _id: 1,
-      }
-    );
-
-    userIds = users.map((u) => u._id);
-  } else if (scope === 'specified') {
-    userIds = Array.isArray(specifiedUser) ? specifiedUser : [specifiedUser];
+  if (!isDbReady()) {
+    res.json({
+      success: false,
+      summary: [],
+      error: 'database not ready',
+    });
+    return;
   }
 
-  broker.call('chat.inbox.batchAppend', {
-    userIds,
-    type: 'markdown',
-    payload: {
-      title,
-      content,
-    },
-  });
+  try {
+    const day = 14;
+    const aggregateRes: { count: number; date: string }[] = await userModel
+      .aggregate([
+        {
+          $match: {
+            createdAt: {
+              $gte: dayjs().subtract(day, 'd').startOf('d').toDate(),
+              $lt: dayjs().endOf('d').toDate(),
+            },
+          },
+        },
+        {
+          $group: {
+            _id: {
+              createdAt: {
+                $dateToString: {
+                  format: '%Y-%m-%d',
+                  date: '$createdAt',
+                },
+              },
+            } as any,
+            count: {
+              $sum: 1,
+            },
+          },
+        },
+        {
+          $project: {
+            date: '$_id.createdAt',
+            count: '$count',
+          },
+        },
+      ])
+      .exec();
 
-  res.json({ userIds });
+    const summary = Array.from({ length: day })
+      .map((_, d) => {
+        const date = dayjs().subtract(d, 'd').format('YYYY-MM-DD');
+
+        return {
+          date,
+          count: aggregateRes.find((r) => r.date === date)?.count ?? 0,
+        };
+      })
+      .reverse();
+
+    res.json({ summary, success: true });
+  } catch (err) {
+    res.json({
+      success: false,
+      summary: [],
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+});
+router.post('/user/ban', auth(), async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const ret = await broker.call('user.banUser', {
+      userId,
+    });
+
+    res.json({
+      ret,
+    });
+  } catch (err) {
+    res.status(503).json({
+      success: false,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+});
+router.post('/user/unban', auth(), async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const ret = await broker.call('user.unbanUser', {
+      userId,
+    });
+
+    res.json({
+      ret,
+    });
+  } catch (err) {
+    res.status(503).json({
+      success: false,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+});
+router.post('/users/system/notify', auth(), async (req, res) => {
+  try {
+    const { scope, specifiedUser, title, content } = req.body;
+
+    let userIds = [];
+
+    if (scope === 'all') {
+      if (!isDbReady()) {
+        res.status(503).json({
+          success: false,
+          error: 'database not ready',
+        });
+        return;
+      }
+
+      const users = await userModel.find(
+        {
+          temporary: {
+            $ne: true,
+          },
+        },
+        {
+          _id: 1,
+        }
+      );
+
+      userIds = users.map((u) => u._id);
+    } else if (scope === 'specified') {
+      userIds = Array.isArray(specifiedUser) ? specifiedUser : [specifiedUser];
+    }
+
+    await broker.call('chat.inbox.batchAppend', {
+      userIds,
+      type: 'markdown',
+      payload: {
+        title,
+        content,
+      },
+    });
+
+    res.json({ userIds });
+  } catch (err) {
+    res.status(503).json({
+      success: false,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
 });
 router.use(
   '/users',
@@ -196,54 +254,70 @@ router.delete('/messages/:id', auth(), async (req, res) => {
 });
 
 router.get('/message/count/summary', auth(), async (req, res) => {
-  // 返回最近14天的消息数统计
-  const day = 14;
-  const aggregateRes: { count: number; date: string }[] = await messageModel
-    .aggregate([
-      {
-        $match: {
-          createdAt: {
-            $gte: dayjs().subtract(day, 'd').startOf('d').toDate(),
-            $lt: dayjs().endOf('d').toDate(),
-          },
-        },
-      },
-      {
-        $group: {
-          _id: {
+  if (!isDbReady()) {
+    res.json({
+      success: false,
+      summary: [],
+      error: 'database not ready',
+    });
+    return;
+  }
+
+  try {
+    const day = 14;
+    const aggregateRes: { count: number; date: string }[] = await messageModel
+      .aggregate([
+        {
+          $match: {
             createdAt: {
-              $dateToString: {
-                format: '%Y-%m-%d',
-                date: '$createdAt',
-              },
+              $gte: dayjs().subtract(day, 'd').startOf('d').toDate(),
+              $lt: dayjs().endOf('d').toDate(),
             },
-          } as any,
-          count: {
-            $sum: 1,
           },
         },
-      },
-      {
-        $project: {
-          date: '$_id.createdAt',
-          count: '$count',
+        {
+          $group: {
+            _id: {
+              createdAt: {
+                $dateToString: {
+                  format: '%Y-%m-%d',
+                  date: '$createdAt',
+                },
+              },
+            } as any,
+            count: {
+              $sum: 1,
+            },
+          },
         },
-      },
-    ])
-    .exec();
+        {
+          $project: {
+            date: '$_id.createdAt',
+            count: '$count',
+          },
+        },
+      ])
+      .exec();
 
-  const summary = Array.from({ length: day })
-    .map((_, d) => {
-      const date = dayjs().subtract(d, 'd').format('YYYY-MM-DD');
+    const summary = Array.from({ length: day })
+      .map((_, d) => {
+        const date = dayjs().subtract(d, 'd').format('YYYY-MM-DD');
 
-      return {
-        date,
-        count: aggregateRes.find((r) => r.date === date)?.count ?? 0,
-      };
-    })
-    .reverse();
+        return {
+          date,
+          count: aggregateRes.find((r) => r.date === date)?.count ?? 0,
+        };
+      })
+      .reverse();
 
-  res.json({ summary });
+    res.json({ summary, success: true });
+  } catch (err) {
+    res.json({
+      success: false,
+      summary: [],
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
 });
 router.use(
   '/messages',

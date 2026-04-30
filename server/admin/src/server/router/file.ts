@@ -7,6 +7,7 @@ import { callBrokerAction } from '../broker';
 import { auth } from '../middleware/auth';
 import Busboy from '@fastify/busboy';
 import fileModel from '../../../../models/file';
+import { isDbReady } from '../utils/db-ready';
 
 const router = Router();
 
@@ -34,7 +35,10 @@ router.put('/upload', auth(), async (req, res) => {
   busboy.on('finish', async () => {
     /* istanbul ignore next */
     if (promises.length == 0) {
-      res.status(500).json('File missing in the request');
+      res.status(500).json({
+        success: false,
+        error: 'File missing in the request',
+      });
       return;
     }
 
@@ -44,7 +48,10 @@ router.put('/upload', auth(), async (req, res) => {
       res.json({ files });
     } catch (err) {
       console.error(err);
-      res.status(500).json(String(err));
+      res.status(500).json({
+        success: false,
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   });
 
@@ -52,13 +59,25 @@ router.put('/upload', auth(), async (req, res) => {
     console.error(err);
     req.unpipe(busboy);
     req.resume();
-    res.status(500).json({ err });
+    res.status(500).json({
+      success: false,
+      error: err instanceof Error ? err.message : String(err),
+    });
   });
 
   req.pipe(busboy);
 });
 
 router.get('/filesizeSum', auth(), async (req, res) => {
+  if (!isDbReady()) {
+    res.json({
+      success: false,
+      totalSize: 0,
+      error: 'database not ready',
+    });
+    return;
+  }
+
   try {
     const ret = await fileModel.aggregate([
       {
@@ -77,8 +96,12 @@ router.get('/filesizeSum', auth(), async (req, res) => {
 
     const totalSize = (ret?.[0]?.totalSize as number | undefined) ?? 0;
     res.json({ totalSize });
-  } catch {
-    res.json({ totalSize: 0 });
+  } catch (err) {
+    res.json({
+      success: false,
+      totalSize: 0,
+      error: err instanceof Error ? err.message : String(err),
+    });
   }
 });
 

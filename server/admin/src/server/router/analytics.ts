@@ -5,62 +5,81 @@ import groupModel from '../../../../models/group/group';
 import fileModel from '../../../../models/file';
 import dayjs from 'dayjs';
 import { db } from 'tailchat-server-sdk';
+import { isDbReady } from '../utils/db-ready';
 
 const router = Router();
 
 router.get('/activeGroups', auth(), async (req, res) => {
-  // 返回最近7天的最活跃的群组
-  const day = 7;
-  const aggregateRes: { _id: string; count: number }[] = await messageModel
-    .aggregate([
-      {
-        $match: {
-          createdAt: {
-            $gte: dayjs().subtract(day, 'd').startOf('d').toDate(),
-            $lt: dayjs().endOf('d').toDate(),
-          },
-        },
-      },
-      {
-        $group: {
-          _id: '$groupId' as any,
-          count: {
-            $sum: 1,
-          },
-        },
-      },
-      {
-        $sort: {
-          count: -1,
-        },
-      },
-      {
-        $limit: 5,
-      },
-      {
-        $lookup: {
-          from: 'groups',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'groupInfo',
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          groupId: '$_id',
-          messageCount: '$count',
-          groupName: {
-            $arrayElemAt: ['$groupInfo.name', 0],
-          },
-        },
-      },
-    ])
-    .exec();
+  if (!isDbReady()) {
+    res.json({
+      success: false,
+      available: false,
+      activeGroups: [],
+      error: 'database not ready',
+      actionHint: '请先连接数据库，再查看分析面板。',
+    });
+    return;
+  }
 
-  const activeGroups = aggregateRes;
+  try {
+    const day = 7;
+    const aggregateRes: { _id: string; count: number }[] = await messageModel
+      .aggregate([
+        {
+          $match: {
+            createdAt: {
+              $gte: dayjs().subtract(day, 'd').startOf('d').toDate(),
+              $lt: dayjs().endOf('d').toDate(),
+            },
+          },
+        },
+        {
+          $group: {
+            _id: '$groupId' as any,
+            count: {
+              $sum: 1,
+            },
+          },
+        },
+        {
+          $sort: {
+            count: -1,
+          },
+        },
+        {
+          $limit: 5,
+        },
+        {
+          $lookup: {
+            from: 'groups',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'groupInfo',
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            groupId: '$_id',
+            messageCount: '$count',
+            groupName: {
+              $arrayElemAt: ['$groupInfo.name', 0],
+            },
+          },
+        },
+      ])
+      .exec();
 
-  res.json({ activeGroups });
+    res.json({ activeGroups: aggregateRes, success: true, available: true });
+  } catch (err) {
+    res.json({
+      success: false,
+      available: false,
+      activeGroups: [],
+      error: err instanceof Error ? err.message : String(err),
+      actionHint: '请确认数据库连接正常，且消息集合可访问。',
+    });
+  }
 });
 
 router.get('/activeUsers', auth(), async (req, res) => {

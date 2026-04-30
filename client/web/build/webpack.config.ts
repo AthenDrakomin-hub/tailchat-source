@@ -204,6 +204,14 @@ const config: Configuration = {
     client: {
       overlay: false,
     },
+    proxy: [
+      {
+        context: ['/api', '/open', '/socket.io'],
+        target: 'http://localhost:11000',
+        changeOrigin: true,
+        ws: true,
+      },
+    ],
   },
   module: {
     rules: [
@@ -279,6 +287,8 @@ const config: Configuration = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.css'],
     alias: {
+      react$: path.resolve(ROOT_PATH, 'node_modules/react'),
+      'react-dom$': path.resolve(ROOT_PATH, 'node_modules/react-dom'),
       'tailchat-types': path.resolve(
         ROOT_PATH,
         '../../packages/types/src/index.ts'

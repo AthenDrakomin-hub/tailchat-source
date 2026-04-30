@@ -14,9 +14,18 @@ function isExecutorConfigured() {
 
 function respondExecutorUnavailable(res: any, err: any) {
   res.status(503).json({
+    success: false,
     ok: false,
     error: err?.message ? String(err.message) : 'executor unreachable',
     hint: '请检查宿主机 tailchat-ops-executor 服务是否运行，以及防火墙/iptables 是否允许 Docker 网段访问 9110 端口',
+  });
+}
+
+function respondOpsConfigUnavailable(res: any, err: any) {
+  res.status(503).json({
+    success: false,
+    error: err?.message ? String(err.message) : 'ops config unavailable',
+    hint: '请确认主系统 broker 已接通，并且 config.get / config.set 服务在当前环境可用。',
   });
 }
 
@@ -136,7 +145,7 @@ router.get('/status', auth(), async (req, res, next) => {
   try {
     res.json(await getOpsStatus());
   } catch (err) {
-    next(err);
+    respondOpsConfigUnavailable(res, err);
   }
 });
 
@@ -144,7 +153,7 @@ router.get('/config', auth(), async (req, res, next) => {
   try {
     res.json(await getOpsStatus());
   } catch (err) {
-    next(err);
+    respondOpsConfigUnavailable(res, err);
   }
 });
 
@@ -193,7 +202,7 @@ router.post('/status', auth(), async (req, res, next) => {
     await setOpsConfig(req.body);
     res.json({ success: true });
   } catch (err) {
-    next(err);
+    respondOpsConfigUnavailable(res, err);
   }
 });
 
@@ -202,7 +211,7 @@ router.post('/config', auth(), async (req, res, next) => {
     await setOpsConfig(req.body);
     res.json({ success: true });
   } catch (err) {
-    next(err);
+    respondOpsConfigUnavailable(res, err);
   }
 });
 

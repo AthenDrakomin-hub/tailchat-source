@@ -852,7 +852,11 @@ export const TcMinioService = {
         return undefined;
       })
       .catch((e) => {
-        throw new MinioInitializationError(e.message);
+        this.logger.error(
+          'Minio backend initialization failed, continue in degraded mode',
+          e
+        );
+        return undefined;
       });
   },
   /**

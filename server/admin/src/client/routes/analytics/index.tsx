@@ -1,5 +1,6 @@
 import fileSize from 'filesize';
 import React from 'react';
+import { FeatureStatusCard } from '../../components/FeatureStatusCard';
 import {
   Card,
   Grid,
@@ -20,6 +21,42 @@ import { request } from '../../request';
 
 export const Analytics: React.FC = React.memo(() => {
   const { t } = useTranslation();
+  const { value: analyticsHealth, loading } = useAsync(async () => {
+    try {
+      const { data } = await request.get('/analytics/activeGroups');
+      if (data.available === false || data.success === false) {
+        return {
+          analyticsUnavailable: true,
+          analyticsError: String(data.error ?? 'analytics unavailable'),
+        };
+      }
+
+      return {
+        analyticsUnavailable: false,
+        analyticsError: '',
+      };
+    } catch (err: any) {
+      return {
+        analyticsUnavailable: true,
+        analyticsError: err?.message ? String(err.message) : 'analytics unavailable',
+      };
+    }
+  }, []);
+
+  if (loading) {
+    return null;
+  }
+
+  if (analyticsHealth?.analyticsUnavailable) {
+    return (
+      <FeatureStatusCard
+        title="分析"
+        summary="当前无法读取分析数据，因此页面进入降级态。"
+        actionHint="请确认 analytics 相关接口可访问，并检查数据库聚合依赖是否正常。"
+        detail={analyticsHealth.analyticsError}
+      />
+    );
+  }
 
   return (
     <div>
