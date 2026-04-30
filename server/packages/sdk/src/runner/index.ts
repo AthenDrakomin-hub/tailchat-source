@@ -1,6 +1,7 @@
 import { Runner } from 'moleculer';
 import path from 'path';
 import cluster from 'cluster';
+import fs from 'fs';
 import { config } from '../services/lib/settings';
 
 declare module 'moleculer' {
@@ -60,9 +61,15 @@ interface ProdRunnerOptions {
 
 export function startProdRunner(options: ProdRunnerOptions = {}) {
   const runner = new Runner();
+  const defaultConfigCandidates = [
+    path.resolve(process.cwd(), '../moleculer.config.js'),
+    path.resolve(process.cwd(), 'moleculer.config.js'),
+  ];
+
   const resolvedConfig =
     options.config ??
-    path.resolve(process.cwd(), 'moleculer.config.js');
+    defaultConfigCandidates.find((p) => fs.existsSync(p)) ??
+    defaultConfigCandidates[0];
 
   runner.flags = {
     hot: false,
