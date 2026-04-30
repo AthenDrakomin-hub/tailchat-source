@@ -36,7 +36,7 @@
 
 仓库已提供示例配置：
 
-- [nginx.goodspage.cn.example.conf](file:///workspace/docs/nginx.goodspage.cn.example.conf)
+- [`../nginx.goodspage.cn.example.conf`](../nginx.goodspage.cn.example.conf)
 
 在服务器上执行（以 Debian/Ubuntu 的常见目录结构为例）：
 
@@ -80,7 +80,7 @@ systemctl reload nginx
 
 若你希望客户端通过 `wss://goodspage.cn/livekit` 连接 LiveKit（推荐），需要在 Nginx 中加入 `/livekit/` 反代规则。
 
-仓库示例配置文件 [nginx.goodspage.cn.example.conf](file:///workspace/docs/nginx.goodspage.cn.example.conf) 已包含：
+仓库示例配置文件 [`../nginx.goodspage.cn.example.conf`](../nginx.goodspage.cn.example.conf) 已包含：
 
 ```nginx
 location = /livekit {
