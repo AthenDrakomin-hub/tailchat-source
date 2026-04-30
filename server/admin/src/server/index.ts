@@ -51,15 +51,30 @@ app.use((err: any, req: any, res: any, next: any) => {
 });
 
 if (process.env.NODE_ENV === 'production') {
-  ViteExpress.config({
-    mode: 'production',
-  });
-  // Fix for ViteExpress ignoring base path: manually serve the dist folder at /admin
-  app.use('/admin', express.static(path.resolve(__dirname, '../../..')));
-}
+  const distRoot = path.resolve(__dirname, '../../..');
+  const distAssets = path.resolve(distRoot, 'assets');
 
-ViteExpress.listen(app, port, () => {
-  console.log(
-    `Server is listening on port ${port}, visit with: http://localhost:${port}/admin/`
+  app.use(
+    '/admin/assets',
+    express.static(distAssets, { immutable: true, maxAge: '1y' })
   );
-});
+
+  app.use('/admin', express.static(distRoot, { maxAge: '1h' }));
+
+  app.get('/admin/*', (req, res) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.sendFile(path.resolve(distRoot, 'index.html'));
+  });
+
+  app.listen(port, () => {
+    console.log(
+      `Server is listening on port ${port}, visit with: http://localhost:${port}/admin/`
+    );
+  });
+} else {
+  ViteExpress.listen(app, port, () => {
+    console.log(
+      `Server is listening on port ${port}, visit with: http://localhost:${port}/admin/`
+    );
+  });
+}
