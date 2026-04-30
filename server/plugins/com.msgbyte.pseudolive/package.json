@@ -17,6 +17,6 @@
     "rollup-plugin-copy": "^3.4.0"
   },
   "dependencies": {
-    "tailchat-server-sdk": "*"
+    "tailchat-server-sdk": "workspace:*"
   }
 }

@@ -11,6 +11,8 @@ x-tailchat-base: &tailchat-base
       DISABLE_SERVICE_WORKER: ${DISABLE_SERVICE_WORKER:-}
   restart: unless-stopped
   env_file: docker-compose.env
+  environment:
+    REDIS_URL: ${REDIS_URL:-redis://redis:6379}
   depends_on:
     - mongo
     - redis

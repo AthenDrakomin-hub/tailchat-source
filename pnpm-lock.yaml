@@ -1828,8 +1828,8 @@ importers:
   server/plugins/com.msgbyte.autojoinGroup:
     dependencies:
       tailchat-server-sdk:
-        specifier: '*'
-        version: 0.0.12(debug@4.4.3)(encoding@0.1.13)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.6)
+        specifier: workspace:*
+        version: link:../../packages/sdk
     devDependencies:
       '@types/react':
         specifier: 18.0.20
@@ -1841,8 +1841,8 @@ importers:
   server/plugins/com.msgbyte.discover:
     dependencies:
       tailchat-server-sdk:
-        specifier: '*'
-        version: 0.0.12(debug@4.4.3)(encoding@0.1.13)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.6)
+        specifier: workspace:*
+        version: link:../../packages/sdk
     devDependencies:
       '@types/react':
         specifier: 18.0.20
@@ -1901,13 +1901,13 @@ importers:
         version: 4.22.1
       livekit-server-sdk:
         specifier: ^1.2.5
-        version: 1.2.7(debug@4.4.3)
+        version: 1.2.7
       long:
         specifier: ^5.2.3
         version: 5.3.2
       tailchat-server-sdk:
-        specifier: '*'
-        version: 0.0.12(debug@4.4.3)(encoding@0.1.13)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.6)
+        specifier: workspace:*
+        version: link:../../packages/sdk
     devDependencies:
       '@types/express':
         specifier: ^4.17.15
@@ -1968,14 +1968,14 @@ importers:
   server/plugins/com.msgbyte.prettyinvite:
     dependencies:
       tailchat-server-sdk:
-        specifier: '*'
-        version: 0.0.12(debug@4.4.3)(encoding@0.1.13)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.6)
+        specifier: workspace:*
+        version: link:../../packages/sdk
 
   server/plugins/com.msgbyte.pseudolive:
     dependencies:
       tailchat-server-sdk:
-        specifier: '*'
-        version: 0.0.12(debug@4.4.3)(encoding@0.1.13)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.6)
+        specifier: workspace:*
+        version: link:../../packages/sdk
     devDependencies:
       '@types/react':
         specifier: 18.0.20
@@ -2048,8 +2048,8 @@ importers:
         specifier: ^3.1.23
         version: 3.3.11
       tailchat-server-sdk:
-        specifier: '*'
-        version: 0.0.12(debug@4.4.3)(encoding@0.1.13)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.6)
+        specifier: workspace:*
+        version: link:../../packages/sdk
     devDependencies:
       '@types/react':
         specifier: 18.0.20
@@ -2092,8 +2092,8 @@ importers:
   server/plugins/com.msgbyte.welcome:
     dependencies:
       tailchat-server-sdk:
-        specifier: '*'
-        version: 0.0.12(debug@4.4.3)(encoding@0.1.13)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.6)
+        specifier: workspace:*
+        version: link:../../packages/sdk
     devDependencies:
       '@types/react':
         specifier: 18.0.20
@@ -2117,8 +2117,8 @@ importers:
   server/plugins/com.ridou.defense-control:
     dependencies:
       tailchat-server-sdk:
-        specifier: '*'
-        version: 0.0.12(debug@4.4.3)(encoding@0.1.13)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.6)
+        specifier: workspace:*
+        version: link:../../packages/sdk
     devDependencies:
       '@types/react':
         specifier: 18.0.20
@@ -32450,7 +32450,7 @@ snapshots:
       typed-emitter: 2.1.0
       webrtc-adapter: 8.2.4
 
-  livekit-server-sdk@1.2.7(debug@4.4.3):
+  livekit-server-sdk@1.2.7:
     dependencies:
       axios: 1.15.2(debug@4.4.3)
       camelcase-keys: 7.0.2
