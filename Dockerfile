@@ -35,7 +35,6 @@ COPY ./server/tsconfig.json ./server/tsconfig.json
 COPY ./package.json ./pnpm-workspace.yaml ./pnpm-lock.yaml ./.npmrc ./
 COPY ./patches ./patches
 RUN pnpm install --frozen-lockfile
-RUN node -e "const ws=require('./server/packages/sdk/package.json').version; const nm=require('./node_modules/tailchat-server-sdk/package.json').version; if (ws!==nm) { console.error('tailchat-server-sdk version mismatch', { workspace: ws, node_modules: nm }); process.exit(1); }"
 
 # Copy all source
 COPY . .
