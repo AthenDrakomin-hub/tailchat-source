@@ -59,7 +59,7 @@ services:
       - livekit
     environment:
       # 只加载“免费且必需”的插件服务，避免无关插件缺少 env 或不兼容导致容器反复重启
-      SERVICES: plugins/com.msgbyte.linkmeta/services/*.service.js
+      SERVICES: plugins/**/*.service.js,plugins/**/*.service.dev.js
 
   # Admin Panel
   tailchat-admin:
