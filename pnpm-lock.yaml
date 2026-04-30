@@ -205,8 +205,8 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1
       tailchat-server-sdk:
-        specifier: ^0.0.12
-        version: 0.0.12(debug@4.4.3)(encoding@0.1.13)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.6)
+        specifier: workspace:*
+        version: link:../../server/packages/sdk
       update-notifier:
         specifier: 5.1.0
         version: 5.1.0
@@ -16953,9 +16953,6 @@ packages:
   table@6.9.0:
     resolution: {integrity: sha512-9kY+CygyYM6j02t5YFHbNz2FN5QmYGv9zAjVp4lCDjlCw7amdckXlEt/bjMhUIfj4ThGRE4gCUH5+yGnNuPo5A==}
     engines: {node: '>=10.0.0'}
-
-  tailchat-server-sdk@0.0.12:
-    resolution: {integrity: sha512-v+Bkdj+W3sEA6jUV8WoEbP6nJa/pYkLyL7C2hXKCAZn95HvwKKdmrTUpbRWJ2adHQO+wvnqo4MDTOPjlAfMLzQ==}
 
   tailwindcss@2.2.19:
     resolution: {integrity: sha512-6Ui7JSVtXadtTUo2NtkBBacobzWiQYVjYW0ZnKaP9S1ZCKQ0w7KVNz+YSDI/j7O7KCMHbOkz94ZMQhbT9pOqjw==}
@@ -38252,49 +38249,6 @@ snapshots:
       slice-ansi: 4.0.0
       string-width: 4.2.3
       strip-ansi: 6.0.1
-
-  tailchat-server-sdk@0.0.12(debug@4.4.3)(encoding@0.1.13)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.6):
-    dependencies:
-      '@typegoose/typegoose': 9.3.1(mongoose@6.1.1)
-      accept-language: 3.0.20
-      crc: 3.8.0
-      dotenv: 10.0.0
-      fastest-validator: 1.19.1
-      i18next: 20.6.1
-      i18next-fs-backend: 1.2.0
-      ioredis: 4.31.0
-      kleur: 4.1.5
-      lodash: 4.18.1
-      moleculer: 0.14.23(patch_hash=46bae59da0e7ec1a023e254f92fbbb910c04c698a3d797b36e71a8df5d262e2e)(debug@4.4.3)(encoding@0.1.13)(ioredis@4.31.0)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.6)
-      moleculer-db: 0.8.19(moleculer@0.14.23(patch_hash=46bae59da0e7ec1a023e254f92fbbb910c04c698a3d797b36e71a8df5d262e2e)(debug@4.4.3)(encoding@0.1.13)(ioredis@4.31.0)(nats@1.4.12)(notepack.io@3.0.1)(pino@6.14.0)(protobufjs@7.5.6))
-      moleculer-repl: 0.6.6
-      moment: 2.30.1
-      mongodb: 4.2.1
-      mongoose: 6.1.1
-    transitivePeerDependencies:
-      - amqplib
-      - avsc
-      - bunyan
-      - cbor-x
-      - dd-trace
-      - debug
-      - encoding
-      - etcd3
-      - jaeger-client
-      - kafka-node
-      - log4js
-      - mqtt
-      - msgpack5
-      - nats
-      - node-nats-streaming
-      - notepack.io
-      - pino
-      - protobufjs
-      - redlock
-      - rhea-promise
-      - supports-color
-      - thrift
-      - winston
 
   tailwindcss@2.2.19(autoprefixer@10.5.0(postcss@8.5.12))(postcss@8.5.12)(ts-node@10.9.1(@types/node@18.11.9)(typescript@4.9.4)):
     dependencies:

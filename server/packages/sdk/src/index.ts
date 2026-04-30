@@ -64,9 +64,7 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('unhandledRejection', reason);
 
   const shouldExit =
-    process.env.EXIT_ON_UNCAUGHT !== undefined
-      ? process.env.EXIT_ON_UNCAUGHT === '1' || process.env.EXIT_ON_UNCAUGHT === 'true'
-      : process.env.NODE_ENV === 'production';
+    process.env.EXIT_ON_UNCAUGHT === '1' || process.env.EXIT_ON_UNCAUGHT === 'true';
 
   if (shouldExit) {
     // 给日志一点刷新时间，然后交给容器自愈重启
@@ -77,9 +75,7 @@ process.on('uncaughtException', (error, origin) => {
   console.error('uncaughtException', error);
 
   const shouldExit =
-    process.env.EXIT_ON_UNCAUGHT !== undefined
-      ? process.env.EXIT_ON_UNCAUGHT === '1' || process.env.EXIT_ON_UNCAUGHT === 'true'
-      : process.env.NODE_ENV === 'production';
+    process.env.EXIT_ON_UNCAUGHT === '1' || process.env.EXIT_ON_UNCAUGHT === 'true';
 
   if (shouldExit) {
     setTimeout(() => process.exit(1), 200);

@@ -148,8 +148,19 @@ export const TcMinioService = {
       },
       handler(ctx) {
         return this.Promise.resolve(ctx.params).then(
-          ({ bucketName, region = '' }) =>
-            this.client.makeBucket(bucketName, region)
+          ({ bucketName, region }) => {
+            const finalBucketName =
+              isString(bucketName) && bucketName.trim()
+                ? bucketName.trim()
+                : isString(this.settings.bucketName) && this.settings.bucketName.trim()
+                  ? this.settings.bucketName.trim()
+                  : 'tailchat';
+
+            const finalRegion =
+              isString(region) && region.trim() ? region.trim() : undefined;
+
+            return this.client.makeBucket(finalBucketName, finalRegion as any);
+          }
         );
       },
     },
@@ -180,7 +191,14 @@ export const TcMinioService = {
         bucketName: { type: 'string' },
       },
       handler(ctx) {
-        return this.client.bucketExists(ctx.params.bucketName || 'tailchat');
+        const bucketName =
+          isString(ctx.params.bucketName) && ctx.params.bucketName.trim()
+            ? ctx.params.bucketName.trim()
+            : isString(this.settings.bucketName) && this.settings.bucketName.trim()
+              ? this.settings.bucketName.trim()
+              : 'tailchat';
+
+        return this.client.bucketExists(bucketName);
       },
     },
     /**

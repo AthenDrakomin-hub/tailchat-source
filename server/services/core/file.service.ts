@@ -84,28 +84,31 @@ class FileService extends TcService {
       return;
     }
 
-    const isExists = await this.actions['bucketExists'](
-      {
-        bucketName: this.bucketName,
-      },
-      {
-        timeout: 20000, // 20s
-      }
-    );
-    if (isExists === false) {
-      // bucket不存在，创建新的
-      this.logger.info(
-        '[File]',
-        'Bucket 不存在, 创建新的Bucket',
-        this.bucketName
+    try {
+      const isExists = await this.actions['bucketExists'](
+        {
+          bucketName: this.bucketName,
+        },
+        {
+          timeout: 20000, // 20s
+        }
       );
-      await this.actions['makeBucket']({
-        bucketName: this.bucketName,
-      });
-    }
+      if (isExists === false) {
+        this.logger.info(
+          '[File]',
+          'Bucket 不存在, 创建新的Bucket',
+          this.bucketName
+        );
+        await this.actions['makeBucket']({
+          bucketName: this.bucketName,
+        });
+      }
 
-    const buckets = await this.actions['listBuckets']();
-    this.logger.info(`[File] MinioInfo: | buckets: ${JSON.stringify(buckets)}`);
+      const buckets = await this.actions['listBuckets']();
+      this.logger.info(`[File] MinioInfo: | buckets: ${JSON.stringify(buckets)}`);
+    } catch (err) {
+      this.logger.error('[File] Minio initialization failed', err);
+    }
   }
 
   /**
