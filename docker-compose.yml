@@ -25,7 +25,7 @@ services:
   service-core:
     <<: *tailchat-base
     environment:
-      SERVICES: core/gateway,core/user/*.service.js,core/group/*.service.js,core/chat/*.service.js,core/file,core/plugin/registry,core/config
+      SERVICES: services/core/**/*.service.js
       PORT: 3000
     # 可观测性：Prometheus metrics（仅本机暴露，需配合 docker-compose.env: PROMETHEUS=true）
     ports:
@@ -41,7 +41,7 @@ services:
   service-openapi:
     <<: *tailchat-base
     environment:
-      SERVICES: openapi/app,openapi/bot,openapi/integration,openapi/oidc/oidc
+      SERVICES: services/openapi/**/*.service.js,services/openapi/**/*.service.dev.js
       OPENAPI_PORT: 3003
       OPENAPI_UNDER_PROXY: "true"
     labels:
@@ -58,9 +58,8 @@ services:
       - minio
       - livekit
     environment:
-      SERVICEDIR: plugins
       # 只加载“免费且必需”的插件服务，避免无关插件缺少 env 或不兼容导致容器反复重启
-      SERVICES: plugins/com.msgbyte.pseudolive/services/*.service.js,plugins/com.msgbyte.livekit/services/*.service.js,plugins/com.ridou.defense-control/services/*.service.js,plugins/com.ridou.ops-bot/services/*.service.js
+      SERVICES: plugins/com.msgbyte.linkmeta/services/*.service.js
 
   # Admin Panel
   tailchat-admin:
