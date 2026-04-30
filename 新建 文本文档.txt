@@ -1,0 +1,977 @@
+From 0d8ee7c0d13e7292b7481637f720866ff04c0a89 Mon Sep 17 00:00:00 2001
+From: AthenDrakomin-hub <AthenDrakomin-hub@users.noreply.github.com>
+Date: Thu, 30 Apr 2026 08:05:13 +0000
+Subject: [PATCH 1/6] fix(admin): auto-detect dist root for /admin assets
+
+---
+ server/admin/src/server/index.ts | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/server/admin/src/server/index.ts b/server/admin/src/server/index.ts
+index 1122483..49023a6 100644
+--- a/server/admin/src/server/index.ts
++++ b/server/admin/src/server/index.ts
+@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
+ import compression from 'compression';
+ import morgan from 'morgan';
+ import path from 'path';
++import fs from 'fs';
+ import dotenv from 'dotenv';
+ dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+ import { apiRouter } from './router/api';
+@@ -50,8 +51,27 @@ app.use((err: any, req: any, res: any, next: any) => {
+   res.json({ error: err.message });
+ });
+ 
++function resolveAdminDistRoot(): string {
++  const candidates = [
++    path.resolve(__dirname, '../../..'),
++    path.resolve(__dirname, '../../../..'),
++    path.resolve(__dirname, '../../../../..'),
++  ];
++
++  for (const p of candidates) {
++    if (
++      fs.existsSync(path.resolve(p, 'index.html')) &&
++      fs.existsSync(path.resolve(p, 'assets'))
++    ) {
++      return p;
++    }
++  }
++
++  return candidates[0];
++}
++
+ if (process.env.NODE_ENV === 'production') {
+-  const distRoot = path.resolve(__dirname, '../../..');
++  const distRoot = resolveAdminDistRoot();
+   const distAssets = path.resolve(distRoot, 'assets');
+ 
+   app.use(
+-- 
+2.43.0
+
+
+From 8a29d1ea316028c1a7b77a7c5857f8b6757be7f4 Mon Sep 17 00:00:00 2001
+From: AthenDrakomin-hub <AthenDrakomin-hub@users.noreply.github.com>
+Date: Thu, 30 Apr 2026 08:43:26 +0000
+Subject: [PATCH 2/6] =?UTF-8?q?feat:=20=E6=8B=89=E5=8F=96Main=E5=88=86?=
+ =?UTF-8?q?=E6=94=AF=E5=88=B0=E5=B7=A5=E4=BD=9C=E5=8C=BA?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-authored-by: traeagent <traeagent@users.noreply.github.com>
+---
+ server/services/core/gateway.service.ts | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/server/services/core/gateway.service.ts b/server/services/core/gateway.service.ts
+index 97aff6a..79a19ea 100644
+--- a/server/services/core/gateway.service.ts
++++ b/server/services/core/gateway.service.ts
+@@ -20,6 +20,7 @@ import accepts from 'accepts';
+ import send from 'send';
+ import path from 'path';
+ import mime from 'mime';
++import fs from 'fs';
+ import {
+   extractPluginIdFromHttpPath,
+   isRoleAllowedForPlugin,
+@@ -118,6 +119,24 @@ export default class ApiService extends TcService {
+   }
+ 
+   getRoutes() {
++    const publicDir = (() => {
++      const candidates = [
++        path.resolve(process.cwd(), 'dist/public'),
++        path.resolve(process.cwd(), 'public'),
++      ];
++
++      for (const p of candidates) {
++        if (
++          fs.existsSync(path.resolve(p, 'index.html')) &&
++          fs.existsSync(path.resolve(p, 'tailchat.manifest'))
++        ) {
++          return p;
++        }
++      }
++
++      return candidates[candidates.length - 1];
++    })();
++
+     return [
+       // /api
+       {
+@@ -375,7 +394,7 @@ export default class ApiService extends TcService {
+         authentication: false,
+         authorization: false,
+         use: [
+-          serve('public', {
++          serve(publicDir, {
+             cacheControl: true,
+             maxAge: '1d', // 1 day for public file, include plugins
+             setHeaders(res: ServerResponse, path: string, stat: any) {
+@@ -403,7 +422,9 @@ export default class ApiService extends TcService {
+               'no-cache, no-store, must-revalidate'
+             );
+             const isAdmin = String(req.url).startsWith('/admin');
+-            send(req, isAdmin ? './public/admin/index.html' : './public/index.html', { root: process.cwd() }).pipe(res);
++            send(req, isAdmin ? './admin/index.html' : './index.html', {
++              root: publicDir,
++            }).pipe(res);
+           }
+         },
+         whitelist: [],
+-- 
+2.43.0
+
+
+From c5ebe779313585e3c58780f927856db1e062e969 Mon Sep 17 00:00:00 2001
+From: AthenDrakomin-hub <AthenDrakomin-hub@users.noreply.github.com>
+Date: Thu, 30 Apr 2026 08:57:01 +0000
+Subject: [PATCH 3/6] chore(web): disable builtin telemetry beacon
+
+---
+ client/web/src/init.tsx | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/client/web/src/init.tsx b/client/web/src/init.tsx
+index e5d6c52..7fc3c21 100644
+--- a/client/web/src/init.tsx
++++ b/client/web/src/init.tsx
+@@ -141,12 +141,7 @@ setErrorHook((err) => {
+  */
+ fetchGlobalClientConfig()
+   .then((config) => {
+-    if (isProduction && !config.disableTelemetry) {
+-      // 发送遥测信息
+-      fetch(
+-        `https://tianji.moonrailgun.com/telemetry/clnzoxcy10001vy2ohi4obbi0/cltpqundt1r4hoi4gk72uj3un.gif?name=tailchat&url=${window.location.origin}&v=${version}`
+-      ).catch(() => {});
+-    }
++    void config;
+   })
+   .catch((e) => {
+     showErrorToasts(t('全局配置加载失败'));
+-- 
+2.43.0
+
+
+From 03a7b38d659072c59b29ad382294560520af2838 Mon Sep 17 00:00:00 2001
+From: AthenDrakomin-hub <AthenDrakomin-hub@users.noreply.github.com>
+Date: Thu, 30 Apr 2026 10:05:52 +0000
+Subject: [PATCH 4/6] docs: add onboarding mentor mapping design
+
+---
+ ...arding-mentor-mapping-account-ui-design.md | 130 ++++++++++++++++++
+ 1 file changed, 130 insertions(+)
+ create mode 100644 docs/superpowers/specs/2026-04-30-onboarding-mentor-mapping-account-ui-design.md
+
+diff --git a/docs/superpowers/specs/2026-04-30-onboarding-mentor-mapping-account-ui-design.md b/docs/superpowers/specs/2026-04-30-onboarding-mentor-mapping-account-ui-design.md
+new file mode 100644
+index 0000000..fb2d376
+--- /dev/null
++++ b/docs/superpowers/specs/2026-04-30-onboarding-mentor-mapping-account-ui-design.md
+@@ -0,0 +1,130 @@
++# 日斗投资社群 Onboarding/导师映射/账号字段/UI 优化设计
++
++**目标**
++- 解决客户端控制台关键报错（`tailchat.manifest` 404、内置 Tianji 遥测 CORS/502）。
++- 为普通成员重写登录后 8 步引导，突出“AI 财富助手（诊股/选股）”引流。
++- 支持按 `orgCode`（邀请码）绑定导师：用户注册成功后自动成为好友（双向好友关系）。
++- 修复账号字段展示：注册账号写入 `username`，并新增“绑定邮箱/绑定手机号”（非必填）可在客户端设置与管理端查看/编辑。
++- 普通成员不显示“创建群组”入口，并增加服务端强拦截防绕过。
++
++---
++
++## 1. 现状与问题
++
++### 1.1 控制台报错
++- `workbox bad-precaching-response tailchat.manifest 404`：网关静态目录未命中 `dist/public` 导致 `tailchat.manifest` 对外 404。
++- `tianji... CORS/502`：前端存在内置 beacon 请求，访问 `tianji.moonrailgun.com` 时被跨域/上游失败。
++- `Provider initialised / TronLink initiated`：浏览器插件注入日志，不属于项目问题，不处理。
++
++### 1.2 普通成员体验不匹配
++- 引导文案包含“创建群组/插件”等普通成员不具备的能力描述。
++- “AI 财富助手”作为项目引流特性未在引导中突出。
++
++### 1.3 账号/资料字段不一致
++- 注册页 `account` 当前以 `email` 字段传输/保存，导致 `username` 为空，管理端“登录账号”列出现空。
++- 客户端设置页缺少“绑定邮箱/绑定手机号”的编辑入口。
++
++---
++
++## 2. 设计总览（改动点拆分）
++
++### 2.1 线上静态资源/遥测修复
++- 网关静态服务优先从 `dist/public` 提供静态文件（兜底到 `public`）。
++- 移除/禁用前端内置 Tianji beacon 请求（保留全局配置中的 `disableTelemetry` 字段语义，但不再发起该固定 URL 请求）。
++
++### 2.2 orgCode→导师映射（Admin 系统设置）
++- 在 Admin 系统设置“注册邀请码”区域旁新增“导师账号（可选）”。
++- 每个 orgCode 仅绑定一个导师（`mentorUserId`），导师候选默认推荐 `systemRole` 为 `teacher/monitor` 的用户。
++- 支持输入搜索：按 `username/email/nickname` 联想并选择，最终保存 `mentorUserId`。
++
++### 2.3 注册成功后自动加导师为好友
++- 注册校验通过后，如果 orgCode 命中导师映射且存在 `mentorUserId`：
++  - 直接调用 `friend.buildFriendRelation(mentorUserId, newUserId)` 建立双向好友关系。
++  - 失败容错：加好友失败不影响注册成功（仅记录错误日志，不抛出给用户）。
++
++### 2.4 普通成员禁用创建群组
++- 前端：对 `systemRole=student` 隐藏群组列表的创建入口。
++- 后端：对创建群组 action 增加权限校验，student 直接 Forbidden（防止绕过前端）。
++
++### 2.5 登录后引导（8步重写）
++- 仅调整文案，不更改引导逻辑/步骤定位元素，降低回归风险。
++- 内容从“插件化开源IM”改为“日斗投资财富交流会”场景，并新增 AI 财富助手引导（选股/诊股）。
++- 不提供外链（Step 8 改为站内提示：公告/置顶 + 私信班长/导师）。
++
++### 2.6 AI 财富助手 UI 美化与暗黑可读性修复
++- 增加“包装框”（高端质感容器、统一主色、边框/阴影/分隔），并补齐 `dark:` 下的文本与背景对比。
++- 不改选股/诊股功能逻辑，仅改呈现（避免业务回归）。
++
++### 2.7 账号字段与联系方式字段
++- 账号规则：登录账号 = 注册账号，注册时写入 `username`。
++- 联系方式字段（非必填）：`contactEmail`、`contactPhone` 写入 `user.extra`。
++- 客户端设置页新增两项编辑入口（绑定邮箱/绑定手机号）。
++- 管理端用户列表/编辑对齐字段展示：显示 `username`（登录账号）与联系方式（从 `extra` 读取），避免“登录账号为空”的困惑。
++
++---
++
++## 3. 数据结构与兼容策略
++
++### 3.1 GlobalConfig 新增字段（客户端全局配置）
++- `registerOrgCodeRules?: Array<{ code: string; mentorUserId?: string }>`
++- 兼容：
++  - 旧字段 `registerOrgCode`（逗号分隔字符串）继续支持，用作“允许注册的邀请码列表”的兜底。
++  - 若 `registerOrgCodeRules` 存在则以其为准（允许列表取 `rules.code`）。
++
++### 3.2 用户联系方式字段（User.extra）
++- `user.extra.contactEmail?: string`
++- `user.extra.contactPhone?: string`
++- 均为非必填，仅用于展示/联系，不参与登录鉴权。
++
++---
++
++## 4. 关键流程
++
++### 4.1 注册流程（user.register）
++1) 读取 `config.client` 获取 `registerOrgCodeRules/registerOrgCode`，校验 orgCode 是否允许。
++2) 创建用户：
++   - `username = params.username`（登录账号）
++   - `email = params.email`（兼容历史：允许为空或写入占位，具体实现时按现有逻辑最小改动）
++3) 若命中导师映射：
++   - 直接建立好友关系 `friend.buildFriendRelation(mentorUserId, newUserId)`（容错）
++4) 返回 token 与用户信息。
++
++### 4.2 管理端配置保存
++- `PATCH /admin/api/config/client`
++  - `key=registerOrgCodeRules`
++  - `value=[{code, mentorUserId}]`
++- 保持与现有 `registerOrgCode` 保存逻辑一致（同一个接口）。
++
++---
++
++## 5. 文件改动范围（预估）
++
++### Server
++- `server/services/core/gateway.service.ts`：静态目录优先 `dist/public`（修复 manifest 404）。
++- `server/services/core/user/user.service.ts`：注册写入 username + orgCode→导师自动加好友。
++- `server/services/core/group/group.service.ts`（或创建群组 action 所在服务）：student 禁止创建群组。
++
++### Admin
++- `server/admin/src/client/routes/system/index.tsx`：新增 orgCode→导师选择 UI（推荐 teacher/monitor + 搜索）。
++- `server/admin/src/client/i18n/zh.ts` / `en.ts`：新增文案 key。
++- `server/admin/src/client/fields.ts`：用户字段展示对齐（username + 联系方式）。
++
++### Web
++- `client/web/plugins/com.msgbyte.intro/src/translate.ts`：重写 8 步引导文案。
++- `client/web/plugins/com.msgbyte.wealth/src/WealthPanel.tsx`：美化与 dark 适配。
++- `client/web/src/init.tsx`：移除内置 tianji beacon。
++- `client/web/src/routes/Main/Navbar/GroupNav.tsx`：隐藏创建群组入口（student）。
++- `client/web/src/components/modals/SettingsView/Account.tsx`：新增绑定邮箱/手机号编辑项（写入 user.extra）。
++
++---
++
++## 6. 验收标准
++- `GET /tailchat.manifest` 在对外入口（11000）返回 200，Workbox 不再报 `bad-precaching-response`。
++- 控制台不再出现 tianji beacon 的 CORS/502（禁用后无请求）。
++- 注册时 `username` 不为空；Admin 用户列表“登录账号”展示正确。
++- 客户端设置页可编辑并保存“绑定邮箱/绑定手机号”，刷新后仍存在。
++- 配置了 `orgCode→mentor` 后，新注册用户自动与导师成为好友。
++- 普通成员界面不出现创建群组入口，且后端接口禁止 student 创建群组。
++- 引导文案符合“普通成员视角 + AI 财富助手引流”，无 Tailchat 默认文案。
++- AI 财富助手在暗黑主题下文字可读，整体视觉更“包装化”。
++
+-- 
+2.43.0
+
+
+From af0dff7c6100ea2df9eac25d64b5b0a124c564d6 Mon Sep 17 00:00:00 2001
+From: AthenDrakomin-hub <AthenDrakomin-hub@users.noreply.github.com>
+Date: Thu, 30 Apr 2026 10:06:07 +0000
+Subject: [PATCH 5/6] feat: orgCode mentor mapping and auto-friend
+
+---
+ client/shared/model/config.ts                 |   6 +
+ server/admin/src/client/i18n/en.ts            |   5 +
+ server/admin/src/client/i18n/zh.ts            |   4 +
+ server/admin/src/client/routes/system/index.tsx  | 190 ++++++++++++++++++
+ server/admin/src/server/router/api.ts         |   4 +-
+ server/services/core/user/user.service.ts     |  49 ++++-
+ 6 files changed, 251 insertions(+), 7 deletions(-)
+
+diff --git a/client/shared/model/config.ts b/client/shared/model/config.ts
+index 5dcf9da..fa0e9c9 100644
+--- a/client/shared/model/config.ts
++++ b/client/shared/model/config.ts
+@@ -17,6 +17,11 @@ export type BeidouStarCardConfig = {
+   footerLeftText?: string;
+ };
+ 
++export type RegisterOrgCodeRule = {
++  code: string;
++  mentorUserId?: string;
++};
++
+ export interface GlobalConfig {
+   /**
+    * Tianji 配置
+@@ -90,6 +95,7 @@ export interface GlobalConfig {
+       };
+ 
+   registerOrgCode?: string;
++  registerOrgCodeRules?: RegisterOrgCodeRule[];
+ 
+   /**
+    * 运营插件发布与权限配置
+diff --git a/server/admin/src/client/i18n/en.ts b/server/admin/src/client/i18n/en.ts
+index 9ac7787..e8529fa 100644
+--- a/server/admin/src/client/i18n/en.ts
++++ b/server/admin/src/client/i18n/en.ts
+@@ -73,6 +73,11 @@ export const enTranslation = {
+       emailVerification: 'Mandatory Email Verification',
+       allowGuestLogin: 'Allow Guest Login',
+       allowUserRegister: 'Allow User Register',
++      registerOrgCode: 'Register Org Code',
++      registerOrgCodeRules: 'Invite Code Rules (optional mentor)',
++      orgCodeMentorPlaceholder: 'Select/search mentor',
++      addOrgCodeRule: 'Add Invite Code',
++      saveOrgCodeRules: 'Save Invite Rules',
+       allowCreateGroup: 'Allow Create Group',
+       serverName: 'Server Name',
+       serverEntryImage: 'Server Entry Page Image',
+diff --git a/server/admin/src/client/i18n/zh.ts b/server/admin/src/client/i18n/zh.ts
+index f295c03..cee9e06 100644
+--- a/server/admin/src/client/i18n/zh.ts
++++ b/server/admin/src/client/i18n/zh.ts
+@@ -171,6 +171,10 @@ export const zhTranslation = {
+       allowGuestLogin: '允许访客登录',
+       allowUserRegister: '允许用户注册',
+       registerOrgCode: '注册组织代码',
++      registerOrgCodeRules: '邀请码规则（可选绑定导师）',
++      orgCodeMentorPlaceholder: '选择/搜索导师或班长',
++      addOrgCodeRule: '新增邀请码',
++      saveOrgCodeRules: '保存邀请码规则',
+       allowCreateGroup: '允许创建群组',
+       serverName: '服务器名',
+       serverEntryImage: '服务器登录图',
+diff --git a/server/admin/src/client/routes/system/index.tsx b/server/admin/src/client/routes/system/index.tsx
+index b05b4df..5645b6c 100644
+--- a/server/admin/src/client/routes/system/index.tsx
++++ b/server/admin/src/client/routes/system/index.tsx
+@@ -15,6 +15,7 @@ import {
+   Switch,
+   Divider,
+   Typography,
++  Select,
+ } from 'tushan';
+ import _get from 'lodash/get';
+ import { IconCheck, IconClose, IconDelete } from 'tushan/icon';
+@@ -32,6 +33,20 @@ type BeidouStarCardConfig = {
+   footerLeftText?: string;
+ };
+ 
++type RegisterOrgCodeRule = {
++  code: string;
++  mentorUserId?: string;
++};
++
++type UserCandidate = {
++  id: string;
++  username?: string;
++  email?: string;
++  nickname?: string;
++  discriminator?: string;
++  systemRole?: 'student' | 'monitor' | 'teacher';
++};
++
+ const DEFAULT_BEIDOU_STARS_CARDS: BeidouStarCardConfig[] = [
+   {
+     id: 'wang-wen',
+@@ -103,6 +118,37 @@ function normalizeBeidouStarsCards(
+   }).slice(0, 7);
+ }
+ 
++function normalizeRegisterOrgCodeRules(config: any): RegisterOrgCodeRule[] {
++  const rules = Array.isArray(config?.registerOrgCodeRules)
++    ? config.registerOrgCodeRules
++    : null;
++  if (rules) {
++    return rules
++      .map((r: any) => ({
++        code: String(r?.code ?? '').trim(),
++        mentorUserId: String(r?.mentorUserId ?? '').trim() || undefined,
++      }))
++      .filter((r: RegisterOrgCodeRule) => r.code.length > 0);
++  }
++
++  const orgCodesStr = String(config?.registerOrgCode || '0501');
++  return orgCodesStr
++    .split(',')
++    .map((c: string) => c.trim())
++    .filter((c: string) => c.length > 0)
++    .map((code: string) => ({ code }));
++}
++
++function formatUserCandidateLabel(u: UserCandidate) {
++  const username = u.username ? String(u.username) : '';
++  const email = u.email ? String(u.email) : '';
++  const nickname = u.nickname ? String(u.nickname) : '';
++  const discriminator = u.discriminator ? String(u.discriminator) : '';
++  const uniq = nickname ? `${nickname}${discriminator ? `#${discriminator}` : ''}` : '';
++  const handle = username || email || u.id;
++  return uniq ? `${uniq} (${handle})` : handle;
++}
++
+ /**
+  * Tailchat 系统设置
+  */
+@@ -162,6 +208,65 @@ export const SystemConfig: React.FC = React.memo(() => {
+     }
+   );
+ 
++  const [registerOrgCodeRules, setRegisterOrgCodeRules] = useState<
++    RegisterOrgCodeRule[]
++  >(() => normalizeRegisterOrgCodeRules(config));
++
++  useEffect(() => {
++    setRegisterOrgCodeRules(normalizeRegisterOrgCodeRules(config));
++  }, [config]);
++
++  const [
++    { value: mentorCandidates = [], loading: loadingMentors },
++    searchMentors,
++  ] = useAsyncRequest(async (keyword: string) => {
++    const { data } = await request.get('/users', {
++      params: {
++        q: keyword,
++        _start: 0,
++        _end: 50,
++        _sort: 'createdAt',
++        _order: 'DESC',
++      },
++    });
++
++    const list: UserCandidate[] = Array.isArray(data) ? data : [];
++    return list.filter(
++      (u) => u.systemRole === 'teacher' || u.systemRole === 'monitor'
++    );
++  });
++
++  const mentorOptions = useMemo(
++    () =>
++      mentorCandidates.map((u) => ({
++        label: formatUserCandidateLabel(u),
++        value: u.id,
++      })),
++    [mentorCandidates]
++  );
++
++  const [{ loading: savingOrgCodeRules }, saveRegisterOrgCodeRules] =
++    useAsyncRequest(async () => {
++      const normalized = registerOrgCodeRules
++        .map((r) => ({
++          code: String(r.code ?? '').trim(),
++          mentorUserId: r.mentorUserId ? String(r.mentorUserId).trim() : '',
++        }))
++        .filter((r) => r.code.length > 0);
++
++      await request.patch('/config/client', {
++        key: 'registerOrgCodeRules',
++        value: normalized,
++      });
++      await request.patch('/config/client', {
++        key: 'registerOrgCode',
++        value: normalized.map((r) => r.code).join(','),
++      });
++
++      fetchConfig();
++      Message.success(t('tushan.common.success'));
++    });
++
+   const [{}, handleChangeServerEntryImage] = useAsyncRequest(
+     async (file: File | null) => {
+       if (file) {
+@@ -340,6 +445,91 @@ export const SystemConfig: React.FC = React.memo(() => {
+               />
+             </Form.Item>
+ 
++            <Form.Item label={t('custom.config.registerOrgCodeRules')}>
++              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
++                {registerOrgCodeRules.map((rule, index) => (
++                  <div
++                    key={`${rule.code}-${index}`}
++                    style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}
++                  >
++                    <Input
++                      style={{ width: 160 }}
++                      value={rule.code}
++                      onChange={(val) =>
++                        setRegisterOrgCodeRules((prev) => {
++                          const next = [...prev];
++                          next[index] = { ...next[index], code: String(val) };
++                          return next;
++                        })
++                      }
++                      placeholder="0501"
++                    />
++
++                    <div style={{ minWidth: 260, flex: 1 }}>
++                      <Select
++                        {...({
++                          value: rule.mentorUserId ?? '',
++                          options: mentorOptions,
++                          allowClear: true,
++                          loading: loadingMentors,
++                          placeholder: t('custom.config.orgCodeMentorPlaceholder'),
++                          showSearch: true,
++                          filterOption: false,
++                          onFocus: () => searchMentors(''),
++                          onSearch: (keyword: string) => searchMentors(keyword),
++                          onChange: (val: string) =>
++                            setRegisterOrgCodeRules((prev) => {
++                              const next = [...prev];
++                              next[index] = {
++                                ...next[index],
++                                mentorUserId: val ? String(val) : undefined,
++                              };
++                              return next;
++                            }),
++                        } as any)}
++                      />
++                    </div>
++
++                    <Button
++                      type="primary"
++                      icon={<IconDelete />}
++                      disabled={savingOrgCodeRules}
++                      onClick={() =>
++                        setRegisterOrgCodeRules((prev) =>
++                          prev.filter((_, i) => i !== index)
++                        )
++                      }
++                    >
++                      Delete
++                    </Button>
++                  </div>
++                ))}
++
++                <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
++                  <Button
++                    type="primary"
++                    disabled={savingOrgCodeRules}
++                    onClick={() =>
++                      setRegisterOrgCodeRules((prev) => [
++                        ...prev,
++                        { code: '', mentorUserId: undefined },
++                      ])
++                    }
++                  >
++                    {t('custom.config.addOrgCodeRule')}
++                  </Button>
++
++                  <Button
++                    type="primary"
++                    loading={savingOrgCodeRules}
++                    onClick={() => saveRegisterOrgCodeRules()}
++                  >
++                    {t('custom.config.saveOrgCodeRules')}
++                  </Button>
++                </div>
++              </div>
++            </Form.Item>
++
+             <Form.Item label={t('custom.config.serverName')}>
+               <Input
+                 value={serverName}
+diff --git a/server/admin/src/server/router/api.ts b/server/admin/src/server/router/api.ts
+index 02d971f..bec5415 100644
+--- a/server/admin/src/server/router/api.ts
++++ b/server/admin/src/server/router/api.ts
+@@ -177,8 +177,8 @@ router.use(
+   '/users',
+   auth(),
+   raExpressMongoose(userModel, {
+-    q: ['_id', 'nickname', 'email'],
+-    allowedRegexFields: ['nickname'],
++    q: ['_id', 'nickname', 'email', 'username'],
++    allowedRegexFields: ['nickname', 'email', 'username'],
+   })
+ );
+ router.delete('/messages/:id', auth(), async (req, res) => {
+diff --git a/server/services/core/user/user.service.ts b/server/services/core/user/user.service.ts
+index dfe48b1..d07ef4e 100644
+--- a/server/services/core/user/user.service.ts
++++ b/server/services/core/user/user.service.ts
+@@ -303,9 +303,19 @@ class UserService extends TcService {
+     if (typeof username === 'string') {
+       user = await this.adapter.findOne({ username });
+       if (!user) {
+-        throw new EntityError(t('用户不存在, 请检查您的用户名'), 442, '', [
+-          { field: 'username', message: t('用户名不存在') },
+-        ]);
++        user = await this.adapter.findOne({ email: username });
++        if (!user) {
++          throw new EntityError(t('用户不存在, 请检查您的用户名'), 442, '', [
++            { field: 'username', message: t('用户名不存在') },
++          ]);
++        }
++        if (!user.username) {
++          try {
++            await this.adapter.updateById(user._id, { $set: { username } });
++          } catch (err) {
++            this.logger.error(err);
++          }
++        }
+       }
+     } else if (typeof email === 'string') {
+       user = await this.adapter.findOne({ email });
+       if (!user) {
+         throw new EntityError(t('用户不存在, 请检查您的账号'), 422, '', [
+@@ -433,8 +443,21 @@ class UserService extends TcService {
+     await this.validateEntity(params);
+ 
+     const globalConfig: any = await ctx.call('config.client');
+-    const orgCodesStr = globalConfig.registerOrgCode || '0501';
+-    const allowedOrgCodes = orgCodesStr.split(',').map((c: string) => c.trim());
++    const rules = Array.isArray(globalConfig.registerOrgCodeRules)
++      ? globalConfig.registerOrgCodeRules
++      : [];
++    const allowedOrgCodesFromRules = rules
++      .map((r: any) => String(r?.code ?? '').trim())
++      .filter((c: string) => c.length > 0);
++    const orgCodesStr = String(globalConfig.registerOrgCode || '0501');
++    const allowedOrgCodesFromStr = orgCodesStr
++      .split(',')
++      .map((c: string) => c.trim())
++      .filter((c: string) => c.length > 0);
++    const allowedOrgCodes =
++      allowedOrgCodesFromRules.length > 0
++        ? allowedOrgCodesFromRules
++        : allowedOrgCodesFromStr;
+ 
+     if (!allowedOrgCodes.includes(params.orgCode)) {
+       throw new Errors.MoleculerClientError(t('组织代码不正确'), 400, '', [
+@@ -483,6 +506,22 @@ class UserService extends TcService {
+       createdAt: new Date(),
+     });
+     const user = await this.transformDocuments(ctx, {}, doc);
++
++    const matchedRule = rules.find(
++      (r: any) => String(r?.code ?? '').trim() === params.orgCode
++    );
++    const mentorUserId = String(matchedRule?.mentorUserId ?? '').trim();
++    if (mentorUserId.length > 0) {
++      try {
++        await ctx.call('friend.buildFriendRelation', {
++          user1: mentorUserId,
++          user2: String((user as any)?._id ?? doc._id),
++        });
++      } catch (err) {
++        this.logger.error(err);
++      }
++    }
++
+     const json = await this.transformEntity(user, true, ctx.meta.token);
+     await this.entityChanged('created', json, ctx);
+     return json;
+-- 
+2.43.0
+
+
+From 2cdf4e61fe4df7c1f2f10b79dd0f74bee36d5e5d Mon Sep 17 00:00:00 2001
+From: AthenDrakomin-hub <AthenDrakomin-hub@users.noreply.github.com>
+Date: Thu, 30 Apr 2026 10:06:20 +0000
+Subject: [PATCH 6/6] feat: member onboarding copy and account contact fields
+
+---
+ client/shared/model/user.ts                   |  9 +++--
+ client/web/plugins/com.msgbyte.intro/src/translate.ts        | 35 ++++++++++---------
+ client/web/plugins/com.msgbyte.wealth/src/WealthPanel.tsx    | 30 ++++++++--------
+ client/web/src/components/modals/SettingsView/Account.tsx           | 18 +++++++++-
+ client/web/src/routes/Entry/RegisterView.tsx  |  2 +-
+ server/admin/src/client/fields.ts             | 24 +++++++++++++
+ 6 files changed, 81 insertions(+), 37 deletions(-)
+
+diff --git a/client/shared/model/user.ts b/client/shared/model/user.ts
+index bfe8f00..7d49d60 100644
+--- a/client/shared/model/user.ts
++++ b/client/shared/model/user.ts
+@@ -112,9 +112,8 @@ export async function loginWithEmail(
+   account: string,
+   password: string
+ ): Promise<UserLoginInfo> {
+-  const isEmail = account.includes('@');
+   const { data } = await request.post('/api/user/login', {
+-    ...(isEmail ? { email: account } : { username: account }),
++    username: account,
+     password,
+   });
+ 
+@@ -169,20 +168,20 @@ export async function verifyEmailWithOTP(
+  * @param password 密码
+  */
+ export async function registerWithEmail({
+-  email,
++  username,
+   password,
+   nickname,
+   emailOTP,
+   orgCode,
+ }: {
+-  email: string;
++  username: string;
+   password: string;
+   nickname?: string;
+   emailOTP?: string;
+   orgCode?: string;
+ }): Promise<UserLoginInfo> {
+   const { data } = await request.post('/api/user/register', {
+-    email,
++    username,
+     password,
+     nickname,
+     emailOTP,
+diff --git a/client/web/plugins/com.msgbyte.intro/src/translate.ts b/client/web/plugins/com.msgbyte.intro/src/translate.ts
+index ec22888..b691f78 100644
+--- a/client/web/plugins/com.msgbyte.intro/src/translate.ts
++++ b/client/web/plugins/com.msgbyte.intro/src/translate.ts
+@@ -10,45 +10,48 @@ export const Translate = {
+     'en-US': 'Skip Tour',
+   }),
+   step1: localTrans({
+-    'zh-CN': '欢迎使用 Tailchat, 一个插件化的开源IM应用！',
+-    'en-US': 'Welcome to Tailchat, a pluginify open source IM application!',
++    'zh-CN':
++      '欢迎来到「日斗投资财富交流会」！建议先查看群公告与置顶内容，快速了解学习节奏与规则。',
++    'en-US':
++      'Welcome to the RIDOU Investment community! Check announcements and pinned messages first to get started.',
+   }),
+   step2: localTrans({
+-    'zh-CN': '这是导航栏, 在这里可以切换tailchat的各个主要页面。',
++    'zh-CN': '这是导航栏，用于切换主要页面：会话、群组、通知等。',
+     'en-US':
+-      'This is the navigation bar, where you can switch between the main pages of tailchat.',
++      'This is the navigation bar, where you can switch between key pages.',
+   }),
+   step3: localTrans({
+-    'zh-CN': '这是个人信息入口，在这里可以访问您的好友、插件、以及私信等功能。',
++    'zh-CN': '这是个人入口：可查看好友与私信，遇到问题可直接联系班长/导师。',
+     'en-US':
+-      'This is the personal information entry, where you can access functions such as your friends, plug-ins, and private messages.',
++      'This is the personal entry: friends and DMs. Reach out to mentors/moderators when needed.',
+   }),
+   step4: localTrans({
+     'zh-CN':
+-      '这是群组列表, 会显示所有已加入的群组，您可以通过点击切换切换群组，也可以点击 + 号按钮来创建群组',
++      '这是群组列表，会显示已加入的学习班/专题群，点击即可进入讨论与资料区。',
+     'en-US':
+-      'This is a list of groups, which will display all the groups you have joined. You can click to switch between groups, or you can click the + button to create a group',
++      'This is the group list showing your joined class/topic groups.',
+   }),
+   step5: localTrans({
+     'zh-CN':
+-      '这是设置按钮，可以通过此按钮来进行个人信息的变更、系统设置的变更、软件信息等内容',
++      '这是设置入口：可修改个人资料、绑定联系方式、调整通知与系统偏好。',
+     'en-US':
+-      'This is the setting button, through which you can change personal information, system settings, software information, etc.',
++      'Settings: update your profile, contact info, and preferences.',
+   }),
+   step6: localTrans({
+-    'zh-CN': '这是侧边栏，用于切换内容。在未来会经常使用它来切换不同的面板。',
++    'zh-CN':
++      '这里可以找到「AI 财富助手」：支持智能选股与个股诊断，是我们日常学习与复盘的核心工具之一。',
+     'en-US':
+-      'This is the sidebar, used to toggle content. Will use it frequently in the future to switch between different panels.',
++      'You can find the AI Wealth Assistant here: AI Picks and AI Diagnosis for daily review.',
+   }),
+   step7: localTrans({
+-    'zh-CN': '这是内容区，用于显示主要内容，也是Tailchat展示内容的地方。',
++    'zh-CN': '这是内容区：讨论、资料分享、复盘记录等都会在这里展示。',
+     'en-US':
+-      'This is the content area, which is used to display the main content, and it is also where Tailchat displays the content.',
++      'This is the main content area where discussions and resources are shown.',
+   }),
+   step8: localTrans({
+     'zh-CN':
+-      '如果有更多疑问, 欢迎访问官方文档了解更多: <br /><a href="https://tailchat.msgbyte.com/" target="_blank" style="text-decoration: underline;">点击此处打开官方文档</a>',
++      '温馨提示：遇到问题先查看群公告/置顶消息；仍需帮助可私信班长或导师。',
+     'en-US':
+-      'If you have more questions, please visit the official document to learn more: <br /><a href="https://tailchat.msgbyte.com/" target="_blank" style="text-decoration: underline;">Click here to open the official documentation</a>',
++      'Tip: check announcements/pinned messages first. If you still need help, DM your mentor/moderator.',
+   }),
+ };
+diff --git a/client/web/plugins/com.msgbyte.wealth/src/WealthPanel.tsx b/client/web/plugins/com.msgbyte.wealth/src/WealthPanel.tsx
+index 82f635f..94f7b3d 100644
+--- a/client/web/plugins/com.msgbyte.wealth/src/WealthPanel.tsx
++++ b/client/web/plugins/com.msgbyte.wealth/src/WealthPanel.tsx
+@@ -176,23 +176,24 @@ const WealthPanelInner: React.FC = () => {
+   };
+ 
+   return (
+-    <div className="p-6 h-full flex flex-col overflow-hidden bg-gray-50 text-gray-800 relative">
+-      <div className="mb-4 border-b border-gray-200 pb-4 shrink-0">
+-        <h1 className="text-2xl font-bold flex items-center">
+-          <Icon icon="mdi:robot-outline" className="mr-2 text-[#d4af37]" />
+-          AI 财富助手
+-        </h1>
+-        <p className="text-sm text-gray-500 mt-2">
+-          为您提供轻量化的智能选股与个股深度诊断服务
+-        </p>
+-      </div>
++    <div className="p-6 h-full flex flex-col overflow-hidden bg-[#f6f7fb] dark:bg-[#060d1a] text-[#0b1220] dark:text-[#e8edf6] relative">
++      <div className="mb-4 shrink-0 rounded-2xl border border-[rgba(212,175,55,0.20)] bg-white/70 dark:bg-[rgba(15,26,46,0.55)] backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
++        <div className="px-5 pt-5 pb-4 border-b border-[rgba(15,23,42,0.08)] dark:border-[rgba(255,255,255,0.08)]">
++          <h1 className="text-2xl font-extrabold flex items-center tracking-wide">
++            <Icon icon="mdi:robot-outline" className="mr-2 text-[#d4af37]" />
++            AI 财富助手
++          </h1>
++          <p className="text-sm mt-2 text-[rgba(15,23,42,0.70)] dark:text-[rgba(232,237,246,0.70)]">
++            智能选股 · 个股诊断 · 量化话术包装
++          </p>
++        </div>
+ 
+       <div className="flex space-x-4 mb-4 shrink-0">
+         <button
+           className={`px-4 py-2 rounded-md transition-colors font-medium shadow-sm ${
+             activeTab === 'pick'
+               ? 'bg-[#0b192c] text-[#d4af37]'
+-              : 'bg-white hover:bg-gray-100 text-gray-600'
++              : 'bg-white/80 dark:bg-[rgba(15,26,46,0.45)] hover:bg-white dark:hover:bg-[rgba(15,26,46,0.65)] text-[rgba(15,23,42,0.70)] dark:text-[rgba(232,237,246,0.70)]'
+           }`}
+           onClick={() => setActiveTab('pick')}
+         >
+@@ -202,21 +203,22 @@ const WealthPanelInner: React.FC = () => {
+           className={`px-4 py-2 rounded-md transition-colors font-medium shadow-sm ${
+             activeTab === 'diag'
+               ? 'bg-[#0b192c] text-[#d4af37]'
+-              : 'bg-white hover:bg-gray-100 text-gray-600'
++              : 'bg-white/80 dark:bg-[rgba(15,26,46,0.45)] hover:bg-white dark:hover:bg-[rgba(15,26,46,0.65)] text-[rgba(15,23,42,0.70)] dark:text-[rgba(232,237,246,0.70)]'
+           }`}
+           onClick={() => setActiveTab('diag')}
+         >
+           智能诊股 (AI Diagnosis)
+         </button>
+       </div>
++      </div>
+ 
+       <div className="flex-1 overflow-y-auto overflow-x-hidden pb-4">
+         {activeTab === 'pick' && (
+           <div className="space-y-4">
+-            <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
++            <div className="bg-white/80 dark:bg-[rgba(15,26,46,0.55)] p-5 rounded-xl shadow-sm border border-[rgba(15,23,42,0.08)] dark:border-[rgba(255,255,255,0.08)]">
+               <div className="flex justify-between items-center mb-4">
+                 <div>
+-                  <h3 className="font-bold text-lg text-gray-800 flex items-center">
++                  <h3 className="font-bold text-lg flex items-center">
+                     <Icon icon="mdi:fire" className="text-red-500 mr-1" />
+                     今日 AI 量化金股精选
+                   </h3>
+diff --git a/client/web/src/components/modals/SettingsView/Account.tsx b/client/web/src/components/modals/SettingsView/Account.tsx
+index 059bee0..60c7914 100644
+--- a/client/web/src/components/modals/SettingsView/Account.tsx
++++ b/client/web/src/components/modals/SettingsView/Account.tsx
+@@ -115,7 +115,7 @@ export const SettingsAccount: React.FC = React.memo(() => {
+             title={t('账号')}
+             content={
+               <div>
+-                <span className="mr-1">{userInfo.email}</span>
++                <span className="mr-1">{userInfo.username || userInfo.email}</span>
+                 {userInfo.temporary && (
+                   <Tag color="warning" className="select-none">
+                     {t('临时账号')}
+@@ -125,6 +125,22 @@ export const SettingsAccount: React.FC = React.memo(() => {
+             }
+           />
+ 
++          <FullModalField
++            title={t('绑定邮箱')}
++            value={userExtra.contactEmail ? String(userExtra.contactEmail) : ''}
++            editable={true}
++            renderEditor={DefaultFullModalInputEditorRender}
++            onSave={(val) => handleUpdateExtraInfo('contactEmail', val)}
++          />
++
++          <FullModalField
++            title={t('绑定手机号')}
++            value={userExtra.contactPhone ? String(userExtra.contactPhone) : ''}
++            editable={true}
++            renderEditor={DefaultFullModalInputEditorRender}
++            onSave={(val) => handleUpdateExtraInfo('contactPhone', val)}
++          />
++
+           {pluginUserExtraInfo.map((item, i) => {
+             if (item.component && item.component.editor) {
+               const Component = item.component.editor;
+diff --git a/client/web/src/routes/Entry/RegisterView.tsx b/client/web/src/routes/Entry/RegisterView.tsx
+index 3a1ba3d..018d861 100644
+--- a/client/web/src/routes/Entry/RegisterView.tsx
++++ b/client/web/src/routes/Entry/RegisterView.tsx
+@@ -68,7 +68,7 @@ export const RegisterView: React.FC = React.memo(() => {
+       .validate(password);
+ 
+     const data = await registerWithEmail({
+-      email: account,
++      username: account,
+       password,
+       nickname,
+       orgCode,
+diff --git a/server/admin/src/client/fields.ts b/server/admin/src/client/fields.ts
+index 2a3ab9d..6d08042 100644
+--- a/server/admin/src/client/fields.ts
++++ b/server/admin/src/client/fields.ts
+@@ -33,6 +33,30 @@ export const userFields = [
+     },
+   }),
+   createTextField('email', {
++    list: {
++      hidden: true,
++    },
++    edit: {
++      hidden: true,
++      rules: [
++        {
++          required: false,
++        },
++      ],
++    },
++  }),
++  createTextField('extra.contactEmail', {
++    label: '绑定邮箱',
++    edit: {
++      rules: [
++        {
++          required: false,
++        },
++      ],
++    },
++  }),
++  createTextField('extra.contactPhone', {
++    label: '绑定手机号',
+     edit: {
+       rules: [
+         {
+-- 
+2.43.0
