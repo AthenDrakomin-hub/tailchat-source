@@ -135,14 +135,15 @@ test('管理端存在统一能力状态类型并被站点配置页接入', () =>
   assert.match(systemPage, /FeatureState/);
 });
 
-test('tushan 创建编辑表单错误提示已接入更友好的错误提取补丁', () => {
-  const rootPackage = fs.readFileSync('/data/user/work/tailchat-source/package.json', 'utf8');
-  const patchFile = fs.readFileSync('/data/user/work/tailchat-source/patches/tushan@0.3.26.patch', 'utf8');
+test('管理端已接入统一错误提取工具以展示更友好的失败提示', () => {
+  const helper = read('client/utils/admin-error.ts');
+  const groupResource = read('client/resources/group.tsx');
+  const userResource = read('client/resources/user.tsx');
 
-  assert.match(rootPackage, /"tushan@0\.3\.26": "patches\/tushan@0\.3\.26\.patch"/);
-  assert.match(patchFile, /getErrorMessage/);
-  assert.match(patchFile, /body\.error/);
-  assert.match(patchFile, /operateFailed/);
+  assert.match(helper, /export function formatAdminError/);
+  assert.match(helper, /response\?\.data\?\.error/);
+  assert.match(groupResource, /formatAdminError/);
+  assert.match(userResource, /formatAdminError/);
 });
 
 test('防御控制页面会识别结构化失败返回并切换到不可用态', () => {
@@ -310,13 +311,10 @@ test('admin broker 在本地 TCP 联调场景支持显式 peer 配置并关闭 U
   assert.match(brokerFile, /cacher:\s*null/);
 });
 
-test('moleculer tracing 补丁兼容 Node 22 的 performance.now this 绑定', () => {
-  const patchFile = fs.readFileSync(
-    '/data/user/work/tailchat-source/patches/moleculer@0.14.23.patch',
-    'utf8'
-  );
+test('生产 Docker 镜像固定使用 Node 18，避免运行时受宿主机 Node 22 兼容性影响', () => {
+  const dockerfile = fs.readFileSync('/data/user/work/tailchat-source/Dockerfile', 'utf8');
 
-  assert.match(patchFile, /performance\.now\.bind\(performance\)/);
+  assert.match(dockerfile, /FROM node:18\.18\.0-alpine/);
 });
 
 test('defense 插件在缺少 logger 与 shared secret 时不会阻塞完整主服务启动', () => {

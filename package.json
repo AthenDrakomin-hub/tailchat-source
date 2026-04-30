@@ -90,10 +90,6 @@
       "@types/estree": "1.0.8",
       "@types/eslint-scope": "3.7.7"
     },
-    "patchedDependencies": {
-      "moleculer@0.14.23": "patches/moleculer@0.14.23.patch",
-      "tushan@0.3.26": "patches/tushan@0.3.26.patch"
-    },
     "ignoredBuiltDependencies": [
       "@trpgengine/react-native-storage",
       "core-js",
