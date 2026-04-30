@@ -54,6 +54,24 @@ curl -fsSL https://raw.githubusercontent.com/AthenDrakomin-hub/tailchat-source/m
 - 不建议使用 `livekit/livekit-server:latest` 与 `--dev`（升级不受控、配置不完整）
 - 建议固定镜像版本并使用配置文件启动，生产网络环境建议配套 TURN
 
+#### LiveKit 503/不可用排查（必看）
+
+常见现象：
+
+- Web 侧进入视频通话提示服务不可用/503
+- `service-all-plugins` 日志出现：`miss env var: LIVEKIT_API_KEY, LIVEKIT_API_SECRET`
+
+必须同时配置（且保持一致）：
+
+- `LIVEKIT_URL=http://livekit:7880`（容器内访问 LiveKit）
+- `LIVEKIT_PUBLIC_URL=wss://goodspage.cn/livekit`（客户端连接地址，必须是公网可访问的 WSS/HTTPS）
+- `LIVEKIT_KEYS=your_key:your_secret`（LiveKit 服务自身使用）
+- `LIVEKIT_API_KEY=your_key`、`LIVEKIT_API_SECRET=your_secret`（Tailchat LiveKit 插件后端使用）
+
+若使用同域名 `https://goodspage.cn/livekit/` 反代 LiveKit，请确保宿主机 Nginx 已配置 `/livekit/` 反代，示例见：
+
+- [nginx.goodspage.cn.example.conf](file:///workspace/docs/nginx.goodspage.cn.example.conf)
+
 ### 更新/发版
 
 ```bash

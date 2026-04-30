@@ -38,11 +38,37 @@ class LivekitService extends TcService {
   }
 
   get apiKey() {
-    return process.env.LIVEKIT_API_KEY;
+    const apiKey = process.env.LIVEKIT_API_KEY;
+    if (apiKey) {
+      return apiKey;
+    }
+
+    const keys = process.env.LIVEKIT_KEYS;
+    if (keys) {
+      const [fallbackKey, fallbackSecret] = String(keys).split(':');
+      if (fallbackKey && fallbackSecret) {
+        return fallbackKey;
+      }
+    }
+
+    return undefined;
   }
 
   get apiSecret() {
-    return process.env.LIVEKIT_API_SECRET;
+    const apiSecret = process.env.LIVEKIT_API_SECRET;
+    if (apiSecret) {
+      return apiSecret;
+    }
+
+    const keys = process.env.LIVEKIT_KEYS;
+    if (keys) {
+      const [fallbackKey, fallbackSecret] = String(keys).split(':');
+      if (fallbackKey && fallbackSecret) {
+        return fallbackSecret;
+      }
+    }
+
+    return undefined;
   }
 
   /**
@@ -68,9 +94,18 @@ class LivekitService extends TcService {
     this.registerAvailableAction(() => this.serverAvailable);
 
     if (!this.serverAvailable) {
-      console.warn(
-        'Livekit service not available, miss env var: LIVEKIT_API_KEY, LIVEKIT_API_SECRET'
-      );
+      const hasKeys = Boolean(process.env.LIVEKIT_KEYS);
+      const keysMalformed = hasKeys && !this.apiKey && !this.apiSecret;
+
+      if (keysMalformed) {
+        console.warn(
+          'Livekit service not available, LIVEKIT_KEYS is set but malformed (expected "key:secret")'
+        );
+      } else {
+        console.warn(
+          'Livekit service not available, miss env var: LIVEKIT_API_KEY, LIVEKIT_API_SECRET (or LIVEKIT_KEYS fallback)'
+        );
+      }
       return;
     }
 

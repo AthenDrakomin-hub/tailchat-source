@@ -64,13 +64,46 @@ systemctl reload nginx
 - `https://goodspage.cn/`
 - `https://goodspage.cn/admin/`
 
+如启用 LiveKit 且采用同域名反代（推荐），还应验证：
+
+- `https://goodspage.cn/livekit/`（应能返回 200/101 等，至少不应是 502/404）
+
+并确保 `docker-compose.env` 中配置：
+
+- `LIVEKIT_PUBLIC_URL=wss://goodspage.cn/livekit`
+
 同时建议验证 WebSocket：
 
 - 打开浏览器 DevTools → Network → WS，确认 `wss://goodspage.cn/socket.io/...` 可建立连接
 
-## 5. 端口与防火墙建议
+## 5. LiveKit 同域名反代（Nginx）
+
+若你希望客户端通过 `wss://goodspage.cn/livekit` 连接 LiveKit（推荐），需要在 Nginx 中加入 `/livekit/` 反代规则。
+
+仓库示例配置文件 [nginx.goodspage.cn.example.conf](file:///workspace/docs/nginx.goodspage.cn.example.conf) 已包含：
+
+```nginx
+location = /livekit {
+    return 301 /livekit/;
+}
+
+location ^~ /livekit/ {
+    proxy_pass http://127.0.0.1:7880/;
+    proxy_http_version 1.1;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    proxy_read_timeout 86400;
+    proxy_send_timeout 86400;
+    proxy_buffering off;
+}
+```
+
+## 6. 端口与防火墙建议
 
 - 对公网开放：`80`、`443`
 - `11000` 建议仅本机访问（`127.0.0.1:11000`），由 Nginx 反代对外提供 HTTPS
 - 不建议将 `11000` 直接暴露到公网，避免绕过 Nginx/HTTPS/域名策略并扩大攻击面
-
