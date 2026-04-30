@@ -16,6 +16,7 @@ function respondExecutorUnavailable(res: any, err: any) {
   res.status(503).json({
     ok: false,
     error: err?.message ? String(err.message) : 'executor unreachable',
+    hint: '请检查宿主机 tailchat-ops-executor 服务是否运行，以及防火墙/iptables 是否允许 Docker 网段访问 9110 端口',
   });
 }
 
@@ -30,7 +31,7 @@ async function callExecutor(path: string) {
     headers: {
       'X-Executor-Secret': EXECUTOR_SHARED_SECRET,
     },
-    timeout: 20_000,
+    timeout: 5_000,
   });
   return data;
 }
@@ -46,35 +47,64 @@ async function getExecutor(path: string) {
     headers: {
       'X-Executor-Secret': EXECUTOR_SHARED_SECRET,
     },
-    timeout: 20_000,
+    timeout: 5_000,
   });
   return data;
 }
 
 async function getOpsConfig() {
-  const pseudoliveEnabled = await broker.call('config.get', {
-    key: 'ops.pseudolive.enabled',
-  });
-  const botEnabled = await broker.call('config.get', { key: 'ops.bot.enabled' });
-  const botIntervalSec = await broker.call('config.get', {
-    key: 'ops.bot.intervalSec',
-  });
-  const botUserId = await broker.call('config.get', { key: 'ops.bot.userId' });
-  const botGroupId = await broker.call('config.get', { key: 'ops.bot.groupId' });
-  const botPanelId = await broker.call('config.get', { key: 'ops.bot.panelId' });
-  const botMessages = await broker.call('config.get', { key: 'ops.bot.messages' });
-
-  return {
-    pseudoliveEnabled: typeof pseudoliveEnabled === 'boolean' ? pseudoliveEnabled : true,
-    bot: {
-      enabled: typeof botEnabled === 'boolean' ? botEnabled : false,
-      intervalSec: typeof botIntervalSec === 'number' ? botIntervalSec : 30,
-      userId: typeof botUserId === 'string' ? botUserId : '',
-      groupId: typeof botGroupId === 'string' ? botGroupId : '',
-      panelId: typeof botPanelId === 'string' ? botPanelId : '',
-      messages: Array.isArray(botMessages) ? botMessages : [],
-    },
+  const safeGet = async (key: string, defaultValue: any) => {
+    try {
+      return await broker.call('config.get', { key });
+    } catch {
+      return defaultValue;
+    }
   };
+
+  try {
+    const [
+      pseudoliveEnabled,
+      botEnabled,
+      botIntervalSec,
+      botUserId,
+      botGroupId,
+      botPanelId,
+      botMessages,
+    ] = await Promise.all([
+      safeGet('ops.pseudolive.enabled', true),
+      safeGet('ops.bot.enabled', false),
+      safeGet('ops.bot.intervalSec', 30),
+      safeGet('ops.bot.userId', ''),
+      safeGet('ops.bot.groupId', ''),
+      safeGet('ops.bot.panelId', ''),
+      safeGet('ops.bot.messages', []),
+    ]);
+
+    return {
+      pseudoliveEnabled:
+        typeof pseudoliveEnabled === 'boolean' ? pseudoliveEnabled : true,
+      bot: {
+        enabled: typeof botEnabled === 'boolean' ? botEnabled : false,
+        intervalSec: typeof botIntervalSec === 'number' ? botIntervalSec : 30,
+        userId: typeof botUserId === 'string' ? botUserId : '',
+        groupId: typeof botGroupId === 'string' ? botGroupId : '',
+        panelId: typeof botPanelId === 'string' ? botPanelId : '',
+        messages: Array.isArray(botMessages) ? botMessages : [],
+      },
+    };
+  } catch {
+    return {
+      pseudoliveEnabled: true,
+      bot: {
+        enabled: false,
+        intervalSec: 30,
+        userId: '',
+        groupId: '',
+        panelId: '',
+        messages: [],
+      },
+    };
+  }
 }
 
 async function getExecutorStatus() {

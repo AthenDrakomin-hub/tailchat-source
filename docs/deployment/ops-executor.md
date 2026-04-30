@@ -4,7 +4,7 @@
 
 - LiveKit 一键启动 / 停止 / 重启
 
-执行器默认监听：`0.0.0.0:9110`（用于让 `tailchat-admin` 容器通过 `host.docker.internal:9110` 访问），强烈建议不要对公网开放。
+执行器默认监听：`0.0.0.0:9110`（用于让 `tailchat-admin` 容器访问），强烈建议不要对公网开放。
 
 ## A. 配置环境变量（docker-compose.env）
 
@@ -18,6 +18,7 @@ nano /var/www/tailchat-source/docker-compose.env
 
 - `EXECUTOR_SHARED_SECRET=一段长随机字符串(>=32位)`
 - `DEFENSE_SHARED_SECRET=一段长随机字符串(>=32位)`
+- `OPS_EXECUTOR_URL=http://172.18.0.1:9110`
 - `API_URL=https://goodspage.cn`（不要反引号）
 
 然后跑校验：
@@ -86,6 +87,15 @@ sudo ufw allow from 127.0.0.1 to any port 9110 proto tcp
 sudo ufw allow from 172.17.0.0/16 to any port 9110 proto tcp
 ```
 
+如果你使用的是自定义 Docker 网段（如 `172.18.0.0/16`），需要把上述网段替换为实际的网桥网段，并建议额外固化 iptables 规则（防止重启后丢失）：
+
+```bash
+sudo apt update && sudo apt install -y iptables-persistent
+sudo iptables -I INPUT 1 -s 172.18.0.0/16 -d 172.18.0.1 -p tcp --dport 9110 -j ACCEPT
+sudo iptables -I DOCKER-USER 1 -s 172.18.0.0/16 -d 172.18.0.1 -p tcp --dport 9110 -j ACCEPT
+sudo netfilter-persistent save
+```
+
 ## C. 重建并启动 Tailchat（让 Admin 能调用执行器）
 
 ```bash
@@ -119,3 +129,12 @@ Admin 点 LiveKit 时报错 “executor unreachable”：
 - 执行器没起来：`systemctl status tailchat-ops-executor`
 - 9110 被防火墙挡了（需要允许 docker 网桥访问，但不能公网访问）
 - Docker 版本太老不支持 `host.docker.internal:host-gateway`：执行 `docker --version` 后把输出发我
+
+自检脚本（可选）：
+
+```bash
+cd /var/www/tailchat-source
+sudo cp scripts/check-tailchat.sh /root/check-tailchat.sh
+sudo chmod +x /root/check-tailchat.sh
+/root/check-tailchat.sh
+```

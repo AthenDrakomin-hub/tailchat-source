@@ -3,6 +3,11 @@
   "include": ["./src/server/**/*.ts", "../models/**/*.ts"],
   "exclude": ["node_modules/**/*", "dist"],
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "tailchat-server-sdk": ["../packages/sdk/src/index.ts"],
+      "tailchat-types": ["../../packages/types/src/index.ts"]
+    },
     "rootDirs": ["./", "../"],
     "outDir": "./dist",
     "skipLibCheck": true,

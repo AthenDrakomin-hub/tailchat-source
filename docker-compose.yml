@@ -67,7 +67,7 @@ services:
     command: pnpm start:admin
     environment:
       PORT: 3000
-      OPS_EXECUTOR_URL: ${OPS_EXECUTOR_URL:-http://host.docker.internal:9110}
+      OPS_EXECUTOR_URL: ${OPS_EXECUTOR_URL:-http://172.18.0.1:9110}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     labels:
