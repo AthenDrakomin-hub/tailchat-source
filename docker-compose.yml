@@ -81,14 +81,16 @@ services:
   # - 提供 WebRTC SFU，用于私信语音通话
   # - 说明：若要在复杂网络/移动网络更稳定，通常还需要 TURN（可后续增加）
   livekit:
-    image: livekit/livekit-server:latest
-    command: --dev
+    image: livekit/livekit-server:v1.11.0
+    command: --config /etc/livekit.yaml
     restart: unless-stopped
     networks:
       - internal
+    volumes:
+      - ./docker/livekit.yaml:/etc/livekit.yaml:ro
     ports:
-      - "7880:7880"
-      - "7881:7881/tcp"
+      - "127.0.0.1:7880:7880"
+      - "127.0.0.1:7881:7881/tcp"
       - "50000-50100:50000-50100/udp"
   # Database
   mongo:

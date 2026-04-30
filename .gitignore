@@ -122,3 +122,5 @@ dist
 # local artifacts
 tailchat-source-fixes.patch
 server/plugins/*.disabled/
+/docker-compose.env
+/docker/livekit.yaml
