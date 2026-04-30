@@ -98,12 +98,48 @@ export function startProdRunner(options: ProdRunnerOptions = {}) {
 
   (runner as any).loadConfigFile = loadConfigFileStrictJs;
 
-  runner.servicePaths = [
-    'services/**/*.service.js',
-    'services/**/*.service.dev.js',
-    'plugins/**/*.service.js',
-    'plugins/**/*.service.dev.js',
-  ];
+  const parseCsv = (value?: string) =>
+    (value ?? '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+  const normalizeServicePath = (p: string) => {
+    const prefixed =
+      p.startsWith('services/') || p.startsWith('plugins/') ? p : `services/${p}`;
+
+    if (prefixed.includes('*')) return prefixed;
+    if (
+      prefixed.endsWith('.service.js') ||
+      prefixed.endsWith('.service.dev.js') ||
+      prefixed.endsWith('.js')
+    ) {
+      return prefixed;
+    }
+
+    return `${prefixed}.service.js`;
+  };
+
+  const servicesEnv = (process.env.SERVICES ?? '').trim();
+  const serviceDirEnv = (process.env.SERVICEDIR ?? '').trim();
+
+  if (servicesEnv) {
+    runner.servicePaths = parseCsv(servicesEnv).map(normalizeServicePath);
+  } else if (serviceDirEnv) {
+    runner.servicePaths = [
+      `${serviceDirEnv}/**/*.service.js`,
+      `${serviceDirEnv}/**/*.service.dev.js`,
+      'services/**/*.service.js',
+      'services/**/*.service.dev.js',
+    ];
+  } else {
+    runner.servicePaths = [
+      'services/**/*.service.js',
+      'services/**/*.service.dev.js',
+      'plugins/**/*.service.js',
+      'plugins/**/*.service.dev.js',
+    ];
+  }
 
   if (runner.flags.instances !== undefined && cluster.isPrimary) {
     return runner.startWorkers(runner.flags.instances);
