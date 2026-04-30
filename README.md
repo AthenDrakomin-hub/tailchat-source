@@ -33,6 +33,18 @@ curl -fsSL https://raw.githubusercontent.com/AthenDrakomin-hub/tailchat-source/m
 - `DEFENSE_SHARED_SECRET`
 - `EXECUTOR_SHARED_SECRET`（用于“系统控制台”一键启停 LiveKit）
 
+### PWA / 离线缓存（可选）
+
+Web 端默认包含 PWA（manifest + service worker）。在极少数情况下可能出现“缓存/更新异常”（旧资源无法更新、白屏、反复提示更新等）。
+
+可通过构建期开关紧急禁用（需要重新构建镜像后生效）：
+
+```bash
+DISABLE_SERVICE_WORKER=true
+```
+
+禁用后建议用户在浏览器执行一次“强制刷新”，或到浏览器 Application → Service Workers 手动 Unregister 后再刷新。
+
 ### 域名与自有证书（Nginx）
 
 - 配置指南：[goodspage-domain-https.md](file:///workspace/docs/deployment/goodspage-domain-https.md)

@@ -48,6 +48,7 @@ const SERVICE_URL = process.env.SERVICE_URL; // 如果不传则为当前服务�
 
 const isDev = NODE_ENV === 'development';
 const mode = isDev ? 'development' : 'production';
+const disableServiceWorker = process.env.DISABLE_SERVICE_WORKER === 'true';
 
 const plugins: Configuration['plugins'] = [
   new DefinePlugin({
@@ -124,11 +125,14 @@ const plugins: Configuration['plugins'] = [
   new RetryChunkLoadPlugin({
     maxRetries: 2,
   }),
-  buildWorkboxPlugin(isDev),
   new WebpackBar({
     name: `Tailchat`,
   }),
 ];
+
+if (!disableServiceWorker) {
+  plugins.push(buildWorkboxPlugin(isDev));
+}
 
 if (ANALYSIS) {
   plugins.push(

@@ -76,6 +76,23 @@ export function installServiceWorker() {
     // 可通过构建期开关紧急禁用（例如遇到缓存相关线上事故）
     if (process.env.DISABLE_SERVICE_WORKER === 'true') {
       console.warn('[sw] service worker disabled by DISABLE_SERVICE_WORKER');
+      try {
+        void navigator.serviceWorker.getRegistrations().then((registrations) =>
+          Promise.all(registrations.map((r) => r.unregister()))
+        );
+      } catch (err) {
+        console.error('[sw] unregister failed', err);
+      }
+
+      try {
+        if ('caches' in window) {
+          void caches
+            .keys()
+            .then((keys) => Promise.all(keys.map((k) => caches.delete(k))));
+        }
+      } catch (err) {
+        console.error('[sw] clear cache failed', err);
+      }
     } else {
       navigator.serviceWorker
         .register('/service-worker.js')
