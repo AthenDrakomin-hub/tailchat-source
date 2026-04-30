@@ -271,6 +271,12 @@ const config: Configuration = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.css'],
+    alias: {
+      'tailchat-types': path.resolve(
+        ROOT_PATH,
+        '../../packages/types/src/index.ts'
+      ),
+    },
     plugins: [
       new TsconfigPathsPlugin({
         configFile: path.resolve(ROOT_PATH, './tsconfig.json'),

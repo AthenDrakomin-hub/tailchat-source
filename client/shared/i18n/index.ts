@@ -67,6 +67,8 @@ interface TFunction {
   ): TResult;
 }
 
+const missingKeysLogged = new Set<string>();
+
 /**
  * 国际化翻译
  */
@@ -80,7 +82,13 @@ export const t: TFunction = (
     let words = i18next.t(hashKey, defaultValue, options);
     if (words === hashKey) {
       words = key;
-      console.info(`[i18n] 翻译缺失: [${hashKey}]${key}`);
+      if (
+        process.env.NODE_ENV === 'development' &&
+        missingKeysLogged.has(hashKey) === false
+      ) {
+        missingKeysLogged.add(hashKey);
+        console.info(`[i18n] 翻译缺失: [${hashKey}]${key}`);
+      }
     }
     return words;
   } catch (err) {

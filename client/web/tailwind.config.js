@@ -175,8 +175,8 @@ const tailchat = plugin(({ e, addUtilities }) => {
 });
 
 module.exports = {
+  mode: 'jit',
   purge: {
-    enabled: process.env.NODE_ENV !== 'development',
     content: [path.resolve(__dirname, './src/**/*.{js,jsx,ts,tsx}')],
   },
   darkMode: 'class', // or 'media'
