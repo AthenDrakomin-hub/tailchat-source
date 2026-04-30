@@ -5,6 +5,18 @@ import { defaultGlobalConfig } from '../utils/consts';
 /**
  * 后端的全局设置
  */
+export type BeidouStarCardConfig = {
+  id: string;
+  name: string;
+  title: string;
+  bio: string;
+  tags: string[];
+  avatar?: string;
+  verifiedText?: string;
+  verifiedIcon?: string;
+  footerLeftText?: string;
+};
+
 export interface GlobalConfig {
   /**
    * Tianji 配置
@@ -91,6 +103,8 @@ export interface GlobalConfig {
       allowRoles: Array<'student' | 'monitor' | 'teacher'>;
     }
   >;
+
+  beidouStarsCards?: BeidouStarCardConfig[];
 }
 
 export function getGlobalConfig(): GlobalConfig {

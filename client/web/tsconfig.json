@@ -6,7 +6,11 @@
       "@/*": ["./src/*"],
       "@test/*": ["./test/*"],
       "@assets/*": ["./assets/*"],
-      "tailchat-design": ["../packages/design/components"]
+      "tailchat-design": ["../packages/design/components"],
+      "tailchat-types": ["../../packages/types/src"],
+      "tailchat-plugin-declaration-generator": [
+        "../packages/plugin-declaration-generator/src"
+      ]
     },
     "typeRoots": ["./node_modules/@types", "./types"]
   },
