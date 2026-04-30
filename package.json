@@ -65,6 +65,7 @@
       ]
     },
     "overrides": {
+      "tailchat-server-sdk": "workspace:*",
       "redux": "4.2.1",
       "@babel/runtime": "7.21.0",
       "@types/react": "18.0.20",

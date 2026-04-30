@@ -5,6 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  tailchat-server-sdk: workspace:*
   redux: 4.2.1
   '@babel/runtime': 7.21.0
   '@types/react': 18.0.20
@@ -324,7 +325,7 @@ importers:
         specifier: ^11.1.0
         version: 11.3.4
       tailchat-server-sdk:
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../server/packages/sdk
     devDependencies:
       '@types/express':
@@ -1644,7 +1645,7 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       tailchat-server-sdk:
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../packages/sdk
       tushan:
         specifier: ^0.3.11
@@ -1705,7 +1706,7 @@ importers:
         specifier: ^4.3.1
         version: 4.5.0
       tailchat-server-sdk:
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../sdk
       ts-node:
         specifier: 10.9.1
