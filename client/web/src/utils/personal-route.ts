@@ -5,7 +5,3 @@ export function getPersonalChatPath(converseId: string) {
 export function getPanelPersonalChatPath(converseId: string) {
   return `/panel/personal/chats/${converseId}`;
 }
-
-export function getLegacyPanelPersonalChatPath(converseId: string) {
-  return `/panel/personal/converse/${converseId}`;
-}

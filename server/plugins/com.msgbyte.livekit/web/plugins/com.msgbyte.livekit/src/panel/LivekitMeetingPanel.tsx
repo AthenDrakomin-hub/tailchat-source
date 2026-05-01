@@ -17,7 +17,7 @@ const LivekitMeetingPanel: React.FC = React.memo(() => {
 
   if (!meetingId) {
     return (
-      <div className="w-full h-full" style={{ paddingTop: 40 }}>
+      <div className="w-full h-full flex items-center justify-center px-4">
         <NotFound message={Translate.notFoundMeeting} />
       </div>
     );
