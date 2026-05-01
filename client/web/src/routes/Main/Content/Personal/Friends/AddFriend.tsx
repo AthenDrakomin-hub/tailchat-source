@@ -111,24 +111,26 @@ export const AddFriend: React.FC = React.memo(() => {
   }, [uniqueName]);
 
   return (
-    <div className="px-8 py-2">
-      <div className="text-lg my-2">{t('添加联系人')}</div>
-      <div className="my-1">
+    <div className="px-6 py-4 max-w-3xl">
+      <div className="text-lg font-semibold text-gray-800 dark:text-gray-100 my-2">
+        {t('添加联系人')}
+      </div>
+      <div className="my-1 text-gray-600 dark:text-gray-300 leading-7">
         <Trans>
           您可以使用完整的 <Highlight>用户昵称#标识</Highlight> 来添加联系人
         </Trans>
       </div>
 
-      <div className="px-4 py-2 my-3 flex border border-black border-opacity-30 rounded items-center bg-black bg-opacity-10 mobile:flex-col">
+      <div className="px-4 py-3 my-4 flex border border-black border-opacity-10 dark:border-white dark:border-opacity-10 rounded-2xl items-center bg-black bg-opacity-[0.03] dark:bg-white dark:bg-opacity-[0.04] mobile:flex-col">
         <input
-          className="bg-transparent flex-1 text-base leading-9 outline-none mobile:w-full mobile:mb-1"
+          className="bg-transparent flex-1 text-base leading-9 outline-none mobile:w-full mobile:mb-2"
           placeholder={t('用户昵称#0000')}
           onChange={(e) => setUniqueName(e.target.value)}
         />
 
         <Button
           type="primary"
-          className="bg-indigo-600 disabled:opacity-80 border-none mobile:w-full"
+          className="bg-green-600 hover:bg-green-500 disabled:opacity-80 border-none mobile:w-full"
           disabled={uniqueName === ''}
           loading={loading}
           onClick={searchUser}

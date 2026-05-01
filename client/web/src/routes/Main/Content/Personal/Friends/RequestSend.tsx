@@ -22,8 +22,10 @@ export const RequestSend: React.FC<{
   }
 
   return (
-    <div className="py-2.5 px-5">
-      <div>{t('等待对方处理的联系人申请')}:</div>
+    <div className="py-3 px-5">
+      <div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
+        {t('等待对方处理的联系人申请')}:
+      </div>
       <div>
         {props.requests.map(({ _id, to }) => (
           <UserListItem

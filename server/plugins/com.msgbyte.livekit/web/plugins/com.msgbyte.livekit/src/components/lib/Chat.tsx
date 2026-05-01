@@ -12,6 +12,51 @@ import * as React from 'react';
 import { Translate } from '../../translate';
 import { cloneSingleChild } from '../../utils/common';
 import { useObservableState } from '../../utils/useObservableState';
+import styled from 'styled-components';
+
+const ChatPanel = styled.div`
+  width: min(24rem, 100%);
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(12px);
+
+  .tc-call-side-header {
+    padding: 1rem 1rem 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .tc-call-side-title {
+    color: rgba(255, 255, 255, 0.96);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .tc-call-side-tip {
+    margin-top: 0.25rem;
+    color: rgba(255, 255, 255, 0.64);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .tc-call-empty {
+    padding: 1rem;
+    color: rgba(255, 255, 255, 0.56);
+    font-size: 0.875rem;
+  }
+
+  .lk-chat-messages {
+    flex: 1;
+    padding: 0.75rem 1rem;
+  }
+
+  .lk-chat-form {
+    padding: 0.875rem 1rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+  }
+`;
 
 export type { ChatMessage, ReceivedChatMessage };
 
@@ -71,8 +116,16 @@ export function Chat({ messageFormatter, ...props }: ChatProps) {
   }, [ulRef, chatMessages]);
 
   return (
-    <div {...props} className="lk-chat">
+    <ChatPanel {...props} className="lk-chat">
+      <div className="tc-call-side-header">
+        <div className="tc-call-side-title">{Translate.callChatTitle}</div>
+        <div className="tc-call-side-tip">{Translate.callChatTip}</div>
+      </div>
+
       <ul className="lk-list lk-chat-messages" ref={ulRef}>
+        {chatMessages.length === 0 && (
+          <li className="tc-call-empty">{Translate.noCallMessages}</li>
+        )}
         {props.children
           ? chatMessages.map((msg, idx) =>
               cloneSingleChild(props.children, {
@@ -114,6 +167,6 @@ export function Chat({ messageFormatter, ...props }: ChatProps) {
           {Translate.send}
         </button>
       </form>
-    </div>
+    </ChatPanel>
   );
 }

@@ -10,10 +10,32 @@ const MemberList = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: clamp(200px, 55ch, 60ch);
-  background-color: var(--lk-bg2);
-  border-left: 1px solid var(--lk-border-color);
-  padding: 8px;
+  width: min(24rem, 100%);
+  background: rgba(15, 23, 42, 0.88);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+
+  .tc-call-side-header {
+    padding: 1rem 1rem 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .tc-call-side-title {
+    color: rgba(255, 255, 255, 0.96);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .tc-call-side-tip {
+    margin-top: 0.25rem;
+    color: rgba(255, 255, 255, 0.64);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .tc-call-member-body {
+    padding: 0.75rem;
+  }
 `;
 
 const IsSpeakingTip = styled.div`
@@ -41,13 +63,20 @@ export const Member: React.FC = React.memo(() => {
 
   return (
     <MemberList>
-      {participants.map((member) => (
-        <UserListItem
-          key={member.sid}
-          userId={member.identity}
-          actions={getAction(member)}
-        />
-      ))}
+      <div className="tc-call-side-header">
+        <div className="tc-call-side-title">{Translate.callMembersTitle}</div>
+        <div className="tc-call-side-tip">{Translate.callMembersTip}</div>
+      </div>
+
+      <div className="tc-call-member-body">
+        {participants.map((member) => (
+          <UserListItem
+            key={member.sid}
+            userId={member.identity}
+            actions={getAction(member)}
+          />
+        ))}
+      </div>
     </MemberList>
   );
 });

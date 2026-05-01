@@ -57,6 +57,26 @@ export const Translate = {
     'zh-CN': '成员',
     'en-US': 'Member',
   }),
+  callChatTitle: localTrans({
+    'zh-CN': '通话消息',
+    'en-US': 'Call Messages',
+  }),
+  callChatTip: localTrans({
+    'zh-CN': '仅当前通话中的成员可见。',
+    'en-US': 'Only visible to people in this call.',
+  }),
+  callMembersTitle: localTrans({
+    'zh-CN': '通话成员',
+    'en-US': 'Call Members',
+  }),
+  callMembersTip: localTrans({
+    'zh-CN': '查看当前在线状态与发言状态。',
+    'en-US': 'See who is online and speaking.',
+  }),
+  noCallMessages: localTrans({
+    'zh-CN': '当前还没有通话消息',
+    'en-US': 'No call messages yet',
+  }),
   leave: localTrans({
     'zh-CN': '离开',
     'en-US': 'Leave',
