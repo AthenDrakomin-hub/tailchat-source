@@ -16,6 +16,7 @@ import {
 } from 'tailchat-shared';
 import { UserProfileContainer } from '../../UserProfileContainer';
 import { usePluginUserExtraInfo } from './usePluginUserExtraInfo';
+import { getPersonalChatPath } from '@/utils/personal-route';
 
 export const GroupUserPopover: React.FC<{
   userInfo: UserBaseInfo;
@@ -38,7 +39,7 @@ export const GroupUserPopover: React.FC<{
 
   const [, handleCreateConverse] = useAsyncRequest(async () => {
     const converse = await createDMConverse([userId]);
-    navigate(`/main/personal/converse/${converse._id}`);
+    navigate(getPersonalChatPath(converse._id));
   }, [navigate]);
 
   useEffect(() => {

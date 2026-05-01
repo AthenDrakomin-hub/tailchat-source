@@ -14,6 +14,7 @@ import React from 'react';
 import { SidebarItem } from '../SidebarItem';
 import { CombinedAvatar, Icon } from 'tailchat-design';
 import _without from 'lodash/without';
+import { getPersonalChatPath } from '@/utils/personal-route';
 
 interface SidebarDMItemProps {
   converse: ChatConverseState;
@@ -68,7 +69,7 @@ export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
           />
         }
         icon={icon}
-        to={`/main/personal/converse/${converseId}`}
+        to={getPersonalChatPath(converseId)}
         badge={hasUnread}
       />
     );

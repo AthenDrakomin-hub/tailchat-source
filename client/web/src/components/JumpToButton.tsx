@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { t } from 'tailchat-shared';
+import { getPersonalChatPath } from '@/utils/personal-route';
 
 interface Props {
   link: string;
@@ -43,7 +44,7 @@ export const JumpToConverseButton: React.FC<{
 }> = React.memo((props) => {
   const link = props.groupId
     ? `/main/group/${props.groupId}/${props.converseId}`
-    : `/main/personal/converse/${props.converseId}`;
+    : getPersonalChatPath(props.converseId);
 
   return <JumpToButton link={link} text={t('跳转到会话')} />;
 });

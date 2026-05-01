@@ -27,7 +27,7 @@ export const FriendPanel: React.FC = React.memo(() => {
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full min-w-0">
       <PillTabs
         className="h-full"
         activeKey={activeKey}

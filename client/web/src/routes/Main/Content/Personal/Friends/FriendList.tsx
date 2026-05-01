@@ -25,6 +25,7 @@ import { closeModal, openModal } from '@/components/Modal';
 import { SetFriendNickname } from '@/components/modals/SetFriendNickname';
 import { Icon } from 'tailchat-design';
 import { Virtuoso } from 'react-virtuoso';
+import { getPersonalChatPath } from '@/utils/personal-route';
 
 /**
  * 联系人列表
@@ -45,7 +46,7 @@ export const FriendList: React.FC<{
   const [, handleCreateConverse] = useAsyncRequest(
     async (targetId: string) => {
       const converse = await createDMConverse([targetId]);
-      navigate(`/main/personal/converse/${converse._id}`);
+      navigate(getPersonalChatPath(converse._id));
     },
     [navigate]
   );

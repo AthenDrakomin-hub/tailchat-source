@@ -20,6 +20,7 @@ import { DMPluginPanelActionProps, pluginPanelActions } from '@/plugin/common';
 import { CreateDMConverse } from '@/components/modals/CreateDMConverse';
 import { MessageSearchPanel } from '../common/MessageSearch';
 import { ChatInputMentionsContextProvider } from '@/components/ChatBox/ChatInputBox/context';
+import { getPanelPersonalChatPath } from '@/utils/personal-route';
 
 const ConversePanelTitle: React.FC<{ converse: ChatConverseState }> =
   React.memo(({ converse }) => {
@@ -56,7 +57,7 @@ export const ConversePanel: React.FC<ConversePanelProps> = React.memo(
     );
 
     const { hasOpenedPanel, openPanelWindow, closePanelWindow } =
-      usePanelWindow(`/panel/personal/converse/${converseId}`);
+      usePanelWindow(getPanelPersonalChatPath(converseId));
     if (hasOpenedPanel) {
       return <OpenedPanelTip onClosePanelWindow={closePanelWindow} />;
     }

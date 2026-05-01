@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import { createDMConverse, t, useAsyncRequest } from 'tailchat-shared';
 import { FriendPicker } from '../UserPicker/FriendPicker';
 import { closeModal, ModalWrapper } from '../Modal';
+import { getPersonalChatPath } from '@/utils/personal-route';
 
 interface CreateDMConverseProps {
   /**
@@ -25,7 +26,7 @@ export const CreateDMConverse: React.FC<CreateDMConverseProps> = React.memo(
         ...selectedFriendIds,
       ]);
       closeModal();
-      navigate(`/main/personal/converse/${converse._id}`);
+      navigate(getPersonalChatPath(converse._id));
     }, [selectedFriendIds]);
 
     return (

@@ -10,6 +10,7 @@ import {
 } from 'tailchat-shared';
 import { useDebugValue, useMemo } from 'react';
 import type { QuickActionContext } from './useQuickSwitcherActionContext';
+import { getPersonalChatPath } from '@/utils/personal-route';
 
 const ChatConverseType = model.converse.ChatConverseType;
 
@@ -78,7 +79,7 @@ function useDMConverseActions(): QuickAction[] {
             label: `${t('私信')} ${converseName}`,
             source: 'core',
             action: ({ navigate }) => {
-              navigate(`/main/personal/converse/${converse._id}`);
+              navigate(getPersonalChatPath(converse._id));
             },
           })
         )

@@ -2,7 +2,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useUserSessionPreference } from '@/hooks/useUserPreference';
 import { pluginCustomPanel } from '@/plugin/common';
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { PageContent } from '../PageContent';
 import { PersonalConverse } from './Converse';
@@ -10,6 +10,19 @@ import { FriendPanel } from './Friends';
 import { PluginsPanel } from './Plugins';
 import { PersonalSidebar } from './Sidebar';
 import { useDMConverseList, useGlobalConfigStore } from 'tailchat-shared';
+import { getPersonalChatPath } from '@/utils/personal-route';
+
+const LegacyPersonalConverseRedirect: React.FC = React.memo(() => {
+  const { converseId } = useParams<{ converseId: string }>();
+
+  return (
+    <Navigate
+      to={converseId ? getPersonalChatPath(converseId) : '/main/personal/contacts'}
+      replace={true}
+    />
+  );
+});
+LegacyPersonalConverseRedirect.displayName = 'LegacyPersonalConverseRedirect';
 
 export const Personal: React.FC = React.memo(() => {
   const [lastVisitPanelUrl, setLastVisitPanelUrl] = useUserSessionPreference(
@@ -33,11 +46,15 @@ export const Personal: React.FC = React.memo(() => {
           path="/friends"
           element={<Navigate to="/main/personal/contacts" replace={true} />}
         />
+        <Route
+          path="/converse/:converseId"
+          element={<LegacyPersonalConverseRedirect />}
+        />
         <Route path="/contacts" element={<FriendPanel />} />
         {!disablePluginStore && (
           <Route path="/plugins" element={<PluginsPanel />} />
         )}
-        <Route path="/converse/:converseId" element={<PersonalConverse />} />
+        <Route path="/chats/:converseId" element={<PersonalConverse />} />
         {pluginCustomPanel
           .filter((p) => p.position === 'personal')
           .map((p) => (
@@ -58,7 +75,7 @@ export const Personal: React.FC = React.memo(() => {
                 lastVisitPanelUrl && lastVisitPanelUrl !== '/main/personal'
                   ? lastVisitPanelUrl
                   : firstConverseId
-                    ? `/main/personal/converse/${firstConverseId}`
+                    ? getPersonalChatPath(firstConverseId)
                     : '/main/personal/contacts'
               }
             />
