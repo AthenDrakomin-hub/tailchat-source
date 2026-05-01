@@ -25,7 +25,7 @@ export const InboxContent: React.FC = React.memo((props) => {
 
   if (!inboxItem) {
     return (
-      <div className="w-full">
+      <div className="w-full min-w-0">
         <NotFound message={t('没有找到该记录')} />
       </div>
     );
@@ -48,7 +48,11 @@ export const InboxContent: React.FC = React.memo((props) => {
     return <Component inboxItem={_item} />;
   }
 
-  return <NotFound message={t('没有找到该类型的渲染方式')} />;
+  return (
+    <div className="w-full min-w-0">
+      <NotFound message={t('没有找到该类型的渲染方式')} />
+    </div>
+  );
 });
 InboxContent.displayName = 'InboxContent';
 

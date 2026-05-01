@@ -25,14 +25,14 @@ export const GroupPanelItem: React.FC<{
     <Link className="block" to={to}>
       <div
         className={clsx(
-          'w-full hover:bg-black hover:bg-opacity-20 dark:hover:bg-white dark:hover:bg-opacity-20 cursor-pointer text-gray-900 dark:text-white rounded px-1 h-8 flex items-center text-base group',
+          'w-full hover:bg-black hover:bg-opacity-10 dark:hover:bg-white dark:hover:bg-opacity-10 cursor-pointer text-gray-900 dark:text-white rounded-xl px-2 h-9 flex items-center text-base group border border-transparent hover:border-black hover:border-opacity-5 dark:hover:border-white dark:hover:border-opacity-10 transition-all duration-200',
           {
-            'bg-black bg-opacity-20 dark:bg-white dark:bg-opacity-20': isActive,
+            'bg-green-500 bg-opacity-10 border-green-500 border-opacity-20 dark:bg-green-500 dark:bg-opacity-10': isActive,
           },
           dimmed && 'text-opacity-40 dark:text-opacity-40'
         )}
       >
-        <div className={clsx('flex items-center justify-center px-1 mr-1')}>
+        <div className={clsx('flex items-center justify-center px-1 mr-2')}>
           {icon}
         </div>
 

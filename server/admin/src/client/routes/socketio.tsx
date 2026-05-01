@@ -25,8 +25,11 @@ export const SocketIOAdmin: React.FC = React.memo(() => {
   return (
     <Card>
       <Typography.Title heading={4}>Socket.IO 诊断</Typography.Title>
-      <Typography.Paragraph>
+      <Typography.Paragraph type="secondary">
         这是一个外部诊断入口，用于辅助排查 Socket.IO 长连接，不是内嵌式管理后台。
+      </Typography.Paragraph>
+      <Typography.Paragraph type="secondary">
+        如果你的目标是确认连接地址是否正确，先核对下面展示的 WebSocket 地址，再打开外部调试台。
       </Typography.Paragraph>
       <div>
         <Typography.Paragraph>
@@ -45,7 +48,7 @@ export const SocketIOAdmin: React.FC = React.memo(() => {
           window.open('https://admin.socket.io/');
         }}
       >
-        {t('custom.socketio.btn')}
+        打开外部调试台
       </Button>
     </Card>
   );

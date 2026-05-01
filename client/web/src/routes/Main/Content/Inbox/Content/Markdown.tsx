@@ -17,7 +17,7 @@ export const InboxMarkdownContent: React.FC<Props> = React.memo((props) => {
 
   return (
     <CommonPanelWrapper header={payload.title ?? t('新消息')}>
-      <div className="h-full min-w-0 overflow-y-auto overflow-x-hidden p-2">
+      <div className="h-full min-w-0 overflow-y-auto overflow-x-hidden px-4 py-3">
         <Markdown raw={payload.content ?? ''} />
       </div>
     </CommonPanelWrapper>
