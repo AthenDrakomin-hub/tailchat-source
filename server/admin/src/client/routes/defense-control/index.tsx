@@ -14,6 +14,7 @@ import {
 } from 'tushan';
 import { callAction } from '../../request';
 import { formatAdminError } from '../../utils/admin-error';
+import { FeatureStatusCard } from '../../components/FeatureStatusCard';
 
 export const DefenseControlPanel: React.FC = React.memo(() => {
   const [form] = Form.useForm();
@@ -100,13 +101,12 @@ export const DefenseControlPanel: React.FC = React.memo(() => {
 
   if (!featureAvailable) {
     return (
-      <Card>
-        <Typography.Title heading={4}>防御控制系统</Typography.Title>
-        <Typography.Paragraph>
-          当前防御控制插件未安装、未启用或未接入到管理端，因此此页面暂不可用。
-        </Typography.Paragraph>
-        <Input.TextArea value={loadError || 'feature unavailable'} rows={4} readOnly />
-      </Card>
+      <FeatureStatusCard
+        title="防御控制系统"
+        summary="当前防御控制插件未安装、未启用或未接入到管理端，因此此页面进入降级态。"
+        actionHint="请确认 com.ridou.defense-control 插件已经加载，并检查 broker action 是否可访问。"
+        detail={loadError || 'feature unavailable'}
+      />
     );
   }
 

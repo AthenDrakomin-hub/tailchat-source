@@ -4,6 +4,7 @@ import { FeatureStatusCard } from '../../components/FeatureStatusCard';
 import {
   Card,
   Grid,
+  Spin,
   Tooltip,
   Typography,
   useAsync,
@@ -44,7 +45,7 @@ export const Analytics: React.FC = React.memo(() => {
   }, []);
 
   if (loading) {
-    return null;
+    return <Spin />;
   }
 
   if (analyticsHealth?.analyticsUnavailable) {
@@ -110,21 +111,40 @@ Analytics.displayName = 'Analytics';
 
 const ActiveGroupChart: React.FC = React.memo(() => {
   const { value } = useAsync(async () => {
-    const { data } = await request.get<{
-      activeGroups: {
-        groupId: string;
-        groupName: string;
-        messageCount: number;
-      }[];
-    }>('/analytics/activeGroups');
+    try {
+      const { data } = await request.get<{
+        activeGroups: {
+          groupId: string;
+          groupName: string;
+          messageCount: number;
+        }[];
+      }>('/analytics/activeGroups');
 
-    return data.activeGroups;
+      return {
+        data: data.activeGroups,
+        error: '',
+      };
+    } catch (err: any) {
+      return {
+        data: [],
+        error: err?.message ? String(err.message) : 'analytics unavailable',
+      };
+    }
   }, []);
+
+  if (value?.error) {
+    return (
+      <AnalyticsUnavailable
+        detail={value.error}
+        hint="请确认 /analytics/activeGroups 可访问。"
+      />
+    );
+  }
 
   return (
     <ResponsiveContainer width="100%" height={320}>
       <BarChart
-        data={value}
+        data={value?.data ?? []}
         layout="vertical"
         maxBarSize={40}
         margin={{ left: 60 }}
@@ -142,21 +162,40 @@ ActiveGroupChart.displayName = 'ActiveGroupChart';
 
 const ActiveUserChart: React.FC = React.memo(() => {
   const { value } = useAsync(async () => {
-    const { data } = await request.get<{
-      activeUsers: {
-        groupId: string;
-        groupName: string;
-        messageCount: number;
-      }[];
-    }>('/analytics/activeUsers');
+    try {
+      const { data } = await request.get<{
+        activeUsers: {
+          groupId: string;
+          groupName: string;
+          messageCount: number;
+        }[];
+      }>('/analytics/activeUsers');
 
-    return data.activeUsers;
+      return {
+        data: data.activeUsers,
+        error: '',
+      };
+    } catch (err: any) {
+      return {
+        data: [],
+        error: err?.message ? String(err.message) : 'analytics unavailable',
+      };
+    }
   }, []);
+
+  if (value?.error) {
+    return (
+      <AnalyticsUnavailable
+        detail={value.error}
+        hint="请确认 /analytics/activeUsers 可访问。"
+      />
+    );
+  }
 
   return (
     <ResponsiveContainer width="100%" height={320}>
       <BarChart
-        data={value}
+        data={value?.data ?? []}
         layout="vertical"
         maxBarSize={40}
         margin={{ left: 60 }}
@@ -174,20 +213,39 @@ ActiveUserChart.displayName = 'ActiveUserChart';
 
 const LargeGroupChart: React.FC = React.memo(() => {
   const { value } = useAsync(async () => {
-    const { data } = await request.get<{
-      largeGroups: {
-        name: string;
-        memberCount: number;
-      }[];
-    }>('/analytics/largeGroups');
+    try {
+      const { data } = await request.get<{
+        largeGroups: {
+          name: string;
+          memberCount: number;
+        }[];
+      }>('/analytics/largeGroups');
 
-    return data.largeGroups;
+      return {
+        data: data.largeGroups,
+        error: '',
+      };
+    } catch (err: any) {
+      return {
+        data: [],
+        error: err?.message ? String(err.message) : 'analytics unavailable',
+      };
+    }
   }, []);
+
+  if (value?.error) {
+    return (
+      <AnalyticsUnavailable
+        detail={value.error}
+        hint="请确认 /analytics/largeGroups 可访问。"
+      />
+    );
+  }
 
   return (
     <ResponsiveContainer width="100%" height={320}>
       <BarChart
-        data={value}
+        data={value?.data ?? []}
         layout="vertical"
         maxBarSize={40}
         margin={{ left: 60 }}
@@ -205,21 +263,40 @@ LargeGroupChart.displayName = 'LargeGroupChart';
 
 const FileStorageChart: React.FC = React.memo(() => {
   const { value } = useAsync(async () => {
-    const { data } = await request.get<{
-      fileStorageUserTop: {
-        userId: string;
-        userName: string;
-        fileStorageTotal: number;
-      }[];
-    }>('/analytics/fileStorageUserTop');
+    try {
+      const { data } = await request.get<{
+        fileStorageUserTop: {
+          userId: string;
+          userName: string;
+          fileStorageTotal: number;
+        }[];
+      }>('/analytics/fileStorageUserTop');
 
-    return data.fileStorageUserTop;
+      return {
+        data: data.fileStorageUserTop,
+        error: '',
+      };
+    } catch (err: any) {
+      return {
+        data: [],
+        error: err?.message ? String(err.message) : 'analytics unavailable',
+      };
+    }
   }, []);
+
+  if (value?.error) {
+    return (
+      <AnalyticsUnavailable
+        detail={value.error}
+        hint="请确认 /analytics/fileStorageUserTop 可访问。"
+      />
+    );
+  }
 
   return (
     <ResponsiveContainer width="100%" height={320}>
       <BarChart
-        data={value}
+        data={value?.data ?? []}
         layout="vertical"
         maxBarSize={40}
         margin={{ left: 60 }}
@@ -238,3 +315,18 @@ const FileStorageChart: React.FC = React.memo(() => {
   );
 });
 FileStorageChart.displayName = 'FileStorageChart';
+
+const AnalyticsUnavailable: React.FC<{
+  detail: string;
+  hint: string;
+}> = React.memo(({ detail, hint }) => {
+  return (
+    <FeatureStatusCard
+      title="分析图表"
+      summary="当前图表数据暂不可用，因此该图表进入降级态。"
+      actionHint={hint}
+      detail={detail}
+    />
+  );
+});
+AnalyticsUnavailable.displayName = 'AnalyticsUnavailable';

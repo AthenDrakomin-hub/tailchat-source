@@ -142,7 +142,7 @@ const ExternalCallView: React.FC = React.memo(() => {
   const liveKitUrl = useServerUrl();
 
   if (!meetingId) {
-    return <div>Invalid meeting link</div>;
+    return <div>Invalid call link</div>;
   }
 
   if (callState === 'ended') {

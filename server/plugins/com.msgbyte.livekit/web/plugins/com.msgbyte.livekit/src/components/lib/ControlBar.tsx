@@ -112,7 +112,7 @@ export function ControlBar({ variation, controls, ...props }: ControlBarProps) {
       const link = `${window.location.origin}/t/${data.code}`;
       copyToClipboard(link);
       showToasts(
-        Translate.shareLinkCopied || '专属通话链接(单次有效)已复制！',
+        Translate.shareLinkCopied || '通话邀请链接(单次有效)已复制！',
         'success'
       );
     } catch (err: any) {
@@ -125,10 +125,10 @@ export function ControlBar({ variation, controls, ...props }: ControlBarProps) {
       <button
         className="lk-button"
         onClick={handleShareShortLink}
-        title="生成阅后即焚通话链接"
+        title="生成单次有效的通话邀请链接"
       >
         {showIcon && <Icon icon="mdi:link-variant" />}
-        {showText && '专属通话链接'}
+        {showText && '通话邀请链接'}
       </button>
 
       {visibleControls.microphone && (

@@ -6,8 +6,8 @@ export const Translate = {
     'en-US': 'Voice Channel',
   }),
   joinLabel: localTrans({
-    'zh-CN': '加入房间',
-    'en-US': 'Join Room',
+    'zh-CN': '加入通话',
+    'en-US': 'Join Call',
   }),
   micLabel: localTrans({
     'zh-CN': '麦克风',
@@ -62,12 +62,12 @@ export const Translate = {
     'en-US': 'Is speaking',
   }),
   nobodyInMeeting: localTrans({
-    'zh-CN': '当前无人在会...',
-    'en-US': 'Nobody in Meeting...',
+    'zh-CN': '当前暂无人在通话中',
+    'en-US': 'No one is in the call',
   }),
   peopleInMeeting: localTrans({
-    'zh-CN': '这些人正在会中:',
-    'en-US': 'Here is people in meeting:',
+    'zh-CN': '当前正在通话:',
+    'en-US': 'Currently in call:',
   }),
   notSupportDOMFullscreen: localTrans({
     'zh-CN': '当前浏览器不支持视图全屏',
@@ -90,16 +90,16 @@ export const Translate = {
     'en-US': 'invite you to join call',
   }),
   notFoundMeeting: localTrans({
-    'zh-CN': '没有找到会议',
-    'en-US': 'Not found meeting',
+    'zh-CN': '没有找到可加入的通话',
+    'en-US': 'No active call found',
   }),
   shareLink: localTrans({
-    'zh-CN': '复制分享链接',
-    'en-US': 'Copy Share Link',
+    'zh-CN': '复制通话邀请链接',
+    'en-US': 'Copy Call Invite Link',
   }),
   shareLinkCopied: localTrans({
-    'zh-CN': '已复制分享链接',
-    'en-US': 'Share link copied',
+    'zh-CN': '已复制通话邀请链接',
+    'en-US': 'Call invite link copied',
   }),
   pleaseEnterName: localTrans({
     'zh-CN': '请输入您的昵称 / Enter your name',
