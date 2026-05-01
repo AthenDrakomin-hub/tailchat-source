@@ -44,18 +44,18 @@ export const SetFriendNickname: React.FC<{
   return (
     <ModalWrapper
       title={
-        isValidStr(friendInfo.nickname) ? t('更改好友昵称') : t('添加好友昵称')
+        isValidStr(friendInfo.nickname) ? t('更改联系人备注') : t('添加联系人备注')
       }
     >
       <Space direction="vertical" style={{ width: '100%' }}>
-        <p>{t('使用个人昵称更快地找到好友。仅您自己可见。')}</p>
+        <p>{t('使用个人备注更快地找到联系人。仅您自己可见。')}</p>
         <Input
           placeholder={userInfo.nickname}
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
         />
         <Button type="text" onClick={() => setNickname('')}>
-          {t('重置好友昵称')}
+          {t('重置联系人备注')}
         </Button>
 
         <SubmitButton

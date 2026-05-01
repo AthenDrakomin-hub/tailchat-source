@@ -65,12 +65,12 @@ export const FriendList: React.FC<{
   const handleRemoveFriend = useEvent(async (targetId: string) => {
     showAlert({
       message: t(
-        '是否要从自己的好友列表中删除对方? 注意:你不会从对方的好友列表消失'
+        '是否要从自己的联系人列表中移除对方？注意：这不会影响对方自己的联系人列表。'
       ),
       onConfirm: async () => {
         try {
           await removeFriend(targetId);
-          showToasts(t('好友删除成功'), 'success');
+          showToasts(t('联系人移除成功'), 'success');
           dispatch(userActions.removeFriend(targetId));
         } catch (err) {
           showErrorToasts(err);
@@ -136,8 +136,8 @@ export const FriendList: React.FC<{
                           key: 'setNickname',
                           onClick: () => handleSetFriendNickname(item._id),
                           label: isValidStr(item.nickname)
-                            ? t('更改好友昵称')
-                            : t('添加好友昵称'),
+                            ? t('更改联系人备注')
+                            : t('添加联系人备注'),
                         },
                         {
                           key: 'delete',

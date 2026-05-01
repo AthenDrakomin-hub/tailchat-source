@@ -39,7 +39,7 @@ const DEFAULT_SERVICES = [
   },
   {
     name: 'friend',
-    label: t('好友服务'),
+    label: t('联系人服务'),
   },
   {
     name: 'group',

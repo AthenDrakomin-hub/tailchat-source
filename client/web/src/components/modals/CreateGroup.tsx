@@ -57,18 +57,18 @@ const panelTemplate: {
       },
       {
         id: '10',
-        name: t('临时会议'),
+        name: t('临时讨论'),
         type: GroupPanelType.GROUP,
       },
       {
         id: '11',
-        name: t('会议室') + '1',
+        name: t('讨论区') + '1',
         parentId: '10',
         type: GroupPanelType.TEXT,
       },
       {
         id: '11',
-        name: t('会议室') + '2',
+        name: t('讨论区') + '2',
         parentId: '10',
         type: GroupPanelType.TEXT,
       },
