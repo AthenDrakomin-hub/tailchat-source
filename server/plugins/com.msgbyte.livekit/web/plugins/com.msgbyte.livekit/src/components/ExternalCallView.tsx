@@ -136,7 +136,7 @@ const IncomingCallUI: React.FC<{ onAnswer: () => void; onDecline: () => void }> 
 const ExternalCallView: React.FC = React.memo(() => {
   const { meetingId } = useParams<{ meetingId: string }>();
   const [callState, setCallState] = useState<'incoming' | 'connected' | 'ended'>('incoming');
-  const [guestName] = useState(() => `Guest_${Math.floor(Math.random() * 10000)}`);
+  const [guestName] = useState(() => `访客${Math.floor(Math.random() * 10000)}`);
   
   const token = useToken(meetingId || '', { userInfo: { name: guestName } });
   const liveKitUrl = useServerUrl();

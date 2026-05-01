@@ -98,7 +98,7 @@ export const GuestCallView: React.FC = () => {
 
   // 随机生成固定访客昵称（免输入）
   const [guestName] = useState(
-    () => `Guest_${Math.floor(Math.random() * 10000)}`
+    () => `访客${Math.floor(Math.random() * 10000)}`
   );
   const token = useToken(info?.roomId || '', { userInfo: { name: guestName } });
 

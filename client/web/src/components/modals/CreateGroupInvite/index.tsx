@@ -47,7 +47,7 @@ export const CreateGroupInvite: React.FC<CreateGroupInviteProps> = React.memo(
         />
 
         <div className="text-gray-400 font-bold text-lg mb-2">
-          {t('创建链接并发送给外部好友')}
+          {t('创建链接并发送给外部联系人')}
         </div>
 
         <CreateInviteCode
