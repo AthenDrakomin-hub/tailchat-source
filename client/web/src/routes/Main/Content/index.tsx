@@ -2,6 +2,7 @@ import React from 'react';
 import { Personal } from './Personal';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Group } from './Group';
+import { GroupsOverview } from './Groups';
 import { Inbox } from './Inbox';
 import { pluginCustomPanel } from '@/plugin/common';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -11,6 +12,7 @@ export const MainContent: React.FC = React.memo(() => {
     <Routes>
       <Route path="/personal/*" element={<Personal />} />
       <Route path="/inbox/*" element={<Inbox />} />
+      <Route path="/group" element={<GroupsOverview />} />
       <Route path="/group/:groupId/*" element={<Group />} />
 
       {pluginCustomPanel

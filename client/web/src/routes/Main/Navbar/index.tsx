@@ -1,10 +1,9 @@
 import React from 'react';
-import { GroupNav } from './GroupNav';
 import { MobileMenuBtn } from './MobileMenuBtn';
 import { SettingBtn } from './SettingBtn';
-import { Divider } from 'antd';
 import { PersonalNav } from './PersonalNav';
 import { InboxNav } from './InboxNav';
+import { GroupsNav } from './GroupsNav';
 import { InstallBtn } from './InstallBtn';
 import { ReactQueryDevBtn } from './ReactQueryDevBtn';
 import { pluginCustomPanel } from '@/plugin/common';
@@ -29,22 +28,15 @@ export const Navbar: React.FC = React.memo(() => {
 
           <InboxNav />
 
+          <GroupsNav />
+
           <QuickSwitcherNav />
 
           {pluginCustomPanel
-            .filter((p) => p.position === 'navbar-personal')
+            .filter((p) => ['navbar-personal', 'navbar-group'].includes(p.position))
             .map((p) => (
               <NavbarCustomNavItem key={p.name} panelInfo={p} withBg={true} />
             ))}
-        </div>
-
-        <div className="px-3">
-          <Divider />
-        </div>
-
-        {/* 如果导航栏高度不够就缩减群组列表的高度 */}
-        <div className="overflow-y-hidden hover:overflow-y-smart scroll overflow-x-hidden thin-scrollbar">
-          <GroupNav />
         </div>
       </div>
 
