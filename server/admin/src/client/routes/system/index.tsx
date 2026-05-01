@@ -21,6 +21,7 @@ import {
 import _get from 'lodash/get';
 import { IconCheck, IconClose, IconDelete } from 'tushan/icon';
 import { TailchatImage } from '../../components/TailchatImage';
+import { FeatureStatusCard } from '../../components/FeatureStatusCard';
 
 type BeidouStarCardConfig = {
   id: string;
@@ -373,8 +374,14 @@ export const SystemConfig: React.FC = React.memo(() => {
   }
 
   if (error) {
-    console.log('error', error);
-    return <div>{String(error)}</div>;
+    return (
+      <FeatureStatusCard
+        title="站点配置"
+        summary="当前页面在读取站点配置时发生异常，因此进入降级态。"
+        actionHint={featureState.actionHint}
+        detail={String(error)}
+      />
+    );
   }
 
   return (

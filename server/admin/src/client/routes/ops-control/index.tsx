@@ -14,11 +14,13 @@ import {
 } from 'tushan';
 import { request } from '../../request';
 import { formatAdminError } from '../../utils/admin-error';
+import { FeatureStatusCard } from '../../components/FeatureStatusCard';
 
 export const OpsControlPanel: React.FC = React.memo(() => {
   const [form] = Form.useForm();
   const [livekitStatus, setLivekitStatus] = useState<any>(null);
   const [opsStatus, setOpsStatus] = useState<any>(null);
+  const [loadError, setLoadError] = useState('');
 
   const [{ loading: loadingConfig }, fetchConfig] = useAsyncRequest(async () => {
     const { data } = await request.get('/ops/status');
@@ -73,6 +75,7 @@ export const OpsControlPanel: React.FC = React.memo(() => {
       try {
         const data = await fetchConfig();
         setOpsStatus(data);
+        setLoadError('');
         form.setFieldsValue({
           pseudoliveEnabled: data?.pseudoliveEnabled ?? true,
           botEnabled: data?.bot?.enabled ?? false,
@@ -85,7 +88,9 @@ export const OpsControlPanel: React.FC = React.memo(() => {
             : '',
         });
       } catch (err) {
-        Message.error(formatAdminError(err, '系统控制台初始化失败'));
+        const msg = formatAdminError(err, '系统控制台初始化失败');
+        setLoadError(msg);
+        Message.error(msg);
       }
       refreshLivekitStatus().catch(() => {});
     })();
@@ -113,6 +118,17 @@ export const OpsControlPanel: React.FC = React.memo(() => {
       Message.error(formatAdminError(err, '系统控制台保存失败'));
     }
   };
+
+  if (!opsStatus && loadError) {
+    return (
+      <FeatureStatusCard
+        title="系统控制台"
+        summary="当前无法初始化系统控制台，因此页面进入降级态。"
+        actionHint="请确认 /ops/status 可访问，并检查执行器配置、主系统 broker 以及管理端路由是否正常。"
+        detail={loadError}
+      />
+    );
+  }
 
   return (
     <Card>
