@@ -51,30 +51,9 @@ function App() {
       authProvider={authProvider}
       i18n={i18n}
     >
-      <Category name="ops">
+      <Category name="operations">
         <CustomRoute name="ops-control" icon={<IconDashboard />}>
           <OpsControlPanel />
-        </CustomRoute>
-      </Category>
-
-      <Category name="security">
-        <CustomRoute name="defense-control" icon={<IconSafe />}>
-          <DefenseControlPanel />
-        </CustomRoute>
-        <CustomRoute name="network" icon={<IconWifi />}>
-          <Network />
-        </CustomRoute>
-        <CustomRoute name="socketio-diagnostic" icon={<IconDashboard />}>
-          <SocketIOAdmin />
-        </CustomRoute>
-      </Category>
-
-      <Category name="operations">
-        <CustomRoute name="analytics" icon={<IconExperiment />}>
-          <Analytics />
-        </CustomRoute>
-        <CustomRoute name="cache" icon={<IconStorage />}>
-          <CacheManager />
         </CustomRoute>
         <CustomRoute name="system-notify" icon={<IconNotification />}>
           <SystemNotify />
@@ -84,7 +63,7 @@ function App() {
         </CustomRoute>
       </Category>
 
-      <Category name="system">
+      <Category name="content">
         <Resource name="users" icon={<IconUser />} list={<UserList />} />
         <Resource
           name="messages"
@@ -114,7 +93,22 @@ function App() {
         <Resource name="mail" icon={<IconEmail />} list={<ListTable fields={mailFields} />} />
       </Category>
 
-      <Category name="plugins">
+      <Category name="diagnostics">
+        <CustomRoute name="defense-control" icon={<IconSafe />}>
+          <DefenseControlPanel />
+        </CustomRoute>
+        <CustomRoute name="network" icon={<IconWifi />}>
+          <Network />
+        </CustomRoute>
+        <CustomRoute name="socketio-diagnostic" icon={<IconDashboard />}>
+          <SocketIOAdmin />
+        </CustomRoute>
+        <CustomRoute name="analytics" icon={<IconExperiment />}>
+          <Analytics />
+        </CustomRoute>
+        <CustomRoute name="cache" icon={<IconStorage />}>
+          <CacheManager />
+        </CustomRoute>
         <CustomRoute name="plugin-registry" icon={<IconExperiment />}>
           <PluginPermissions />
         </CustomRoute>

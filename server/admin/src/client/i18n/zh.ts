@@ -106,11 +106,9 @@ export const zhTranslation = {
     },
   },
   category: {
-    ops: '系统控制台',
-    security: '安全与防御',
-    operations: '运营工具',
-    system: '系统管理',
-    plugins: '插件',
+    operations: '运营与配置',
+    content: '内容与用户',
+    diagnostics: '系统诊断',
   },
   custom: {
     action: {

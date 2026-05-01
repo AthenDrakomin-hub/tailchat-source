@@ -21,6 +21,11 @@ export const enTranslation = {
       name: 'Socket.IO Diagnostic',
     },
   },
+  category: {
+    operations: 'Operations & Config',
+    content: 'Content & Users',
+    diagnostics: 'Diagnostics',
+  },
   custom: {
     action: {
       resetPassword: 'Reset Password',
