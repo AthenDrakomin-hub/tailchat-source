@@ -23,7 +23,7 @@ const SidebarSection: React.FC<
 > = React.memo((props) => {
   return (
     <div className="h-10 text-gray-900 dark:text-white flex pt-4 px-2">
-      <span className="flex-1 overflow-hidden overflow-ellipsis text-xs text-gray-700 dark:text-gray-300">
+      <span className="flex-1 overflow-hidden overflow-ellipsis text-[11px] font-medium tracking-wide uppercase text-gray-500 dark:text-gray-400">
         {props.children}
       </span>
       <div className="text-base opacity-70 hover:opacity-100 cursor-pointer">
@@ -56,7 +56,7 @@ export const PersonalSidebar: React.FC = React.memo(() => {
     <CommonSidebarWrapper data-tc-role="sidebar-personal">
       <SectionHeader>{t('消息')}</SectionHeader>
 
-      <div className="p-2 overflow-y-auto overflow-x-hidden">
+      <div className="p-2 space-y-1 overflow-y-auto overflow-x-hidden">
         <SidebarSection
           action={
             <Icon

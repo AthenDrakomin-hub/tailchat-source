@@ -17,7 +17,7 @@ export const Navbar: React.FC = React.memo(() => {
   return (
     <div
       data-tc-role="navbar"
-      className="w-18 mobile:zoom-4/5 bg-navbar-light dark:bg-navbar-dark flex flex-col justify-start items-center pt-4 pb-4"
+      className="w-18 mobile:zoom-4/5 bg-navbar-light dark:bg-navbar-dark border-r border-black border-opacity-10 dark:border-white dark:border-opacity-10 flex flex-col justify-start items-center pt-4 pb-4"
     >
       <MobileMenuBtn />
 

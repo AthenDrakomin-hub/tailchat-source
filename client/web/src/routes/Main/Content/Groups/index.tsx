@@ -57,7 +57,7 @@ const GroupsSidebar: React.FC = React.memo(() => {
         {canCreateGroup && (
           <button
             type="button"
-            className="w-full h-11 rounded px-2 text-left text-base flex items-center gap-3 bg-green-500 text-white hover:opacity-90"
+            className="w-full h-11 rounded-2xl px-3 text-left text-base flex items-center gap-3 bg-green-500 text-white shadow-sm hover:opacity-90"
             onClick={handleCreateGroup}
           >
             <Icon icon="mdi:plus" className="text-2xl flex-shrink-0" />

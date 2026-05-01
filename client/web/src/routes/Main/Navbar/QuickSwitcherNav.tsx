@@ -7,7 +7,7 @@ import { openQuickSwitcher } from '@/components/QuickSwitcher';
 export const QuickSwitcherNav: React.FC = React.memo(() => {
   return (
     <NavbarNavItem
-      className="bg-gray-700"
+      className="bg-black bg-opacity-20"
       name={t('快速搜索、跳转') + ' | ctrl + k'}
       onClick={() => {
         openQuickSwitcher();

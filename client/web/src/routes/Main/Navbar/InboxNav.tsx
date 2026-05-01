@@ -12,7 +12,7 @@ export const InboxNav: React.FC = React.memo(() => {
 
   return (
     <NavbarNavItem
-      className="bg-gray-700"
+      className="bg-black bg-opacity-20"
       name={t('通知')}
       to={'/main/inbox'}
       showPill={true}

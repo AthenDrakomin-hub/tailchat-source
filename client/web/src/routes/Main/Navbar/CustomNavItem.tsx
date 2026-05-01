@@ -29,7 +29,7 @@ export const NavbarCustomNavItem: React.FC<{
       key={panelInfo.name}
       name={panelInfo.label}
       className={clsx('text-3xl  cursor-pointer', {
-        'bg-gray-700 text-white': withBg,
+        'bg-black bg-opacity-20 text-white': withBg,
         'text-gray-600 dark:text-white': !withBg,
       })}
       to={`/main/custom/${panelInfo.name}`}

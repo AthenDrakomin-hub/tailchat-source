@@ -9,7 +9,7 @@ export const GroupsNav: React.FC = React.memo(() => {
 
   return (
     <NavbarNavItem
-      className="bg-gray-700"
+      className="bg-black bg-opacity-20"
       name={t('群组')}
       to={'/main/group'}
       showPill={true}

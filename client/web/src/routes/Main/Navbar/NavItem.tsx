@@ -38,11 +38,11 @@ export const NavbarNavItem: React.FC<
     >
       <div
         className={clsx(
-          'w-12 h-12 hover:rounded-lg transition-all duration-300 cursor-pointer flex items-center justify-center overflow-hidden',
+          'w-12 h-12 border border-white border-opacity-0 bg-black bg-opacity-15 hover:bg-opacity-30 text-white shadow-sm hover:rounded-2xl transition-all duration-300 cursor-pointer flex items-center justify-center overflow-hidden backdrop-blur-sm',
           className,
           {
             'rounded-1/2': !isActive,
-            'rounded-lg': isActive,
+            'rounded-2xl bg-green-500 bg-opacity-95 border-opacity-20 shadow-lg': isActive,
           }
         )}
         onClick={handleClick}
@@ -70,7 +70,7 @@ export const NavbarNavItem: React.FC<
         >
           <span
             className={clsx(
-              'bg-gray-400 dark:bg-white w-2 h-2 rounded transition-all duration-300',
+              'bg-green-400 dark:bg-green-300 w-2 h-2 rounded transition-all duration-300',
               {
                 'h-2 group-hover:h-5': !isActive,
                 'h-10': isActive,
