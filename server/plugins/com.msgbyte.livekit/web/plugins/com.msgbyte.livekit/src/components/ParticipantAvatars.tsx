@@ -8,6 +8,18 @@ import {
 } from '@capital/component';
 import { Translate } from '../translate';
 import { useRoomParticipants } from '../utils/useRoomParticipants';
+import styled from 'styled-components';
+
+const PresenceContainer = styled.div`
+  text-align: center;
+  color: rgba(255, 255, 255, 0.92);
+
+  .tc-call-presence-label {
+    margin-bottom: 0.5rem;
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.68);
+  }
+`;
 
 interface Props {
   roomName: string;
@@ -44,11 +56,11 @@ export const ParticipantAvatars: React.FC<Props> = React.memo((props) => {
     inner = <LoadingSpinner />;
   } else {
     if (participants.length === 0) {
-      inner = Translate.nobodyInMeeting;
+      inner = <div className="tc-call-presence-label">{Translate.nobodyInMeeting}</div>;
     } else {
       inner = (
         <>
-          <div>{Translate.peopleInMeeting}</div>
+          <div className="tc-call-presence-label">{Translate.peopleInMeeting}</div>
           <Avatar.Group
             maxCount={4}
             maxPopoverTrigger="click"
@@ -70,9 +82,9 @@ export const ParticipantAvatars: React.FC<Props> = React.memo((props) => {
   }
 
   return (
-    <div ref={containerEl} style={{ textAlign: 'center' }}>
+    <PresenceContainer ref={containerEl}>
       {inner}
-    </div>
+    </PresenceContainer>
   );
 });
 ParticipantAvatars.displayName = 'ParticipantAvatars';

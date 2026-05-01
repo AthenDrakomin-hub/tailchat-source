@@ -44,12 +44,21 @@ const IsCallingContainer = styled.div`
   display: flex;
   gap: 8px;
   align-items: center;
-  padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 10px;
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
   position: absolute;
-  right: 10px;
-  bottom: 120px;
+  right: 16px;
+  top: 16px;
+  color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(10px);
+
+  .tc-call-status-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.72);
+  }
 `;
 
 /**
@@ -153,7 +162,7 @@ export const VideoConference: React.FC<VideoConferenceProps> = React.memo(
 
               {Array.isArray(invitingUserIds) && invitingUserIds.length > 0 && (
                 <IsCallingContainer>
-                  {Translate.isCalling}:
+                  <span className="tc-call-status-label">{Translate.isCalling}:</span>
                   {invitingUserIds.map((userId) => (
                     <UserAvatar key={userId} userId={userId} />
                   ))}
