@@ -1,9 +1,8 @@
-import { Avatar } from 'tailchat-design';
+import { Icon } from 'tailchat-design';
 import React from 'react';
 import {
   t,
   useDMConverseList,
-  useUserInfo,
   useUnread,
   useAppSelector,
 } from 'tailchat-shared';
@@ -17,7 +16,6 @@ function usePersonalUnread(): boolean {
 }
 
 export const PersonalNav: React.FC = React.memo(() => {
-  const userInfo = useUserInfo();
   const unread = usePersonalUnread();
   const hasFriendRequest = useAppSelector(
     (state) =>
@@ -31,17 +29,12 @@ export const PersonalNav: React.FC = React.memo(() => {
   return (
     <div data-tc-role="navbar-personal">
       <NavbarNavItem
-        name={t('我')}
+        name={t('消息')}
         to={'/main/personal'}
         showPill={true}
         badge={badge}
       >
-        <Avatar
-          shape="square"
-          size={48}
-          name={userInfo?.nickname}
-          src={userInfo?.avatar}
-        />
+        <Icon className="text-3xl text-white" icon="mdi:message-text" />
       </NavbarNavItem>
     </div>
   );

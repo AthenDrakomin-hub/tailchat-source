@@ -9,7 +9,7 @@ import { PersonalConverse } from './Converse';
 import { FriendPanel } from './Friends';
 import { PluginsPanel } from './Plugins';
 import { PersonalSidebar } from './Sidebar';
-import { useGlobalConfigStore } from 'tailchat-shared';
+import { useDMConverseList, useGlobalConfigStore } from 'tailchat-shared';
 
 export const Personal: React.FC = React.memo(() => {
   const [lastVisitPanelUrl, setLastVisitPanelUrl] = useUserSessionPreference(
@@ -19,6 +19,8 @@ export const Personal: React.FC = React.memo(() => {
   const disablePluginStore = useGlobalConfigStore(
     (state) => state.disablePluginStore
   );
+  const converseList = useDMConverseList();
+  const firstConverseId = converseList[0]?._id;
 
   useEffect(() => {
     setLastVisitPanelUrl(location.pathname);
@@ -49,7 +51,11 @@ export const Personal: React.FC = React.memo(() => {
           element={
             <Navigate
               to={
-                lastVisitPanelUrl ? lastVisitPanelUrl : '/main/personal/friends'
+                lastVisitPanelUrl && lastVisitPanelUrl !== '/main/personal'
+                  ? lastVisitPanelUrl
+                  : firstConverseId
+                    ? `/main/personal/converse/${firstConverseId}`
+                    : '/main/personal/friends'
               }
             />
           }

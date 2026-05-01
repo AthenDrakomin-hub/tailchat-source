@@ -10,7 +10,7 @@ export const CommonSidebarWrapper: React.FC<CommonSidebarProps> = React.memo(
 
     return (
       <div
-        className="h-full flex flex-col"
+        className="h-full min-w-0 flex flex-col overflow-hidden"
         data-tc-role={props['data-tc-role']}
       >
         {props.children}

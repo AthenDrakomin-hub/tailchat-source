@@ -21,7 +21,10 @@ const PageContentRoot: React.FC<PageContentRootProps> = ({
   <div
     {...others}
     style={style}
-    className={clsx('flex flex-row flex-1 overflow-hidden relative', className)}
+    className={clsx(
+      'flex min-w-0 flex-row flex-1 overflow-hidden relative',
+      className
+    )}
   >
     {children}
   </div>
@@ -92,7 +95,7 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
     const sidebarEl = _isNil(sidebar) ? null : (
       <div
         className={clsx(
-          'bg-sidebar-light dark:bg-sidebar-dark flex-shrink-0 transition-width w-60'
+          'bg-sidebar-light dark:bg-sidebar-dark flex-shrink-0 transition-width w-60 min-w-0 overflow-hidden'
         )}
       >
         {props.sidebar}
@@ -121,7 +124,7 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
 
         <div
           className={clsx(
-            'flex flex-auto bg-content-light dark:bg-content-dark overflow-hidden',
+            'flex min-w-0 flex-auto bg-content-light dark:bg-content-dark overflow-hidden',
             isMobile &&
               'transform left-0 w-full h-full absolute transition-transform',
             isMobile && {
@@ -135,7 +138,7 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
 
           <div
             className={clsx('flex relative w-full', {
-              'overflow-auto': !showMask,
+              'min-w-0 overflow-y-auto overflow-x-hidden': !showMask,
               'overflow-hidden': showMask,
             })}
           >

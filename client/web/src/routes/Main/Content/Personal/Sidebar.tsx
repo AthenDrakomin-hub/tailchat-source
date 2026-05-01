@@ -54,9 +54,30 @@ export const PersonalSidebar: React.FC = React.memo(() => {
 
   return (
     <CommonSidebarWrapper data-tc-role="sidebar-personal">
-      <SectionHeader>{userInfo?.nickname}</SectionHeader>
+      <SectionHeader>{t('消息')}</SectionHeader>
 
-      <div className="p-2 overflow-auto">
+      <div className="p-2 overflow-y-auto overflow-x-hidden">
+        <SidebarSection
+          action={
+            <Icon
+              icon="mdi:plus"
+              onClick={() => openModal(<CreateDMConverse />)}
+            />
+          }
+        >
+          {t('会话')}
+        </SidebarSection>
+
+        {converseList.map((converse) => {
+          return <SidebarDMItem key={converse._id} converse={converse} />;
+        })}
+
+        <SidebarSection
+          action={<Icon icon="mdi:account-multiple-outline" />}
+        >
+          {t('联系人')}
+        </SidebarSection>
+
         <SidebarItem
           name={t('好友')}
           icon={<Icon icon="mdi:account-multiple" />}
@@ -79,21 +100,6 @@ export const PersonalSidebar: React.FC = React.memo(() => {
           .map((p) => (
             <CustomSidebarItem key={p.name} panelInfo={p} />
           ))}
-
-        <SidebarSection
-          action={
-            <Icon
-              icon="mdi:plus"
-              onClick={() => openModal(<CreateDMConverse />)}
-            />
-          }
-        >
-          {t('私信')}
-        </SidebarSection>
-
-        {converseList.map((converse) => {
-          return <SidebarDMItem key={converse._id} converse={converse} />;
-        })}
       </div>
     </CommonSidebarWrapper>
   );
