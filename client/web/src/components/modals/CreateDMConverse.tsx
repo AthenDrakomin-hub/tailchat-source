@@ -30,7 +30,7 @@ export const CreateDMConverse: React.FC<CreateDMConverseProps> = React.memo(
     }, [selectedFriendIds]);
 
     return (
-      <ModalWrapper title={t('创建多人会话')}>
+      <ModalWrapper title={t('发起多人聊天')}>
         <FriendPicker
           withoutUserIds={hiddenUserIds}
           selectedIds={selectedFriendIds}

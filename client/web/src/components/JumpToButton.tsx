@@ -8,7 +8,7 @@ interface Props {
   text: string;
 }
 /**
- * 跳转到会话面板
+ * 跳转到聊天面板
  */
 export const JumpToButton: React.FC<Props> = React.memo((props) => {
   const navigate = useNavigate();
@@ -46,6 +46,6 @@ export const JumpToConverseButton: React.FC<{
     ? `/main/group/${props.groupId}/${props.converseId}`
     : getPersonalChatPath(props.converseId);
 
-  return <JumpToButton link={link} text={t('跳转到会话')} />;
+  return <JumpToButton link={link} text={t('跳转到聊天')} />;
 });
 JumpToConverseButton.displayName = 'JumpToConverseButton';

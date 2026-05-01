@@ -26,7 +26,7 @@ const ConversePanelTitle: React.FC<{ converse: ChatConverseState }> =
   React.memo(({ converse }) => {
     const name = useDMConverseName(converse);
 
-    return t('与 {{name}} 的会话', { name });
+    return t('与 {{name}} 的聊天', { name });
   });
 ConversePanelTitle.displayName = 'ConversePanelTitle';
 
@@ -101,7 +101,7 @@ export const ConversePanel: React.FC<ConversePanelProps> = React.memo(
             converse.members.length === 2 ? (
               <IconBtn
                 key="create"
-                title={t('创建会话')}
+                title={t('发起多人聊天')}
                 shape="square"
                 icon="mdi:account-multiple-plus-outline"
                 iconClassName="text-2xl"

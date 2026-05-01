@@ -53,7 +53,12 @@ export const GroupHeader: React.FC<GroupHeaderProps> = React.memo((props) => {
 
   return (
     <SectionHeader menu={menu} data-testid="group-header">
-      {groupInfo?.name}
+      <div className="min-w-0">
+        <div className="truncate">{groupInfo?.name}</div>
+        <div className="text-[11px] font-normal text-gray-500 dark:text-gray-400 truncate">
+          {t('群组空间')}
+        </div>
+      </div>
     </SectionHeader>
   );
 });

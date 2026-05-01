@@ -97,11 +97,13 @@ export const FriendList: React.FC<{
   }
 
   return (
-    <div className="py-2.5 px-5 h-full flex flex-col">
-      <div>{t('联系人列表')}</div>
+    <div className="py-4 px-5 h-full flex flex-col">
+      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+        {t('联系人列表')}
+      </div>
 
       <Input
-        className="my-2"
+        className="my-3"
         placeholder={t('搜索联系人')}
         size="large"
         prefix={<Icon fontSize={20} color="grey" icon="mdi:magnify" />}
