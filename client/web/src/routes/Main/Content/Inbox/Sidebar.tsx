@@ -184,20 +184,25 @@ const InboxSidebarItem: React.FC<{
     <Link to={props.to}>
       <div
         className={clsx(
-          'p-2 overflow-hidden cursor-pointer hover:bg-black hover:bg-opacity-10 dark:hover:bg-white dark:hover:bg-opacity-10 border-r-4 rounded',
+          'mx-2 my-1 p-3 overflow-hidden cursor-pointer border border-transparent hover:border-black hover:border-opacity-5 dark:hover:border-white dark:hover:border-opacity-10 hover:bg-black hover:bg-opacity-5 dark:hover:bg-white dark:hover:bg-opacity-5 rounded-2xl transition-all duration-200',
           {
-            'bg-black bg-opacity-10 dark:bg-white dark:bg-opacity-10': isActive,
+            'bg-green-500 bg-opacity-10 border-green-500 border-opacity-20 dark:bg-green-500 dark:bg-opacity-10': isActive,
           },
-          props.readed ? 'border-transparent' : 'border-green-500'
+          props.readed ? '' : 'shadow-sm'
         )}
       >
-        <div className="truncate text-lg text-gray-700 dark:text-white">
-          {props.title || <span>&nbsp;</span>}
+        <div className="flex items-center gap-2">
+          {!props.readed && (
+            <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+          )}
+          <div className="truncate text-base font-medium text-gray-700 dark:text-white">
+            {props.title || <span>&nbsp;</span>}
+          </div>
         </div>
-        <div className="line-clamp-2 break-words text-opacity-80 text-black dark:text-opacity-80 dark:text-white text-sm p-1 border-l-2 border-gray-500 border-opacity-50 overflow-hidden">
+        <div className="line-clamp-2 break-words text-opacity-80 text-black dark:text-opacity-80 dark:text-white text-sm mt-2 pl-3 border-l-2 border-gray-300 dark:border-gray-600 overflow-hidden">
           {props.desc}
         </div>
-        <div className="truncate text-xs text-opacity-50 text-black dark:text-opacity-50 dark:text-white">
+        <div className="truncate text-[11px] mt-2 text-opacity-50 text-black dark:text-opacity-50 dark:text-white">
           {t('来自')}: {props.source}
         </div>
       </div>
