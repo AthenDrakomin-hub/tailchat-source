@@ -1,6 +1,6 @@
 import { useRecordMeasure } from '@/utils/measure-helper';
 import React from 'react';
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import { MainProvider } from '../Main/Provider';
 import { t } from 'tailchat-shared';
 import { PersonalConverse } from '../Main/Content/Personal/Converse';
@@ -10,6 +10,7 @@ import { useParams } from 'react-router';
 import { NotFound } from '@/components/NotFound';
 import { Group } from '../Main/Content/Group';
 import { pluginPanelRoute } from '@/plugin/common';
+import { getPanelPersonalChatPath } from '@/utils/personal-route';
 
 const GroupDetailRoute = React.memo(() => {
   const { groupId } = useParams<{ groupId: string }>();
@@ -22,6 +23,19 @@ const GroupDetailRoute = React.memo(() => {
 });
 GroupDetailRoute.displayName = 'GroupDetailRoute';
 
+const LegacyPanelPersonalConverseRedirect = React.memo(() => {
+  const { converseId } = useParams<{ converseId: string }>();
+
+  return (
+    <Navigate
+      to={converseId ? getPanelPersonalChatPath(converseId) : '/panel'}
+      replace={true}
+    />
+  );
+});
+LegacyPanelPersonalConverseRedirect.displayName =
+  'LegacyPanelPersonalConverseRedirect';
+
 const PanelRoute: React.FC = React.memo(() => {
   useRecordMeasure('appRouteRenderStart');
 
@@ -31,6 +45,10 @@ const PanelRoute: React.FC = React.memo(() => {
         <Routes>
           <Route
             path="/personal/converse/:converseId"
+            element={<LegacyPanelPersonalConverseRedirect />}
+          />
+          <Route
+            path="/personal/chats/:converseId"
             element={<PersonalConverse />}
           />
           <Route path="/group/:groupId/detail" element={<GroupDetailRoute />} />

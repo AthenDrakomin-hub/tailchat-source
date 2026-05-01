@@ -17,6 +17,37 @@ import { useMeetingContextState } from '../../context/MeetingContext';
 import { Icon } from '@capital/component';
 import { copyToClipboard, showToasts, useIsMobile, request } from '@capital/common';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+const ControlBarRoot = styled.div`
+  &.lk-control-bar {
+    padding: 0.875rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(
+      180deg,
+      rgba(15, 23, 42, 0.12) 0%,
+      rgba(15, 23, 42, 0.72) 100%
+    );
+    backdrop-filter: blur(10px);
+  }
+
+  .tc-call-action {
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.94);
+    transition: all 0.2s ease;
+  }
+
+  .tc-call-action:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .tc-call-action[data-active='true'] {
+    background: rgba(34, 197, 94, 0.18);
+    border-color: rgba(34, 197, 94, 0.34);
+    color: #dcfce7;
+  }
+`;
 
 /** @public */
 export type ControlBarControls = {
@@ -60,6 +91,7 @@ export function ControlBar({ variation, controls, ...props }: ControlBarProps) {
     }
   }, [layoutContext?.widget.state?.showChat]);
   const setRightPanel = useMeetingContextState((state) => state.setRightPanel);
+  const rightPanel = useMeetingContextState((state) => state.rightPanel);
   const isTooLittleSpace = useMediaQuery(
     `(max-width: ${isChatOpen ? 1000 : 760}px)`
   );
@@ -121,9 +153,9 @@ export function ControlBar({ variation, controls, ...props }: ControlBarProps) {
   };
 
   return (
-    <div className="lk-control-bar" {...props}>
+    <ControlBarRoot className="lk-control-bar" {...props}>
       <button
-        className="lk-button"
+        className="lk-button tc-call-action"
         onClick={handleShareShortLink}
         title="生成单次有效的通话邀请链接"
       >
@@ -168,7 +200,11 @@ export function ControlBar({ variation, controls, ...props }: ControlBarProps) {
       )}
 
       {visibleControls.chat && (
-        <button className="lk-button" onClick={() => setRightPanel('chat')}>
+        <button
+          className="lk-button tc-call-action"
+          data-active={rightPanel === 'chat'}
+          onClick={() => setRightPanel('chat')}
+        >
           {showIcon && <Icon icon="mdi:message-reply-text-outline" />}
           {showText && Translate.chat}
         </button>
@@ -176,7 +212,11 @@ export function ControlBar({ variation, controls, ...props }: ControlBarProps) {
 
       {/* Hide member control in mobile version because of not ready */}
       {!isMobile && visibleControls.member && (
-        <button className="lk-button" onClick={() => setRightPanel('member')}>
+        <button
+          className="lk-button tc-call-action"
+          data-active={rightPanel === 'member'}
+          onClick={() => setRightPanel('member')}
+        >
           {showIcon && <Icon icon="mdi:account-multiple" />}
           {showText && Translate.member}
         </button>
@@ -190,6 +230,6 @@ export function ControlBar({ variation, controls, ...props }: ControlBarProps) {
       )}
 
       <StartAudio label={Translate.startAudio} />
-    </div>
+    </ControlBarRoot>
   );
 }
