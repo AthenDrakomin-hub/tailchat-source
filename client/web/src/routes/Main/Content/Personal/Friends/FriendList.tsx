@@ -27,7 +27,7 @@ import { Icon } from 'tailchat-design';
 import { Virtuoso } from 'react-virtuoso';
 
 /**
- * 好友列表
+ * 联系人列表
  */
 export const FriendList: React.FC<{
   onSwitchToAddFriend: () => void;
@@ -83,10 +83,10 @@ export const FriendList: React.FC<{
       <Problem
         text={
           <div>
-            <p className="mb-2">{t('暂无好友')}</p>
+            <p className="mb-2">{t('暂无联系人')}</p>
             {!disableAddFriend && (
               <Button type="primary" onClick={props.onSwitchToAddFriend}>
-                {t('立即添加')}
+                {t('立即添加联系人')}
               </Button>
             )}
           </div>
@@ -97,11 +97,11 @@ export const FriendList: React.FC<{
 
   return (
     <div className="py-2.5 px-5 h-full flex flex-col">
-      <div>{t('好友列表')}</div>
+      <div>{t('联系人列表')}</div>
 
       <Input
         className="my-2"
-        placeholder={t('搜索好友')}
+        placeholder={t('搜索联系人')}
         size="large"
         prefix={<Icon fontSize={20} color="grey" icon="mdi:magnify" />}
         value={searchText}

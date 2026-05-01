@@ -29,7 +29,11 @@ export const Personal: React.FC = React.memo(() => {
   return (
     <PageContent data-tc-role="content-personal" sidebar={<PersonalSidebar />}>
       <Routes>
-        <Route path="/friends" element={<FriendPanel />} />
+        <Route
+          path="/friends"
+          element={<Navigate to="/main/personal/contacts" replace={true} />}
+        />
+        <Route path="/contacts" element={<FriendPanel />} />
         {!disablePluginStore && (
           <Route path="/plugins" element={<PluginsPanel />} />
         )}
@@ -55,7 +59,7 @@ export const Personal: React.FC = React.memo(() => {
                   ? lastVisitPanelUrl
                   : firstConverseId
                     ? `/main/personal/converse/${firstConverseId}`
-                    : '/main/personal/friends'
+                    : '/main/personal/contacts'
               }
             />
           }

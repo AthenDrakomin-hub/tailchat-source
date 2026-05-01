@@ -79,9 +79,9 @@ export const PersonalSidebar: React.FC = React.memo(() => {
         </SidebarSection>
 
         <SidebarItem
-          name={t('好友')}
+          name={t('联系人')}
           icon={<Icon icon="mdi:account-multiple" />}
-          to="/main/personal/friends"
+          to="/main/personal/contacts"
           badge={hasFriendRequest}
         />
 

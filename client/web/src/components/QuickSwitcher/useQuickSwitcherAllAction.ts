@@ -35,7 +35,7 @@ const useBuiltinActions = (): QuickAction[] => {
         source: 'core',
         label: t('个人主页'),
         action({ navigate }) {
-          navigate('/main/personal/friends');
+          navigate('/main/personal/contacts');
         },
       },
     ];

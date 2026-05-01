@@ -35,7 +35,7 @@ export const FriendPanel: React.FC = React.memo(() => {
         items={_compact([
           {
             key: '1',
-            label: t('全部'),
+            label: t('全部联系人'),
             children: (
               <FriendList onSwitchToAddFriend={handleSwitchToAddFriend} />
             ),
@@ -48,7 +48,7 @@ export const FriendPanel: React.FC = React.memo(() => {
                 size="small"
                 count={send.length}
               >
-                {t('已发送')}
+                {t('已发送申请')}
               </Badge>
             ),
             children: <RequestSend requests={send} />,
@@ -61,14 +61,14 @@ export const FriendPanel: React.FC = React.memo(() => {
                 size="small"
                 count={received.length}
               >
-                {t('待处理')}
+                {t('待处理申请')}
               </Badge>
             ),
             children: <RequestReceived requests={received} />,
           },
           !disableAddFriend && {
             key: '4',
-            label: <span className="text-green-400">{t('添加好友')}</span>,
+            label: <span className="text-green-400">{t('添加联系人')}</span>,
             children: <AddFriend />,
           },
         ])}

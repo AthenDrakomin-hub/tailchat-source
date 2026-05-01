@@ -66,7 +66,7 @@ const SearchFriendResult: React.FC<{
           disabled={hasSent}
           onClick={() => handleAddFriend(result._id)}
         >
-          {hasSent ? t('已申请') : t('申请好友')}
+          {hasSent ? t('已申请') : t('申请联系人')}
         </Button>
       </div>
     </div>
@@ -112,10 +112,10 @@ export const AddFriend: React.FC = React.memo(() => {
 
   return (
     <div className="px-8 py-2">
-      <div className="text-lg my-2">{t('添加好友')}</div>
+      <div className="text-lg my-2">{t('添加联系人')}</div>
       <div className="my-1">
         <Trans>
-          您可以使用完整的 <Highlight>用户昵称#标识</Highlight> 来添加好友
+          您可以使用完整的 <Highlight>用户昵称#标识</Highlight> 来添加联系人
         </Trans>
       </div>
 
@@ -133,7 +133,7 @@ export const AddFriend: React.FC = React.memo(() => {
           loading={loading}
           onClick={searchUser}
         >
-          {t('查找好友')}
+          {t('查找联系人')}
         </Button>
       </div>
 

@@ -18,12 +18,12 @@ export const RequestSend: React.FC<{
   }, []);
 
   if (props.requests.length === 0) {
-    return <Problem text={t('暂无已发送的好友请求')} />;
+    return <Problem text={t('暂无已发送的联系人申请')} />;
   }
 
   return (
     <div className="py-2.5 px-5">
-      <div>{t('等待对方处理的好友请求')}:</div>
+      <div>{t('等待对方处理的联系人申请')}:</div>
       <div>
         {props.requests.map(({ _id, to }) => (
           <UserListItem
