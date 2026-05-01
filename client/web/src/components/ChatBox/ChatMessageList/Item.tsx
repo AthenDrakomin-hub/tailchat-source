@@ -87,7 +87,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
     return (
       <div
         className={clsx(
-          'chat-message-item flex px-2 mobile:px-0 group relative select-text text-sm',
+          'chat-message-item flex min-w-0 px-2 mobile:px-0 group relative select-text text-sm',
           {
             'bg-black bg-opacity-10': isActionBtnActive,
             'hover:bg-black hover:bg-opacity-5': !isActionBtnActive,
@@ -96,7 +96,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
         data-message-id={payload._id}
       >
         {/* 头像 */}
-        <div className="w-18 mobile:w-14 flex items-start justify-center pt-0.5">
+        <div className="w-18 mobile:w-14 flex-shrink-0 flex items-start justify-center pt-0.5">
           {showAvatar ? (
             <Popover
               content={
@@ -130,15 +130,15 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
           onOpenChange={setIsActionBtnActive}
         >
           <div
-            className="flex flex-col flex-1 overflow-auto group"
+            className="flex min-w-0 flex-col flex-1 overflow-hidden group"
             onContextMenu={stopPropagation}
           >
             {showAvatar && (
-              <div className="flex items-center">
-                <div className="font-bold">
+              <div className="flex min-w-0 items-center">
+                <div className="font-bold truncate">
                   {userInfo.nickname || <span>&nbsp;</span>}
                 </div>
-                <div className="hidden group-hover:block opacity-40 ml-1 text-sm">
+                <div className="hidden group-hover:block opacity-40 ml-1 text-sm flex-shrink-0">
                   {formatShortTime(payload.createdAt)}
                 </div>
               </div>
@@ -154,7 +154,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                 </div>
               }
             >
-              <div className="chat-message-item_body leading-6 break-words">
+              <div className="chat-message-item_body min-w-0 leading-6 break-words overflow-x-hidden">
                 <MessageQuote payload={payload} />
 
                 <span>{getMessageRender(payload.content)}</span>

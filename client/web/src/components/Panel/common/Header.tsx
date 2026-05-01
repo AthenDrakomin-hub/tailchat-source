@@ -15,14 +15,14 @@ export const PanelCommonHeader: React.FC<PanelCommonHeaderProps> = React.memo(
   (props) => {
     return (
       <SectionHeader>
-        <div className="flex flex-wrap text-xl justify-between">
-          <div className="flex items-center">
-            <div className="text-gray-500 mr-1">{props.prefix}</div>
-            <div className="text-base">{props.children}</div>
-            <div className="ml-2">{props.suffix}</div>
+        <div className="flex min-w-0 flex-wrap text-xl justify-between gap-2">
+          <div className="flex min-w-0 items-center">
+            <div className="text-gray-500 mr-1 flex-shrink-0">{props.prefix}</div>
+            <div className="text-base truncate">{props.children}</div>
+            <div className="ml-2 flex-shrink-0">{props.suffix}</div>
           </div>
 
-          <Space>{props.actions}</Space>
+          <Space className="flex-shrink-0">{props.actions}</Space>
         </div>
       </SectionHeader>
     );
