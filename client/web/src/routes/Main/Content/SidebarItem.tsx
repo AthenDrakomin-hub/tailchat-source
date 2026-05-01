@@ -21,13 +21,13 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
     <Link to={to}>
       <div
         className={clsx(
-          'w-full hover:bg-black hover:bg-opacity-20 dark:hover:bg-white dark:hover:bg-opacity-20 cursor-pointer text-gray-700 dark:text-white rounded px-2 h-11 flex items-center text-base group mb-0.5',
+          'w-full min-w-0 overflow-hidden hover:bg-black hover:bg-opacity-20 dark:hover:bg-white dark:hover:bg-opacity-20 cursor-pointer text-gray-700 dark:text-white rounded px-2 h-11 flex items-center text-base group mb-0.5',
           {
             'bg-black bg-opacity-20 dark:bg-white dark:bg-opacity-20': isActive,
           }
         )}
       >
-        <div className="flex h-8 items-center justify-center text-2xl w-8 mr-3">
+        <div className="flex h-8 items-center justify-center text-2xl w-8 mr-3 flex-shrink-0">
           {React.isValidElement(icon) ? (
             icon
           ) : (
@@ -36,7 +36,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
         </div>
 
         <Typography.Text
-          className="flex-1 text-gray-900 dark:text-white"
+          className="flex-1 min-w-0 text-gray-900 dark:text-white"
           ellipsis={true}
         >
           {name}
@@ -49,7 +49,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
         )}
 
         {props.action && (
-          <div className="text-base p-1 cursor-pointer hidden opacity-70 group-hover:block hover:opacity-100">
+          <div className="text-base p-1 cursor-pointer hidden opacity-70 group-hover:block hover:opacity-100 flex-shrink-0">
             {props.action}
           </div>
         )}

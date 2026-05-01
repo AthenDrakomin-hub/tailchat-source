@@ -26,7 +26,7 @@ import { Virtuoso } from 'react-virtuoso';
 const buildLink = (itemId: string) => `/main/inbox/${itemId}`;
 
 /**
- * 收件箱侧边栏组件
+ * 通知侧边栏组件
  */
 export const InboxSidebar: React.FC = React.memo(() => {
   const inbox = useInboxList();
@@ -107,7 +107,7 @@ export const InboxSidebar: React.FC = React.memo(() => {
 
   const [, handleClear] = useAsyncRequest(async () => {
     const res = await openReconfirmModalP({
-      title: t('确认清空收件箱么?'),
+      title: t('确认清空通知么?'),
     });
     if (res) {
       await model.inbox.clearInbox();
@@ -126,14 +126,14 @@ export const InboxSidebar: React.FC = React.memo(() => {
             },
             {
               key: 'clear',
-              label: t('清空收件箱'),
+              label: t('清空通知'),
               danger: true,
               onClick: handleClear,
             },
           ],
         }}
       >
-        {t('收件箱')}
+        {t('通知')}
       </SectionHeader>
 
       <div className="overflow-hidden flex-1">

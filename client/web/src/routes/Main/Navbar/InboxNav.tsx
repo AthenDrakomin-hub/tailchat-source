@@ -4,7 +4,7 @@ import { t, useInboxList } from 'tailchat-shared';
 import { NavbarNavItem } from './NavItem';
 
 /**
- * 收件箱
+ * 通知中心
  */
 export const InboxNav: React.FC = React.memo(() => {
   const inbox = useInboxList();
@@ -13,7 +13,7 @@ export const InboxNav: React.FC = React.memo(() => {
   return (
     <NavbarNavItem
       className="bg-gray-700"
-      name={t('收件箱')}
+      name={t('通知')}
       to={'/main/inbox'}
       showPill={true}
       badge={unreadList.length > 0}
@@ -22,7 +22,7 @@ export const InboxNav: React.FC = React.memo(() => {
       }}
       data-testid="inbox"
     >
-      <Icon className="text-3xl text-white" icon="mdi:inbox-arrow-down" />
+      <Icon className="text-3xl text-white" icon="mdi:bell-ring" />
     </NavbarNavItem>
   );
 });

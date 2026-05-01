@@ -27,7 +27,7 @@ export const InboxMessageContent: React.FC<Props> = React.memo((props) => {
 
   return (
     <CommonPanelWrapper header={t('提及我的消息')}>
-      <div className="h-full overflow-auto p-2 pb-18 relative">
+      <div className="h-full min-w-0 overflow-y-auto overflow-x-hidden p-2 pb-18 relative">
         <NearbyMessages
           groupId={groupId}
           converseId={converseId}
