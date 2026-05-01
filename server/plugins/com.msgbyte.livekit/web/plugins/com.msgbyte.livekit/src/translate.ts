@@ -5,6 +5,18 @@ export const Translate = {
     'zh-CN': '语音频道',
     'en-US': 'Voice Channel',
   }),
+  callTitle: localTrans({
+    'zh-CN': '语音通话',
+    'en-US': 'Voice Call',
+  }),
+  preJoinTitle: localTrans({
+    'zh-CN': '准备加入通话',
+    'en-US': 'Ready to join the call',
+  }),
+  preJoinTip: localTrans({
+    'zh-CN': '确认昵称和麦克风后即可进入当前会话通话。',
+    'en-US': 'Confirm your name and microphone before joining this call.',
+  }),
   joinLabel: localTrans({
     'zh-CN': '加入通话',
     'en-US': 'Join Call',

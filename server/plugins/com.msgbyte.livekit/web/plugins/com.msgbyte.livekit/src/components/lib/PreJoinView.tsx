@@ -17,6 +17,43 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { log } from '@livekit/components-core';
 import { Translate } from '../../translate';
 import { ParticipantAvatars } from '../ParticipantAvatars';
+import styled from 'styled-components';
+
+const Panel = styled.div`
+  width: 100%;
+  max-width: 30rem;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(10px);
+
+  .tc-prejoin-title {
+    margin-top: 1rem;
+    text-align: center;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .tc-prejoin-tip {
+    margin: 0.5rem 0 1rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .tc-prejoin-name {
+    margin: 0 0 1rem;
+    width: 100%;
+  }
+
+  .tc-prejoin-submit {
+    width: 100%;
+  }
+`;
 
 /**
  * Fork <PreJoin /> from "@livekit/components-react"
@@ -155,13 +192,13 @@ export const PreJoinView: React.FC<PreJoinProps> = React.memo(
       if (typeof onValidate === 'function') {
         return onValidate(values);
       } else {
-        return values.username !== '';
+        return values.username.trim() !== '';
       }
     });
 
     useEffect(() => {
       const newUserChoices = {
-        username: nickname,
+        username: finalNickname,
         videoEnabled: videoEnabled,
         videoDeviceId: videoDeviceId,
         audioEnabled: audioEnabled,
@@ -169,7 +206,7 @@ export const PreJoinView: React.FC<PreJoinProps> = React.memo(
       };
       setUserChoices(newUserChoices);
       setIsValid(handleValidation(newUserChoices));
-    }, [handleValidation, audioEnabled, audioDeviceId, nickname]);
+    }, [handleValidation, audioEnabled, audioDeviceId, finalNickname]);
 
     const handleSubmit = useEvent((event: React.FormEvent) => {
       event.preventDefault();
@@ -195,63 +232,71 @@ export const PreJoinView: React.FC<PreJoinProps> = React.memo(
 
     return (
       <div className="lk-prejoin" {...htmlProps}>
-        <ParticipantAvatars roomName={roomName} />
+        <Panel>
+          <ParticipantAvatars roomName={roomName} />
 
-        <div className="lk-video-container" style={{ borderRadius: 10 }}>
-          {videoTrack && (
-            <video
-              ref={videoEl}
-              width="1280"
-              height="720"
-              data-lk-facing-mode={facingMode}
-            />
-          )}
-          {(!videoTrack || !videoEnabled) && (
-            <div className="lk-camera-off-note">
-              <Avatar size={128} src={avatar} name={nickname} />
+          <div className="tc-prejoin-title">{Translate.preJoinTitle}</div>
+          <div className="tc-prejoin-tip">{Translate.preJoinTip}</div>
+
+          <div className="lk-video-container" style={{ borderRadius: 10 }}>
+            {videoTrack && (
+              <video
+                ref={videoEl}
+                width="1280"
+                height="720"
+                data-lk-facing-mode={facingMode}
+              />
+            )}
+            {(!videoTrack || !videoEnabled) && (
+              <div className="lk-camera-off-note">
+                <Avatar size={128} src={avatar} name={finalNickname} />
+              </div>
+            )}
+          </div>
+          <div className="lk-button-group-container">
+            <div className="lk-button-group audio">
+              <TrackToggle
+                initialState={audioEnabled}
+                source={Track.Source.Microphone}
+                onChange={(enabled) => setAudioEnabled(enabled)}
+              >
+                {micLabel}
+              </TrackToggle>
+              <div className="lk-button-group-menu">
+                <MediaDeviceMenu
+                  initialSelection={audioDeviceId}
+                  kind="audioinput"
+                  disabled={!audioTrack}
+                  tracks={{ audioinput: audioTrack }}
+                  onActiveDeviceChange={(_, id) => setAudioDeviceId(id)}
+                />
+              </div>
             </div>
-          )}
-        </div>
-        <div className="lk-button-group-container">
-          <div className="lk-button-group audio">
-            <TrackToggle
-              initialState={audioEnabled}
-              source={Track.Source.Microphone}
-              onChange={(enabled) => setAudioEnabled(enabled)}
-            >
-              {micLabel}
-            </TrackToggle>
-            <div className="lk-button-group-menu">
-              <MediaDeviceMenu
-                initialSelection={audioDeviceId}
-                kind="audioinput"
-                disabled={!audioTrack}
-                tracks={{ audioinput: audioTrack }}
-                onActiveDeviceChange={(_, id) => setAudioDeviceId(id)}
+          </div>
+
+          {!nickname && (
+            <div className="tc-prejoin-name">
+              <Input
+                placeholder={
+                  Translate.pleaseEnterName || '请输入您的昵称 / Enter your name'
+                }
+                value={guestNickname}
+                onChange={(e) => setGuestNickname(e.target.value)}
+                style={{ width: '100%' }}
               />
             </div>
-          </div>
-        </div>
+          )}
 
-        {!nickname && (
-          <div style={{ marginBottom: 16, width: '100%', maxWidth: 300, alignSelf: 'center' }}>
-            <Input
-              placeholder={Translate.pleaseEnterName || '请输入您的昵称 / Enter your name'}
-              value={guestNickname}
-              onChange={(e) => setGuestNickname(e.target.value)}
-              style={{ width: '100%' }}
-            />
-          </div>
-        )}
-
-        <Button
-          size="large"
-          type="primary"
-          onClick={handleSubmit}
-          disabled={!isValid}
-        >
-          {joinLabel}
-        </Button>
+          <Button
+            className="tc-prejoin-submit"
+            size="large"
+            type="primary"
+            onClick={handleSubmit}
+            disabled={!isValid}
+          >
+            {joinLabel}
+          </Button>
+        </Panel>
 
         {debug && (
           <>
