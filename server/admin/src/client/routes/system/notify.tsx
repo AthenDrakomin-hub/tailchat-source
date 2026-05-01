@@ -39,6 +39,11 @@ export const SystemNotify: React.FC = React.memo(() => {
       Message.success(
         t('custom.system-notify.notifySuccess', { count: data.userIds.length })
       );
+      form.setFieldsValue({
+        title: '',
+        content: '',
+        specifiedUser: undefined,
+      });
     } catch (err) {
       Message.error(formatAdminError(err, '系统通知发送失败'));
     }
@@ -55,6 +60,9 @@ export const SystemNotify: React.FC = React.memo(() => {
       >
         {t('custom.system-notify.tip')}
       </Typography.Title>
+      <Typography.Paragraph type="secondary" style={{ textAlign: 'center' }}>
+        该通知会直接进入用户的通知中心。发送给指定用户时，请明确选择目标对象，避免误发。
+      </Typography.Paragraph>
 
       <Form form={form} onSubmit={handleSubmit}>
         <Form.Item label={t('custom.system-notify.title')} field="title">
@@ -95,6 +103,7 @@ export const SystemNotify: React.FC = React.memo(() => {
           <Form.Item
             label={t('custom.system-notify.specifiedUser')}
             field="specifiedUser"
+            rules={[{ required: true }]}
           >
             <UserSelectedFormInput />
           </Form.Item>
