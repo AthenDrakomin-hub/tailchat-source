@@ -74,8 +74,8 @@ export const Translate = {
     'en-US': 'Current browser does not support DOM full screen',
   }),
   startCall: localTrans({
-    'zh-CN': '发起/加入通话',
-    'en-US': 'Start/Join Call',
+    'zh-CN': '发起通话',
+    'en-US': 'Start Call',
   }),
   isCalling: localTrans({
     'zh-CN': '正在呼叫',
@@ -86,8 +86,8 @@ export const Translate = {
     'en-US': 'The user call failed because of offline',
   }),
   inviteJoinCall: localTrans({
-    'zh-CN': '邀请你加入会话',
-    'en-US': 'invite you to join conversation',
+    'zh-CN': '邀请你加入通话',
+    'en-US': 'invite you to join call',
   }),
   notFoundMeeting: localTrans({
     'zh-CN': '没有找到会议',

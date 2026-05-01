@@ -3,12 +3,10 @@ import {
   regPluginPanelAction,
   regPluginPanelRoute,
   regPluginRootRoute,
-  panelWindowManager,
   regSocketEventListener,
   getGlobalState,
   showNotification,
   navigate,
-  isMobile,
 } from '@capital/common';
 import { Loadable } from '@capital/component';
 import { Translate } from './translate';
@@ -78,12 +76,12 @@ regCustomPanel({
   useIsShow: () => false,
 });
 
-// 发起私信会议
+// 发起私聊通话
 regPluginPanelAction({
   name: `${PLUGIN_ID}/groupAction`,
   label: Translate.startCall,
   position: 'dm',
-  icon: 'mdi:video-box',
+  icon: 'mdi:phone-in-talk',
   onClick: ({ converseId }) => {
     const state = getGlobalState() ?? {};
     const currentUserId = state.user?.info?._id ?? '';
@@ -91,25 +89,13 @@ regPluginPanelAction({
       state.chat?.converses?.[converseId]?.members ?? [];
     const shouldInviteUserIds = members.filter((m) => m !== currentUserId);
 
-    if (isMobile()) {
-      // 如果是手机端则内嵌显示
-      useLivekitState.setState({
-        currentMeetingId: converseId,
-        autoInviteIds: shouldInviteUserIds,
-      });
-      const url = `/main/personal/custom/${PLUGIN_ID}/livekitPersonMeeting`;
-      navigate(url);
-    } else {
-      // 如果是桌面端则弹出独立窗口
-      const win = panelWindowManager.open(
-        `/panel/plugin/${PLUGIN_ID}/meeting/${converseId}`,
-        {
-          width: 1280,
-          height: 768,
-        }
-      );
-      (win.window as any).autoInviteIds = shouldInviteUserIds;
-    }
+    // 统一改为应用内直达，不再优先弹出独立窗口
+    useLivekitState.setState({
+      currentMeetingId: converseId,
+      autoInviteIds: shouldInviteUserIds,
+    });
+    const url = `/main/personal/custom/${PLUGIN_ID}/livekitPersonMeeting`;
+    navigate(url);
   },
 });
 
@@ -122,13 +108,11 @@ regSocketEventListener({
       <InviteCallNotification
         senderUserId={senderUserId}
         onJoin={() => {
-          panelWindowManager.open(
-            `/panel/plugin/${PLUGIN_ID}/meeting/${roomName}`,
-            {
-              width: 1280,
-              height: 768,
-            }
-          );
+          useLivekitState.setState({
+            currentMeetingId: roomName,
+            autoInviteIds: [],
+          });
+          navigate(`/main/personal/custom/${PLUGIN_ID}/livekitPersonMeeting`);
           close();
         }}
       />,
