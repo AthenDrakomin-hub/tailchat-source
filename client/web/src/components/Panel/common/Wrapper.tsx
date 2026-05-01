@@ -25,25 +25,25 @@ export const CommonPanelWrapper: React.FC<CommonPanelWrapperProps> = React.memo(
 
     return (
       <div
-        className="w-full h-full flex"
+        className="w-full h-full min-w-0 flex overflow-hidden"
         style={{
           minWidth: isMobile && !rightPanel ? 'calc(100vw - 72px)' : 0,
         }} // NOTICE: 72px为导航栏宽度
       >
         {/* 主面板 */}
-        <div className="flex flex-col overflow-hidden flex-1">
+        <div className="flex min-w-0 flex-col overflow-hidden flex-1">
           <PanelCommonHeader
             actions={props.actions && props.actions({ setRightPanel })}
           >
             {props.header}
           </PanelCommonHeader>
-          <div className="flex-1 overflow-hidden">{props.children}</div>
+          <div className="flex-1 min-w-0 overflow-hidden">{props.children}</div>
         </div>
 
         {/* 右侧面板 */}
         <div
           className={clsx(
-            'transition-all overflow-hidden border-l border-black border-opacity-20 flex flex-col',
+            'transition-all min-w-0 overflow-hidden border-l border-black border-opacity-20 flex flex-col',
             {
               'w-96 mobile:w-full': rightPanel,
               'w-0': !rightPanel,

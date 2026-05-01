@@ -95,7 +95,7 @@ export const VirtualizedMessageList: React.FC<MessageListProps> = React.memo(
     });
 
     return (
-      <div className="flex-1">
+      <div className="flex-1 min-w-0 overflow-hidden">
         <Virtuoso
           style={virtuosoStyle}
           ref={listRef}

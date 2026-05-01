@@ -123,8 +123,8 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
         appendMsg,
       }}
     >
-      <div className="px-4 py-2">
-        <div className="bg-white dark:bg-gray-600 flex rounded-md items-center relative">
+      <div className="px-4 py-2 min-w-0">
+        <div className="bg-white dark:bg-gray-600 flex min-w-0 rounded-md items-center relative">
           {/* This w-0 is magic to ensure show mention and long text */}
           <div className="flex-1 w-0">
             <ChatInputBoxInput
@@ -142,7 +142,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
           {pasteHandlerContainer}
 
           {!disabled && (
-            <div className="px-2 flex space-x-1">
+            <div className="px-2 flex flex-shrink-0 space-x-1">
               {pluginChatInputButtons.map((item, i) =>
                 React.cloneElement(item.render(), {
                   key: `plugin-chatinput-btn#${i}`,
