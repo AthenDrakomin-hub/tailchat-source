@@ -65,7 +65,7 @@ export const PersonalSidebar: React.FC = React.memo(() => {
             />
           }
         >
-          {t('最近会话')}
+          {t('最近聊天')}
         </SidebarSection>
 
         {converseList.map((converse) => {

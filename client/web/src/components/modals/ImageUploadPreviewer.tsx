@@ -92,7 +92,7 @@ export const ImageUploadPreviewer: React.FC<ImageUploadPreviewerProps> =
 
           <div className="w-1/3 p-2 flex flex-col items-end justify-between">
             <div className="text-right">
-              <div className="text-lg">{t('上传图片到会话')}</div>
+              <div className="text-lg">{t('上传图片到聊天')}</div>
               <div className="text-sm text-gray-400">
                 {t('请勿上传违反当地法律法规的图片')}
               </div>

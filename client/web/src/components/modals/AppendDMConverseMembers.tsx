@@ -23,7 +23,7 @@ export const AppendDMConverseMembers: React.FC<AppendDMConverseMembersProps> =
     }, [converseId, selectedFriendIds]);
 
     return (
-      <ModalWrapper title={t('邀请好友加入会话')}>
+      <ModalWrapper title={t('邀请联系人加入聊天')}>
         <FriendPicker
           withoutUserIds={withoutUserIds}
           selectedIds={selectedFriendIds}

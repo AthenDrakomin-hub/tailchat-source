@@ -31,7 +31,7 @@ const DEFAULT_SERVICES = [
   },
   {
     name: 'chat.converse',
-    label: t('会话服务'),
+    label: t('聊天列表服务'),
   },
   {
     name: 'chat.ack',

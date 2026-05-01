@@ -64,7 +64,7 @@ export const ChatDropArea: React.FC = React.memo(() => {
         <div>
           <Icon icon="mdi:cloud-upload" fontSize={128} />
         </div>
-        <div className="text-xl font-bold">{t('拖放文件以发送到当前会话')}</div>
+        <div className="text-xl font-bold">{t('拖放文件以发送到当前聊天')}</div>
       </div>
     </div>
   );
