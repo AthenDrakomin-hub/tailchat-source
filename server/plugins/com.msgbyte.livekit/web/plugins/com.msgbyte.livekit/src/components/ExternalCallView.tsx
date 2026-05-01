@@ -39,9 +39,9 @@ const CallUI: React.FC<{ onLeave: () => void }> = React.memo(({ onLeave }) => {
       
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '40px' }}>
         <Avatar size={120} src={mainRemote?.identity ? '' : undefined} name={mainRemote?.name || 'Caller'} style={{ marginBottom: 20, boxShadow: '0 0 0 4px rgba(255,255,255,0.1)' }} />
-        <h2 style={{ fontSize: 28, fontWeight: 600, margin: 0, color: '#fff' }}>{mainRemote?.name || 'Encrypted Call'}</h2>
+        <h2 style={{ fontSize: 28, fontWeight: 600, margin: 0, color: '#fff' }}>{mainRemote?.name || '语音通话'}</h2>
         <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', marginTop: 8 }}>
-          {room.state === RoomState.Connected ? 'Connected' : 'Connecting...'}
+          {room.state === RoomState.Connected ? '已接通' : '正在连接...'}
         </p>
       </div>
 
@@ -86,8 +86,8 @@ const IncomingCallUI: React.FC<{ onAnswer: () => void; onDecline: () => void }> 
         }}>
           <Icon icon="mdi:phone-incoming" style={{ fontSize: 48, color: '#fff' }} />
         </div>
-        <h2 style={{ fontSize: 28, fontWeight: 600, margin: 0, color: '#fff' }}>Encrypted Voice Call</h2>
-        <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', marginTop: 8 }}>Incoming call...</p>
+        <h2 style={{ fontSize: 28, fontWeight: 600, margin: 0, color: '#fff' }}>专属语音通话</h2>
+        <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', marginTop: 8 }}>有新的通话邀请</p>
       </div>
 
       <div style={{ display: 'flex', width: '100%', maxWidth: 300, justifyContent: 'space-between', marginBottom: '40px' }}>
@@ -103,7 +103,7 @@ const IncomingCallUI: React.FC<{ onAnswer: () => void; onDecline: () => void }> 
           >
             <Icon icon="mdi:phone-hangup" style={{ fontSize: 36 }} />
           </button>
-          <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>Decline</span>
+          <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>拒绝</span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
@@ -118,7 +118,7 @@ const IncomingCallUI: React.FC<{ onAnswer: () => void; onDecline: () => void }> 
           >
             <Icon icon="mdi:phone" style={{ fontSize: 36 }} />
           </button>
-          <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>Answer</span>
+          <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>接听</span>
         </div>
       </div>
       
@@ -142,7 +142,7 @@ const ExternalCallView: React.FC = React.memo(() => {
   const liveKitUrl = useServerUrl();
 
   if (!meetingId) {
-    return <div>Invalid call link</div>;
+    return <div>无效的通话链接</div>;
   }
 
   if (callState === 'ended') {
@@ -151,7 +151,7 @@ const ExternalCallView: React.FC = React.memo(() => {
         <div style={{ width: 80, height: 80, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
           <Icon icon="mdi:phone-hangup" style={{ fontSize: 40, color: 'rgba(255,255,255,0.6)' }} />
         </div>
-        <h2 style={{ margin: 0, fontWeight: 500 }}>Call Ended</h2>
+        <h2 style={{ margin: 0, fontWeight: 500 }}>通话已结束</h2>
       </div>
     );
   }
@@ -173,7 +173,7 @@ const ExternalCallView: React.FC = React.memo(() => {
           </LiveKitRoom>
         ) : (
           <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ color: 'rgba(255,255,255,0.6)' }}>Connecting...</p>
+            <p style={{ color: 'rgba(255,255,255,0.6)' }}>正在连接...</p>
           </div>
         )
       )}

@@ -21,8 +21,8 @@ const IncomingCallUI: React.FC<{ info: LinkInfo; onAccept: () => void }> = ({
   info,
   onAccept,
 }) => (
-  <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-white fixed inset-0">
-    <div className="mb-12 flex flex-col items-center">
+  <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-white fixed inset-0 px-6">
+    <div className="mb-12 flex flex-col items-center text-center">
       <div className="relative">
         <Avatar
           src={info.inviterAvatar}
@@ -34,6 +34,7 @@ const IncomingCallUI: React.FC<{ info: LinkInfo; onAccept: () => void }> = ({
       </div>
       <h2 className="mt-8 text-2xl font-bold">{info.inviterName}</h2>
       <p className="mt-2 text-gray-400">邀请您进行专属语音通话</p>
+      <p className="mt-1 text-xs text-gray-500">接听后将在当前页面内直接进入通话。</p>
     </div>
 
     <div className="flex gap-16 mt-12">
@@ -66,11 +67,12 @@ const ActiveCallUI: React.FC<{ info: LinkInfo }> = ({ info }) => {
   }, [participants.length, room.state]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-white fixed inset-0">
-      <div className="mb-12 flex flex-col items-center">
+    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-white fixed inset-0 px-6">
+      <div className="mb-12 flex flex-col items-center text-center">
         <Avatar src={info.inviterAvatar} name={info.inviterName} size={100} />
         <h2 className="mt-6 text-xl">{info.inviterName}</h2>
         <p className="mt-2 text-green-400 font-mono">00:00 通话中...</p>
+        <p className="mt-1 text-xs text-gray-500">音频正在当前页面中保持连接。</p>
       </div>
       <div className="mt-12">
         <button
