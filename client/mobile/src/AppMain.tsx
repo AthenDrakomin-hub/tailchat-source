@@ -24,6 +24,7 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
   const [progress, setProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [slowNetworkHint, setSlowNetworkHint] = useState(false);
+  const [statusText, setStatusText] = useState('正在连接当前工作区…');
 
   useEffect(() => {
     if (!loading) {
@@ -94,12 +95,17 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
             setLoading(true);
             setErrorMessage(null);
             setSlowNetworkHint(false);
+            setStatusText('正在连接当前工作区…');
           }}
           onLoadEnd={() => {
             setLoading(false);
+            setStatusText('当前工作区内容已恢复');
           }}
           onLoadProgress={(event) => {
             setProgress(event.nativeEvent.progress);
+            if (event.nativeEvent.progress > 0.6) {
+              setStatusText('正在同步页面内容…');
+            }
           }}
           onNavigationStateChange={(navState) => {
             setCanGoBack(navState.canGoBack);
@@ -107,12 +113,14 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
           onError={(event) => {
             setLoading(false);
             setErrorMessage(event.nativeEvent.description || '页面加载失败');
+            setStatusText('当前工作区暂时无法访问');
           }}
           onHttpError={(event) => {
             setLoading(false);
             setErrorMessage(
               `服务返回异常状态 (${event.nativeEvent.statusCode})，请稍后重试或切换工作区。`
             );
+            setStatusText('服务响应异常');
           }}
           onMessage={(e) => {
             if (!webviewRef.current) {
@@ -139,6 +147,7 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
             <ActivityIndicator size="small" color="#0b4a8b" />
             <View>
               <Text style={styles.loadingText}>正在载入当前工作区内容…</Text>
+              <Text style={styles.statusText}>{statusText}</Text>
               {slowNetworkHint && (
                 <Text style={styles.slowNetworkText}>
                   当前网络较慢，若长时间无响应可尝试刷新或切换工作区。
@@ -150,6 +159,7 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
         {errorMessage && (
           <View style={styles.errorOverlay}>
             <Text style={styles.errorTitle}>当前页面加载失败</Text>
+            <Text style={styles.statusBadge}>{statusText}</Text>
             <Text style={styles.errorText}>{errorMessage}</Text>
             <View style={styles.errorActions}>
               <TouchableOpacity
@@ -283,6 +293,13 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     maxWidth: 220,
   },
+  statusText: {
+    marginLeft: 8,
+    marginTop: 4,
+    color: '#0b4a8b',
+    fontSize: 11,
+    lineHeight: 18,
+  },
   errorOverlay: {
     position: 'absolute',
     left: 16,
@@ -306,6 +323,16 @@ const styles = StyleSheet.create({
     color: '#0f172a',
     fontSize: 16,
     fontWeight: '700',
+  },
+  statusBadge: {
+    marginTop: 8,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: '#eef2ff',
+    color: '#0b4a8b',
+    fontSize: 11,
   },
   errorText: {
     marginTop: 8,

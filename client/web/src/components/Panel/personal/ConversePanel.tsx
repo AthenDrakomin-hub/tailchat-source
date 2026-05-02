@@ -26,7 +26,14 @@ const ConversePanelTitle: React.FC<{ converse: ChatConverseState }> =
   React.memo(({ converse }) => {
     const name = useDMConverseName(converse);
 
-    return t('与 {{name}} 的聊天', { name });
+    return (
+      <div className="min-w-0">
+        <div className="truncate">{t('与 {{name}} 的聊天', { name })}</div>
+        <div className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400 truncate">
+          适合处理一对一跟进、观点确认、资料交换与长期协作沟通
+        </div>
+      </div>
+    );
   });
 ConversePanelTitle.displayName = 'ConversePanelTitle';
 
