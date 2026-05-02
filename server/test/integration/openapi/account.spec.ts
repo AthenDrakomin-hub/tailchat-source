@@ -40,6 +40,7 @@ describe('Test "openapi.account" service', () => {
         return {
           _id: params.postId,
           content: '详情动态',
+          groupId: 'group_1',
         };
       }
 
@@ -204,6 +205,13 @@ describe('Test "openapi.account" service', () => {
       groupId: 'group_1',
       content: '欢迎大家今晚准时参加讨论',
     });
+    const feedRelatedLobbyMessage = await broker.call(
+      'openapi.account.sendFeedRelatedGroupMessage',
+      {
+        postId: 'post_1',
+        content: '围绕这条动态继续在群里展开讨论',
+      }
+    );
 
     expect(detail).toHaveProperty('content', '详情动态');
     expect(Array.isArray(ownPosts)).toBe(true);
@@ -217,6 +225,9 @@ describe('Test "openapi.account" service', () => {
     expect(groupSummary).toHaveProperty('memberCount', 1);
     expect(groupSummary).toHaveProperty('recentMessagesCount', 1);
     expect(groupSummary).toHaveProperty('lastActiveAt', '2026-05-02T12:00:00.000Z');
+    expect(groupSummary).toHaveProperty('hasRecentMessages', true);
+    expect(groupSummary).toHaveProperty('isRecentlyActive', true);
+    expect(groupSummary).toHaveProperty('activityStatus', 'active');
     expect(groupAnnouncement).toHaveProperty('announcement', '今晚八点专题讨论');
     expect(groupLobbyConversation).toHaveProperty('converseId', 'group_converse_1');
     expect(Array.isArray(groupMembers)).toBe(true);
@@ -225,5 +236,9 @@ describe('Test "openapi.account" service', () => {
     expect(conversation).toHaveProperty('type', 'DM');
     expect(Array.isArray(messages)).toBe(true);
     expect(lobbyMessage).toHaveProperty('content', '欢迎大家今晚准时参加讨论');
+    expect(feedRelatedLobbyMessage).toHaveProperty(
+      'content',
+      '围绕这条动态继续在群里展开讨论'
+    );
   });
 });

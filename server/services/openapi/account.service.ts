@@ -44,6 +44,12 @@ class OpenAccountService extends TcService {
         groupId: 'string',
       },
     });
+    this.registerAction('sendFeedRelatedGroupMessage', this.sendFeedRelatedGroupMessage, {
+      params: {
+        postId: 'string',
+        content: 'string',
+      },
+    });
     this.registerAction('getGroupAnnouncement', this.getGroupAnnouncement, {
       params: {
         groupId: 'string',
@@ -265,8 +271,52 @@ class OpenAccountService extends TcService {
       memberCount: context.members.length,
       recentMessagesCount,
       lastActiveAt: latestMessage?.createdAt ?? null,
+      hasRecentMessages: recentMessagesCount > 0,
+      isRecentlyActive:
+        typeof latestMessage?.createdAt === 'string'
+          ? Date.now() - new Date(latestMessage.createdAt).getTime() <=
+            1000 * 60 * 60 * 24
+          : false,
+      activityStatus: recentMessagesCount > 0 ? 'active' : 'quiet',
       recentMessages: context.recentMessages,
     };
+  }
+
+  async sendFeedRelatedGroupMessage(
+    ctx: TcContext<{
+      postId: string;
+      content: string;
+    }>
+  ) {
+    const post = (await ctx.call(
+      'feed.getPostDetail',
+      {
+        postId: ctx.params.postId,
+      },
+      { meta: ctx.meta }
+    )) as { groupId?: string | null };
+
+    if (!post?.groupId) {
+      throw new Error('Feed post has no related group');
+    }
+
+    const converseId = await ctx.call(
+      'group.getGroupLobbyConverseId',
+      {
+        groupId: post.groupId,
+      },
+      { meta: ctx.meta }
+    );
+
+    return ctx.call(
+      'chat.message.sendMessage',
+      {
+        groupId: post.groupId,
+        converseId,
+        content: ctx.params.content,
+      },
+      { meta: ctx.meta }
+    );
   }
 
   async getGroupAnnouncement(

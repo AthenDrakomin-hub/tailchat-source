@@ -69,6 +69,7 @@ export const FeedDetail: React.FC = React.memo(() => {
   const latestRecentMessageTime = latestRecentMessage?.createdAt
     ? new Date(latestRecentMessage.createdAt).toLocaleString('zh-CN')
     : null;
+  const isGroupActive = recentMessages.length > 0;
 
   useEffect(() => {
     document.title = '动态详情 - 財訊';
@@ -160,8 +161,8 @@ export const FeedDetail: React.FC = React.memo(() => {
             </div>
             <div className="mt-3 text-xs leading-6 text-gray-500 dark:text-gray-400">
               {latestRecentMessageTime
-                ? `最近活跃时间：${latestRecentMessageTime}`
-                : '最近暂无可感知活跃记录，当前更像静态群资料页。'}
+                ? `当前群最近仍有互动，最近活跃时间：${latestRecentMessageTime}`
+                : '当前群最近暂无可感知活跃记录，更适合先浏览群说明再决定是否进入。'}
             </div>
             <div className="mt-4 border-t border-black/10 dark:border-white/10 pt-4">
               <div className="text-xs font-semibold text-gray-900 dark:text-white">
@@ -178,7 +179,9 @@ export const FeedDetail: React.FC = React.memo(() => {
                 )}
               </div>
               <div className="mt-3 text-xs leading-6 text-gray-500 dark:text-gray-400">
-                如果你认同这条动态主题，并且群最近仍在活跃交流，可以直接进入群组继续参与讨论。
+                {isGroupActive
+                  ? '如果你认同这条动态主题，现在适合直接进入群组继续参与讨论。'
+                  : '如果你认同这条动态主题，可以先进入群组观察，再决定是否继续参与互动。'}
               </div>
             </div>
           </div>

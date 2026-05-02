@@ -19,6 +19,23 @@ import { getPersonalChatPath } from '@/utils/personal-route';
 interface SidebarDMItemProps {
   converse: ChatConverseState;
 }
+
+function getConverseRoleLabel(name: string): string | null {
+  if (/(官方|系统|公告)/.test(name)) {
+    return '官方';
+  }
+
+  if (/(客服|服务|助手)/.test(name)) {
+    return '服务';
+  }
+
+  if (/(活动|直播|训练营|专题)/.test(name)) {
+    return '活动';
+  }
+
+  return null;
+}
+
 export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
   (props) => {
     const converse = props.converse;
@@ -53,11 +70,21 @@ export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
       dispatch(chatActions.removeConverse({ converseId }));
       await model.user.removeUserDMConverse(converseId);
     }, [converseId]);
+    const roleLabel = getConverseRoleLabel(name);
 
     return (
       <SidebarItem
         key={converseId}
-        name={name}
+        name={
+          <div className="min-w-0 flex items-center gap-2">
+            <span className="truncate">{name}</span>
+            {roleLabel && (
+              <span className="rounded-full bg-black/5 dark:bg-white/10 px-2 py-0.5 text-[10px] leading-4 text-gray-500 dark:text-gray-300">
+                {roleLabel}
+              </span>
+            )}
+          </div>
+        }
         action={
           <Icon
             icon="mdi:close"
@@ -71,6 +98,7 @@ export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
         icon={icon}
         to={getPersonalChatPath(converseId)}
         badge={hasUnread}
+        avatarName={name}
       />
     );
   }

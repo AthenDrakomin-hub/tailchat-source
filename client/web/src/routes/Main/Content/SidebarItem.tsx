@@ -6,14 +6,15 @@ import clsx from 'clsx';
 import { Avatar } from 'tailchat-design';
 
 interface SidebarItemProps {
-  name: string;
+  name: React.ReactNode;
   to: string;
   badge?: boolean | number;
   icon?: string | React.ReactElement;
   action?: React.ReactNode;
+  avatarName?: string;
 }
 export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
-  const { icon, name, to, badge } = props;
+  const { icon, name, to, badge, avatarName } = props;
   const location = useLocation();
   const isActive = location.pathname.startsWith(to);
 
@@ -31,7 +32,10 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
           {React.isValidElement(icon) ? (
             icon
           ) : (
-            <Avatar src={icon} name={name} />
+            <Avatar
+              src={icon}
+              name={typeof name === 'string' ? name : avatarName ?? ''}
+            />
           )}
         </div>
 
