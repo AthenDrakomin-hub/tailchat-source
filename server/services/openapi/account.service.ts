@@ -39,6 +39,11 @@ class OpenAccountService extends TcService {
         groupId: 'string',
       },
     });
+    this.registerAction('getGroupOperationsSummary', this.getGroupOperationsSummary, {
+      params: {
+        groupId: 'string',
+      },
+    });
     this.registerAction('getGroupAnnouncement', this.getGroupAnnouncement, {
       params: {
         groupId: 'string',
@@ -230,6 +235,37 @@ class OpenAccountService extends TcService {
       lobbyConverseId: converseId,
       members,
       recentMessages,
+    };
+  }
+
+  async getGroupOperationsSummary(
+    ctx: TcContext<{
+      groupId: string;
+    }>
+  ) {
+    const context = (await this.getGroupOperationsContext(ctx)) as {
+      group?: {
+        description?: string;
+      } & Record<string, unknown>;
+      announcement: string;
+      lobbyConverseId: string;
+      members: Array<unknown>;
+      recentMessages: Array<{
+        createdAt?: string;
+      }>;
+    };
+
+    const recentMessagesCount = context.recentMessages.length;
+    const latestMessage = context.recentMessages[0];
+
+    return {
+      group: context.group,
+      announcement: context.announcement,
+      lobbyConverseId: context.lobbyConverseId,
+      memberCount: context.members.length,
+      recentMessagesCount,
+      lastActiveAt: latestMessage?.createdAt ?? null,
+      recentMessages: context.recentMessages,
     };
   }
 

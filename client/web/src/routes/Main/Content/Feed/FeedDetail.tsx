@@ -65,6 +65,10 @@ export const FeedDetail: React.FC = React.memo(() => {
     return fetchConverseMessage(converseId);
   }, [post?.groupId]);
   const recentMessages: ChatMessage[] = recentMessagesValue ?? [];
+  const latestRecentMessage = recentMessages[0];
+  const latestRecentMessageTime = latestRecentMessage?.createdAt
+    ? new Date(latestRecentMessage.createdAt).toLocaleString('zh-CN')
+    : null;
 
   useEffect(() => {
     document.title = '动态详情 - 財訊';
@@ -154,6 +158,11 @@ export const FeedDetail: React.FC = React.memo(() => {
             <div className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
               {relatedGroup.description || '该群当前暂无公开群说明。'}
             </div>
+            <div className="mt-3 text-xs leading-6 text-gray-500 dark:text-gray-400">
+              {latestRecentMessageTime
+                ? `最近活跃时间：${latestRecentMessageTime}`
+                : '最近暂无可感知活跃记录，当前更像静态群资料页。'}
+            </div>
             <div className="mt-4 border-t border-black/10 dark:border-white/10 pt-4">
               <div className="text-xs font-semibold text-gray-900 dark:text-white">
                 群最近消息
@@ -164,12 +173,12 @@ export const FeedDetail: React.FC = React.memo(() => {
                 ))}
                 {recentMessages.length === 0 && (
                   <div className="text-xs leading-6 text-gray-500 dark:text-gray-400">
-                    当前群最近暂无可预览消息。
+                    当前群最近暂无可预览消息，适合先浏览群说明后再决定是否进入。
                   </div>
                 )}
               </div>
               <div className="mt-3 text-xs leading-6 text-gray-500 dark:text-gray-400">
-                如果你认同这条动态主题，可以直接进入群组继续参与实时讨论。
+                如果你认同这条动态主题，并且群最近仍在活跃交流，可以直接进入群组继续参与讨论。
               </div>
             </div>
           </div>
