@@ -68,9 +68,15 @@ export const PersonalSidebar: React.FC = React.memo(() => {
           {t('最近聊天')}
         </SidebarSection>
 
-        {converseList.map((converse) => {
-          return <SidebarDMItem key={converse._id} converse={converse} />;
-        })}
+        {converseList.length > 0 ? (
+          converseList.map((converse) => {
+            return <SidebarDMItem key={converse._id} converse={converse} />;
+          })
+        ) : (
+          <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-3 py-3 text-xs leading-6 text-gray-500 dark:text-gray-400">
+            当前还没有最近聊天。你可以先从下方联系人开始，或点击右上角 `+` 新建私信会话。
+          </div>
+        )}
 
         <SidebarSection
           action={<Icon icon="mdi:account-multiple-outline" />}
