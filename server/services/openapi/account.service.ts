@@ -34,6 +34,11 @@ class OpenAccountService extends TcService {
         groupId: 'string',
       },
     });
+    this.registerAction('getGroupOperationsContext', this.getGroupOperationsContext, {
+      params: {
+        groupId: 'string',
+      },
+    });
     this.registerAction('getGroupAnnouncement', this.getGroupAnnouncement, {
       params: {
         groupId: 'string',
@@ -197,6 +202,35 @@ class OpenAccountService extends TcService {
     }>
   ) {
     return ctx.call('group.listGroupMembers', ctx.params, { meta: ctx.meta });
+  }
+
+  async getGroupOperationsContext(
+    ctx: TcContext<{
+      groupId: string;
+    }>
+  ) {
+    const groupId = ctx.params.groupId;
+    const [group, members, converseId] = await Promise.all([
+      ctx.call('group.getGroupInfo', { groupId }, { meta: ctx.meta }),
+      ctx.call('group.listGroupMembers', { groupId }, { meta: ctx.meta }),
+      ctx.call('group.getGroupLobbyConverseId', { groupId }, { meta: ctx.meta }),
+    ]);
+
+    const recentMessages = await ctx.call(
+      'chat.message.fetchConverseMessage',
+      {
+        converseId,
+      },
+      { meta: ctx.meta }
+    );
+
+    return {
+      group,
+      announcement: (group as { description?: string } | null)?.description ?? '',
+      lobbyConverseId: converseId,
+      members,
+      recentMessages,
+    };
   }
 
   async getGroupAnnouncement(

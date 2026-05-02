@@ -150,6 +150,12 @@ describe('Test "openapi.account" service', () => {
     const group = await broker.call('openapi.account.getGroupDetail', {
       groupId: 'group_1',
     });
+    const groupContext = await broker.call(
+      'openapi.account.getGroupOperationsContext',
+      {
+        groupId: 'group_1',
+      }
+    );
     const groupAnnouncement = await broker.call(
       'openapi.account.getGroupAnnouncement',
       {
@@ -199,6 +205,8 @@ describe('Test "openapi.account" service', () => {
     expect(liked).toHaveProperty('likesCount', 3);
     expect(removed).toHaveProperty('success', true);
     expect(group).toHaveProperty('name', '群组A');
+    expect(groupContext).toHaveProperty('announcement', '今晚八点专题讨论');
+    expect(groupContext).toHaveProperty('lobbyConverseId', 'group_converse_1');
     expect(groupAnnouncement).toHaveProperty('announcement', '今晚八点专题讨论');
     expect(groupLobbyConversation).toHaveProperty('converseId', 'group_converse_1');
     expect(Array.isArray(groupMembers)).toBe(true);

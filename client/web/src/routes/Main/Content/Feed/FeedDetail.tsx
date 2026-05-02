@@ -19,6 +19,26 @@ import { FeedSidebar } from './FeedSidebar';
 import { CommentComposer } from './CommentComposer';
 import { CommentList } from './CommentList';
 
+const RecentMessageItem: React.FC<{ message: ChatMessage }> = React.memo(({ message }) => {
+  const author = useCachedUserInfo(message.author ?? '');
+  const createdAtText = message.createdAt
+    ? new Date(message.createdAt).toLocaleString('zh-CN')
+    : '刚刚';
+
+  return (
+    <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-3 py-2">
+      <div className="flex items-center justify-between gap-3 text-[11px] text-gray-500 dark:text-gray-400">
+        <span className="truncate">{author.nickname ?? '群成员'}</span>
+        <span>{createdAtText}</span>
+      </div>
+      <div className="mt-1 text-xs leading-6 text-gray-600 dark:text-gray-300">
+        {message.content || '[非文本消息]'}
+      </div>
+    </div>
+  );
+});
+RecentMessageItem.displayName = 'RecentMessageItem';
+
 export const FeedDetail: React.FC = React.memo(() => {
   const { postId = '' } = useParams();
   const [post, setPost] = useState<FeedPost | null>(null);
@@ -128,7 +148,7 @@ export const FeedDetail: React.FC = React.memo(() => {
                 to={`/main/group/${post.groupId}`}
                 className="rounded-2xl bg-[#0b4a8b] px-4 py-2 text-sm font-medium text-white"
               >
-                进入群组
+                去群里参与讨论
               </Link>
             </div>
             <div className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
@@ -140,18 +160,16 @@ export const FeedDetail: React.FC = React.memo(() => {
               </div>
               <div className="mt-2 space-y-2">
                 {recentMessages.slice(0, 2).map((message) => (
-                  <div
-                    key={message._id}
-                    className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-3 py-2 text-xs leading-6 text-gray-600 dark:text-gray-300"
-                  >
-                    {message.content || '[非文本消息]'}
-                  </div>
+                  <RecentMessageItem key={message._id} message={message} />
                 ))}
                 {recentMessages.length === 0 && (
                   <div className="text-xs leading-6 text-gray-500 dark:text-gray-400">
                     当前群最近暂无可预览消息。
                   </div>
                 )}
+              </div>
+              <div className="mt-3 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                如果你认同这条动态主题，可以直接进入群组继续参与实时讨论。
               </div>
             </div>
           </div>
