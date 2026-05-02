@@ -18,6 +18,7 @@ interface Props {
 }
 export const AppMain: React.FC<Props> = React.memo((props) => {
   const webviewRef = useRef<WebView>(null);
+  const nextLoadStatusTextRef = useRef<string | null>(null);
   const clearSelectedServer = useServerStore((state) => state.clearSelectedServer);
   const [canGoBack, setCanGoBack] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -38,6 +39,16 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
 
     return () => clearTimeout(timer);
   }, [loading]);
+
+  const recoverCurrentPage = (status: string) => {
+    nextLoadStatusTextRef.current = status;
+    setErrorMessage(null);
+    setLoading(true);
+    setProgress(0.08);
+    setSlowNetworkHint(false);
+    setStatusText(status);
+    webviewRef.current?.reload();
+  };
 
   return (
     <View style={styles.root}>
@@ -70,10 +81,10 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
             <Text style={styles.ghostBtnText}>切换</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.primaryBtn}
+            style={[styles.primaryBtn, loading && styles.disabledPrimaryBtn]}
+            disabled={loading}
             onPress={() => {
-              setErrorMessage(null);
-              webviewRef.current?.reload();
+              recoverCurrentPage('正在重新连接当前工作区…');
             }}
           >
             <Text style={styles.primaryBtnText}>刷新</Text>
@@ -95,7 +106,10 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
             setLoading(true);
             setErrorMessage(null);
             setSlowNetworkHint(false);
-            setStatusText('正在连接当前工作区…');
+            setStatusText(
+              nextLoadStatusTextRef.current ?? '正在连接当前工作区…'
+            );
+            nextLoadStatusTextRef.current = null;
           }}
           onLoadEnd={() => {
             setLoading(false);
@@ -173,9 +187,7 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
               <TouchableOpacity
                 style={styles.primaryBtn}
                 onPress={() => {
-                  setErrorMessage(null);
-                  setLoading(true);
-                  webviewRef.current?.reload();
+                  recoverCurrentPage('正在恢复当前工作区…');
                 }}
               >
                 <Text style={styles.primaryBtnText}>重试</Text>
@@ -252,6 +264,9 @@ const styles = StyleSheet.create({
   },
   disabledBtnText: {
     color: '#94a3b8',
+  },
+  disabledPrimaryBtn: {
+    opacity: 0.65,
   },
   progressWrap: {
     marginTop: 10,

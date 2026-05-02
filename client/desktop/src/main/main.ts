@@ -14,6 +14,7 @@ import {
   BrowserWindow,
   shell,
   ipcMain,
+  dialog,
   desktopCapturer,
   DesktopCapturerSource,
 } from 'electron';
@@ -111,6 +112,8 @@ const webPreferences: Electron.WebPreferences = {
 let welcomeWindow: BrowserWindow | null = null;
 let mainWindow: BrowserWindow | null = null;
 let capturerSourcePickerWindow: BrowserWindow | null = null;
+let currentWorkspaceUrl: string | null = null;
+let isShowingRecoveryDialog = false;
 
 const createWelcomeWindow = async () => {
   // 创建一个新的浏览器窗口
@@ -159,6 +162,7 @@ const createMainWindow = async (url: string) => {
       await installExtensions();
     }
 
+    currentWorkspaceUrl = url;
     const RESOURCES_PATH = app.isPackaged
       ? path.join(process.resourcesPath, 'assets')
       : path.join(__dirname, '../../assets');
@@ -246,7 +250,7 @@ const createMainWindow = async (url: string) => {
 
     mainWindow.webContents.on(
       'did-fail-load',
-      (_event, errorCode, errorDescription) => {
+      async (_event, errorCode, errorDescription) => {
         if (!mainWindow || errorCode === -3) {
           return;
         }
@@ -254,6 +258,37 @@ const createMainWindow = async (url: string) => {
         log.error('main window load failed:', errorCode, errorDescription);
         applyWindowTitle('工作区加载失败');
         mainWindow.setProgressBar(-1);
+
+        if (isShowingRecoveryDialog) {
+          return;
+        }
+
+        isShowingRecoveryDialog = true;
+        const result = await dialog.showMessageBox(mainWindow, {
+          type: 'warning',
+          title: '工作区加载失败',
+          message: '当前工作区暂时无法加载',
+          detail: `${errorDescription}（错误码: ${errorCode}）`,
+          buttons: ['重试', '返回工作区选择'],
+          cancelId: 1,
+          defaultId: 0,
+        });
+        isShowingRecoveryDialog = false;
+
+        if (!mainWindow) {
+          return;
+        }
+
+        if (result.response === 0 && currentWorkspaceUrl) {
+          applyWindowTitle('正在重新连接工作区');
+          mainWindow.setProgressBar(0.2);
+          mainWindow.loadURL(currentWorkspaceUrl);
+          return;
+        }
+
+        currentWorkspaceUrl = null;
+        mainWindow.close();
+        createWelcomeWindow();
       }
     );
 
