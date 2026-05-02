@@ -22,6 +22,7 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
   const recoverSuccessTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
+  const showRecoverSuccessRef = useRef(false);
   const clearSelectedServer = useServerStore((state) => state.clearSelectedServer);
   const [canGoBack, setCanGoBack] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -53,6 +54,7 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
   }, []);
 
   const recoverCurrentPage = (status: string) => {
+    showRecoverSuccessRef.current = true;
     nextLoadStatusTextRef.current = status;
     setErrorMessage(null);
     setLoading(true);
@@ -126,14 +128,20 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
           }}
           onLoadEnd={() => {
             setLoading(false);
-            setStatusText('当前工作区内容已恢复');
-            setRecoverSuccessVisible(true);
-            if (recoverSuccessTimerRef.current) {
-              clearTimeout(recoverSuccessTimerRef.current);
+            if (showRecoverSuccessRef.current) {
+              setStatusText('当前工作区内容已恢复');
+              setRecoverSuccessVisible(true);
+              if (recoverSuccessTimerRef.current) {
+                clearTimeout(recoverSuccessTimerRef.current);
+              }
+              recoverSuccessTimerRef.current = setTimeout(() => {
+                setRecoverSuccessVisible(false);
+                setStatusText('当前工作区连接稳定');
+              }, 1800);
+              showRecoverSuccessRef.current = false;
+            } else {
+              setStatusText('当前工作区已连接');
             }
-            recoverSuccessTimerRef.current = setTimeout(() => {
-              setRecoverSuccessVisible(false);
-            }, 1800);
           }}
           onLoadProgress={(event) => {
             setProgress(event.nativeEvent.progress);

@@ -1,5 +1,6 @@
 import {
   app,
+  clipboard,
   Menu,
   shell,
   BrowserWindow,
@@ -15,10 +16,16 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
   onSwitchWorkspace?: () => void;
+  workspaceUrl?: string;
 
-  constructor(mainWindow: BrowserWindow, onSwitchWorkspace?: () => void) {
+  constructor(
+    mainWindow: BrowserWindow,
+    onSwitchWorkspace?: () => void,
+    workspaceUrl?: string
+  ) {
     this.mainWindow = mainWindow;
     this.onSwitchWorkspace = onSwitchWorkspace;
+    this.workspaceUrl = workspaceUrl;
   }
 
   buildMenu(): Menu {
@@ -53,6 +60,35 @@ export default class MenuBuilder {
         },
       ]).popup({ window: this.mainWindow });
     });
+  }
+
+  buildWorkspaceSubmenu(): MenuItemConstructorOptions[] {
+    return [
+      {
+        label: '在浏览器打开当前工作区',
+        enabled: Boolean(this.workspaceUrl),
+        click: () => {
+          if (this.workspaceUrl) {
+            shell.openExternal(this.workspaceUrl);
+          }
+        },
+      },
+      {
+        label: '复制当前工作区地址',
+        enabled: Boolean(this.workspaceUrl),
+        click: () => {
+          if (this.workspaceUrl) {
+            clipboard.writeText(this.workspaceUrl);
+          }
+        },
+      },
+      {
+        label: '返回工作区选择',
+        click: () => {
+          this.onSwitchWorkspace?.();
+        },
+      },
+    ];
   }
 
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
@@ -149,6 +185,10 @@ export default class MenuBuilder {
         { label: 'Bring All to Front', selector: 'arrangeInFront:' },
       ],
     };
+    const subMenuWorkspace: MenuItemConstructorOptions = {
+      label: 'Workspace',
+      submenu: this.buildWorkspaceSubmenu(),
+    };
     const subMenuHelp: MenuItemConstructorOptions = {
       label: 'Help',
       submenu: [
@@ -179,7 +219,14 @@ export default class MenuBuilder {
       ],
     };
 
-    return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+    return [
+      subMenuAbout,
+      subMenuEdit,
+      subMenuView,
+      subMenuWindow,
+      subMenuWorkspace,
+      subMenuHelp,
+    ];
   }
 
   buildDefaultTemplate() {
@@ -232,6 +279,10 @@ export default class MenuBuilder {
             },
           },
         ],
+      },
+      {
+        label: '工作区',
+        submenu: this.buildWorkspaceSubmenu(),
       },
       {
         label: 'Help',

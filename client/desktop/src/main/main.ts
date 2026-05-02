@@ -342,7 +342,8 @@ const createMainWindow = async (url: string) => {
     log.info('Build menu');
     const menuBuilder = new MenuBuilder(
       mainWindow,
-      switchBackToWorkspaceSelector
+      switchBackToWorkspaceSelector,
+      currentWorkspaceUrl ?? undefined
     );
     menuBuilder.buildMenu();
 
