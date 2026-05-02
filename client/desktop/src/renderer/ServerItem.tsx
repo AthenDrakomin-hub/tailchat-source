@@ -8,11 +8,15 @@ export const ServerItem: React.FC<
     url?: string;
     badge?: string;
     subtitle?: string;
+    entering?: boolean;
     onClick: () => void;
   }>
 > = React.memo((props) => {
   return (
-    <div className="server-item" onClick={props.onClick}>
+    <div
+      className={`server-item ${props.entering ? 'is-entering' : ''}`}
+      onClick={props.onClick}
+    >
       {props.badge && <div className="server-item__badge">{props.badge}</div>}
       <div>
         <img width="60px" height="60px" alt="icon" src={props.icon} />
@@ -21,7 +25,9 @@ export const ServerItem: React.FC<
       {props.subtitle && <div className="server-item__subtitle">{props.subtitle}</div>}
       {props.url && <div className="server-item__url">{props.url}</div>}
       <div className="server-item__version">
-        <small title={props.version}>{props.version}</small>
+        <small title={props.version}>
+          {props.entering ? '正在进入工作区…' : props.version}
+        </small>
       </div>
     </div>
   );

@@ -87,6 +87,9 @@ const ChatBoxInner: React.FC<ChatBoxProps> = React.memo((props) => {
             <div className="mt-4 text-xs leading-6 text-gray-500 dark:text-gray-400">
               当这条会话开始持续互动后，它会稳定出现在左侧最近聊天，方便你把一对一沟通沉淀成长期跟进关系。
             </div>
+            <div className="mt-3 text-[11px] leading-5 text-gray-400 dark:text-gray-500">
+              小提示：如果这是第一次联系，对方更容易响应清楚、简短且直接说明意图的消息。
+            </div>
           </div>
         </div>
       ) : (

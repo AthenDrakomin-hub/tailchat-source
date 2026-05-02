@@ -9,6 +9,9 @@ import './App.css';
 const Hello: React.FC = React.memo(() => {
   const { serverList, removeServer } = useServerStore();
   const allServers = [...defaultServerList, ...serverList];
+  const [enteringServerUrl, setEnteringServerUrl] = React.useState<string | null>(
+    null
+  );
 
   return (
     <div className="app-shell">
@@ -23,6 +26,11 @@ const Hello: React.FC = React.memo(() => {
         <p className="hero-description">
           桌面端适合长期盯盘、观点沉淀、群组讨论和会话常驻。当前版本已进入内测阶段，推荐优先使用默认工作区开始体验。
         </p>
+        {enteringServerUrl && (
+          <div className="hero-entering">
+            正在连接当前工作区并准备主窗口，请稍候…
+          </div>
+        )}
         <div className="hero-tips">
           <span>推荐 Windows 长时间使用</span>
           <span>支持自定义服务器</span>
@@ -34,6 +42,7 @@ const Hello: React.FC = React.memo(() => {
       <div className="server-list">
         {allServers.map((serverInfo, i) => {
           const isDefaultServer = i < defaultServerList.length;
+          const entering = enteringServerUrl === serverInfo.url;
 
           return (
             <Dropdown
@@ -68,7 +77,9 @@ const Hello: React.FC = React.memo(() => {
                       ? '建议从默认工作区开始体验財訊桌面端'
                       : '你手动添加的服务器入口'
                   }
+                  entering={entering}
                   onClick={() => {
+                    setEnteringServerUrl(serverInfo.url);
                     window.electron.ipcRenderer.sendMessage('selectServer', {
                       url: serverInfo.url,
                     });
@@ -88,6 +99,7 @@ const Hello: React.FC = React.memo(() => {
         <button
           className="primary"
           type="button"
+          disabled={Boolean(enteringServerUrl)}
           onClick={() => {
             window.open('https://tailchat.msgbyte.com/');
           }}
@@ -97,6 +109,7 @@ const Hello: React.FC = React.memo(() => {
 
         <button
           type="button"
+          disabled={Boolean(enteringServerUrl)}
           onClick={() => {
             window.open('https://tailchat.msgbyte.com/downloads');
           }}
@@ -106,6 +119,7 @@ const Hello: React.FC = React.memo(() => {
 
         <button
           type="button"
+          disabled={Boolean(enteringServerUrl)}
           onClick={() => {
             window.electron.ipcRenderer.sendMessage('close');
           }}
