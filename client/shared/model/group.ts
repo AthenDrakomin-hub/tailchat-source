@@ -97,6 +97,16 @@ export async function getGroupBasicInfo(
   return data;
 }
 
+export async function getGroupLobbyConverseId(groupId: string): Promise<string> {
+  const { data } = await request.get('/api/group/getGroupLobbyConverseId', {
+    params: {
+      groupId,
+    },
+  });
+
+  return data;
+}
+
 /**
  * 修改群组属性
  * @param groupId 群组ID

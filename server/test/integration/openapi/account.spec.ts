@@ -118,6 +118,15 @@ describe('Test "openapi.account" service', () => {
         ];
       }
 
+      if (actionName === 'chat.message.sendMessage') {
+        return {
+          _id: 'msg_sent_1',
+          converseId: params.converseId,
+          groupId: params.groupId,
+          content: params.content,
+        };
+      }
+
       return [];
     });
 
@@ -178,6 +187,10 @@ describe('Test "openapi.account" service', () => {
     const messages = await broker.call('openapi.account.listConversationMessages', {
       converseId: 'converse_1',
     });
+    const lobbyMessage = await broker.call('openapi.account.sendGroupLobbyMessage', {
+      groupId: 'group_1',
+      content: '欢迎大家今晚准时参加讨论',
+    });
 
     expect(detail).toHaveProperty('content', '详情动态');
     expect(Array.isArray(ownPosts)).toBe(true);
@@ -193,5 +206,6 @@ describe('Test "openapi.account" service', () => {
     expect(announcement).toHaveProperty('fieldName', 'description');
     expect(conversation).toHaveProperty('type', 'DM');
     expect(Array.isArray(messages)).toBe(true);
+    expect(lobbyMessage).toHaveProperty('content', '欢迎大家今晚准时参加讨论');
   });
 });

@@ -136,6 +136,7 @@ export {
   createGroupInviteCode,
   getAllGroupInviteCode,
   getGroupBasicInfo,
+  getGroupLobbyConverseId,
   quitGroup,
   applyGroupInvite,
   deleteGroupInvite,
@@ -177,6 +178,7 @@ export {
 } from './model/feed';
 export {
   sendMessage,
+  fetchConverseMessage,
   recallMessage,
   deleteMessage,
   addReaction,

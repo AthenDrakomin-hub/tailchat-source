@@ -22,6 +22,12 @@ class OpenAccountService extends TcService {
         groupId: { type: 'string', optional: true },
       },
     });
+    this.registerAction('sendGroupLobbyMessage', this.sendGroupLobbyMessage, {
+      params: {
+        groupId: 'string',
+        content: 'string',
+      },
+    });
     this.registerAction('listGroups', this.listGroups);
     this.registerAction('listGroupMembers', this.listGroupMembers, {
       params: {
@@ -154,6 +160,31 @@ class OpenAccountService extends TcService {
     return ctx.call('chat.message.sendMessage', ctx.params, {
       meta: ctx.meta,
     });
+  }
+
+  async sendGroupLobbyMessage(
+    ctx: TcContext<{
+      groupId: string;
+      content: string;
+    }>
+  ) {
+    const converseId = await ctx.call(
+      'group.getGroupLobbyConverseId',
+      {
+        groupId: ctx.params.groupId,
+      },
+      { meta: ctx.meta }
+    );
+
+    return ctx.call(
+      'chat.message.sendMessage',
+      {
+        groupId: ctx.params.groupId,
+        converseId,
+        content: ctx.params.content,
+      },
+      { meta: ctx.meta }
+    );
   }
 
   async listGroups(ctx: TcContext) {

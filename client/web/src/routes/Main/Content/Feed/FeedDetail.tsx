@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
+  ChatMessage,
+  fetchConverseMessage,
   FeedComment,
   FeedPost,
   getGroupBasicInfo,
+  getGroupLobbyConverseId,
   getFeedPostDetail,
   listFeedComments,
   showErrorToasts,
@@ -33,6 +36,15 @@ export const FeedDetail: React.FC = React.memo(() => {
         } & Awaited<ReturnType<typeof getGroupBasicInfo>>)
       | null;
   }, [post?.groupId]);
+  const { value: recentMessagesValue } = useAsync(async () => {
+    if (!post?.groupId) {
+      return [] as ChatMessage[];
+    }
+
+    const converseId = await getGroupLobbyConverseId(post.groupId);
+    return fetchConverseMessage(converseId);
+  }, [post?.groupId]);
+  const recentMessages: ChatMessage[] = recentMessagesValue ?? [];
 
   useEffect(() => {
     document.title = '动态详情 - 財訊';
@@ -121,6 +133,26 @@ export const FeedDetail: React.FC = React.memo(() => {
             </div>
             <div className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
               {relatedGroup.description || '该群当前暂无公开群说明。'}
+            </div>
+            <div className="mt-4 border-t border-black/10 dark:border-white/10 pt-4">
+              <div className="text-xs font-semibold text-gray-900 dark:text-white">
+                群最近消息
+              </div>
+              <div className="mt-2 space-y-2">
+                {recentMessages.slice(0, 2).map((message) => (
+                  <div
+                    key={message._id}
+                    className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-3 py-2 text-xs leading-6 text-gray-600 dark:text-gray-300"
+                  >
+                    {message.content || '[非文本消息]'}
+                  </div>
+                ))}
+                {recentMessages.length === 0 && (
+                  <div className="text-xs leading-6 text-gray-500 dark:text-gray-400">
+                    当前群最近暂无可预览消息。
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
