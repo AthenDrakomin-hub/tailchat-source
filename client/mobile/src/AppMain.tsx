@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { generateInjectedScript } from './lib/inject';
@@ -23,6 +23,20 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [slowNetworkHint, setSlowNetworkHint] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      setSlowNetworkHint(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setSlowNetworkHint(true);
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   return (
     <View style={styles.root}>
@@ -79,6 +93,7 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
           onLoadStart={() => {
             setLoading(true);
             setErrorMessage(null);
+            setSlowNetworkHint(false);
           }}
           onLoadEnd={() => {
             setLoading(false);
@@ -92,6 +107,12 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
           onError={(event) => {
             setLoading(false);
             setErrorMessage(event.nativeEvent.description || '页面加载失败');
+          }}
+          onHttpError={(event) => {
+            setLoading(false);
+            setErrorMessage(
+              `服务返回异常状态 (${event.nativeEvent.statusCode})，请稍后重试或切换工作区。`
+            );
           }}
           onMessage={(e) => {
             if (!webviewRef.current) {
@@ -116,7 +137,14 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
         {loading && (
           <View style={styles.loadingOverlay}>
             <ActivityIndicator size="small" color="#0b4a8b" />
-            <Text style={styles.loadingText}>正在载入当前工作区内容…</Text>
+            <View>
+              <Text style={styles.loadingText}>正在载入当前工作区内容…</Text>
+              {slowNetworkHint && (
+                <Text style={styles.slowNetworkText}>
+                  当前网络较慢，若长时间无响应可尝试刷新或切换工作区。
+                </Text>
+              )}
+            </View>
           </View>
         )}
         {errorMessage && (
@@ -246,6 +274,14 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     color: '#334155',
     fontSize: 12,
+  },
+  slowNetworkText: {
+    marginLeft: 8,
+    marginTop: 4,
+    color: '#64748b',
+    fontSize: 11,
+    lineHeight: 18,
+    maxWidth: 220,
   },
   errorOverlay: {
     position: 'absolute',

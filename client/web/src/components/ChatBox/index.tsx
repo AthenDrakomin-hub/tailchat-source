@@ -51,11 +51,39 @@ const ChatBoxInner: React.FC<ChatBoxProps> = React.memo((props) => {
     <div className="w-full h-full min-w-0 overflow-hidden flex flex-col select-text relative text-sm">
       {messages.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-          <div className="text-base font-semibold text-gray-700 dark:text-gray-200">
-            从这里开始交流
-          </div>
-          <div className="mt-2 text-sm text-gray-500 dark:text-gray-400 max-w-[42rem]">
-            “{emptyQuote.text}”
+          <div className="max-w-2xl w-full rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-6 py-6 shadow-sm">
+            <div className="text-base font-semibold text-gray-700 dark:text-gray-200">
+              从这里开始交流
+            </div>
+            <div className="mt-2 text-sm text-gray-500 dark:text-gray-400 max-w-[42rem] mx-auto">
+              “{emptyQuote.text}”
+            </div>
+            <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+              <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4 text-left">
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                  先发一条消息
+                </div>
+                <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                  直接在下方输入框开始聊天，最适合破冰和确认对方是否在线。
+                </div>
+              </div>
+              <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4 text-left">
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                  明确主题
+                </div>
+                <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                  第一条消息最好直接说明你的问题、观点或需要对方配合的事项。
+                </div>
+              </div>
+              <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4 text-left">
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                  持续沉淀
+                </div>
+                <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                  后续这条会话会出现在最近聊天里，方便你持续跟进一对一沟通。
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       ) : (
