@@ -55,6 +55,23 @@ describe('Test "openapi.account" service', () => {
         };
       }
 
+      if (actionName === 'feed.listPostComments') {
+        return [
+          {
+            _id: 'comment_1',
+            postId: params.postId,
+            content: '评论A',
+          },
+        ];
+      }
+
+      if (actionName === 'feed.likePost') {
+        return {
+          postId: params.postId,
+          likesCount: 3,
+        };
+      }
+
       if (actionName === 'feed.removePost') {
         return { success: true };
       }
@@ -63,12 +80,38 @@ describe('Test "openapi.account" service', () => {
         return { _id: params.groupId, name: '群组A' };
       }
 
+      if (actionName === 'group.listGroupMembers') {
+        return [
+          {
+            userId: 'user_1',
+            nickname: '成员A',
+          },
+        ];
+      }
+
       if (actionName === 'group.updateGroupField') {
         return {
           groupId: params.groupId,
           fieldName: params.fieldName,
           fieldValue: params.fieldValue,
         };
+      }
+
+      if (actionName === 'chat.converse.findConverseInfo') {
+        return {
+          _id: params.converseId,
+          type: 'DM',
+        };
+      }
+
+      if (actionName === 'chat.message.fetchConverseMessage') {
+        return [
+          {
+            _id: 'msg_1',
+            converseId: params.converseId,
+            content: '会话消息A',
+          },
+        ];
       }
 
       return [];
@@ -82,10 +125,19 @@ describe('Test "openapi.account" service', () => {
       postId: 'post_1',
       content: '收到，今晚参与讨论',
     });
+    const commentList = await broker.call('openapi.account.listFeedComments', {
+      postId: 'post_1',
+    });
+    const liked = await broker.call('openapi.account.likeFeedPost', {
+      postId: 'post_1',
+    });
     const removed = await broker.call('openapi.account.removeFeedPost', {
       postId: 'post_1',
     });
     const group = await broker.call('openapi.account.getGroupDetail', {
+      groupId: 'group_1',
+    });
+    const groupMembers = await broker.call('openapi.account.listGroupMembers', {
       groupId: 'group_1',
     });
     const announcement = await broker.call(
@@ -95,12 +147,26 @@ describe('Test "openapi.account" service', () => {
         announcement: '今晚八点专题讨论',
       }
     );
+    const conversation = await broker.call(
+      'openapi.account.getConversationDetail',
+      {
+        converseId: 'converse_1',
+      }
+    );
+    const messages = await broker.call('openapi.account.listConversationMessages', {
+      converseId: 'converse_1',
+    });
 
     expect(detail).toHaveProperty('content', '详情动态');
     expect(Array.isArray(ownPosts)).toBe(true);
     expect(comment).toHaveProperty('content', '收到，今晚参与讨论');
+    expect(Array.isArray(commentList)).toBe(true);
+    expect(liked).toHaveProperty('likesCount', 3);
     expect(removed).toHaveProperty('success', true);
     expect(group).toHaveProperty('name', '群组A');
+    expect(Array.isArray(groupMembers)).toBe(true);
     expect(announcement).toHaveProperty('fieldName', 'description');
+    expect(conversation).toHaveProperty('type', 'DM');
+    expect(Array.isArray(messages)).toBe(true);
   });
 });

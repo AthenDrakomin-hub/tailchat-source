@@ -91,6 +91,12 @@ export async function listUserFeedPosts(userId: string): Promise<FeedPost[]> {
   return data;
 }
 
+export async function listOwnFeedPosts(): Promise<FeedPost[]> {
+  const { data } = await request.get('/api/openapi/account/listOwnFeedPosts');
+
+  return data;
+}
+
 export async function removeFeedPost(postId: string): Promise<{ success: true }> {
   const { data } = await request.post('/api/feed/removePost', {
     postId,

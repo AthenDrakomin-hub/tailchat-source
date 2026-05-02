@@ -18,6 +18,7 @@ export const FeedDetail: React.FC = React.memo(() => {
   const { postId = '' } = useParams();
   const [post, setPost] = useState<FeedPost | null>(null);
   const [comments, setComments] = useState<FeedComment[]>([]);
+  const [likesCount, setLikesCount] = useState(0);
   const author = useCachedUserInfo(post?.author ?? '');
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export const FeedDetail: React.FC = React.memo(() => {
       .then(([detail, commentList]) => {
         setPost(detail);
         setComments(commentList);
+        setLikesCount(detail.likesCount);
       })
       .catch(showErrorToasts);
   }, [postId]);
@@ -79,6 +81,11 @@ export const FeedDetail: React.FC = React.memo(() => {
           <div className="mt-4 whitespace-pre-wrap text-sm leading-7 text-gray-700 dark:text-gray-200">
             {post.content}
           </div>
+
+          <div className="mt-4 flex items-center gap-5 text-xs text-gray-500 dark:text-gray-400">
+            <span>点赞 {likesCount}</span>
+            <span>评论 {comments.length}</span>
+          </div>
         </div>
 
         <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-5 shadow-sm space-y-4">
@@ -87,7 +94,21 @@ export const FeedDetail: React.FC = React.memo(() => {
           </div>
           <CommentComposer
             postId={post._id}
-            onCreated={(comment) => setComments((prev) => [...prev, comment])}
+            onCreated={(comment) =>
+              setComments((prev) => {
+                const next = [...prev, comment];
+                setPost((current) =>
+                  current
+                    ? {
+                        ...current,
+                        commentsCount: next.length,
+                      }
+                    : current
+                );
+
+                return next;
+              })
+            }
           />
           <CommentList comments={comments} />
         </div>

@@ -23,6 +23,11 @@ class OpenAccountService extends TcService {
       },
     });
     this.registerAction('listGroups', this.listGroups);
+    this.registerAction('listGroupMembers', this.listGroupMembers, {
+      params: {
+        groupId: 'string',
+      },
+    });
     this.registerAction('getGroupDetail', this.getGroupDetail, {
       params: {
         groupId: 'string',
@@ -52,9 +57,30 @@ class OpenAccountService extends TcService {
         content: 'string',
       },
     });
+    this.registerAction('listFeedComments', this.listFeedComments, {
+      params: {
+        postId: 'string',
+      },
+    });
+    this.registerAction('likeFeedPost', this.likeFeedPost, {
+      params: {
+        postId: 'string',
+      },
+    });
     this.registerAction('removeFeedPost', this.removeFeedPost, {
       params: {
         postId: 'string',
+      },
+    });
+    this.registerAction('getConversationDetail', this.getConversationDetail, {
+      params: {
+        converseId: 'string',
+      },
+    });
+    this.registerAction('listConversationMessages', this.listConversationMessages, {
+      params: {
+        converseId: 'string',
+        startId: { type: 'string', optional: true },
       },
     });
   }
@@ -118,6 +144,14 @@ class OpenAccountService extends TcService {
     return ctx.call('group.getUserGroups', {}, { meta: ctx.meta });
   }
 
+  async listGroupMembers(
+    ctx: TcContext<{
+      groupId: string;
+    }>
+  ) {
+    return ctx.call('group.listGroupMembers', ctx.params, { meta: ctx.meta });
+  }
+
   async getGroupDetail(
     ctx: TcContext<{
       groupId: string;
@@ -179,12 +213,49 @@ class OpenAccountService extends TcService {
     return ctx.call('feed.commentPost', ctx.params, { meta: ctx.meta });
   }
 
+  async listFeedComments(
+    ctx: TcContext<{
+      postId: string;
+    }>
+  ) {
+    return ctx.call('feed.listPostComments', ctx.params, { meta: ctx.meta });
+  }
+
+  async likeFeedPost(
+    ctx: TcContext<{
+      postId: string;
+    }>
+  ) {
+    return ctx.call('feed.likePost', ctx.params, { meta: ctx.meta });
+  }
+
   async removeFeedPost(
     ctx: TcContext<{
       postId: string;
     }>
   ) {
     return ctx.call('feed.removePost', ctx.params, { meta: ctx.meta });
+  }
+
+  async getConversationDetail(
+    ctx: TcContext<{
+      converseId: string;
+    }>
+  ) {
+    return ctx.call('chat.converse.findConverseInfo', ctx.params, {
+      meta: ctx.meta,
+    });
+  }
+
+  async listConversationMessages(
+    ctx: TcContext<{
+      converseId: string;
+      startId?: string;
+    }>
+  ) {
+    return ctx.call('chat.message.fetchConverseMessage', ctx.params, {
+      meta: ctx.meta,
+    });
   }
 }
 

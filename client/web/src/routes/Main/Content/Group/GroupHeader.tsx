@@ -58,6 +58,11 @@ export const GroupHeader: React.FC<GroupHeaderProps> = React.memo((props) => {
         <div className="text-[11px] font-normal text-gray-500 dark:text-gray-400 truncate">
           {t('群组空间')}
         </div>
+        {groupInfo?.description && (
+          <div className="mt-1 text-[11px] leading-5 font-normal text-gray-500 dark:text-gray-400 line-clamp-2 whitespace-pre-wrap">
+            {groupInfo.description}
+          </div>
+        )}
       </div>
     </SectionHeader>
   );

@@ -171,6 +171,7 @@ export {
   likeFeedPost,
   getFeedPostDetail,
   listFeedComments,
+  listOwnFeedPosts,
   listUserFeedPosts,
   removeFeedPost,
 } from './model/feed';

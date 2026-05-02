@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Route, Routes, useSearchParams } from 'react-router-dom';
-import { FeedPost, listFeedPosts, showErrorToasts } from 'tailchat-shared';
+import { Link, Route, Routes, useSearchParams } from 'react-router-dom';
+import {
+  FeedPost,
+  listFeedPosts,
+  listOwnFeedPosts,
+  showErrorToasts,
+} from 'tailchat-shared';
 import { PageContent } from '../PageContent';
 import { FeedSidebar } from './FeedSidebar';
 import { FeedComposer } from './FeedComposer';
@@ -11,6 +16,7 @@ import { UserFeedPage } from './UserFeedPage';
 const FeedHome: React.FC = React.memo(() => {
   const [searchParams] = useSearchParams();
   const groupId = searchParams.get('groupId') ?? undefined;
+  const view = searchParams.get('view') ?? 'all';
   const [posts, setPosts] = useState<FeedPost[]>([]);
 
   useEffect(() => {
@@ -18,12 +24,15 @@ const FeedHome: React.FC = React.memo(() => {
   }, []);
 
   useEffect(() => {
-    listFeedPosts(groupId).then(setPosts).catch(showErrorToasts);
-  }, [groupId]);
+    const fetcher =
+      view === 'mine' ? listOwnFeedPosts() : listFeedPosts(groupId);
+
+    Promise.resolve(fetcher).then(setPosts).catch(showErrorToasts);
+  }, [groupId, view]);
 
   const heading = useMemo(
-    () => (groupId ? '群组关联动态' : '动态'),
-    [groupId]
+    () => (groupId ? '群组关联动态' : view === 'mine' ? '我的动态' : '动态'),
+    [groupId, view]
   );
 
   return (
@@ -36,6 +45,30 @@ const FeedHome: React.FC = React.memo(() => {
           <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             面向财富论坛的公开内容流，用于观点发布、活动预热和群组联动。
           </div>
+          {!groupId && (
+            <div className="mt-4 inline-flex rounded-2xl border border-black/10 dark:border-white/10 p-1 bg-black/[0.03] dark:bg-white/[0.03]">
+              <Link
+                to="/main/feed"
+                className={`rounded-xl px-4 py-2 text-sm ${
+                  view === 'all'
+                    ? 'bg-white dark:bg-black/30 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400'
+                }`}
+              >
+                全部动态
+              </Link>
+              <Link
+                to="/main/feed?view=mine"
+                className={`rounded-xl px-4 py-2 text-sm ${
+                  view === 'mine'
+                    ? 'bg-white dark:bg-black/30 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400'
+                }`}
+              >
+                我的动态
+              </Link>
+            </div>
+          )}
         </div>
 
         <FeedComposer

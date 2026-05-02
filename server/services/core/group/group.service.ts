@@ -67,6 +67,11 @@ class GroupService extends TcService {
       },
       visibility: 'public',
     });
+    this.registerAction('listGroupMembers', this.listGroupMembers, {
+      params: {
+        groupId: 'string',
+      },
+    });
     this.registerAction('updateGroupField', this.updateGroupField, {
       params: {
         groupId: 'string',
@@ -405,6 +410,27 @@ class GroupService extends TcService {
     const groupInfo = await this.adapter.model.findById(ctx.params.groupId);
 
     return await this.transformDocuments(ctx, {}, groupInfo);
+  }
+
+  async listGroupMembers(ctx: TcContext<{ groupId: string }>) {
+    const groupInfo = await this.adapter.model.findById(ctx.params.groupId);
+    if (!groupInfo) {
+      throw new DataNotFoundError();
+    }
+
+    return Promise.all(
+      (groupInfo.members ?? []).map(async (member) => {
+        const userInfo = await call(ctx).getUserInfo(String(member.userId));
+
+        return {
+          userId: String(member.userId),
+          roles: member.roles ?? [],
+          muteUntil: member.muteUntil ?? null,
+          nickname: userInfo.nickname,
+          avatar: userInfo.avatar,
+        };
+      })
+    );
   }
 
   /**
