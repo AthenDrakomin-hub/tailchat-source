@@ -1,6 +1,17 @@
-export const BRAND_NAME_FULL = '日斗投资财富交流会 · RIDOU INVESTMENT';
-export const BRAND_NAME_SHORT = '日斗投资财富交流会';
-export const BRAND_NAME_ADMIN = '财富中心';
+export const BRAND_NAME_FULL = '財訊';
+export const BRAND_NAME_SHORT = '財訊';
+export const BRAND_NAME_ADMIN = '財訊後台';
+export const BRAND_SUBTITLE = '日斗投資財富論壇';
+export const BRAND_COMPANY = '日斗投資諮詢有限公司';
+export const BRAND_EVENT_NAME = '第十屆交流會';
+export const BRAND_EVENT_FULL = '第十屆投資財富交流會';
+export const BRAND_TAGLINE = '內部通訊 · 投資論壇 · 語音互動';
+export const PRIVACY_TITLE = '隱私政策';
+export const TERMS_TITLE = '用戶協議';
+export const COMMUNITY_TITLE = '社區公約';
+export const TRUST_TITLE = '財訊 · 安全與合規';
+export const ENTRY_META_DESCRIPTION =
+  '財訊｜日斗投資財富交流會第十屆。專為日斗投資諮詢有限公司會員打造的內部通訊與投資論壇，實時交流、語音互動。';
 
 export type Quote = {
   text: string;
@@ -58,13 +69,13 @@ export function getDailyQuote(
   return list[idx];
 }
 
-export const RISK_DECLARATION_TITLE = '投资风险安全宣言 / Risk Disclosure';
+export const RISK_DECLARATION_TITLE = '投資風險提示';
 export const RISK_DECLARATION_FULL = [
-  '本交流会内容仅用于学习与交流分享，不构成任何投资建议、收益承诺或买卖依据。',
-  '证券/基金/期货等金融产品与服务存在风险，市场有风险，投资需谨慎；过往表现不代表未来。',
-  '请在充分理解产品特性与风险后，结合自身风险承受能力，独立做出决策，并自行承担投资结果。',
-  '交流中涉及的任何观点、策略、标的与案例均具有时效性与不确定性，请勿盲从、勿冲动交易。',
-  '我们倡导理性、长期、合规的投资行为：规避系统性风险，长期跟踪，多方求证。',
+  '本平台內容僅用於學習、交流與觀點分享，不構成任何投資建議、收益承諾或買賣依據。',
+  '證券、基金、期貨等金融產品具有風險，市場有風險，投資需謹慎；過往表現不代表未來結果。',
+  '請在充分理解產品特性與風險後，結合自身風險承受能力，獨立做出決策，並自行承擔投資結果。',
+  '交流中涉及的任何觀點、策略、標的與案例均具有時效性與不確定性，請勿盲從、勿衝動交易。',
+  '我們倡導理性、長期、合規的投資行為：規避系統性風險，長期跟蹤，多方求證。',
 ].join('\n');
 
-export const RISK_AGREE_LABEL = '我已阅读并同意《投资风险安全宣言》';
+export const RISK_AGREE_LABEL = '我已閱讀並同意《用戶協議》與《隱私政策》';
