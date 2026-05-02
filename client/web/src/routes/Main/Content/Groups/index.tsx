@@ -82,8 +82,37 @@ GroupsSidebar.displayName = 'GroupsSidebar';
 export const GroupsOverview: React.FC = React.memo(() => {
   return (
     <PageContent data-tc-role="content-groups" sidebar={<GroupsSidebar />}>
-      <div className="mt-11 w-full">
-        <Problem text={t('选择一个群组开始查看消息和面板')} />
+      <div className="w-full h-full flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-2xl space-y-4">
+          <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-6 py-6 shadow-sm">
+            <div className="text-xl font-bold text-gray-900 dark:text-white">
+              选择一个群组开始查看消息和面板
+            </div>
+            <div className="mt-3 text-sm leading-7 text-gray-500 dark:text-gray-400">
+              群组是財訊客户端里承接活动、专题交流和长期讨论的主场。你可以先从左侧选择一个现有群组进入，也可以创建新的交流空间。
+            </div>
+            <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+              <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4">
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">看群说明</div>
+                <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                  先理解群当前主题、定位和公告内容。
+                </div>
+              </div>
+              <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4">
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">看最近交流</div>
+                <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                  快速判断这个群最近是否仍在活跃讨论。
+                </div>
+              </div>
+              <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4">
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">继续参与</div>
+                <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                  再决定是发消息、参与专题，还是围绕动态继续承接。
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </PageContent>
   );

@@ -16,6 +16,7 @@ interface ServerStoreState {
   addServer: (url: string) => Promise<void>;
   removeServer: (url: string) => void;
   selectServer: (serverInfo: ServerInfo) => void;
+  clearSelectedServer: () => void;
 }
 
 const defaultServerList: ServerInfo[] = [
@@ -66,6 +67,11 @@ export const useServerStore = create<ServerStoreState>()(
       selectServer: (serverInfo: ServerInfo) => {
         set({
           selectedServerInfo: serverInfo,
+        });
+      },
+      clearSelectedServer: () => {
+        set({
+          selectedServerInfo: null,
         });
       },
     })),

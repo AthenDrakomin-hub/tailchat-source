@@ -35,7 +35,10 @@ function App(): JSX.Element {
       />
 
       {selectedServerInfo ? (
-        <AppMain host={selectedServerInfo.url} />
+        <AppMain
+          host={selectedServerInfo.url}
+          serverName={selectedServerInfo.name ?? selectedServerInfo.url}
+        />
       ) : (
         <Entry />
       )}
