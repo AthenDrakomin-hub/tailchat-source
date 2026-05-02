@@ -130,6 +130,16 @@ const switchBackToWorkspaceSelector = () => {
   }
 };
 
+const reconnectCurrentWorkspace = () => {
+  if (!mainWindow || !currentWorkspaceUrl) {
+    return;
+  }
+
+  mainWindow.setTitle('財訊桌面端 · 正在重新连接工作区');
+  mainWindow.setProgressBar(0.2);
+  mainWindow.loadURL(currentWorkspaceUrl);
+};
+
 const createWelcomeWindow = async () => {
   // 创建一个新的浏览器窗口
   welcomeWindow = new BrowserWindow({
@@ -295,9 +305,7 @@ const createMainWindow = async (url: string) => {
         }
 
         if (result.response === 0 && currentWorkspaceUrl) {
-          applyWindowTitle('正在重新连接工作区');
-          mainWindow.setProgressBar(0.2);
-          mainWindow.loadURL(currentWorkspaceUrl);
+          reconnectCurrentWorkspace();
           return;
         }
 
@@ -343,7 +351,8 @@ const createMainWindow = async (url: string) => {
     const menuBuilder = new MenuBuilder(
       mainWindow,
       switchBackToWorkspaceSelector,
-      currentWorkspaceUrl ?? undefined
+      currentWorkspaceUrl ?? undefined,
+      reconnectCurrentWorkspace
     );
     menuBuilder.buildMenu();
 

@@ -110,6 +110,11 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
             <View style={[styles.progressBar, { width: `${Math.max(progress * 100, 8)}%` }]} />
           </View>
         )}
+        {!loading && !errorMessage && (
+          <View style={styles.topbarStatusWrap}>
+            <Text style={styles.topbarStatusText}>{statusText}</Text>
+          </View>
+        )}
       </View>
       <View style={styles.webviewWrap}>
         <WebView
@@ -307,6 +312,19 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: '#e2e8f0',
     overflow: 'hidden',
+  },
+  topbarStatusWrap: {
+    marginTop: 10,
+    alignSelf: 'flex-start',
+    borderRadius: 999,
+    backgroundColor: '#eef2ff',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  topbarStatusText: {
+    color: '#0b4a8b',
+    fontSize: 11,
+    fontWeight: '600',
   },
   progressBar: {
     height: '100%',

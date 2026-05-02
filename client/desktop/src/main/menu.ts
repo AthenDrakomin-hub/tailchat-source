@@ -16,16 +16,19 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
   onSwitchWorkspace?: () => void;
+  onReconnectWorkspace?: () => void;
   workspaceUrl?: string;
 
   constructor(
     mainWindow: BrowserWindow,
     onSwitchWorkspace?: () => void,
-    workspaceUrl?: string
+    workspaceUrl?: string,
+    onReconnectWorkspace?: () => void
   ) {
     this.mainWindow = mainWindow;
     this.onSwitchWorkspace = onSwitchWorkspace;
     this.workspaceUrl = workspaceUrl;
+    this.onReconnectWorkspace = onReconnectWorkspace;
   }
 
   buildMenu(): Menu {
@@ -80,6 +83,13 @@ export default class MenuBuilder {
       },
       {
         type: 'separator',
+      },
+      {
+        label: '重新连接当前工作区',
+        enabled: Boolean(this.workspaceUrl),
+        click: () => {
+          this.onReconnectWorkspace?.();
+        },
       },
       {
         label: '在浏览器打开当前工作区',
