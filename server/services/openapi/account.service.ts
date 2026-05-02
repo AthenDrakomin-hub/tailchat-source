@@ -28,6 +28,22 @@ class OpenAccountService extends TcService {
         groupId: 'string',
       },
     });
+    this.registerAction('getGroupAnnouncement', this.getGroupAnnouncement, {
+      params: {
+        groupId: 'string',
+      },
+    });
+    this.registerAction('getGroupLobbyConversation', this.getGroupLobbyConversation, {
+      params: {
+        groupId: 'string',
+      },
+    });
+    this.registerAction('listGroupRecentMessages', this.listGroupRecentMessages, {
+      params: {
+        groupId: 'string',
+        startId: { type: 'string', optional: true },
+      },
+    });
     this.registerAction('getGroupDetail', this.getGroupDetail, {
       params: {
         groupId: 'string',
@@ -150,6 +166,58 @@ class OpenAccountService extends TcService {
     }>
   ) {
     return ctx.call('group.listGroupMembers', ctx.params, { meta: ctx.meta });
+  }
+
+  async getGroupAnnouncement(
+    ctx: TcContext<{
+      groupId: string;
+    }>
+  ) {
+    const group = (await ctx.call('group.getGroupInfo', ctx.params, {
+      meta: ctx.meta,
+    })) as { description?: string } | null;
+
+    return {
+      groupId: ctx.params.groupId,
+      announcement: group?.description ?? '',
+    };
+  }
+
+  async getGroupLobbyConversation(
+    ctx: TcContext<{
+      groupId: string;
+    }>
+  ) {
+    const converseId = await ctx.call('group.getGroupLobbyConverseId', ctx.params, {
+      meta: ctx.meta,
+    });
+
+    return {
+      groupId: ctx.params.groupId,
+      converseId,
+    };
+  }
+
+  async listGroupRecentMessages(
+    ctx: TcContext<{
+      groupId: string;
+      startId?: string;
+    }>
+  ) {
+    const converseId = await ctx.call(
+      'group.getGroupLobbyConverseId',
+      { groupId: ctx.params.groupId },
+      { meta: ctx.meta }
+    );
+
+    return ctx.call(
+      'chat.message.fetchConverseMessage',
+      {
+        converseId,
+        startId: ctx.params.startId,
+      },
+      { meta: ctx.meta }
+    );
   }
 
   async getGroupDetail(

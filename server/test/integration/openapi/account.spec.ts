@@ -77,7 +77,11 @@ describe('Test "openapi.account" service', () => {
       }
 
       if (actionName === 'group.getGroupInfo') {
-        return { _id: params.groupId, name: '群组A' };
+        return { _id: params.groupId, name: '群组A', description: '今晚八点专题讨论' };
+      }
+
+      if (actionName === 'group.getGroupLobbyConverseId') {
+        return 'group_converse_1';
       }
 
       if (actionName === 'group.listGroupMembers') {
@@ -137,9 +141,27 @@ describe('Test "openapi.account" service', () => {
     const group = await broker.call('openapi.account.getGroupDetail', {
       groupId: 'group_1',
     });
+    const groupAnnouncement = await broker.call(
+      'openapi.account.getGroupAnnouncement',
+      {
+        groupId: 'group_1',
+      }
+    );
+    const groupLobbyConversation = await broker.call(
+      'openapi.account.getGroupLobbyConversation',
+      {
+        groupId: 'group_1',
+      }
+    );
     const groupMembers = await broker.call('openapi.account.listGroupMembers', {
       groupId: 'group_1',
     });
+    const groupRecentMessages = await broker.call(
+      'openapi.account.listGroupRecentMessages',
+      {
+        groupId: 'group_1',
+      }
+    );
     const announcement = await broker.call(
       'openapi.account.updateGroupAnnouncement',
       {
@@ -164,7 +186,10 @@ describe('Test "openapi.account" service', () => {
     expect(liked).toHaveProperty('likesCount', 3);
     expect(removed).toHaveProperty('success', true);
     expect(group).toHaveProperty('name', '群组A');
+    expect(groupAnnouncement).toHaveProperty('announcement', '今晚八点专题讨论');
+    expect(groupLobbyConversation).toHaveProperty('converseId', 'group_converse_1');
     expect(Array.isArray(groupMembers)).toBe(true);
+    expect(Array.isArray(groupRecentMessages)).toBe(true);
     expect(announcement).toHaveProperty('fieldName', 'description');
     expect(conversation).toHaveProperty('type', 'DM');
     expect(Array.isArray(messages)).toBe(true);
