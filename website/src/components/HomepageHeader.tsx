@@ -1,105 +1,66 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 import Link from '@docusaurus/Link';
 import Head from '@docusaurus/Head';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import Translate from '@docusaurus/Translate';
 import { useColorMode } from '@docusaurus/theme-common';
-import { inviteLink, nightlyUrl, releaseNoteUrl } from '../utils/consts';
-import packageJson from '../../../package.json';
 import './HomepageHeader.less';
-
-const alternative = [
-  <Translate key="slack">Slack</Translate>,
-  <Translate key="discord">Discord</Translate>,
-  <Translate key="rocket.chat">Rocket.Chat</Translate>,
-];
-
-export function getRandomAlternative() {
-  return alternative[Math.floor(Math.random() * alternative.length)];
-}
 
 export const HomepageHeader: React.FC = React.memo(() => {
   const { siteConfig } = useDocusaurusContext();
   const { colorMode } = useColorMode();
-  const [alternativeIndex, updateAlternative] = useReducer(
-    (index) => (index + 1) % alternative.length,
-    Math.floor(Math.random() * alternative.length)
-  );
 
   return (
     <div className="homepage-header">
       <Head>
         <link rel="prefetch" href="/img/hero-light.png" />
         <link rel="prefetch" href="/img/hero-dark.png" />
+        <meta
+          name="description"
+          content="財訊｜日斗投資財富交流會第十屆。專為日斗投資諮詢有限公司會員打造的內部通訊與投資論壇，實時交流、語音互動。"
+        />
+        <meta property="og:title" content="財訊 - 第十屆投資財富交流會" />
+        <meta
+          property="og:description"
+          content="日斗投資財富論壇官方內部通訊與投資交流平台"
+        />
+        <meta property="og:image" content="/img/caixun-og.png" />
       </Head>
 
       <div className="screenshot">
-        <img src={`/img/hero-${colorMode}.png`} alt="Preview of Tailchat" />
+        <img src={`/img/hero-${colorMode}.png`} alt="Preview of 財訊" />
       </div>
 
       <div className="header">
-        <h1 className="title">
-          <Translate>Open Source, Open Platform</Translate>
-        </h1>
-        <h3 className="title">
-          <Translate>Not only Another</Translate>{' '}
-          <strong onClick={updateAlternative}>
-            {alternative[alternativeIndex]}
-          </strong>
-        </h3>
+        <h1 className="title">財訊</h1>
+        <h3 className="title">日斗投資財富論壇 · 第十屆交流會</h3>
 
         <p className="desc">
-          Tailchat: {siteConfig.tagline}
-          <small>
-            <Link
-              href="/blog/2023/03/01/the-era-of-noIM"
-              data-umami-event="what-is-noim"
-              data-tianji-event="what-is-noim"
-            >
-              <Translate>What is noIM(not only IM)?</Translate>
-            </Link>
-          </small>
+          {siteConfig.tagline}
+          <small>日斗投資諮詢有限公司 · 內部通訊 · 投資論壇 · 語音互動</small>
         </p>
 
         <div className="btns">
           <Link
             className="button button--primary button--lg"
-            to={inviteLink}
-            data-umami-event="joingroup"
-            data-tianji-event="joingroup"
+            to="/trust"
           >
-            <Translate>Join our Group</Translate>
+            安全與合規
           </Link>
 
           <Link
             className="button button--secondary button--lg"
-            href="/docs/intro"
-            data-umami-event="learnmore"
-            data-tianji-event="learnmore"
+            to="/about"
           >
-            <Translate>Learn More</Translate>
+            關於我們
           </Link>
         </div>
 
         <div className="link">
-          <Link
-            to={nightlyUrl}
-            data-umami-event="direct-nightly"
-            data-tianji-event="direct-nightly"
-          >
-            <Translate>Or direct visit Tailchat nightly version</Translate>
-          </Link>
+          <Link to="/privacy">查看隱私政策、用戶協議與社區公約</Link>
         </div>
 
         <div className="version">
-          <Translate>Current version</Translate>: v{packageJson.version},{' '}
-          <Link
-            to={releaseNoteUrl}
-            data-umami-event="release-note"
-            data-tianji-event="release-note"
-          >
-            <Translate>release note</Translate>
-          </Link>
+          官方定位：內部會員交流與語音互動平台
         </div>
       </div>
     </div>

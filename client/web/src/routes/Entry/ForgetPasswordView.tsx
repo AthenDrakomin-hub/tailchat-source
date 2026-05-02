@@ -1,6 +1,6 @@
 import { Icon } from 'tailchat-design';
 import { BRAND_NAME_FULL, BRAND_SUBTITLE, t } from 'tailchat-shared';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavToView } from './utils';
 import { SecondaryBtn } from './components/SecondaryBtn';
 import { BrandLogo } from '@/components/BrandLogo';
@@ -12,6 +12,9 @@ import { TrustLinks } from './components/TrustLinks';
  */
 export const ForgetPasswordView: React.FC = React.memo(() => {
   const navToView = useNavToView();
+  useEffect(() => {
+    document.title = '找回密碼 - 財訊';
+  }, []);
 
   return (
     <div className="w-full">

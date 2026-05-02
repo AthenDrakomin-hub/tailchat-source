@@ -4,26 +4,26 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
 const themeConfig = {
   navbar: {
-    title: 'Tailchat',
+    title: '財訊',
     logo: {
-      alt: 'Tailchat Logo',
-      src: 'img/logo.svg',
+      alt: '財訊 Logo',
+      src: 'img/logo@192.png',
     },
     items: [
       {
-        type: 'doc',
-        docId: 'intro',
+        to: '/about',
         position: 'left',
-        label: 'Docs',
+        label: '關於我們',
       },
-      { to: '/blog', label: 'Blog', position: 'left' },
-      { to: '/downloads', label: 'Downloads', position: 'left' },
+      { to: '/trust', label: '安全與合規', position: 'left' },
+      { to: '/privacy', label: '隱私政策', position: 'left' },
+      { to: '/terms', label: '用戶協議', position: 'left' },
       {
         type: 'localeDropdown',
         position: 'right',
       },
       {
-        href: 'https://github.com/msgbyte/tailchat',
+        href: 'https://github.com/AthenDrakomin-hub/tailchat-source',
         label: 'GitHub',
         position: 'right',
       },
@@ -72,7 +72,7 @@ const themeConfig = {
     //     ],
     //   },
     // ],
-    copyright: `Copyright © ${new Date().getFullYear()} MsgByte, Inc. Built with Docusaurus and ❤.`,
+    copyright: `Copyright © ${new Date().getFullYear()} 日斗投資諮詢有限公司`,
   },
   prism: {
     theme: lightCodeTheme,
@@ -109,15 +109,15 @@ const presetClassicOptions = {
 
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-  title: 'Tailchat',
-  tagline: 'The next-generation noIM Application in your own workspace',
+  title: '財訊',
+  tagline: '日斗投資財富論壇第十屆交流會官方內部平台',
   url: 'https://tailchat.msgbyte.com', // TODO: 待修改成文档主页
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/logo.svg',
-  organizationName: 'msgbyte', // Usually your GitHub org/user name.
-  projectName: 'tailchat', // Usually your repo name.
+  favicon: 'img/logo@192.png',
+  organizationName: 'AthenDrakomin-hub',
+  projectName: 'tailchat-source',
   themeConfig,
   i18n: {
     defaultLocale: 'en',

@@ -14,7 +14,7 @@ import {
   TERMS_TITLE,
   PRIVACY_TITLE,
 } from 'tailchat-shared';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { string } from 'yup';
 import { Icon } from 'tailchat-design';
 import { useNavigate } from 'react-router';
@@ -95,6 +95,9 @@ export const RegisterView: React.FC = React.memo(() => {
   });
 
   const navToView = useNavToView();
+  useEffect(() => {
+    document.title = '註冊賬號 - 財訊';
+  }, []);
   const openRiskDeclaration = () => {
     openModal(
       <ModalWrapper title={RISK_DECLARATION_TITLE}>

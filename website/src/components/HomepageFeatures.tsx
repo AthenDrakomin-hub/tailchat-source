@@ -5,37 +5,32 @@ import { translate } from '@docusaurus/Translate';
 
 const FeatureList = [
   {
-    title: translate({ message: 'Easy to use' }),
+    title: translate({ message: '內部通訊' }),
     Svg: require('../../static/img/undraw_Website_setup_re_d4y9.svg').default,
     description: (
       <>
-        The basic design of <code>Tailchat</code> is borrowed from{' '}
-        <code>Discord</code>, but with <code>Discord</code> is different,{' '}
-        <code>Tailchat</code> Use the concept of panels instead of channels.
-        This makes groups capable of more than just chatting.
+        <code>財訊</code> 以穩重、克制、正式的金融科技風格承接日斗投資財富論壇內部交流，
+        讓消息、公告、語音互動與學習陪伴在同一個界面內完成。
       </>
     ),
   },
   {
-    title: translate({ message: 'Easy to expand' }),
+    title: translate({ message: '活動承接' }),
     Svg: require('../../static/img/undraw_design_components_9vy6.svg').default,
     description: (
       <>
-        <code>Tailchat</code> is based on the microkernel + microservice
-        architecture, and has carefully designed a unique plug-in system, which
-        is easy to expand in terms of business and scale, and is sufficient to
-        support business and needs of any size
+        本輪以 <code>第十屆交流會</code> 為核心活動標識，將品牌、社群、協議、
+        風險提示與信任說明統一到客戶端與官網展示層。
       </>
     ),
   },
   {
-    title: translate({ message: 'Open source' }),
+    title: translate({ message: '安全與合規' }),
     Svg: require('../../static/img/undraw_open_source_1qxw.svg').default,
     description: (
       <>
-        <code>Tailchat</code> is an open source software, anyone can submit the
-        ability they want to Tailchat. We always believe that the power of open
-        source can make an application better
+        平台展示基於真實技術能力整理，包括 <code>TLS 1.3</code>、<code>HSTS</code>、
+        日本東京數據節點、每日備份與消息傳輸/落盤加密等安全能力。
       </>
     ),
   },

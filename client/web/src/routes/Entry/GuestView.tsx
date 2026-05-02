@@ -3,7 +3,7 @@ import { useSearchParam } from '@/hooks/useSearchParam';
 import { setUserJWT } from '@/utils/jwt-helper';
 import { setGlobalUserLoginInfo } from '@/utils/user-helper';
 import { Icon } from 'tailchat-design';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
   createTemporaryUser,
@@ -27,6 +27,9 @@ export const GuestView: React.FC = React.memo(() => {
   const navToView = useNavToView();
   const navRedirect = useSearchParam('redirect');
   const [nickname, setNickname] = useState('');
+  useEffect(() => {
+    document.title = '訪客入口 - 財訊';
+  }, []);
 
   const [{ loading }, handleCreateTemporaryUser] = useAsyncRequest(async () => {
     await string().required(t('昵称不能为空')).max(16).validate(nickname);

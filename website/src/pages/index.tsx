@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <Layout
       title={`${siteConfig.title} - ${siteConfig.tagline}`}
-      description={`${siteConfig.tagline}`}
+      description="財訊｜日斗投資財富交流會第十屆。專為日斗投資諮詢有限公司會員打造的內部通訊與投資論壇，實時交流、語音互動。"
     >
       <ColorModeProvider>
         <HomepageHeader />
@@ -45,8 +45,7 @@ export default function Home() {
           {/* <HomepageVideo /> */}
 
           <FeatureSection />
-
-          {/* <HomepageFeatures /> */}
+          <HomepageFeatures />
 
           <JoinCommunity />
         </main>

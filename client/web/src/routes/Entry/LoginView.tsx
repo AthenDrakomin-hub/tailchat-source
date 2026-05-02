@@ -55,6 +55,7 @@ export const LoginView: React.FC = React.memo(() => {
   );
 
   useEffect(() => {
+    document.title = '財訊 - 第十屆投資財富交流會';
     tryAutoLogin()
       .then(() => {
         navigate('/main');
