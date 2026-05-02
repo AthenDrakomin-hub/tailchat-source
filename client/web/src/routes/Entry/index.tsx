@@ -8,6 +8,9 @@ import { useRecordMeasure } from '@/utils/measure-helper';
 import { GuestView } from './GuestView';
 import { ForgetPasswordView } from './ForgetPasswordView';
 import { BeidouStars } from './components/BeidouStars';
+import { AboutView } from './AboutView';
+import { LegalView } from './LegalView';
+import { TrustView } from './TrustView';
 
 const EntryRoute = React.memo(() => {
   useRecordMeasure('appEntryRenderStart');
@@ -29,6 +32,11 @@ const EntryRoute = React.memo(() => {
             <Route path="/register" element={<RegisterView />} />
             <Route path="/guest" element={<GuestView />} />
             <Route path="/forget" element={<ForgetPasswordView />} />
+            <Route path="/about" element={<AboutView />} />
+            <Route path="/privacy" element={<LegalView />} />
+            <Route path="/terms" element={<LegalView />} />
+            <Route path="/community" element={<LegalView />} />
+            <Route path="/trust" element={<TrustView />} />
             <Route
               path="/"
               element={<Navigate to="/entry/login" replace={true} />}

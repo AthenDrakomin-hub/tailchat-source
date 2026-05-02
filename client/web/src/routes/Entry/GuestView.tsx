@@ -10,6 +10,8 @@ import {
   isValidStr,
   t,
   useAsyncRequest,
+  BRAND_NAME_FULL,
+  BRAND_SUBTITLE,
 } from 'tailchat-shared';
 import { string } from 'yup';
 import { useNavToView } from './utils';
@@ -17,6 +19,8 @@ import { EntryInput } from './components/Input';
 import { PrimaryBtn } from './components/PrimaryBtn';
 import { SecondaryBtn } from './components/SecondaryBtn';
 import { BrandLogo } from '@/components/BrandLogo';
+import { EventBanner } from './components/EventBanner';
+import { TrustLinks } from './components/TrustLinks';
 
 export const GuestView: React.FC = React.memo(() => {
   const navigate = useNavigate();
@@ -42,8 +46,19 @@ export const GuestView: React.FC = React.memo(() => {
   return (
     <div className="w-full">
       <div className="mb-6 flex justify-center">
-        <BrandLogo alt="Logo" className="max-h-24 max-w-[80%]" />
+        <BrandLogo alt="財訊" className="max-h-24 max-w-[80%]" />
       </div>
+
+      <div className="text-center mb-8">
+        <div className="font-extrabold text-2xl mobile:text-xl tracking-wide text-white">
+          {BRAND_NAME_FULL}
+        </div>
+        <div className="mt-2 text-sm text-[rgba(255,255,255,0.82)]">
+          {BRAND_SUBTITLE}
+        </div>
+      </div>
+
+      <EventBanner />
 
       <div>
         <div className="mb-4">
@@ -71,6 +86,8 @@ export const GuestView: React.FC = React.memo(() => {
           {t('返回登录')}
         </SecondaryBtn>
       </div>
+
+      <TrustLinks />
     </div>
   );
 });

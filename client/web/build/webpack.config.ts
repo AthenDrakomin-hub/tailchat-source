@@ -110,6 +110,10 @@ const plugins: Configuration['plugins'] = [
         to: 'images/logo/',
       },
       {
+        from: path.resolve(ROOT_PATH, './assets/images/brand/'),
+        to: 'images/brand/',
+      },
+      {
         from: path.resolve(ROOT_PATH, './assets/images/avatar/'),
         to: 'images/avatar/',
       },

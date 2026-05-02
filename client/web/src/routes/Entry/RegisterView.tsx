@@ -6,9 +6,13 @@ import {
   useAsyncFn,
   useWatch,
   BRAND_NAME_FULL,
+  BRAND_SUBTITLE,
+  BRAND_COMPANY,
   RISK_AGREE_LABEL,
   RISK_DECLARATION_FULL,
   RISK_DECLARATION_TITLE,
+  TERMS_TITLE,
+  PRIVACY_TITLE,
 } from 'tailchat-shared';
 import React, { useState } from 'react';
 import { string } from 'yup';
@@ -25,15 +29,15 @@ import { TipIcon } from '@/components/TipIcon';
 import { BrandLogo } from '@/components/BrandLogo';
 import { openModal, ModalWrapper } from '@/components/Modal';
 import { useMemo } from 'react';
+import { EventBanner } from './components/EventBanner';
+import { TrustLinks } from './components/TrustLinks';
 
 const QUOTES = [
-  "便宜是硬道理，成长是真功夫。",
-  "去人少的地方，非经调研不买入。",
-  "赚大钱要靠一只股票赚很多倍，而不是频繁操作。",
-  "投资就像修行，需要深度的认知、坚定的持有和果断的交易。",
-  "在全盛时果断退出，分清风险和波动。",
-  "买错股票和频繁止损是造成永久性损失的两大原因。",
-  "看见了，才能重仓，拒绝平庸的投资机会。"
+  '便宜不是目的，理解才是底氣。',
+  '市場會放大情緒，也會獎勵紀律。',
+  '深度研究與長期跟蹤，才配得上重倉決策。',
+  '先建立風險邊界，再談收益彈性。',
+  '真正的交流，是互相校正，而不是互相裹挾。',
 ];
 
 /**
@@ -52,7 +56,7 @@ export const RegisterView: React.FC = React.memo(() => {
 
   const [{ loading, error }, handleRegister] = useAsyncFn(async () => {
     if (!agreeRisk) {
-      showErrorToasts('请先阅读并同意《投资风险安全宣言》');
+      showErrorToasts(`請先閱讀並同意《${TERMS_TITLE}》與《${PRIVACY_TITLE}》`);
       return;
     }
 
@@ -105,17 +109,22 @@ export const RegisterView: React.FC = React.memo(() => {
   return (
     <div className="w-full">
       <div className="mb-6 flex justify-center">
-        <BrandLogo alt="Logo" className="max-h-24 max-w-[80%]" />
+        <BrandLogo alt="財訊" className="max-h-24 max-w-[80%]" />
       </div>
 
       <div className="text-center mb-8">
         <div className="font-extrabold text-2xl mobile:text-xl tracking-wide text-white">
           {BRAND_NAME_FULL}
         </div>
+        <div className="mt-2 text-sm text-[rgba(255,255,255,0.82)]">
+          {BRAND_SUBTITLE}
+        </div>
         <div className="mt-3 text-sm text-[rgba(255,255,255,0.85)] italic font-serif">
           "{dailyQuote}"
         </div>
       </div>
+
+      <EventBanner />
 
       <div>
         <div className="mb-4">
@@ -198,7 +207,7 @@ export const RegisterView: React.FC = React.memo(() => {
               </button>
             </span>
             <span className="block mt-1 text-[rgba(255,255,255,0.60)] font-medium">
-              日斗投资财富交流会学习名额注册仅限特邀内部成员
+              第十屆交流會名額註冊僅限特邀內部成員
             </span>
           </div>
         </label>
@@ -218,6 +227,12 @@ export const RegisterView: React.FC = React.memo(() => {
           {t('返回登录')}
         </SecondaryBtn>
       </div>
+
+      <div className="mt-6 text-xs text-[rgba(255,255,255,0.55)] leading-6">
+        <div>{BRAND_COMPANY}</div>
+        <div>TLS 1.3 傳輸保護 · 日本數據節點部署</div>
+      </div>
+      <TrustLinks />
     </div>
   );
 });

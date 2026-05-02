@@ -1,26 +1,26 @@
 {
-  "name": "日斗投资财富交流会 · RIDOU INVESTMENT",
-  "short_name": "日斗投资",
-  "description": "价值投资交流与风险控制分享平台",
+  "name": "財訊",
+  "short_name": "財訊",
+  "description": "日斗投資財富論壇第十屆交流會內部通訊平台",
   "icons": [
     {
-      "src": "/images/logo/logo@32.png",
+      "src": "/images/brand/favicon-32.png",
       "sizes": "32x32",
       "type": "image/png"
     },
     {
-      "src": "/images/logo/logo@192.png",
+      "src": "/images/brand/logo-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/images/logo/logo@512.png",
+      "src": "/images/brand/logo-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#374151",
-  "background_color": "#374151"
+  "theme_color": "#081a33",
+  "background_color": "#081a33"
 }
