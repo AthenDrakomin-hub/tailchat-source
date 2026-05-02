@@ -19,6 +19,9 @@ interface Props {
 export const AppMain: React.FC<Props> = React.memo((props) => {
   const webviewRef = useRef<WebView>(null);
   const nextLoadStatusTextRef = useRef<string | null>(null);
+  const recoverSuccessTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
   const clearSelectedServer = useServerStore((state) => state.clearSelectedServer);
   const [canGoBack, setCanGoBack] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -26,6 +29,7 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [slowNetworkHint, setSlowNetworkHint] = useState(false);
   const [statusText, setStatusText] = useState('正在连接当前工作区…');
+  const [recoverSuccessVisible, setRecoverSuccessVisible] = useState(false);
 
   useEffect(() => {
     if (!loading) {
@@ -40,12 +44,21 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
     return () => clearTimeout(timer);
   }, [loading]);
 
+  useEffect(() => {
+    return () => {
+      if (recoverSuccessTimerRef.current) {
+        clearTimeout(recoverSuccessTimerRef.current);
+      }
+    };
+  }, []);
+
   const recoverCurrentPage = (status: string) => {
     nextLoadStatusTextRef.current = status;
     setErrorMessage(null);
     setLoading(true);
     setProgress(0.08);
     setSlowNetworkHint(false);
+    setRecoverSuccessVisible(false);
     setStatusText(status);
     webviewRef.current?.reload();
   };
@@ -114,6 +127,13 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
           onLoadEnd={() => {
             setLoading(false);
             setStatusText('当前工作区内容已恢复');
+            setRecoverSuccessVisible(true);
+            if (recoverSuccessTimerRef.current) {
+              clearTimeout(recoverSuccessTimerRef.current);
+            }
+            recoverSuccessTimerRef.current = setTimeout(() => {
+              setRecoverSuccessVisible(false);
+            }, 1800);
           }}
           onLoadProgress={(event) => {
             setProgress(event.nativeEvent.progress);
@@ -168,6 +188,11 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
                 </Text>
               )}
             </View>
+          </View>
+        )}
+        {recoverSuccessVisible && !errorMessage && (
+          <View style={styles.recoverSuccessOverlay}>
+            <Text style={styles.recoverSuccessText}>已恢复当前工作区内容</Text>
           </View>
         )}
         {errorMessage && (
@@ -333,6 +358,20 @@ const styles = StyleSheet.create({
       height: 8,
     },
     elevation: 4,
+  },
+  recoverSuccessOverlay: {
+    position: 'absolute',
+    top: 24,
+    alignSelf: 'center',
+    borderRadius: 999,
+    backgroundColor: 'rgba(11,74,139,0.92)',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  recoverSuccessText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
   },
   errorTitle: {
     color: '#0f172a',

@@ -14,9 +14,11 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
+  onSwitchWorkspace?: () => void;
 
-  constructor(mainWindow: BrowserWindow) {
+  constructor(mainWindow: BrowserWindow, onSwitchWorkspace?: () => void) {
     this.mainWindow = mainWindow;
+    this.onSwitchWorkspace = onSwitchWorkspace;
   }
 
   buildMenu(): Menu {
@@ -136,6 +138,13 @@ export default class MenuBuilder {
           selector: 'performMiniaturize:',
         },
         { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
+        {
+          label: '返回工作区选择',
+          accelerator: 'Shift+Command+W',
+          click: () => {
+            this.onSwitchWorkspace?.();
+          },
+        },
         { type: 'separator' },
         { label: 'Bring All to Front', selector: 'arrangeInFront:' },
       ],
@@ -187,6 +196,13 @@ export default class MenuBuilder {
             accelerator: 'Ctrl+W',
             click: () => {
               this.mainWindow.close();
+            },
+          },
+          {
+            label: '返回工作区选择',
+            accelerator: 'Ctrl+Shift+W',
+            click: () => {
+              this.onSwitchWorkspace?.();
             },
           },
         ],

@@ -115,6 +115,21 @@ let capturerSourcePickerWindow: BrowserWindow | null = null;
 let currentWorkspaceUrl: string | null = null;
 let isShowingRecoveryDialog = false;
 
+const switchBackToWorkspaceSelector = () => {
+  currentWorkspaceUrl = null;
+
+  if (!welcomeWindow) {
+    createWelcomeWindow();
+  } else {
+    welcomeWindow.show();
+    welcomeWindow.focus();
+  }
+
+  if (mainWindow) {
+    mainWindow.close();
+  }
+};
+
 const createWelcomeWindow = async () => {
   // 创建一个新的浏览器窗口
   welcomeWindow = new BrowserWindow({
@@ -286,9 +301,7 @@ const createMainWindow = async (url: string) => {
           return;
         }
 
-        currentWorkspaceUrl = null;
-        mainWindow.close();
-        createWelcomeWindow();
+        switchBackToWorkspaceSelector();
       }
     );
 
@@ -327,7 +340,10 @@ const createMainWindow = async (url: string) => {
     });
 
     log.info('Build menu');
-    const menuBuilder = new MenuBuilder(mainWindow);
+    const menuBuilder = new MenuBuilder(
+      mainWindow,
+      switchBackToWorkspaceSelector
+    );
     menuBuilder.buildMenu();
 
     // Open urls in the user's browser
