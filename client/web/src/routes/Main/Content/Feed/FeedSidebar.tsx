@@ -30,6 +30,15 @@ export const FeedSidebar: React.FC = React.memo(() => {
             {groupId ? '当前正在查看与指定群组关联的动态。' : '当前正在查看全站公开动态流。'}
           </div>
         </div>
+
+        <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-black/[0.03] dark:bg-white/[0.03] px-4 py-3">
+          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+            主场联动
+          </div>
+          <div className="mt-2 text-xs leading-6 text-gray-600 dark:text-gray-300">
+            先在动态做内容预热，再回到群组承接讨论；也可以从群组回看关联动态，形成完整运营链路。
+          </div>
+        </div>
       </div>
     </CommonSidebarWrapper>
   );

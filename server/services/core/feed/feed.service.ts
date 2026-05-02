@@ -1,5 +1,6 @@
 import {
   DataNotFoundError,
+  NoPermissionError,
   TcContext,
   TcDbService,
   TcService,
@@ -39,13 +40,33 @@ class FeedService extends TcService {
         groupId: { type: 'string', optional: true },
       },
     });
+    this.registerAction('getPostDetail', this.getPostDetail, {
+      params: {
+        postId: 'string',
+      },
+    });
+    this.registerAction('listUserPosts', this.listUserPosts, {
+      params: {
+        userId: 'string',
+      },
+    });
     this.registerAction('commentPost', this.commentPost, {
       params: {
         postId: 'string',
         content: 'string',
       },
     });
+    this.registerAction('listPostComments', this.listPostComments, {
+      params: {
+        postId: 'string',
+      },
+    });
     this.registerAction('likePost', this.likePost, {
+      params: {
+        postId: 'string',
+      },
+    });
+    this.registerAction('removePost', this.removePost, {
       params: {
         postId: 'string',
       },
@@ -65,6 +86,17 @@ class FeedService extends TcService {
       groupId: doc.groupId ? String(doc.groupId) : null,
       commentsCount,
       likesCount: doc.likes?.length ?? 0,
+      createdAt: doc.createdAt?.toISOString?.() ?? '',
+      updatedAt: doc.updatedAt?.toISOString?.() ?? '',
+    };
+  }
+
+  private serializeComment(doc: FeedCommentDocument) {
+    return {
+      _id: String(doc._id),
+      postId: String(doc.postId),
+      author: String(doc.author),
+      content: doc.content,
       createdAt: doc.createdAt?.toISOString?.() ?? '',
       updatedAt: doc.updatedAt?.toISOString?.() ?? '',
     };
@@ -104,6 +136,35 @@ class FeedService extends TcService {
     return Promise.all(docs.map((doc) => this.serializePost(doc)));
   }
 
+  async getPostDetail(
+    ctx: TcContext<{
+      postId: string;
+    }>
+  ) {
+    const post = await this.adapter.findById(ctx.params.postId);
+    if (!post) {
+      throw new DataNotFoundError();
+    }
+
+    return this.serializePost(post);
+  }
+
+  async listUserPosts(
+    ctx: TcContext<{
+      userId: string;
+    }>
+  ) {
+    const docs = await this.adapter.model
+      .find({
+        author: ctx.params.userId,
+      })
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .exec();
+
+    return Promise.all(docs.map((doc) => this.serializePost(doc)));
+  }
+
   async commentPost(
     ctx: TcContext<{
       postId: string;
@@ -125,13 +186,25 @@ class FeedService extends TcService {
     });
 
     return {
-      _id: String(comment._id),
-      postId,
-      author: String(comment.author),
-      content: comment.content,
-      createdAt: comment.createdAt?.toISOString?.() ?? '',
-      updatedAt: comment.updatedAt?.toISOString?.() ?? '',
+      ...this.serializeComment(comment),
     };
+  }
+
+  async listPostComments(
+    ctx: TcContext<{
+      postId: string;
+    }>
+  ) {
+    const { postId } = ctx.params;
+    const comments = await this.commentModel
+      .find({
+        postId,
+      })
+      .sort({ createdAt: 1 })
+      .limit(50)
+      .exec();
+
+    return comments.map((comment) => this.serializeComment(comment));
   }
 
   async likePost(
@@ -155,6 +228,33 @@ class FeedService extends TcService {
     return {
       postId,
       likesCount: post.likes.length,
+    };
+  }
+
+  async removePost(
+    ctx: TcContext<{
+      postId: string;
+    }>
+  ) {
+    const userId = ctx.meta.userId;
+    const { postId } = ctx.params;
+    const post = await this.adapter.findById(postId);
+
+    if (!post) {
+      throw new DataNotFoundError();
+    }
+
+    if (String(post.author) !== String(userId)) {
+      throw new NoPermissionError('Cannot remove others feed post');
+    }
+
+    await this.commentModel.deleteMany({
+      postId,
+    });
+    await this.adapter.removeById(postId);
+
+    return {
+      success: true as const,
     };
   }
 }

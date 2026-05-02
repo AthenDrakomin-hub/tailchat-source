@@ -26,6 +26,9 @@ export const Sidebar: React.FC = React.memo(() => {
           icon={<Icon icon="mdi:post-outline" />}
           to={`/main/feed?groupId=${groupId}`}
         />
+        <div className="px-3 pb-1 text-[11px] leading-5 text-gray-500 dark:text-gray-400">
+          从群组查看关联动态，用于承接活动预热、观点沉淀和公开讨论导流。
+        </div>
 
         {groupPanels
           .filter((panel) => !isValidStr(panel.parentId))

@@ -60,3 +60,41 @@ export async function likeFeedPost(postId: string): Promise<{
 
   return data;
 }
+
+export async function getFeedPostDetail(postId: string): Promise<FeedPost> {
+  const { data } = await request.get('/api/feed/getPostDetail', {
+    params: {
+      postId,
+    },
+  });
+
+  return data;
+}
+
+export async function listFeedComments(postId: string): Promise<FeedComment[]> {
+  const { data } = await request.get('/api/feed/listPostComments', {
+    params: {
+      postId,
+    },
+  });
+
+  return data;
+}
+
+export async function listUserFeedPosts(userId: string): Promise<FeedPost[]> {
+  const { data } = await request.get('/api/feed/listUserPosts', {
+    params: {
+      userId,
+    },
+  });
+
+  return data;
+}
+
+export async function removeFeedPost(postId: string): Promise<{ success: true }> {
+  const { data } = await request.post('/api/feed/removePost', {
+    postId,
+  });
+
+  return data;
+}

@@ -23,10 +23,38 @@ class OpenAccountService extends TcService {
       },
     });
     this.registerAction('listGroups', this.listGroups);
+    this.registerAction('getGroupDetail', this.getGroupDetail, {
+      params: {
+        groupId: 'string',
+      },
+    });
+    this.registerAction('updateGroupAnnouncement', this.updateGroupAnnouncement, {
+      params: {
+        groupId: 'string',
+        announcement: 'string',
+      },
+    });
     this.registerAction('publishFeedPost', this.publishFeedPost, {
       params: {
         content: 'string',
         groupId: { type: 'string', optional: true },
+      },
+    });
+    this.registerAction('getFeedPostDetail', this.getFeedPostDetail, {
+      params: {
+        postId: 'string',
+      },
+    });
+    this.registerAction('listOwnFeedPosts', this.listOwnFeedPosts);
+    this.registerAction('commentFeedPost', this.commentFeedPost, {
+      params: {
+        postId: 'string',
+        content: 'string',
+      },
+    });
+    this.registerAction('removeFeedPost', this.removeFeedPost, {
+      params: {
+        postId: 'string',
       },
     });
   }
@@ -90,6 +118,31 @@ class OpenAccountService extends TcService {
     return ctx.call('group.getUserGroups', {}, { meta: ctx.meta });
   }
 
+  async getGroupDetail(
+    ctx: TcContext<{
+      groupId: string;
+    }>
+  ) {
+    return ctx.call('group.getGroupInfo', ctx.params, { meta: ctx.meta });
+  }
+
+  async updateGroupAnnouncement(
+    ctx: TcContext<{
+      groupId: string;
+      announcement: string;
+    }>
+  ) {
+    return ctx.call(
+      'group.updateGroupField',
+      {
+        groupId: ctx.params.groupId,
+        fieldName: 'description',
+        fieldValue: ctx.params.announcement,
+      },
+      { meta: ctx.meta }
+    );
+  }
+
   async publishFeedPost(
     ctx: TcContext<{
       content: string;
@@ -97,6 +150,41 @@ class OpenAccountService extends TcService {
     }>
   ) {
     return ctx.call('feed.createPost', ctx.params, { meta: ctx.meta });
+  }
+
+  async getFeedPostDetail(
+    ctx: TcContext<{
+      postId: string;
+    }>
+  ) {
+    return ctx.call('feed.getPostDetail', ctx.params, { meta: ctx.meta });
+  }
+
+  async listOwnFeedPosts(ctx: TcContext) {
+    return ctx.call(
+      'feed.listUserPosts',
+      {
+        userId: ctx.meta.userId,
+      },
+      { meta: ctx.meta }
+    );
+  }
+
+  async commentFeedPost(
+    ctx: TcContext<{
+      postId: string;
+      content: string;
+    }>
+  ) {
+    return ctx.call('feed.commentPost', ctx.params, { meta: ctx.meta });
+  }
+
+  async removeFeedPost(
+    ctx: TcContext<{
+      postId: string;
+    }>
+  ) {
+    return ctx.call('feed.removePost', ctx.params, { meta: ctx.meta });
   }
 }
 

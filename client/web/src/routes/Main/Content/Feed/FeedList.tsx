@@ -5,9 +5,10 @@ import { FeedCard } from './FeedCard';
 
 interface FeedListProps {
   posts: FeedPost[];
+  onRemoved?: (postId: string) => void;
 }
 
-export const FeedList: React.FC<FeedListProps> = React.memo(({ posts }) => {
+export const FeedList: React.FC<FeedListProps> = React.memo(({ posts, onRemoved }) => {
   if (posts.length === 0) {
     return <Problem text={t('还没有动态，发布第一条市场观察或活动预告吧')} />;
   }
@@ -15,7 +16,7 @@ export const FeedList: React.FC<FeedListProps> = React.memo(({ posts }) => {
   return (
     <div className="space-y-4">
       {posts.map((post) => (
-        <FeedCard key={post._id} post={post} />
+        <FeedCard key={post._id} post={post} onRemoved={onRemoved} />
       ))}
     </div>
   );

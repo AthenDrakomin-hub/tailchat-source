@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Route, Routes, useSearchParams } from 'react-router-dom';
 import { FeedPost, listFeedPosts, showErrorToasts } from 'tailchat-shared';
 import { PageContent } from '../PageContent';
 import { FeedSidebar } from './FeedSidebar';
 import { FeedComposer } from './FeedComposer';
 import { FeedList } from './FeedList';
+import { FeedDetail } from './FeedDetail';
+import { UserFeedPage } from './UserFeedPage';
 
-export const FeedPage: React.FC = React.memo(() => {
+const FeedHome: React.FC = React.memo(() => {
   const [searchParams] = useSearchParams();
   const groupId = searchParams.get('groupId') ?? undefined;
   const [posts, setPosts] = useState<FeedPost[]>([]);
@@ -41,9 +43,25 @@ export const FeedPage: React.FC = React.memo(() => {
           onCreated={(post) => setPosts((prev) => [post, ...prev])}
         />
 
-        <FeedList posts={posts} />
+        <FeedList
+          posts={posts}
+          onRemoved={(postId) =>
+            setPosts((prev) => prev.filter((item) => item._id !== postId))
+          }
+        />
       </div>
     </PageContent>
+  );
+});
+FeedHome.displayName = 'FeedHome';
+
+export const FeedPage: React.FC = React.memo(() => {
+  return (
+    <Routes>
+      <Route path="/" element={<FeedHome />} />
+      <Route path="/post/:postId" element={<FeedDetail />} />
+      <Route path="/user/:userId" element={<UserFeedPage />} />
+    </Routes>
   );
 });
 FeedPage.displayName = 'FeedPage';

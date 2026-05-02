@@ -169,6 +169,10 @@ export {
   createFeedPost,
   commentFeedPost,
   likeFeedPost,
+  getFeedPostDetail,
+  listFeedComments,
+  listUserFeedPosts,
+  removeFeedPost,
 } from './model/feed';
 export {
   sendMessage,
