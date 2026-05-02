@@ -163,6 +163,13 @@ export type {
   MarkdownInboxItem,
   InboxItem,
 } from './model/inbox';
+export type { FeedPost, FeedComment } from './model/feed';
+export {
+  listFeedPosts,
+  createFeedPost,
+  commentFeedPost,
+  likeFeedPost,
+} from './model/feed';
 export {
   sendMessage,
   recallMessage,

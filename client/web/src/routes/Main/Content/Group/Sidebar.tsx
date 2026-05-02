@@ -5,6 +5,8 @@ import { GroupHeader } from './GroupHeader';
 import { GroupSection } from '@/components/GroupSection';
 import { CommonSidebarWrapper } from '@/components/CommonSidebarWrapper';
 import { SidebarItem } from './SidebarItem';
+import { GroupPanelItem } from '@/components/GroupPanelItem';
+import { Icon } from 'tailchat-design';
 
 /**
  * 群组面板侧边栏组件
@@ -19,6 +21,12 @@ export const Sidebar: React.FC = React.memo(() => {
       <GroupHeader groupId={groupId} />
 
       <div className="p-2 space-y-1 overflow-y-auto overflow-x-hidden min-w-0">
+        <GroupPanelItem
+          name="关联动态"
+          icon={<Icon icon="mdi:post-outline" />}
+          to={`/main/feed?groupId=${groupId}`}
+        />
+
         {groupPanels
           .filter((panel) => !isValidStr(panel.parentId))
           .map((panel) =>

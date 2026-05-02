@@ -9,6 +9,7 @@ import { ReactQueryDevBtn } from './ReactQueryDevBtn';
 import { pluginCustomPanel } from '@/plugin/common';
 import { NavbarCustomNavItem } from './CustomNavItem';
 import { QuickSwitcherNav } from './QuickSwitcherNav';
+import { FeedNav } from './FeedNav';
 
 /**
  * 导航栏组件
@@ -29,6 +30,8 @@ export const Navbar: React.FC = React.memo(() => {
           <InboxNav />
 
           <GroupsNav />
+
+          <FeedNav />
 
           <QuickSwitcherNav />
 

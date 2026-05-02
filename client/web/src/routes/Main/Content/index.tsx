@@ -4,6 +4,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { Group } from './Group';
 import { GroupsOverview } from './Groups';
 import { Inbox } from './Inbox';
+import { FeedPage } from './Feed';
 import { pluginCustomPanel } from '@/plugin/common';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
@@ -12,6 +13,7 @@ export const MainContent: React.FC = React.memo(() => {
     <Routes>
       <Route path="/personal/*" element={<Personal />} />
       <Route path="/inbox/*" element={<Inbox />} />
+      <Route path="/feed" element={<FeedPage />} />
       <Route path="/group" element={<GroupsOverview />} />
       <Route path="/group/:groupId/*" element={<Group />} />
 
