@@ -164,6 +164,13 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
             </div>
           )}
         </div>
+        {!disabled && (
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 px-1 text-[11px] leading-5 text-gray-400 dark:text-gray-500">
+            <span>支持 `Enter` 快速发送消息</span>
+            <span>可直接拖拽或粘贴图片</span>
+            <span>更适合用简短直接的表达开始长期沟通</span>
+          </div>
+        )}
       </div>
 
       {!disabled && <ChatDropArea />}

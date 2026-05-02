@@ -183,6 +183,17 @@ const createMainWindow = async (url: string) => {
       webPreferences,
     });
 
+    const applyWindowTitle = (subtitle?: string) => {
+      if (!mainWindow) {
+        return;
+      }
+
+      mainWindow.setTitle(
+        subtitle ? `財訊桌面端 · ${subtitle}` : '財訊桌面端'
+      );
+    };
+
+    applyWindowTitle('正在连接工作区');
     mainWindow.loadURL(url);
 
     /**
@@ -201,9 +212,50 @@ const createMainWindow = async (url: string) => {
 
     mainWindow.webContents.on('did-start-navigation', () => {
       if (mainWindow) {
+        applyWindowTitle('正在连接工作区');
+        mainWindow.setProgressBar(0.15);
         mainWindow.webContents.executeJavaScript(generateInjectedScript());
       }
     });
+
+    mainWindow.webContents.on('did-start-loading', () => {
+      if (!mainWindow) {
+        return;
+      }
+
+      applyWindowTitle('正在同步页面内容');
+      mainWindow.setProgressBar(0.45);
+    });
+
+    mainWindow.webContents.on('did-stop-loading', () => {
+      if (!mainWindow) {
+        return;
+      }
+
+      applyWindowTitle('工作区内容已就绪');
+      mainWindow.setProgressBar(-1);
+    });
+
+    mainWindow.webContents.on(
+      'page-title-updated',
+      (event, title: string) => {
+        event.preventDefault();
+        applyWindowTitle(title);
+      }
+    );
+
+    mainWindow.webContents.on(
+      'did-fail-load',
+      (_event, errorCode, errorDescription) => {
+        if (!mainWindow || errorCode === -3) {
+          return;
+        }
+
+        log.error('main window load failed:', errorCode, errorDescription);
+        applyWindowTitle('工作区加载失败');
+        mainWindow.setProgressBar(-1);
+      }
+    );
 
     mainWindow.webContents.on('ipc-message', (e, channel, data) => {
       if (channel === 'webview-message') {
