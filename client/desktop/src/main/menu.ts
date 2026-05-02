@@ -63,7 +63,24 @@ export default class MenuBuilder {
   }
 
   buildWorkspaceSubmenu(): MenuItemConstructorOptions[] {
+    const workspaceHost = this.workspaceUrl
+      ? (() => {
+          try {
+            return new URL(this.workspaceUrl).host;
+          } catch {
+            return this.workspaceUrl;
+          }
+        })()
+      : undefined;
+
     return [
+      {
+        label: workspaceHost ? `当前工作区：${workspaceHost}` : '当前工作区：未连接',
+        enabled: false,
+      },
+      {
+        type: 'separator',
+      },
       {
         label: '在浏览器打开当前工作区',
         enabled: Boolean(this.workspaceUrl),
