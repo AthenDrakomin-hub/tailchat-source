@@ -8,6 +8,34 @@
     margin-top: 6rem;
   }
 
+  .intro {
+    max-width: 48rem;
+    margin: 0 auto 3rem;
+
+    .intro-badge {
+      display: inline-block;
+      margin-bottom: 1rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(11, 74, 139, 0.08);
+      color: #0b4a8b;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: #475569;
+      line-height: 1.9;
+      font-size: 1rem;
+    }
+  }
+
   .section {
     display: flex;
     align-items: center;
@@ -23,6 +51,19 @@
     }
 
     .block {
+      max-width: 30rem;
+
+      .status {
+        display: inline-block;
+        margin-bottom: 0.75rem;
+        padding: 0.3rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.06);
+        color: #334155;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
       h3 {
         font-size: 2.25rem;
         font-weight: 700;
@@ -48,6 +89,37 @@
         font-size: 0.8rem;
         color: #666;
       }
+    }
+  }
+
+  .web-card {
+    margin: 4rem auto 0;
+    max-width: 42rem;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+
+    .status {
+      display: inline-block;
+      margin-bottom: 0.75rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(11, 74, 139, 0.08);
+      color: #0b4a8b;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    h3 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: #475569;
+      line-height: 1.9;
+      margin-bottom: 1.25rem;
     }
   }
 }

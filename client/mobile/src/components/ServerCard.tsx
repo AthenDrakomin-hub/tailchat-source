@@ -7,6 +7,8 @@ interface ServerCardProps {
   name: string;
   url?: string;
   version?: string;
+  badge?: string;
+  subtitle?: string;
   onPress?: () => void;
   onLongPress?: () => void;
 }
@@ -17,7 +19,14 @@ export const ServerCard: React.FC<ServerCardProps> = React.memo((props) => {
       onPress={props.onPress}
       onLongPress={props.onLongPress}
     >
+      {props.badge && <Text style={styles.badge}>{props.badge}</Text>}
       <Text style={styles.name}>{props.name}</Text>
+
+      {props.subtitle && (
+        <Text style={styles.subtitle} grey30>
+          {props.subtitle}
+        </Text>
+      )}
 
       {props.url && (
         <Text style={styles.url} grey30>
@@ -37,25 +46,38 @@ ServerCard.displayName = 'ServerCard';
 
 const styles = StyleSheet.create({
   root: {
-    height: 56,
-    padding: 8,
+    minHeight: 84,
+    padding: 12,
     backgroundColor: 'white',
-    borderRadius: 4,
-    borderColor: '#ccc',
+    borderRadius: 14,
+    borderColor: '#d7dee7',
     borderWidth: 1,
     justifyContent: 'center',
   },
+  badge: {
+    alignSelf: 'flex-start',
+    marginBottom: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+    backgroundColor: '#eef5ff',
+    color: '#0b4a8b',
+    fontSize: 10,
+  },
   name: {
     fontSize: 16,
-    textAlign: 'center',
+    fontWeight: '600',
+  },
+  subtitle: {
+    fontSize: 12,
+    marginTop: 4,
   },
   version: {
-    // color: '#999',
-    textAlign: 'center',
+    marginTop: 6,
     fontSize: 10,
   },
   url: {
-    // color: '#999',
-    textAlign: 'center',
+    marginTop: 6,
+    fontSize: 12,
   },
 });

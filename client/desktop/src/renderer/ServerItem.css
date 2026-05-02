@@ -1,8 +1,9 @@
 .server-item {
-  background-color: white;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
+  position: relative;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  padding: 16px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
   appearance: none;
   font-size: 1rem;
   box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
@@ -11,13 +12,13 @@
   cursor: pointer;
   opacity: 0.9;
   color: black;
-  width: 120px;
-  height: 120px;
+  width: 220px;
+  min-height: 188px;
   text-align: center;
 }
 
 .server-item:hover {
-  transform: scale(1.05);
+  transform: translateY(-2px);
   opacity: 1;
 }
 
@@ -25,4 +26,41 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.server-item__badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(11, 74, 139, 0.1);
+  color: #0b4a8b;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.server-item__name {
+  margin-top: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  color: #111827;
+}
+
+.server-item__subtitle {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.server-item__url {
+  margin-top: 8px;
+  font-size: 11px;
+  line-height: 18px;
+  color: #64748b;
+}
+
+.server-item__version {
+  margin-top: 10px;
+  color: #64748b;
 }

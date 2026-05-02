@@ -106,6 +106,44 @@ export const LoginView: React.FC = React.memo(() => {
 
       <EventBanner />
 
+      <div className="mb-6 rounded-3xl border border-white/10 bg-[rgba(255,255,255,0.06)] px-4 py-4 backdrop-blur-sm">
+        <div className="text-sm font-semibold text-white">客户端使用建议</div>
+        <div className="mt-3 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+          <div className="rounded-2xl bg-[rgba(255,255,255,0.06)] px-3 py-3">
+            <div className="text-xs text-[rgba(255,255,255,0.62)]">Web</div>
+            <div className="mt-1 text-sm font-medium text-white">当前主入口</div>
+            <div className="mt-1 text-xs leading-5 text-[rgba(255,255,255,0.68)]">
+              推荐先通过 Web 完成内测主链路体验。
+            </div>
+          </div>
+          <div className="rounded-2xl bg-[rgba(255,255,255,0.06)] px-3 py-3">
+            <div className="text-xs text-[rgba(255,255,255,0.62)]">Desktop</div>
+            <div className="mt-1 text-sm font-medium text-white">适合长期使用</div>
+            <div className="mt-1 text-xs leading-5 text-[rgba(255,255,255,0.68)]">
+              适合盯盘、群讨论常驻与多会话并行使用。
+            </div>
+          </div>
+          <div className="rounded-2xl bg-[rgba(255,255,255,0.06)] px-3 py-3">
+            <div className="text-xs text-[rgba(255,255,255,0.62)]">Mobile</div>
+            <div className="mt-1 text-sm font-medium text-white">持续完善中</div>
+            <div className="mt-1 text-xs leading-5 text-[rgba(255,255,255,0.68)]">
+              移动端入口已进入内测优化阶段，后续继续推进商城上架准备。
+            </div>
+          </div>
+        </div>
+        <div className="mt-3 text-xs text-[rgba(255,255,255,0.62)]">
+          下载与平台说明：
+          <a
+            className="ml-1 underline underline-offset-4 hover:text-white"
+            href="https://tailchat.msgbyte.com/downloads"
+            target="_blank"
+            rel="noreferrer"
+          >
+            查看客户端分发页
+          </a>
+        </div>
+      </div>
+
       <div>
         <div className="mb-4">
           <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
