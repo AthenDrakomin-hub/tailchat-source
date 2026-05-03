@@ -45,6 +45,7 @@ export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
     const userId = useUserId();
     const [hasUnread] = useUnread([converseId]);
     const dispatch = useAppDispatch();
+    const lastMessage = converse.messages[converse.messages.length - 1];
 
     const { value: icon } = useAsync(async () => {
       if (!userId) {
@@ -72,20 +73,12 @@ export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
       await model.user.removeUserDMConverse(converseId);
     }, [converseId]);
     const roleLabel = getConverseRoleLabel(name);
+    const previewText = getConversePreview(lastMessage, roleLabel);
 
     return (
       <SidebarItem
         key={converseId}
-        name={
-          <div className="min-w-0 flex items-center gap-2">
-            <span className="truncate">{name}</span>
-            {roleLabel && (
-              <span className="rounded-full bg-[#e5e7eb] dark:bg-white/10 px-2 py-0.5 text-[10px] leading-4 text-gray-500 dark:text-gray-300">
-                {roleLabel}
-              </span>
-            )}
-          </div>
-        }
+        name={<span className="truncate">{name}</span>}
         action={
           <Icon
             icon="mdi:close"
@@ -97,7 +90,8 @@ export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
           />
         }
         icon={icon}
-        subtitle={converse.updatedAt ? formatShortTime(converse.updatedAt) : undefined}
+        subtitle={previewText}
+        trailing={converse.updatedAt ? formatShortTime(converse.updatedAt) : undefined}
         to={getPersonalChatPath(converseId)}
         badge={hasUnread}
         avatarName={name}
@@ -106,3 +100,22 @@ export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
   }
 );
 SidebarDMItem.displayName = 'SidebarDMItem';
+
+function getConversePreview(
+  message: ChatConverseState['messages'][number] | undefined,
+  roleLabel: string | null
+) {
+  if (!message) {
+    return roleLabel ? `[${roleLabel}]` : '暂无消息';
+  }
+
+  const text =
+    message.plain?.trim() ||
+    (typeof message.content === 'string' ? message.content.trim() : '') ||
+    (message.hasRecall ? '撤回了一条消息' : '') ||
+    '新消息';
+
+  const compactText = text.replace(/\s+/g, ' ').slice(0, 30);
+
+  return roleLabel ? `[${roleLabel}] ${compactText}` : compactText;
+}

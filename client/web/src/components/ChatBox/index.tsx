@@ -49,9 +49,11 @@ const ChatBoxInner: React.FC<ChatBoxProps> = React.memo((props) => {
 
   return (
     <div className="w-full h-full min-w-0 overflow-hidden flex flex-col select-text relative text-sm">
-      <div className="px-5 h-14 flex items-center border-b border-black/5 bg-[#f7f7f7]">
-        <div className="text-[11px] font-medium text-[#6b7280]">
-          支持 `Enter` 快速发送、图片拖拽与粘贴上传
+      <div className="px-5 h-11 flex items-center border-b border-black/5 dark:border-white/10 bg-[#f7f7f7] dark:bg-[#1f1f1f]">
+        <div className="text-[11px] font-medium text-[#9ca3af]">
+          {props.isGroup
+            ? '群聊消息会按连续发送进行分组显示'
+            : '聊天消息支持 Enter 发送'}
         </div>
       </div>
       {messages.length === 0 ? (

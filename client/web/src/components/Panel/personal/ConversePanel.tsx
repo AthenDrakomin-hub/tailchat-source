@@ -5,6 +5,7 @@ import {
   ChatConverseState,
   t,
   useAppSelector,
+  useCachedOnlineStatus,
   useDMConverseName,
   useUserId,
   useUserInfoList,
@@ -23,18 +24,35 @@ import { ChatInputMentionsContextProvider } from '@/components/ChatBox/ChatInput
 import { getPanelPersonalChatPath } from '@/utils/personal-route';
 import { useNavigate } from 'react-router';
 import { ProfilePanel } from './ProfilePanel';
+import { Avatar } from 'tailchat-design';
 
-const ConversePanelTitle: React.FC<{ converse: ChatConverseState }> =
-  React.memo(({ converse }) => {
+const ConversePanelTitle: React.FC<{
+  converse: ChatConverseState;
+  targetUserId?: string;
+  targetUserAvatar?: string;
+}> = React.memo(({ converse, targetUserId, targetUserAvatar }) => {
     const name = useDMConverseName(converse);
+    const [isOnline] = useCachedOnlineStatus(
+      targetUserId ? [targetUserId] : ([] as string[])
+    );
 
     return (
-      <div className="min-w-0">
-        <div className="truncate text-[15px] font-semibold text-[#111827] dark:text-white">
-          {name}
-        </div>
-        <div className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400 truncate">
-          {t('私聊')}
+      <div className="min-w-0 flex items-center gap-3">
+        {targetUserId && (
+          <Avatar
+            size={36}
+            src={targetUserAvatar}
+            name={name}
+            isOnline={isOnline}
+          />
+        )}
+        <div className="min-w-0">
+          <div className="truncate text-[15px] font-semibold text-[#111827] dark:text-white">
+            {name}
+          </div>
+          <div className="mt-0.5 text-[11px] font-normal text-gray-500 dark:text-gray-400 truncate">
+            {targetUserId ? (isOnline ? t('在线') : t('私聊')) : t('私聊')}
+          </div>
         </div>
       </div>
     );
@@ -74,10 +92,14 @@ export const ConversePanel: React.FC<ConversePanelProps> = React.memo(
       return <OpenedPanelTip onClosePanelWindow={closePanelWindow} />;
     }
 
-    const converseHeader = converse && (
-      <ConversePanelTitle converse={converse} />
-    );
     const targetUser = converse?.members.length === 2 ? userInfos[0] : undefined;
+    const converseHeader = converse && (
+      <ConversePanelTitle
+        converse={converse}
+        targetUserId={targetUser?._id}
+        targetUserAvatar={targetUser?.avatar}
+      />
+    );
 
     return (
       <CommonPanelWrapper

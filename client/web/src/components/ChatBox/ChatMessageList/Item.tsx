@@ -138,7 +138,12 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
               />
             </Popover>
           ) : (
-            <div className="hidden group-hover:block opacity-40">
+            <div
+              className={clsx('hidden group-hover:block opacity-40 text-[11px]', {
+                'text-right w-full pr-1': layout.rowAlign === 'right',
+                'text-left w-full pl-1': layout.rowAlign === 'left',
+              })}
+            >
               {formatShortTime(payload.createdAt)}
             </div>
           )}
@@ -160,8 +165,8 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
             onContextMenu={stopPropagation}
           >
             {showAvatar && layout.showNickname && (
-              <div className="flex min-w-0 items-center">
-                <div className="font-bold truncate">
+              <div className="flex min-w-0 items-center mb-0.5 px-1">
+                <div className="text-[12px] text-gray-500 dark:text-gray-400 truncate">
                   {userInfo.nickname || <span>&nbsp;</span>}
                 </div>
                 <div className="hidden group-hover:block opacity-40 ml-1 text-sm flex-shrink-0">
