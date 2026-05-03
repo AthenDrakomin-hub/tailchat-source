@@ -51,6 +51,31 @@ export const SettingsAbout: React.FC = React.memo(() => {
         </a>
       </Paragraph>
 
+      <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.04] px-5 py-5 mb-4">
+        <div className="font-bold text-base text-gray-900 dark:text-white">
+          Web 试运营帮助
+        </div>
+        <div className="mt-3 text-sm leading-7 text-gray-600 dark:text-gray-300">
+          当前 Web 端已作为试运营主入口使用。建议先验证动态、群组与私信三条主链路；若遇到登录、聊天或群组异常，先回到“状态”页查看服务健康度，再决定是否继续。
+        </div>
+        <div className="mt-4 flex flex-wrap gap-3 text-xs">
+          <a
+            href="/main/personal/friends"
+            className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300"
+          >
+            返回起步面板
+          </a>
+          <a
+            href="https://tailchat.msgbyte.com/downloads"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300"
+          >
+            查看客户端下载说明
+          </a>
+        </div>
+      </div>
+
       <Paragraph>当前版本: {version}</Paragraph>
     </div>
   );
