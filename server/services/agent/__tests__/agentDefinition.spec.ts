@@ -1,17 +1,18 @@
 import { buildAgentDefinition } from '../utils/agentDefinition';
 
 describe('agentDefinition', () => {
-  test('builds agent definition with product defaults', () => {
+  test('builds external agent config with infrastructure defaults', () => {
     expect(
       buildAgentDefinition({
-        agentId: 'agent_teacher',
+        agentId: 'agent_teacher_finance',
         name: '投教主讲老师',
-        persona: '负责建立信任、讲解课程并推进转化',
+        externalAgentId: 'openclaw.teacher.finance',
       })
     ).toMatchObject({
-      agentId: 'agent_teacher',
+      agentId: 'agent_teacher_finance',
       name: '投教主讲老师',
-      persona: '负责建立信任、讲解课程并推进转化',
+      externalAgentId: 'openclaw.teacher.finance',
+      provider: 'openclaw',
       domain: 'general',
       runtimeMode: 'openclaw-bridge',
       status: 'draft',

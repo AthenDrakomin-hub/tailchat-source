@@ -9,11 +9,12 @@ export interface AgentDefinition {
   agentId: string;
   name: string;
   avatar?: string;
-  persona: string;
+  externalAgentId: string;
   domain: string;
   runtimeMode: AgentRuntimeMode;
-  provider?: string;
-  promptTemplate?: string;
+  provider: string;
+  description?: string;
+  availableScopes?: string[];
   tags?: string[];
   status: AgentStatus;
 }

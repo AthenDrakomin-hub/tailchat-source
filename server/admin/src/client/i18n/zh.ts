@@ -105,7 +105,7 @@ export const zhTranslation = {
       name: '系统控制台',
     },
     'agent-control': {
-      name: 'Agent 总控台',
+      name: 'OpenClaw 接入底座',
     },
   },
   category: {

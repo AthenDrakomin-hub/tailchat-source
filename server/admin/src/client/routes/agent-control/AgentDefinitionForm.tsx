@@ -4,8 +4,10 @@ import { Button, Form, Input, Select, Typography } from 'tushan';
 export interface AgentDefinitionFormValues {
   agentId: string;
   name: string;
-  persona: string;
+  externalAgentId: string;
   domain: string;
+  provider: string;
+  description?: string;
   runtimeMode: 'openapi-http' | 'openapi-ws' | 'openclaw-bridge';
 }
 
@@ -19,12 +21,13 @@ export const AgentDefinitionForm: React.FC<Props> = React.memo((props) => {
 
   return (
     <div>
-      <Typography.Title heading={6}>新建 Agent</Typography.Title>
+      <Typography.Title heading={6}>新建外部 Agent 接入</Typography.Title>
       <Form
         form={form}
         layout="vertical"
         initialValues={{
           domain: 'general',
+          provider: 'openclaw',
           runtimeMode: 'openclaw-bridge',
         }}
         onSubmit={props.onSubmit}
@@ -35,9 +38,19 @@ export const AgentDefinitionForm: React.FC<Props> = React.memo((props) => {
         <Form.Item field="name" label="Agent 名称" rules={[{ required: true }]}>
           <Input placeholder="投教主讲老师" />
         </Form.Item>
-        <Form.Item field="persona" label="人格定位" rules={[{ required: true }]}>
+        <Form.Item
+          field="externalAgentId"
+          label="外部 Agent ID"
+          rules={[{ required: true }]}
+        >
+          <Input placeholder="openclaw.teacher.finance" />
+        </Form.Item>
+        <Form.Item field="provider" label="接入来源" rules={[{ required: true }]}>
+          <Input placeholder="openclaw" />
+        </Form.Item>
+        <Form.Item field="description" label="接入说明">
           <Input.TextArea
-            placeholder="说明这个角色的身份、语气、立场和目标"
+            placeholder="说明这个外部 Agent 负责的业务角色和接入用途"
             rows={4}
           />
         </Form.Item>
@@ -54,7 +67,7 @@ export const AgentDefinitionForm: React.FC<Props> = React.memo((props) => {
           />
         </Form.Item>
         <Button type="primary" htmlType="submit" loading={props.loading}>
-          保存 Agent
+          保存接入配置
         </Button>
       </Form>
     </div>

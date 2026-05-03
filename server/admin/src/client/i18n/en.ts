@@ -18,7 +18,7 @@ export const enTranslation = {
       name: 'Plugin Registry',
     },
     'agent-control': {
-      name: 'Agent Control',
+      name: 'OpenClaw Gateway',
     },
     'socketio-diagnostic': {
       name: 'Socket.IO Diagnostic',

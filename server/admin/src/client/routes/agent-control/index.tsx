@@ -60,9 +60,9 @@ export const AgentControlPanel: React.FC = React.memo(() => {
   return (
     <Space direction="vertical" style={{ width: '100%' }} size="large">
       <Card>
-        <Typography.Title heading={4}>Agent 总控台</Typography.Title>
+        <Typography.Title heading={4}>OpenClaw 接入底座</Typography.Title>
         <Typography.Paragraph>
-          在这里统一管理角色型 Agent 的基础定义。后续会继续补角色绑定、剧本模板和运行时调度。
+          在这里统一管理外部 Agent 接入、角色绑定、剧本模板和运行时调度。本项目只负责场景、关系、入口和沉淀，不负责 Agent 人格与推理本体。
         </Typography.Paragraph>
       </Card>
 
@@ -72,17 +72,17 @@ export const AgentControlPanel: React.FC = React.memo(() => {
           onSubmit={async (values) => {
             try {
               await createAgent(values);
-              Message.success('Agent 已创建');
+              Message.success('外部 Agent 接入已创建');
               await fetchList();
             } catch (err) {
-              Message.error(formatAdminError(err, '创建 Agent 失败'));
+              Message.error(formatAdminError(err, '创建外部 Agent 接入失败'));
             }
           }}
         />
       </Card>
 
       <Card>
-        <Typography.Title heading={6}>当前 Agent 列表</Typography.Title>
+        <Typography.Title heading={6}>外部 Agent 接入列表</Typography.Title>
         <Table
           loading={loading}
           pagination={false}
@@ -90,6 +90,8 @@ export const AgentControlPanel: React.FC = React.memo(() => {
           columns={[
             { title: 'Agent ID', dataIndex: 'agentId' },
             { title: '名称', dataIndex: 'name' },
+            { title: '外部 Agent ID', dataIndex: 'externalAgentId' },
+            { title: '来源', dataIndex: 'provider' },
             { title: '行业域', dataIndex: 'domain' },
             { title: '运行模式', dataIndex: 'runtimeMode' },
             { title: '状态', dataIndex: 'status' },

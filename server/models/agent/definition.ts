@@ -23,7 +23,7 @@ export class AgentDefinitionModel extends TimeStamps implements Base {
   avatar?: string;
 
   @prop({ required: true })
-  persona: string;
+  externalAgentId: string;
 
   @prop({ default: 'general' })
   domain: string;
@@ -31,11 +31,14 @@ export class AgentDefinitionModel extends TimeStamps implements Base {
   @prop({ default: 'openclaw-bridge' })
   runtimeMode: AgentRuntimeMode;
 
-  @prop()
-  provider?: string;
+  @prop({ default: 'openclaw' })
+  provider: string;
 
   @prop()
-  promptTemplate?: string;
+  description?: string;
+
+  @prop({ type: () => [String], default: [] })
+  availableScopes: string[];
 
   @prop({ type: () => [String], default: [] })
   tags: string[];
