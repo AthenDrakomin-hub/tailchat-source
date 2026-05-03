@@ -15,6 +15,7 @@ import {
   useMemoizedFn,
 } from 'tailchat-shared';
 import { buildAgentBindingDisplay } from './agentBindingDisplay';
+import { buildAgentBindingStatus } from './agentBindingStatus';
 
 interface RoleSummaryProps {
   groupId: string;
@@ -76,6 +77,7 @@ export const RoleSummary: React.FC<RoleSummaryProps> = React.memo((props) => {
   }, []);
 
   const agentDisplay = buildAgentBindingDisplay(agentDefinitions, agentId);
+  const bindingStatus = buildAgentBindingStatus(agentDisplay);
 
   useEffect(() => {
     model.agent
@@ -108,6 +110,17 @@ export const RoleSummary: React.FC<RoleSummaryProps> = React.memo((props) => {
             options={agentOptions}
             onChange={setAgentId}
           />
+
+          <div
+            className={`rounded-xl border px-3 py-2 text-sm ${
+              bindingStatus.status === 'bound'
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                : 'border-slate-200 bg-slate-50 text-slate-600'
+            }`}
+          >
+            <div className="font-medium">{t(bindingStatus.title)}</div>
+            <div className="mt-1">{t(bindingStatus.description)}</div>
+          </div>
 
           {agentDisplay && (
             <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
