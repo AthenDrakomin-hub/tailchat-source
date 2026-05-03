@@ -31,7 +31,6 @@ import _isEmpty from 'lodash/isEmpty';
 import type { LocalChatMessage } from 'tailchat-shared/model/message';
 import { getChatMessageLayout } from './layout';
 import { getGroupPanelRoleStyle } from './roleStyle';
-import { getUserTypeBadgeText } from '../chatEnhancement';
 import './Item.less';
 
 /**
@@ -88,7 +87,6 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
       !isSelf && isGroup
         ? getGroupPanelRoleStyle(groupInfo, panelId, payload.author)
         : undefined;
-    const userTypeBadge = getUserTypeBadgeText((userInfo as any)?.type);
     const [isActionBtnActive, setIsActionBtnActive] = useState(false);
     const { settings } = useUserSettings();
 
@@ -194,11 +192,6 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                 >
                   {userInfo.nickname || <span>&nbsp;</span>}
                 </div>
-                {userTypeBadge && (
-                  <div className="ml-1 px-1.5 py-0.5 rounded-full bg-[#eef6ff] dark:bg-[#1e3a5f] text-[#2563eb] dark:text-[#93c5fd] text-[10px] leading-none flex-shrink-0">
-                    {userTypeBadge}
-                  </div>
-                )}
                 <div className="hidden group-hover:block opacity-40 ml-1 text-sm flex-shrink-0">
                   {formatShortTime(payload.createdAt)}
                 </div>
