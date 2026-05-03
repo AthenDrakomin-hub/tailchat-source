@@ -25,7 +25,7 @@ export const UserListItem: React.FC<UserListItemProps> = React.memo((props) => {
   const popoverContent =
     props.popover ??
     (enableUserPopover && !_isEmpty(userInfo) ? (
-      <UserPopover userInfo={userInfo} />
+      <UserPopover userInfo={userInfo as any} />
     ) : undefined);
 
   return (

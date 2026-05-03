@@ -156,7 +156,13 @@ export type {
   GroupBasicInfo,
   GroupInvite,
   GroupMember,
+  GroupRole,
   GroupPanelFeature,
+  GroupPanelSpeakPolicy,
+  GroupPanelSpeakRule,
+  GroupPanelFloodControlRule,
+  GroupPanelReadabilityRule,
+  GroupPanelRoleStyle,
 } from './model/group';
 export type {
   BasicInboxItem,

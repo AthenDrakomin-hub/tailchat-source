@@ -97,7 +97,7 @@ export const ConversePanel: React.FC<ConversePanelProps> = React.memo(
       <ConversePanelTitle
         converse={converse}
         targetUserId={targetUser?._id}
-        targetUserAvatar={targetUser?.avatar}
+        targetUserAvatar={targetUser?.avatar ?? undefined}
       />
     );
 

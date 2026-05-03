@@ -188,7 +188,7 @@ export const GroupSpeakPolicyEditor: React.FC<Props> = React.memo((props) => {
             <RuleEditor
               compact={true}
               value={policy.roleRules?.[role._id]}
-              onChange={(value) => updateRoleRule(role._id, value)}
+              onChange={(value) => updateRoleRule(role._id, value as Record<string, unknown>)}
             />
             <div className="grid grid-cols-3 gap-3 mt-3">
               <Field label={t('昵称颜色')}>

@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router';
 import {
   addFriendRequest,
   createDMConverse,
-  openModal,
   showErrorToasts,
   showToasts,
   t,
@@ -20,6 +19,7 @@ import { usePluginUserExtraInfo } from './usePluginUserExtraInfo';
 import { getUserRelationshipState } from './relationship';
 import { getPersonalChatPath } from '@/utils/personal-route';
 import { SetFriendNickname } from '@/components/modals/SetFriendNickname';
+import { openModal } from '@/components/Modal';
 
 export const PersonalUserPopover: React.FC<{
   userInfo: UserBaseInfo;

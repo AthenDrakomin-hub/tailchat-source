@@ -122,7 +122,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
       value={{
         message,
         setMessage,
-        sendMsg: async (msg, meta) => {
+        sendMsg: async (msg: string, meta?: any) => {
           if (!String(msg).trim()) {
             return;
           }

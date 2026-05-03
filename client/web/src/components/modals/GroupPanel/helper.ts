@@ -29,7 +29,7 @@ export function buildDataFromValues(values: GroupPanelValues) {
     type: panelType,
     provider,
     pluginPanelName,
-    meta,
+    meta: meta as Record<string, unknown>,
     permissionMap,
     fallbackPermissions,
   };

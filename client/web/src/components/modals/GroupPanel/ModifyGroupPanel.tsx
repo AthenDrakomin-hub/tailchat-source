@@ -72,38 +72,40 @@ export const ModalModifyGroupPanel: React.FC<{
         onSubmit={handleSubmit}
         extraProps={{
           suffixElement: (
-            <CollapseView title={t('高级权限控制')} className="mb-2">
-              <AdvanceGroupPanelPermission
-                height={320}
-                groupId={props.groupId}
-                panelId={props.groupPanelId}
-                onChange={(permissionMap) => {
-                  if (permissionMap) {
-                    const fallbackPermissions = permissionMap[ALL_PERMISSION];
-                    const others = { ...permissionMap };
+            <>
+              <CollapseView title={t('高级权限控制')} className="mb-2">
+                <AdvanceGroupPanelPermission
+                  height={320}
+                  groupId={props.groupId}
+                  panelId={props.groupPanelId}
+                  onChange={(permissionMap) => {
+                    if (permissionMap) {
+                      const fallbackPermissions = permissionMap[ALL_PERMISSION];
+                      const others = { ...permissionMap };
 
-                    handleUpdateValues({
-                      fallbackPermissions,
-                      permissionMap: _omit(others, [ALL_PERMISSION]),
-                    });
-                  } else {
-                    handleUpdateValues({
-                      fallbackPermissions: undefined,
-                      permissionMap: undefined,
-                    });
-                  }
-                }}
-              />
-            </CollapseView>
-            {groupInfo && (
-              <CollapseView title={t('发言治理')} className="mb-2">
-                <GroupSpeakPolicyEditor
-                  roles={groupInfo.roles}
-                  value={currentValues.speakPolicy as any}
-                  onChange={(speakPolicy) => handleUpdateValues({ speakPolicy })}
+                      handleUpdateValues({
+                        fallbackPermissions,
+                        permissionMap: _omit(others, [ALL_PERMISSION]),
+                      });
+                    } else {
+                      handleUpdateValues({
+                        fallbackPermissions: undefined,
+                        permissionMap: undefined,
+                      });
+                    }
+                  }}
                 />
               </CollapseView>
-            )}
+              {groupInfo && (
+                <CollapseView title={t('发言治理')} className="mb-2">
+                  <GroupSpeakPolicyEditor
+                    roles={groupInfo.roles}
+                    value={currentValues.speakPolicy as any}
+                    onChange={(speakPolicy) => handleUpdateValues({ speakPolicy })}
+                  />
+                </CollapseView>
+              )}
+            </>
           ),
         }}
       />

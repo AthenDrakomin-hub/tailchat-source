@@ -17,10 +17,11 @@
     @apply bg-transparent !important;
 
     &__list {
-      @apply border border-black/5 bg-white dark:bg-content-dark rounded-2xl overflow-auto absolute shadow-[0_10px_30px_rgba(15,23,42,0.12)];
+      @apply border border-black/5 bg-white dark:bg-content-dark rounded-2xl overflow-auto absolute;
       max-height: 60vh;
       min-width: 240px;
       bottom: 14px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
     }
 
     &__item {

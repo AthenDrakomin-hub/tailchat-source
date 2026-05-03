@@ -4,8 +4,47 @@ export enum GroupPanelType {
   PLUGIN = 2,
 }
 
-// TODO
-export type GroupPanelMeta = {};
+export interface GroupPanelSpeakRule {
+  allowText?: boolean;
+  allowRichContent?: boolean;
+  rateLimitWindowSec?: number;
+  rateLimitCount?: number;
+}
+
+export interface GroupPanelFloodControlRule {
+  enabled?: boolean;
+  duplicateWindowSec?: number;
+  duplicateLimit?: number;
+}
+
+export interface GroupPanelRoleStyle {
+  nicknameColor?: string;
+  avatarRingColor?: string;
+  sideAccentColor?: string;
+}
+
+export interface GroupPanelReadabilityRule {
+  roleStyleMode?:
+    | 'none'
+    | 'nickname'
+    | 'avatar-ring'
+    | 'side-accent'
+    | 'combined';
+  roleStyleMap?: Record<string, GroupPanelRoleStyle>;
+}
+
+export interface GroupPanelSpeakPolicy {
+  enabled?: boolean;
+  defaultRule?: GroupPanelSpeakRule;
+  roleRules?: Record<string, GroupPanelSpeakRule>;
+  botRule?: GroupPanelSpeakRule;
+  floodControl?: GroupPanelFloodControlRule;
+  readability?: GroupPanelReadabilityRule;
+}
+
+export type GroupPanelMeta = {
+  speakPolicy?: GroupPanelSpeakPolicy;
+};
 
 interface GroupMemberStruct {
   roles?: string[]; // 角色

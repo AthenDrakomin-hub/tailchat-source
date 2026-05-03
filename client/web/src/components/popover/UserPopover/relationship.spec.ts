@@ -31,10 +31,8 @@ describe('user relationship state', () => {
         friends: [],
         friendRequests: [
           {
-            _id: 'r1',
             from: 'u1',
             to: 'u3',
-            message: '',
           },
         ],
       })

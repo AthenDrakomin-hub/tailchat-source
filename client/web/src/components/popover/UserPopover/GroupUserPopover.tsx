@@ -9,7 +9,6 @@ import {
   createDMConverse,
   getGroupConfigWithInfo,
   GroupInfo,
-  openModal,
   showErrorToasts,
   showToasts,
   t,
@@ -23,6 +22,7 @@ import { usePluginUserExtraInfo } from './usePluginUserExtraInfo';
 import { getPersonalChatPath } from '@/utils/personal-route';
 import { getUserRelationshipState } from './relationship';
 import { SetFriendNickname } from '@/components/modals/SetFriendNickname';
+import { openModal } from '@/components/Modal';
 
 export const GroupUserPopover: React.FC<{
   userInfo: UserBaseInfo;

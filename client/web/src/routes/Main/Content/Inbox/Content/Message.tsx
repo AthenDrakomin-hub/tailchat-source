@@ -69,6 +69,9 @@ export const NearbyMessages: React.FC<{
     <MessageHighlightContainer messageId={props.messageId}>
       <NormalMessageList
         messages={value}
+        isGroup={Boolean(props.groupId)}
+        groupId={props.groupId}
+        panelId={props.converseId}
         isLoadingMore={false}
         hasMoreMessage={false}
         onLoadMore={async () => {}}

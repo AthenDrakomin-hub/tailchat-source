@@ -91,7 +91,7 @@ export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
         }
         icon={icon}
         subtitle={previewText}
-        trailing={converse.updatedAt ? formatShortTime(converse.updatedAt) : undefined}
+        trailing={lastMessage?.createdAt ? formatShortTime(lastMessage.createdAt) : undefined}
         to={getPersonalChatPath(converseId)}
         badge={hasUnread}
         avatarName={name}
@@ -110,7 +110,6 @@ function getConversePreview(
   }
 
   const text =
-    message.plain?.trim() ||
     (typeof message.content === 'string' ? message.content.trim() : '') ||
     (message.hasRecall ? '撤回了一条消息' : '') ||
     '新消息';

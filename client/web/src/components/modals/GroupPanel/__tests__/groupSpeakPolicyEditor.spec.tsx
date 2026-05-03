@@ -12,9 +12,9 @@ describe('GroupSpeakPolicyEditor', () => {
       />
     );
 
-    expect(screen.getByText('发言治理')).toBeInTheDocument();
-    expect(screen.getByText('默认成员规则')).toBeInTheDocument();
-    expect(screen.getByText('机器人规则')).toBeInTheDocument();
-    expect(screen.getByText('管理员')).toBeInTheDocument();
+    expect(screen.getByText('发言治理')).toBeTruthy();
+    expect(screen.getByText('默认成员规则')).toBeTruthy();
+    expect(screen.getByText('机器人规则')).toBeTruthy();
+    expect(screen.getByText('管理员')).toBeTruthy();
   });
 });

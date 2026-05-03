@@ -8,7 +8,7 @@ import { useShallowObject } from 'tailchat-shared';
 export interface ChatInputActionContextProps {
   message: string;
   setMessage: (msg: string) => void;
-  sendMsg: (message: string) => void;
+  sendMsg: (message: string, meta?: any) => Promise<void> | void;
   appendMsg: (message: string) => void;
 }
 export const ChatInputActionContext =
