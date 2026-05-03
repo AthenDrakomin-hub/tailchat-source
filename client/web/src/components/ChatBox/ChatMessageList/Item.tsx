@@ -66,7 +66,7 @@ const MessageActionIcon: React.FC<{ icon: string }> = (props) => (
  */
 export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
   (props) => {
-    const { showAvatar, payload, hideAction = false, isGroup } = props;
+    const { showAvatar, isMergedPrev, payload, hideAction = false, isGroup } = props;
     const userInfo = useCachedUserInfo(payload.author ?? '');
     const currentUser = useUserInfo();
     const isSelf = payload.author === currentUser?._id;
@@ -98,6 +98,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
             'hover:bg-black hover:bg-opacity-[0.02] dark:hover:bg-white/5': !isActionBtnActive,
             'justify-end': layout.rowAlign === 'right',
             'justify-start': layout.rowAlign === 'left',
+            'pt-0.5': isMergedPrev,
           }
         )}
         data-message-id={payload._id}
@@ -174,10 +175,17 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
             >
               <div
                 className={clsx(
-                  'chat-message-item_body min-w-0 leading-6 break-words overflow-x-hidden rounded-[18px] px-3.5 py-2.5 max-w-[820px]',
+                  'chat-message-item_body min-w-0 leading-6 break-words overflow-x-hidden px-3.5 py-2.5 max-w-[820px]',
                   isSelf
                     ? 'bg-[#95ec69] text-[#111827]'
-                    : 'bg-white text-[#111827] border border-black/5 dark:bg-[#2b2b2b] dark:text-[#f3f4f6] dark:border-white/10'
+                    : 'bg-white text-[#111827] border border-black/5 dark:bg-[#2b2b2b] dark:text-[#f3f4f6] dark:border-white/10',
+                  layout.rowAlign === 'right'
+                    ? showAvatar
+                      ? 'rounded-[18px] rounded-tr-[6px]'
+                      : 'rounded-[18px] rounded-tr-[10px]'
+                    : showAvatar
+                      ? 'rounded-[18px] rounded-tl-[6px]'
+                      : 'rounded-[18px] rounded-tl-[10px]'
                 )}
                 style={{
                   alignSelf:
@@ -294,6 +302,7 @@ SystemMessageWithNickname.displayName = 'SystemMessageWithNickname';
 
 interface ChatMessageItemProps {
   showAvatar: boolean;
+  isMergedPrev: boolean;
   payload: LocalChatMessage;
   isGroup: boolean;
   hideAction?: boolean;
@@ -340,6 +349,7 @@ export function buildMessageItemRow(
 
   let showDate = true;
   let showAvatar = true;
+  let isMergedPrev = false;
   const messageCreatedAt = new Date(message.createdAt ?? '');
   if (index > 0) {
     // 当不是第一条数据时
@@ -359,6 +369,7 @@ export function buildMessageItemRow(
     if (showDate === false) {
       showAvatar =
         prevMessage.author !== message.author || prevMessage.hasRecall === true;
+      isMergedPrev = !showAvatar;
     }
   }
 
@@ -376,6 +387,7 @@ export function buildMessageItemRow(
         <div className="opacity-50">
           <ChatMessageItem
             showAvatar={showAvatar}
+            isMergedPrev={isMergedPrev}
             payload={message}
             isGroup={isGroup}
           />
@@ -387,6 +399,7 @@ export function buildMessageItemRow(
         >
           <ChatMessageItem
             showAvatar={showAvatar}
+            isMergedPrev={isMergedPrev}
             payload={message}
             isGroup={isGroup}
           />

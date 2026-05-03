@@ -4,18 +4,29 @@ import _isEmpty from 'lodash/isEmpty';
 import { Popover, PopoverProps, Skeleton, Space } from 'antd';
 import { useCachedUserInfo, useCachedOnlineStatus } from 'tailchat-shared';
 import { UserName } from './UserName';
+import { UserPopover } from './popover/UserPopover';
 
 interface UserListItemProps {
   userId: string;
   popover?: PopoverProps['content'];
   actions?: React.ReactElement[];
   hideDiscriminator?: boolean;
+  enableUserPopover?: boolean;
 }
 export const UserListItem: React.FC<UserListItemProps> = React.memo((props) => {
-  const { actions = [], hideDiscriminator = false } = props;
+  const {
+    actions = [],
+    hideDiscriminator = false,
+    enableUserPopover = true,
+  } = props;
   const userInfo = useCachedUserInfo(props.userId);
   const [isOnline] = useCachedOnlineStatus([props.userId]);
   const userName = userInfo.nickname;
+  const popoverContent =
+    props.popover ??
+    (enableUserPopover && !_isEmpty(userInfo) ? (
+      <UserPopover userInfo={userInfo} />
+    ) : undefined);
 
   return (
     <div className="flex items-center h-16 px-3.5 border-b border-black/5 rounded-none group bg-transparent hover:bg-white dark:bg-white dark:bg-opacity-0 dark:hover:bg-opacity-20">
@@ -26,8 +37,8 @@ export const UserListItem: React.FC<UserListItemProps> = React.memo((props) => {
         active={true}
       >
         <div className="mr-3">
-          {props.popover ? (
-            <Popover content={props.popover} placement="left" trigger="click">
+          {popoverContent ? (
+            <Popover content={popoverContent} placement="left" trigger="click">
               <Avatar
                 className="cursor-pointer"
                 src={userInfo.avatar}

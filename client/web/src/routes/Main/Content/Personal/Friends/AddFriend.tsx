@@ -1,5 +1,5 @@
 import { Highlight } from '@/components/Highlight';
-import { Button, Divider, Typography } from 'antd';
+import { Button, Divider, Popover, Typography } from 'antd';
 import {
   addFriendRequest,
   searchUserWithUniqueName,
@@ -15,6 +15,7 @@ import React, { useCallback, useState } from 'react';
 import _isNil from 'lodash/isNil';
 import { Avatar } from 'tailchat-design';
 import { NoData } from '@/components/NoData';
+import { UserPopover } from '@/components/popover/UserPopover';
 
 const SearchFriendResult: React.FC<{
   result: UserBaseInfo | undefined | null;
@@ -46,12 +47,16 @@ const SearchFriendResult: React.FC<{
 
       <div className="rounded-md border border-black border-opacity-30 px-4 py-3 bg-black bg-opacity-10 flex justify-between items-center mobile:flex-col">
         <div className="mobile:w-full mobile:mb-1">
-          <Avatar
-            className="mb-3"
-            size={60}
-            name={result.nickname}
-            src={result.avatar}
-          />
+          <Popover content={<UserPopover userInfo={result} />} trigger="click">
+            <div className="inline-block cursor-pointer">
+              <Avatar
+                className="mb-3"
+                size={60}
+                name={result.nickname}
+                src={result.avatar}
+              />
+            </div>
+          </Popover>
           <div className="text-lg">
             {result.nickname}
             <span className="text-opacity-60 text-sm text-white">

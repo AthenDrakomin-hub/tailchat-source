@@ -7,13 +7,16 @@ import {
   acceptFriendRequest,
   denyFriendRequest,
   useAsyncRequest,
+  useUserInfoList,
 } from 'tailchat-shared';
 import React from 'react';
 import { Problem } from '@/components/Problem';
+import { UserPopover } from '@/components/popover/UserPopover';
 
 export const RequestReceived: React.FC<{
   requests: FriendRequest[];
 }> = React.memo((props) => {
+  const userInfos = useUserInfoList(props.requests.map((item) => item.from));
   const [{ loading: acceptLoading }, handleAccept] = useAsyncRequest(
     async (requestId) => {
       await acceptFriendRequest(requestId);
@@ -40,10 +43,13 @@ export const RequestReceived: React.FC<{
         {t('等待处理的联系人申请')}:
       </div>
       <div>
-        {props.requests.map(({ _id, from }) => (
+        {props.requests.map(({ _id, from }, index) => (
           <UserListItem
             key={from}
             userId={from}
+            popover={
+              userInfos[index] ? <UserPopover userInfo={userInfos[index]} /> : undefined
+            }
             actions={[
               <Tooltip key="accept" title={t('接受')}>
                 <div>

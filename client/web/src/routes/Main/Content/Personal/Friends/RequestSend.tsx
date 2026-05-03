@@ -6,13 +6,16 @@ import {
   FriendRequest,
   t,
   useAsyncFn,
+  useUserInfoList,
 } from 'tailchat-shared';
 import React from 'react';
 import { Problem } from '@/components/Problem';
+import { UserPopover } from '@/components/popover/UserPopover';
 
 export const RequestSend: React.FC<{
   requests: FriendRequest[];
 }> = React.memo((props) => {
+  const userInfos = useUserInfoList(props.requests.map((item) => item.to));
   const [{ loading }, handleCancel] = useAsyncFn(async (requestId) => {
     await cancelFriendRequest(requestId);
   }, []);
@@ -27,10 +30,13 @@ export const RequestSend: React.FC<{
         {t('等待对方处理的联系人申请')}:
       </div>
       <div>
-        {props.requests.map(({ _id, to }) => (
+        {props.requests.map(({ _id, to }, index) => {
+          const userInfo = userInfos[index];
+          return (
           <UserListItem
             key={to}
             userId={to}
+            popover={userInfo ? <UserPopover userInfo={userInfo} /> : undefined}
             actions={[
               <Tooltip key="cancel" title={t('取消')}>
                 <div>
@@ -43,7 +49,8 @@ export const RequestSend: React.FC<{
               </Tooltip>,
             ]}
           />
-        ))}
+          );
+        })}
       </div>
     </div>
   );

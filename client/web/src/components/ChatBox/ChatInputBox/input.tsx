@@ -73,6 +73,7 @@ export const ChatInputBoxInput: React.FC<ChatInputBoxInputProps> = React.memo(
             <UserListItem
               userId={String(suggestion.id)}
               hideDiscriminator={hideGroupMemberDiscriminator}
+              enableUserPopover={false}
             />
           )}
           markup={getMessageTextDecorators().mention('__id__', '__display__')}

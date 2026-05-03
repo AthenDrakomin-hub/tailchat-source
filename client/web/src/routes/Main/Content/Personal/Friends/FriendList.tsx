@@ -26,6 +26,7 @@ import { SetFriendNickname } from '@/components/modals/SetFriendNickname';
 import { Icon } from 'tailchat-design';
 import { Virtuoso } from 'react-virtuoso';
 import { getPersonalChatPath } from '@/utils/personal-route';
+import { UserPopover } from '@/components/popover/UserPopover';
 
 /**
  * 联系人列表
@@ -119,6 +120,7 @@ export const FriendList: React.FC<{
             <UserListItem
               key={item._id}
               userId={item._id}
+              popover={<UserPopover userInfo={item} />}
               actions={[
                 <Tooltip key="message" title={t('发送消息')}>
                   <div>

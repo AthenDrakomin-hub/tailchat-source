@@ -21,6 +21,8 @@ import { CreateDMConverse } from '@/components/modals/CreateDMConverse';
 import { MessageSearchPanel } from '../common/MessageSearch';
 import { ChatInputMentionsContextProvider } from '@/components/ChatBox/ChatInputBox/context';
 import { getPanelPersonalChatPath } from '@/utils/personal-route';
+import { useNavigate } from 'react-router';
+import { UserPopover } from '@/components/popover/UserPopover';
 
 const ConversePanelTitle: React.FC<{ converse: ChatConverseState }> =
   React.memo(({ converse }) => {
@@ -60,6 +62,7 @@ export const ConversePanel: React.FC<ConversePanelProps> = React.memo(
     const converse = useAppSelector(
       (state) => state.chat.converses[converseId]
     );
+    const navigate = useNavigate();
     const userId = useUserId();
     const userInfos = useUserInfoList(
       (converse?.members ?? []).filter((m) => m !== userId)
@@ -74,6 +77,7 @@ export const ConversePanel: React.FC<ConversePanelProps> = React.memo(
     const converseHeader = converse && (
       <ConversePanelTitle converse={converse} />
     );
+    const targetUser = converse?.members.length === 2 ? userInfos[0] : undefined;
 
     return (
       <CommonPanelWrapper
@@ -107,6 +111,43 @@ export const ConversePanel: React.FC<ConversePanelProps> = React.memo(
               iconClassName="text-2xl"
               onClick={openPanelWindow}
             />,
+            converse.members.length === 2 && (
+              <IconBtn
+                key="profile"
+                title={t('联系人资料')}
+                shape="square"
+                icon="mdi:account-outline"
+                iconClassName="text-2xl"
+                onClick={() => {
+                  if (!targetUser) {
+                    return;
+                  }
+
+                  setRightPanel({
+                    name: t('联系人资料'),
+                    panel: (
+                      <div className="p-3">
+                        <UserPopover userInfo={targetUser} />
+                      </div>
+                    ),
+                  });
+                }}
+              />
+            ),
+            converse.members.length === 2 && (
+              <IconBtn
+                key="feed"
+                title={t('查看动态')}
+                shape="square"
+                icon="mdi:post-outline"
+                iconClassName="text-2xl"
+                onClick={() => {
+                  if (targetUser) {
+                    navigate(`/main/feed/user/${targetUser._id}`);
+                  }
+                }}
+              />
+            ),
             converse.members.length === 2 ? (
               <IconBtn
                 key="create"
