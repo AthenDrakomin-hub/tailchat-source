@@ -1,5 +1,10 @@
 # 自动化社群营销系统 Implementation Plan
 
+> 2026-05-03 方向更新：
+> 本文保留为旧路线图存档。当前实施边界已改为“OpenClaw 接入底座”模式。
+> 最新计划请以 `docs/superpowers/plans/2026-05-03-openclaw-bottom-layer-alignment-plan.md` 为准。
+> 旧文中涉及“平台内剧本模板、平台内 Persona/Prompt 管理、平台内导演/策略引擎”的部分，均已迁移到 OpenClaw 负责。
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 将当前 Tailchat 从“群聊 + Bot 接入”升级为“自动化社群营销操作系统”的第一阶段可落地产品，跑通角色消息样式、Agent 总控后台、群角色绑定、OpenClaw Bridge 和剧本化运行骨架。
