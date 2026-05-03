@@ -95,6 +95,56 @@ const Hello: React.FC = React.memo(() => {
         <AddServerItem />
       </div>
 
+      <div className="support-panel">
+        <div className="section-title">试运营支持</div>
+        <div className="support-grid">
+          <div className="support-card">
+            <div className="support-card__title">推荐体验顺序</div>
+            <div className="support-card__desc">
+              建议先用 Web 完成动态、群组和私信主链路，再回到桌面端验证长时间常驻、工作区切换和恢复链路。
+            </div>
+          </div>
+          <div className="support-card">
+            <div className="support-card__title">出现问题先看什么</div>
+            <div className="support-card__desc">
+              优先检查当前工作区状态，必要时直接重新连接当前工作区；如果依旧异常，再返回工作区选择或切回 Web 主入口确认服务状态。
+            </div>
+          </div>
+          <div className="support-card">
+            <div className="support-card__title">当前阶段定位</div>
+            <div className="support-card__desc">
+              Desktop 已适合作为 Web 试运营的辅助端，重点验证长期使用感、恢复能力和主窗稳定性。
+            </div>
+          </div>
+        </div>
+        <div className="support-actions">
+          <button
+            type="button"
+            onClick={() => {
+              window.open('https://tailchat.msgbyte.com/docs/intro');
+            }}
+          >
+            查看文档
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              window.open('https://tailchat.msgbyte.com/entry/trust');
+            }}
+          >
+            查看安全与合规
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              window.open('https://tailchat.msgbyte.com/downloads');
+            }}
+          >
+            查看客户端下载说明
+          </button>
+        </div>
+      </div>
+
       <div className="actions">
         <button
           className="primary"

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, ScrollView } from 'react-native';
+import { Alert, Linking, StyleSheet, ScrollView } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import { ServerCard } from './components/ServerCard';
 import { useServerStore } from './store/server';
@@ -89,6 +89,51 @@ export const Entry: React.FC = React.memo(() => {
           badge="操作"
           onPress={() => setDialogVisible(true)}
         />
+
+        <View style={styles.supportPanel}>
+          <Text style={styles.supportTitle}>试运营起步建议</Text>
+          <Text style={styles.supportDesc}>
+            移动端建议作为 Web 试运营的补充验证端使用。推荐顺序是：先在 Web 完成动态、群组和私信主链路，再回到移动端验证窄屏浏览、返回、刷新与恢复体验。
+          </Text>
+          <View style={styles.supportCard}>
+            <Text style={styles.supportCardTitle}>推荐验证项</Text>
+            <Text style={styles.supportCardText}>1. 动态浏览与详情滚动是否顺畅</Text>
+            <Text style={styles.supportCardText}>2. 群组进入与返回是否稳定</Text>
+            <Text style={styles.supportCardText}>3. 刷新、重试与恢复反馈是否明确</Text>
+          </View>
+          <View style={styles.supportCard}>
+            <Text style={styles.supportCardTitle}>出现问题先做什么</Text>
+            <Text style={styles.supportCardText}>1. 先刷新当前工作区</Text>
+            <Text style={styles.supportCardText}>2. 再切换工作区确认是否为单环境问题</Text>
+            <Text style={styles.supportCardText}>3. 必要时回到 Web 状态中心确认服务健康度</Text>
+          </View>
+          <View style={styles.supportActions}>
+            <TouchableOpacity
+              style={styles.supportActionBtn}
+              onPress={() => {
+                Linking.openURL('https://tailchat.msgbyte.com/docs/intro');
+              }}
+            >
+              <Text style={styles.supportActionText}>查看文档</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.supportActionBtn}
+              onPress={() => {
+                Linking.openURL('https://tailchat.msgbyte.com/entry/trust');
+              }}
+            >
+              <Text style={styles.supportActionText}>安全与合规</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.supportActionBtn}
+              onPress={() => {
+                Linking.openURL('https://tailchat.msgbyte.com/downloads');
+              }}
+            >
+              <Text style={styles.supportActionText}>下载说明</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
         <ActionSheet
           visible={!!selectedServer}
@@ -253,5 +298,60 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     textAlign: 'center',
     color: '#64748b',
+  },
+  supportPanel: {
+    marginTop: 16,
+    marginBottom: 12,
+    padding: 16,
+    borderRadius: 18,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#d7dee7',
+  },
+  supportTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0f172a',
+  },
+  supportDesc: {
+    marginTop: 8,
+    fontSize: 12,
+    lineHeight: 20,
+    color: '#64748b',
+  },
+  supportCard: {
+    marginTop: 12,
+    padding: 12,
+    borderRadius: 14,
+    backgroundColor: '#f8fafc',
+  },
+  supportCardTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: 6,
+  },
+  supportCardText: {
+    fontSize: 12,
+    lineHeight: 20,
+    color: '#475569',
+  },
+  supportActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 14,
+  },
+  supportActionBtn: {
+    marginRight: 8,
+    marginBottom: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: '#eef2ff',
+  },
+  supportActionText: {
+    fontSize: 11,
+    color: '#0b4a8b',
+    fontWeight: '600',
   },
 });

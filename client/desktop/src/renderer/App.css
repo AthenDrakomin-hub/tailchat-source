@@ -151,6 +151,45 @@ button + button {
   color: rgba(255, 255, 255, 0.86);
 }
 
+.support-panel {
+  margin-top: 26px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.support-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.support-card {
+  border-radius: 22px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.support-card__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.support-card__desc {
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.support-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
 button.primary {
   background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
 }
@@ -167,5 +206,9 @@ button.primary {
 
   .hero-card h1 {
     font-size: 24px;
+  }
+
+  .support-grid {
+    grid-template-columns: 1fr;
   }
 }
