@@ -58,7 +58,10 @@ export const MuteAllButton: React.FC<{ groupId?: string; panelId?: string }> =
       <div
         title={isMuted ? t('解除全群禁言') : t('一键全群禁言')}
         onClick={handleToggleMute}
-        className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[#f3f4f6] dark:hover:bg-white/10 transition-colors"
+        className={clsx(
+          'w-8 h-8 rounded-full flex items-center justify-center hover:bg-[#f3f4f6] dark:hover:bg-white/10 transition-colors',
+          isMuted && 'bg-red-50 dark:bg-red-500/10'
+        )}
       >
         <Icon
           className={clsx(

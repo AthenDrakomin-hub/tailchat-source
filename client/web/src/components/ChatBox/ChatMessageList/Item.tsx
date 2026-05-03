@@ -248,7 +248,8 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                   !isActionBtnActive,
                 'opacity-100 bg-opacity-100': isActionBtnActive,
                 'right-2': layout.rowAlign === 'left',
-                'left-16 mobile:left-12 right-auto': layout.rowAlign === 'right',
+                'left-14 mobile:left-11 right-auto': layout.rowAlign === 'right',
+                '-top-2': isMergedPrev,
               }
             )}
           >

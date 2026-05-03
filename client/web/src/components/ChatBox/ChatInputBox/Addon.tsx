@@ -91,12 +91,21 @@ export const ChatInputAddon: React.FC = React.memo(() => {
       trigger={['click']}
     >
       <div>
-        <Icon
-          className={clsx('text-[24px] text-gray-500 dark:text-gray-300 cursor-pointer transition transform hover:text-[#07c160]', {
-            'rotate-45': open,
-          })}
-          icon="mdi:plus-circle-outline"
-        />
+        <div
+          className={clsx(
+            'w-8 h-8 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-300 hover:text-[#07c160] hover:bg-[#f3f4f6] dark:hover:bg-white/10 transition-colors cursor-pointer',
+            {
+              'text-[#07c160] bg-[#f3f4f6] dark:bg-white/10': open,
+            }
+          )}
+        >
+          <Icon
+            className={clsx('text-[22px] transition transform', {
+              'rotate-45': open,
+            })}
+            icon="mdi:plus"
+          />
+        </div>
       </div>
     </Dropdown>
   );
