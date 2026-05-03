@@ -30,7 +30,7 @@ import { Chat } from './Chat';
 import { FocusLayout } from './FocusLayout';
 import { useMeetingContextState } from '../../context/MeetingContext';
 import { Member } from './Member';
-import { UserAvatar } from '@capital/component';
+import { Button, UserAvatar } from '@capital/component';
 import { Translate } from '../../translate';
 import styled from 'styled-components';
 
@@ -42,44 +42,67 @@ export interface VideoConferenceProps
 
 const IsCallingContainer = styled.div`
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: 18px;
   align-items: center;
-  padding: 12px 14px;
+  justify-content: center;
+  padding: 28px 24px;
   background: rgba(15, 23, 42, 0.88);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 18px;
+  border-radius: 28px;
   position: absolute;
   left: 50%;
-  top: 20px;
+  top: 50%;
   transform: translateX(-50%);
   color: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
   backdrop-filter: blur(10px);
-  min-width: 260px;
+  min-width: 320px;
   z-index: 4;
+  transform: translate(-50%, -50%);
 
   .tc-call-status-main {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 6px;
+    align-items: center;
+    text-align: center;
   }
 
   .tc-call-status-label {
-    font-size: 13px;
+    font-size: 20px;
     font-weight: 600;
     color: rgba(255, 255, 255, 0.94);
   }
 
   .tc-call-status-tip {
-    font-size: 12px;
+    font-size: 13px;
     color: rgba(255, 255, 255, 0.72);
   }
 
   .tc-call-status-users {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-left: auto;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .tc-call-status-actions {
+    display: flex;
+    justify-content: center;
+  }
+
+  .tc-call-status-user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tc-call-status-user-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
   }
 `;
 
@@ -108,6 +131,7 @@ export const VideoConference: React.FC<VideoConferenceProps> = React.memo(
       (state) => state.invitingUserIds
     );
     useMeetingInit({ autoInviteIds });
+    const room = useRoomContext();
 
     const tracks = useTracks(
       [
@@ -192,8 +216,20 @@ export const VideoConference: React.FC<VideoConferenceProps> = React.memo(
                   </div>
                   <div className="tc-call-status-users">
                     {invitingUserIds.map((userId) => (
-                      <UserAvatar key={userId} userId={userId} />
+                      <div key={userId} className="tc-call-status-user">
+                        <UserAvatar userId={userId} size={56} />
+                        <span className="tc-call-status-user-label">等待接听</span>
+                      </div>
                     ))}
+                  </div>
+                  <div className="tc-call-status-actions">
+                    <Button
+                      danger={true}
+                      icon="mdi:phone-hangup"
+                      onClick={() => room.disconnect()}
+                    >
+                      取消通话
+                    </Button>
                   </div>
                 </IsCallingContainer>
               )}
