@@ -7,6 +7,7 @@ import {
   RoomAudioRenderer,
   useRoomContext,
   useParticipants,
+  useLocalParticipant,
 } from '@livekit/components-react';
 import { useToken } from '../utils/useToken';
 import { useServerUrl } from '../utils/useServerUrl';
@@ -17,39 +18,54 @@ interface LinkInfo {
   inviterAvatar: string;
 }
 
+const formatDuration = (seconds: number) => {
+  const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
+  const ss = String(seconds % 60).padStart(2, '0');
+  return `${mm}:${ss}`;
+};
+
 const IncomingCallUI: React.FC<{ info: LinkInfo; onAccept: () => void }> = ({
   info,
   onAccept,
 }) => (
-  <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-white fixed inset-0 px-6">
-    <div className="mb-12 flex flex-col items-center text-center">
+  <div className="w-full h-full flex flex-col items-center justify-between bg-gray-900 text-white fixed inset-0 px-6 py-14">
+    <div className="flex flex-col items-center text-center mt-8">
+      <div className="text-sm text-gray-400 mb-6">语音通话</div>
       <div className="relative">
         <Avatar
           src={info.inviterAvatar}
           name={info.inviterName}
-          size={100}
+          size={116}
           className="relative z-10"
         />
         <div className="absolute inset-0 bg-white/20 rounded-full animate-ping z-0 scale-150" />
       </div>
-      <h2 className="mt-8 text-2xl font-bold">{info.inviterName}</h2>
-      <p className="mt-2 text-gray-400">邀请您进行语音通话</p>
+      <h2 className="mt-8 text-3xl font-bold">{info.inviterName}</h2>
+      <p className="mt-3 text-gray-400">邀请您进行语音通话</p>
       <p className="mt-1 text-xs text-gray-500">接听后将在当前页面内直接进入通话。</p>
     </div>
 
-    <div className="flex gap-16 mt-12">
-      <button
-        className="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
-        onClick={() => window.close()}
-      >
-        <Icon icon="mdi:phone-hangup" className="text-3xl" />
-      </button>
-      <button
-        className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center shadow-lg animate-bounce hover:bg-green-600 transition-colors"
-        onClick={onAccept}
-      >
-        <Icon icon="mdi:phone" className="text-3xl" />
-      </button>
+    <div className="flex gap-16">
+      <div className="flex flex-col items-center gap-3">
+        <button
+          className="w-18 h-18 rounded-full bg-red-500 flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
+          onClick={() => window.close()}
+          style={{ width: 74, height: 74 }}
+        >
+          <Icon icon="mdi:phone-hangup" className="text-3xl" />
+        </button>
+        <span className="text-sm text-gray-400">拒绝</span>
+      </div>
+      <div className="flex flex-col items-center gap-3">
+        <button
+          className="w-18 h-18 rounded-full bg-green-500 flex items-center justify-center shadow-lg animate-bounce hover:bg-green-600 transition-colors"
+          onClick={onAccept}
+          style={{ width: 74, height: 74 }}
+        >
+          <Icon icon="mdi:phone" className="text-3xl" />
+        </button>
+        <span className="text-sm text-gray-400">接听</span>
+      </div>
     </div>
   </div>
 );
@@ -57,6 +73,9 @@ const IncomingCallUI: React.FC<{ info: LinkInfo; onAccept: () => void }> = ({
 const ActiveCallUI: React.FC<{ info: LinkInfo }> = ({ info }) => {
   const room = useRoomContext();
   const participants = useParticipants();
+  const { localParticipant } = useLocalParticipant();
+  const [isMuted, setIsMuted] = useState(false);
+  const [duration, setDuration] = useState(0);
 
   // 双向挂断检测：如果房间里只剩自己（邀请人离线了），自动挂断
   useEffect(() => {
@@ -66,21 +85,65 @@ const ActiveCallUI: React.FC<{ info: LinkInfo }> = ({ info }) => {
     }
   }, [participants.length, room.state]);
 
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setDuration((prev) => prev + 1);
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const toggleMute = () => {
+    if (!localParticipant) {
+      return;
+    }
+
+    if (isMuted) {
+      localParticipant.setMicrophoneEnabled(true);
+      setIsMuted(false);
+    } else {
+      localParticipant.setMicrophoneEnabled(false);
+      setIsMuted(true);
+    }
+  };
+
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-white fixed inset-0 px-6">
-      <div className="mb-12 flex flex-col items-center text-center">
-        <Avatar src={info.inviterAvatar} name={info.inviterName} size={100} />
-        <h2 className="mt-6 text-xl">{info.inviterName}</h2>
-        <p className="mt-2 text-green-400 font-mono">00:00 通话中...</p>
+    <div className="w-full h-full flex flex-col items-center justify-between bg-gray-900 text-white fixed inset-0 px-6 py-14">
+      <div className="flex flex-col items-center text-center mt-8">
+        <div className="text-sm text-gray-400 mb-6">语音通话</div>
+        <Avatar src={info.inviterAvatar} name={info.inviterName} size={116} />
+        <h2 className="mt-8 text-3xl font-bold">{info.inviterName}</h2>
+        <p className="mt-3 text-green-400 font-mono">{formatDuration(duration)} 通话中</p>
         <p className="mt-1 text-xs text-gray-500">音频正在当前页面中保持连接。</p>
       </div>
-      <div className="mt-12">
-        <button
-          className="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
-          onClick={() => room.disconnect()}
-        >
-          <Icon icon="mdi:phone-hangup" className="text-3xl" />
-        </button>
+
+      <div className="flex gap-16">
+        <div className="flex flex-col items-center gap-3">
+          <button
+            className="rounded-full flex items-center justify-center shadow-lg transition-colors"
+            style={{
+              width: 72,
+              height: 72,
+              border: 'none',
+              backgroundColor: isMuted ? '#ffffff' : 'rgba(255,255,255,0.18)',
+              color: isMuted ? '#111827' : '#ffffff',
+            }}
+            onClick={toggleMute}
+          >
+            <Icon icon={isMuted ? 'mdi:microphone-off' : 'mdi:microphone'} className="text-3xl" />
+          </button>
+          <span className="text-sm text-gray-400">{isMuted ? '已静音' : '麦克风'}</span>
+        </div>
+        <div className="flex flex-col items-center gap-3">
+          <button
+            className="rounded-full bg-red-500 flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
+            style={{ width: 78, height: 78, border: 'none' }}
+            onClick={() => room.disconnect()}
+          >
+            <Icon icon="mdi:phone-hangup" className="text-3xl" />
+          </button>
+          <span className="text-sm text-gray-400">挂断</span>
+        </div>
       </div>
       <RoomAudioRenderer />
     </div>

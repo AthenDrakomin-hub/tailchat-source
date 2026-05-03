@@ -12,11 +12,30 @@ import {
 } from '@livekit/components-react';
 import { RoomState } from 'livekit-client';
 
+const formatDuration = (seconds: number) => {
+  const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
+  const ss = String(seconds % 60).padStart(2, '0');
+  return `${mm}:${ss}`;
+};
+
 const CallUI: React.FC<{ onLeave: () => void }> = React.memo(({ onLeave }) => {
   const room = useRoomContext();
   const participants = useParticipants();
   const { localParticipant } = useLocalParticipant();
   const [isMuted, setIsMuted] = useState(false);
+  const [duration, setDuration] = useState(0);
+
+  useEffect(() => {
+    if (room.state !== RoomState.Connected) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setDuration((prev) => prev + 1);
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [room.state]);
 
   const toggleMute = () => {
     if (localParticipant) {
@@ -34,42 +53,51 @@ const CallUI: React.FC<{ onLeave: () => void }> = React.memo(({ onLeave }) => {
   const mainRemote = remoteParticipants[0];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '60px 20px', boxSizing: 'border-box' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '56px 24px 42px', boxSizing: 'border-box' }}>
       <RoomAudioRenderer />
       
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '40px' }}>
-        <Avatar size={120} src={mainRemote?.identity ? '' : undefined} name={mainRemote?.name || 'Caller'} style={{ marginBottom: 20, boxShadow: '0 0 0 4px rgba(255,255,255,0.1)' }} />
-        <h2 style={{ fontSize: 28, fontWeight: 600, margin: 0, color: '#fff' }}>{mainRemote?.name || '语音通话'}</h2>
-        <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', marginTop: 8 }}>
-          {room.state === RoomState.Connected ? '已接通' : '正在连接...'}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '36px' }}>
+        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)', marginBottom: 26 }}>语音通话</div>
+        <Avatar size={132} src={mainRemote?.identity ? '' : undefined} name={mainRemote?.name || '语音通话'} style={{ marginBottom: 24, boxShadow: '0 0 0 6px rgba(255,255,255,0.08)' }} />
+        <h2 style={{ fontSize: 32, fontWeight: 600, margin: 0, color: '#fff' }}>{mainRemote?.name || '语音通话'}</h2>
+        <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.62)', marginTop: 10 }}>
+          {room.state === RoomState.Connected ? `${formatDuration(duration)} 通话中` : '正在连接对方…'}
         </p>
       </div>
 
-      <div style={{ display: 'flex', gap: 40, alignItems: 'center', marginBottom: '40px' }}>
-        <button
-          onClick={toggleMute}
-          style={{
-            width: 64, height: 64, borderRadius: '50%', border: 'none',
-            backgroundColor: isMuted ? '#fff' : 'rgba(255,255,255,0.2)',
-            color: isMuted ? '#000' : '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', transition: 'all 0.2s'
-          }}
-        >
-          <Icon icon={isMuted ? "mdi:microphone-off" : "mdi:microphone"} style={{ fontSize: 32 }} />
-        </button>
+      <div style={{ display: 'flex', gap: 54, alignItems: 'center', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+          <button
+            onClick={toggleMute}
+            style={{
+              width: 72, height: 72, borderRadius: '50%', border: 'none',
+              backgroundColor: isMuted ? '#ffffff' : 'rgba(255,255,255,0.18)',
+              color: isMuted ? '#111827' : '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', transition: 'all 0.2s'
+            }}
+          >
+            <Icon icon={isMuted ? "mdi:microphone-off" : "mdi:microphone"} style={{ fontSize: 34 }} />
+          </button>
+          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14 }}>
+            {isMuted ? '已静音' : '麦克风'}
+          </span>
+        </div>
 
-        <button
-          onClick={() => { room.disconnect(); onLeave(); }}
-          style={{
-            width: 72, height: 72, borderRadius: '50%', border: 'none',
-            backgroundColor: '#ff4d4f', color: '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 8px 24px rgba(255,77,79,0.4)'
-          }}
-        >
-          <Icon icon="mdi:phone-hangup" style={{ fontSize: 36 }} />
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+          <button
+            onClick={() => { room.disconnect(); onLeave(); }}
+            style={{
+              width: 78, height: 78, borderRadius: '50%', border: 'none',
+              backgroundColor: '#ff4d4f', color: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 8px 24px rgba(255,77,79,0.4)'
+            }}
+          >
+            <Icon icon="mdi:phone-hangup" style={{ fontSize: 38 }} />
+          </button>
+          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14 }}>挂断</span>
+        </div>
       </div>
     </div>
   );
@@ -77,20 +105,21 @@ const CallUI: React.FC<{ onLeave: () => void }> = React.memo(({ onLeave }) => {
 
 const IncomingCallUI: React.FC<{ onAnswer: () => void; onDecline: () => void }> = React.memo(({ onAnswer, onDecline }) => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '60px 20px', boxSizing: 'border-box' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '40px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '56px 24px 42px', boxSizing: 'border-box' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '36px' }}>
+        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)', marginBottom: 26 }}>语音通话</div>
         <div style={{
-          width: 120, height: 120, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20,
+          width: 132, height: 132, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24,
           animation: 'pulse 2s infinite'
         }}>
           <Icon icon="mdi:phone-incoming" style={{ fontSize: 48, color: '#fff' }} />
         </div>
-        <h2 style={{ fontSize: 28, fontWeight: 600, margin: 0, color: '#fff' }}>语音通话</h2>
-        <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', marginTop: 8 }}>有新的通话邀请</p>
+        <h2 style={{ fontSize: 32, fontWeight: 600, margin: 0, color: '#fff' }}>语音通话</h2>
+        <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.62)', marginTop: 10 }}>有新的通话邀请</p>
       </div>
 
-      <div style={{ display: 'flex', width: '100%', maxWidth: 300, justifyContent: 'space-between', marginBottom: '40px' }}>
+      <div style={{ display: 'flex', width: '100%', maxWidth: 320, justifyContent: 'space-between', marginBottom: '24px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
           <button
             onClick={onDecline}
