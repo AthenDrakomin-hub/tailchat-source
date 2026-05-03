@@ -16,7 +16,7 @@ export const JumpToButton: React.FC<Props> = React.memo((props) => {
   return (
     <div className="absolute bottom-4 left-0 right-0 text-center">
       <div
-        className="shadow-lg px-6 py-2 rounded-full inline-block bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer"
+        className="px-6 py-2.5 rounded-full inline-block bg-[#07c160] hover:bg-[#06ad56] text-white cursor-pointer shadow-[0_8px_20px_rgba(7,193,96,0.18)]"
         onClick={() => {
           navigate(props.link);
         }}

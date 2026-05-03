@@ -99,7 +99,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
         data-message-id={payload._id}
       >
         {/* 头像 */}
-          <div className="w-14 mobile:w-12 flex-shrink-0 flex items-start justify-center pt-0.5">
+        <div className="w-14 mobile:w-12 flex-shrink-0 flex items-start justify-center pt-0.5">
           {showAvatar ? (
             <Popover
               content={
