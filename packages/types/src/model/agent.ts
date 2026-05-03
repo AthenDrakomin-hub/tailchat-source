@@ -17,3 +17,17 @@ export interface AgentDefinition {
   tags?: string[];
   status: AgentStatus;
 }
+
+export type AgentTriggerMode =
+  | 'mention-only'
+  | 'mention-or-script'
+  | 'script-only';
+
+export interface AgentRoleBinding {
+  groupId: string;
+  roleId: string;
+  panelIds: string[];
+  agentId: string;
+  triggerMode: AgentTriggerMode;
+  active: boolean;
+}

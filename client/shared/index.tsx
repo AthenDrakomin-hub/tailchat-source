@@ -196,7 +196,16 @@ export type {
   SendMessagePayloadMeta,
 } from './model/message';
 export type { PluginManifest } from './model/plugin';
-export type { UserBaseInfo, UserLoginInfo, UserSettings } from './model/user';
+export {
+  listAgentDefinitions,
+  getAgentRoleBinding,
+  upsertAgentRoleBinding,
+} from './model/agent';
+export type {
+  AgentDefinition,
+  AgentRoleBinding,
+  AgentTriggerMode,
+} from './model/agent';
 export {
   loginWithEmail,
   loginWithToken,
@@ -210,6 +219,7 @@ export {
   checkTokenValid,
   modifyUserField,
 } from './model/user';
+export type { UserBaseInfo, UserLoginInfo, UserSettings } from './model/user';
 
 // redux
 export {
