@@ -45,4 +45,7 @@ export interface AgentScriptTemplate {
   entryTrigger?: string;
   conversionGoal?: string;
   forumSinkMode: AgentForumSinkMode;
+  forumTargetCategory?: string;
+  forumPostTitleTemplate?: string;
+  archiveTags: string[];
 }

@@ -12,5 +12,8 @@ export function buildAgentScriptTemplate(
     entryTrigger: input.entryTrigger,
     conversionGoal: input.conversionGoal,
     forumSinkMode: input.forumSinkMode ?? 'topic-thread',
+    forumTargetCategory: input.forumTargetCategory,
+    forumPostTitleTemplate: input.forumPostTitleTemplate,
+    archiveTags: input.archiveTags ?? [],
   };
 }

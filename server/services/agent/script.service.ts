@@ -27,6 +27,9 @@ class ScriptService extends TcService {
         entryTrigger: { type: 'string', optional: true },
         conversionGoal: { type: 'string', optional: true },
         forumSinkMode: { type: 'string', optional: true },
+        forumTargetCategory: { type: 'string', optional: true },
+        forumPostTitleTemplate: { type: 'string', optional: true },
+        archiveTags: { type: 'array', items: 'string', optional: true },
       },
     });
   }

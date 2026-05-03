@@ -33,6 +33,15 @@ export class AgentScriptTemplateModel extends TimeStamps implements Base {
 
   @prop({ default: 'topic-thread' })
   forumSinkMode: AgentForumSinkMode;
+
+  @prop()
+  forumTargetCategory?: string;
+
+  @prop()
+  forumPostTitleTemplate?: string;
+
+  @prop({ type: () => [String], default: [] })
+  archiveTags: string[];
 }
 
 export type AgentScriptTemplateDocument = DocumentType<AgentScriptTemplateModel>;

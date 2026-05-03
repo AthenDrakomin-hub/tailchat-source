@@ -6,6 +6,10 @@ import {
   AgentDefinitionForm,
   AgentDefinitionFormValues,
 } from './AgentDefinitionForm';
+import {
+  ScriptTemplateForm,
+  ScriptTemplateFormValues,
+} from './ScriptTemplateForm';
 
 export const AgentControlPanel: React.FC = React.memo(() => {
   const [list, setList] = useState<any[]>([]);
@@ -24,6 +28,28 @@ export const AgentControlPanel: React.FC = React.memo(() => {
   const [{ loading: creating }, createAgent] = useAsyncRequest(
     async (values: AgentDefinitionFormValues) => {
       await callAction('agent.definition.create', values);
+    }
+  );
+  const [{ loading: creatingScript }, createScript] = useAsyncRequest(
+    async (values: ScriptTemplateFormValues) => {
+      const normalizeList = (text?: string) =>
+        String(text ?? '')
+          .split(/[\n,，]/)
+          .map((item) => item.trim())
+          .filter(Boolean);
+
+      await callAction('agent.script.create', {
+        scriptId: values.scriptId,
+        name: values.name,
+        domain: values.domain,
+        stages: normalizeList(values.stagesText),
+        entryTrigger: values.entryTrigger,
+        conversionGoal: values.conversionGoal,
+        forumSinkMode: values.forumSinkMode,
+        forumTargetCategory: values.forumTargetCategory,
+        forumPostTitleTemplate: values.forumPostTitleTemplate,
+        archiveTags: normalizeList(values.archiveTagsText),
+      });
     }
   );
 
@@ -74,6 +100,22 @@ export const AgentControlPanel: React.FC = React.memo(() => {
 
       <Card>
         <Typography.Title heading={6}>剧本模板骨架</Typography.Title>
+        <ScriptTemplateForm
+          loading={creatingScript}
+          onSubmit={async (values) => {
+            try {
+              await createScript(values);
+              Message.success('剧本模板已创建');
+              await fetchList();
+            } catch (err) {
+              Message.error(formatAdminError(err, '创建剧本模板失败'));
+            }
+          }}
+        />
+      </Card>
+
+      <Card>
+        <Typography.Title heading={6}>剧本模板列表</Typography.Title>
         <Table
           pagination={false}
           rowKey={(row: any) => row.scriptId}
@@ -83,6 +125,7 @@ export const AgentControlPanel: React.FC = React.memo(() => {
             { title: '行业域', dataIndex: 'domain' },
             { title: '阶段', dataIndex: 'stages' },
             { title: '论坛沉淀', dataIndex: 'forumSinkMode' },
+            { title: '目标分类', dataIndex: 'forumTargetCategory' },
           ]}
           data={scriptList}
         />
