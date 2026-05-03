@@ -21,6 +21,11 @@ export interface GroupPanelRoleStyle {
   nicknameColor?: string;
   avatarRingColor?: string;
   sideAccentColor?: string;
+  bubbleBgColor?: string;
+  bubbleTextColor?: string;
+  bubbleBorderColor?: string;
+  badgeText?: string;
+  badgeColor?: string;
 }
 
 export interface GroupPanelReadabilityRule {

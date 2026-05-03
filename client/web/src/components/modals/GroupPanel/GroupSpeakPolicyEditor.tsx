@@ -85,7 +85,7 @@ export const GroupSpeakPolicyEditor: React.FC<Props> = React.memo((props) => {
         <div>
           <div className="font-semibold">{t('发言治理')}</div>
           <div className="text-xs text-gray-400">
-            {t('控制默认成员、角色与机器人的发言频率及消息识别样式')}
+            {t('控制默认成员、角色发言规则，并定义角色在消息流中的人格化表现')}
           </div>
         </div>
         <Switch
@@ -220,6 +220,61 @@ export const GroupSpeakPolicyEditor: React.FC<Props> = React.memo((props) => {
                   onChange={(e) =>
                     updateRoleStyle(role._id, {
                       sideAccentColor: e.target.value,
+                    })
+                  }
+                />
+              </Field>
+              <Field label={t('气泡背景色')}>
+                <Input
+                  value={policy.readability?.roleStyleMap?.[role._id]?.bubbleBgColor}
+                  placeholder="#fff7e6"
+                  onChange={(e) =>
+                    updateRoleStyle(role._id, {
+                      bubbleBgColor: e.target.value,
+                    })
+                  }
+                />
+              </Field>
+              <Field label={t('气泡文字色')}>
+                <Input
+                  value={policy.readability?.roleStyleMap?.[role._id]?.bubbleTextColor}
+                  placeholder="#391085"
+                  onChange={(e) =>
+                    updateRoleStyle(role._id, {
+                      bubbleTextColor: e.target.value,
+                    })
+                  }
+                />
+              </Field>
+              <Field label={t('气泡边框色')}>
+                <Input
+                  value={policy.readability?.roleStyleMap?.[role._id]?.bubbleBorderColor}
+                  placeholder="#ffd591"
+                  onChange={(e) =>
+                    updateRoleStyle(role._id, {
+                      bubbleBorderColor: e.target.value,
+                    })
+                  }
+                />
+              </Field>
+              <Field label={t('角色徽标')}>
+                <Input
+                  value={policy.readability?.roleStyleMap?.[role._id]?.badgeText}
+                  placeholder={t('主讲')}
+                  onChange={(e) =>
+                    updateRoleStyle(role._id, {
+                      badgeText: e.target.value,
+                    })
+                  }
+                />
+              </Field>
+              <Field label={t('徽标颜色')}>
+                <Input
+                  value={policy.readability?.roleStyleMap?.[role._id]?.badgeColor}
+                  placeholder="#cf1322"
+                  onChange={(e) =>
+                    updateRoleStyle(role._id, {
+                      badgeColor: e.target.value,
                     })
                   }
                 />

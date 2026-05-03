@@ -192,6 +192,17 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                 >
                   {userInfo.nickname || <span>&nbsp;</span>}
                 </div>
+                {!isSelf && roleStyle?.badgeText && (
+                  <div
+                    className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] leading-none flex-shrink-0"
+                    style={{
+                      backgroundColor: `${roleStyle.badgeColor ?? '#1677ff'}22`,
+                      color: roleStyle.badgeColor ?? '#1677ff',
+                    }}
+                  >
+                    {roleStyle.badgeText}
+                  </div>
+                )}
                 <div className="hidden group-hover:block opacity-40 ml-1 text-sm flex-shrink-0">
                   {formatShortTime(payload.createdAt)}
                 </div>
@@ -229,6 +240,18 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                 style={{
                   alignSelf:
                     layout.bubbleAlign === 'right' ? 'flex-end' : 'flex-start',
+                  backgroundColor:
+                    !isSelf && roleStyle?.bubbleBgColor
+                      ? roleStyle.bubbleBgColor
+                      : undefined,
+                  color:
+                    !isSelf && roleStyle?.bubbleTextColor
+                      ? roleStyle.bubbleTextColor
+                      : undefined,
+                  borderColor:
+                    !isSelf && roleStyle?.bubbleBorderColor
+                      ? roleStyle.bubbleBorderColor
+                      : undefined,
                   ...(roleStyle?.sideAccentColor && !isSelf
                     ? {
                         boxShadow: `inset 3px 0 0 ${roleStyle.sideAccentColor}, 0 1px 2px rgba(0, 0, 0, 0.04)`,

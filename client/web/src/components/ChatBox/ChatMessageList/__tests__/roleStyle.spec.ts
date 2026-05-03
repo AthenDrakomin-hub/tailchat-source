@@ -25,6 +25,11 @@ describe('group panel role style', () => {
                         nicknameColor: '#ff4d4f',
                         avatarRingColor: '#52c41a',
                         sideAccentColor: '#1677ff',
+                        bubbleBgColor: '#fff7e6',
+                        bubbleTextColor: '#391085',
+                        bubbleBorderColor: '#ffd591',
+                        badgeText: '主讲',
+                        badgeColor: '#cf1322',
                       },
                     },
                   },
@@ -43,6 +48,11 @@ describe('group panel role style', () => {
       nicknameColor: '#ff4d4f',
       avatarRingColor: '#52c41a',
       sideAccentColor: '#1677ff',
+      bubbleBgColor: '#fff7e6',
+      bubbleTextColor: '#391085',
+      bubbleBorderColor: '#ffd591',
+      badgeText: '主讲',
+      badgeColor: '#cf1322',
     });
   });
 });
