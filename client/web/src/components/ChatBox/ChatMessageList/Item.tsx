@@ -66,7 +66,14 @@ const MessageActionIcon: React.FC<{ icon: string }> = (props) => (
  */
 export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
   (props) => {
-    const { showAvatar, isMergedPrev, payload, hideAction = false, isGroup } = props;
+    const {
+      showAvatar,
+      isMergedPrev,
+      isMergedNext,
+      payload,
+      hideAction = false,
+      isGroup,
+    } = props;
     const userInfo = useCachedUserInfo(payload.author ?? '');
     const currentUser = useUserInfo();
     const isSelf = payload.author === currentUser?._id;
@@ -180,12 +187,16 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                     ? 'bg-[#95ec69] text-[#111827]'
                     : 'bg-white text-[#111827] border border-black/5 dark:bg-[#2b2b2b] dark:text-[#f3f4f6] dark:border-white/10',
                   layout.rowAlign === 'right'
-                    ? showAvatar
-                      ? 'rounded-[18px] rounded-tr-[6px]'
-                      : 'rounded-[18px] rounded-tr-[10px]'
-                    : showAvatar
-                      ? 'rounded-[18px] rounded-tl-[6px]'
-                      : 'rounded-[18px] rounded-tl-[10px]'
+                    ? clsx('rounded-[18px]', {
+                        'rounded-tr-[6px]': showAvatar,
+                        'rounded-tr-[10px]': !showAvatar,
+                        'rounded-br-[10px]': isMergedNext,
+                      })
+                    : clsx('rounded-[18px]', {
+                        'rounded-tl-[6px]': showAvatar,
+                        'rounded-tl-[10px]': !showAvatar,
+                        'rounded-bl-[10px]': isMergedNext,
+                      })
                 )}
                 style={{
                   alignSelf:
@@ -303,6 +314,7 @@ SystemMessageWithNickname.displayName = 'SystemMessageWithNickname';
 interface ChatMessageItemProps {
   showAvatar: boolean;
   isMergedPrev: boolean;
+  isMergedNext: boolean;
   payload: LocalChatMessage;
   isGroup: boolean;
   hideAction?: boolean;
@@ -350,6 +362,7 @@ export function buildMessageItemRow(
   let showDate = true;
   let showAvatar = true;
   let isMergedPrev = false;
+  let isMergedNext = false;
   const messageCreatedAt = new Date(message.createdAt ?? '');
   if (index > 0) {
     // 当不是第一条数据时
@@ -373,6 +386,18 @@ export function buildMessageItemRow(
     }
   }
 
+  const nextMessage = messages[index + 1];
+  if (nextMessage) {
+    const nextCreatedAt = new Date(nextMessage.createdAt ?? '');
+    if (
+      !shouldShowMessageTime(messageCreatedAt, nextCreatedAt) &&
+      nextMessage.author === message.author &&
+      nextMessage.hasRecall !== true
+    ) {
+      isMergedNext = true;
+    }
+  }
+
   return (
     <div key={message._id}>
       {showDate && (
@@ -388,6 +413,7 @@ export function buildMessageItemRow(
           <ChatMessageItem
             showAvatar={showAvatar}
             isMergedPrev={isMergedPrev}
+            isMergedNext={isMergedNext}
             payload={message}
             isGroup={isGroup}
           />
@@ -400,6 +426,7 @@ export function buildMessageItemRow(
           <ChatMessageItem
             showAvatar={showAvatar}
             isMergedPrev={isMergedPrev}
+            isMergedNext={isMergedNext}
             payload={message}
             isGroup={isGroup}
           />

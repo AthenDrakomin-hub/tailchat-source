@@ -1,12 +1,12 @@
 import { UserName } from '@/components/UserName';
 import { fetchImagePrimaryColor } from '@/utils/image-helper';
-import { IconBtn } from '@/components/IconBtn';
-import { Space, Tag, Tooltip } from 'antd';
+import { Button, Space, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
   addFriendRequest,
   createDMConverse,
+  openModal,
   showErrorToasts,
   showToasts,
   t,
@@ -19,6 +19,7 @@ import { UserProfileContainer } from '../../UserProfileContainer';
 import { usePluginUserExtraInfo } from './usePluginUserExtraInfo';
 import { getUserRelationshipState } from './relationship';
 import { getPersonalChatPath } from '@/utils/personal-route';
+import { SetFriendNickname } from '@/components/modals/SetFriendNickname';
 
 export const PersonalUserPopover: React.FC<{
   userInfo: UserBaseInfo;
@@ -30,6 +31,9 @@ export const PersonalUserPopover: React.FC<{
   const currentUserId = useUserId();
   const friends = useAppSelector((state) => state.user.friends);
   const friendRequests = useAppSelector((state) => state.user.friendRequests);
+  const friendInfo = useAppSelector((state) =>
+    state.user.friends.find((item) => item.id === userInfo._id)
+  );
   const relationshipState = getUserRelationshipState({
     currentUserId,
     targetUserId: userInfo._id,
@@ -50,6 +54,9 @@ export const PersonalUserPopover: React.FC<{
       showErrorToasts(err);
     }
   }, [userInfo._id]);
+  const handleSetFriendNickname = () => {
+    openModal(<SetFriendNickname userId={userInfo._id} />);
+  };
 
   useEffect(() => {
     if (userInfo.avatar) {
@@ -62,11 +69,11 @@ export const PersonalUserPopover: React.FC<{
   return (
     <div className="w-80 -mx-2 -my-2 bg-transparent">
       <UserProfileContainer userInfo={userInfo}>
-        <div className="text-xl">
+        <div className="text-xl text-[#111827] dark:text-white">
           <span className="font-semibold">
-            <UserName userId={userInfo._id} />
+            {friendInfo?.nickname || <UserName userId={userInfo._id} />}
           </span>
-          <span className="opacity-60 ml-1">#{userInfo.discriminator}</span>
+          <span className="opacity-60 ml-1 text-sm">#{userInfo.discriminator}</span>
         </div>
 
         <Space size={4} wrap={true} className="py-1">
@@ -76,6 +83,7 @@ export const PersonalUserPopover: React.FC<{
           {(relationshipState === 'requested' || requested) && (
             <Tag color="processing">{t('已发送申请')}</Tag>
           )}
+          {friendInfo?.nickname && <Tag>{t('已设置备注')}</Tag>}
           {userInfo.type === 'openapiBot' && (
             <Tag color="orange">{t('开放平台机器人')}</Tag>
           )}
@@ -89,27 +97,37 @@ export const PersonalUserPopover: React.FC<{
 
         <div className="pt-2">{pluginUserExtraInfoEl}</div>
 
-        <div className="pt-3 flex justify-end gap-2">
+        <div className="pt-3 grid grid-cols-2 gap-2">
           {relationshipState === 'friend' && (
             <>
-              <Tooltip title={t('查看动态')}>
-                <IconBtn
-                  icon="mdi:post-outline"
-                  onClick={() => navigate(`/main/feed/user/${userInfo._id}`)}
-                />
-              </Tooltip>
-              <Tooltip title={t('发送消息')}>
-                <IconBtn
-                  icon="mdi:message-processing-outline"
-                  onClick={handleCreateConverse}
-                />
-              </Tooltip>
+              <Button onClick={handleCreateConverse}>{t('发消息')}</Button>
+              <Button onClick={() => navigate(`/main/feed/user/${userInfo._id}`)}>
+                {t('查看动态')}
+              </Button>
+              <Button onClick={handleSetFriendNickname}>{t('设置备注')}</Button>
             </>
           )}
           {relationshipState === 'stranger' && !requested && !userInfo.temporary && (
-            <Tooltip title={t('申请联系人')}>
-              <IconBtn icon="mdi:account-plus-outline" onClick={handleAddFriend} />
-            </Tooltip>
+            <Button type="primary" className="col-span-2" onClick={handleAddFriend}>
+              {t('申请联系人')}
+            </Button>
+          )}
+        </div>
+
+        <div className="mt-4 rounded-2xl bg-[#f7f7f7] dark:bg-white/5 px-3 py-3 text-sm">
+          <div className="flex items-start justify-between gap-3">
+            <span className="text-gray-400">{t('昵称')}</span>
+            <span className="text-right text-[#111827] dark:text-white">
+              {userInfo.nickname}
+            </span>
+          </div>
+          {friendInfo?.nickname && (
+            <div className="mt-2 flex items-start justify-between gap-3">
+              <span className="text-gray-400">{t('备注')}</span>
+              <span className="text-right text-[#111827] dark:text-white">
+                {friendInfo.nickname}
+              </span>
+            </div>
           )}
         </div>
       </UserProfileContainer>
