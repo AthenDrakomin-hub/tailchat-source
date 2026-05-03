@@ -28,6 +28,8 @@ services:
     environment:
       SERVICES: services/core/**/*.service.js
       PORT: 3000
+    volumes:
+      - ./server/public/downloads:/app/tailchat/server/dist/public/downloads
     # 可观测性：Prometheus metrics（仅本机暴露，需配合 docker-compose.env: PROMETHEUS=true）
     ports:
       - "127.0.0.1:13030:13030"

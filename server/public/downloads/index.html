@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>財訊客户端下载</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: linear-gradient(180deg, #08111f 0%, #0f172a 100%);
+        color: #f8fafc;
+      }
+      .wrap {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 56px 24px 72px;
+      }
+      .hero {
+        margin-bottom: 32px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(212, 175, 55, 0.14);
+        color: #f6d87d;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+      }
+      h1 {
+        margin: 18px 0 12px;
+        font-size: 40px;
+        line-height: 1.15;
+      }
+      .desc {
+        max-width: 760px;
+        color: rgba(248, 250, 252, 0.76);
+        line-height: 1.8;
+        font-size: 16px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+      .card {
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(15, 23, 42, 0.72);
+        border-radius: 24px;
+        padding: 24px;
+        backdrop-filter: blur(10px);
+      }
+      .status {
+        color: #93c5fd;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      h3 {
+        margin: 14px 0 10px;
+        font-size: 24px;
+      }
+      p {
+        margin: 0;
+        color: rgba(248, 250, 252, 0.74);
+        line-height: 1.8;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 20px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 124px;
+        padding: 12px 18px;
+        border-radius: 14px;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .btn-primary {
+        background: #d4af37;
+        color: #111827;
+      }
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.08);
+        color: #f8fafc;
+      }
+      .tip {
+        margin-top: 16px;
+        font-size: 13px;
+        color: rgba(248, 250, 252, 0.54);
+      }
+      .tip a {
+        color: #93c5fd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="hero">
+        <div class="badge">客户端分发中心</div>
+        <h1>下载財訊客户端</h1>
+        <div class="desc">
+          当前页面已经跟随主站一起部署。你可以直接下载桌面端与 Android 客户端，也可以继续使用 Web
+          端作为最稳定的入口。
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <div class="status">移动端</div>
+          <h3>Android App</h3>
+          <p>适合查看消息、联系人、发现与我的页面。正式安装包放入服务器目录后即可直接下载。</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="/downloads/client/caixun-android-release.apk">Android</a>
+          </div>
+          <div class="tip">放包路径：`server/public/downloads/client/caixun-android-release.apk`</div>
+        </section>
+
+        <section class="card">
+          <div class="status">桌面端</div>
+          <h3>Desktop Client</h3>
+          <p>适合长期在线、群组讨论常驻、多会话并行与资料整理。Windows、macOS 与 Linux 都使用固定文件名分发。</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="/downloads/client/caixun-desktop-windows.zip">Windows</a>
+            <a class="btn btn-secondary" href="/downloads/client/caixun-desktop-macos.dmg">macOS</a>
+            <a class="btn btn-secondary" href="/downloads/client/caixun-desktop-linux.AppImage">Linux</a>
+          </div>
+          <div class="tip">Apple Silicon：<a href="/downloads/client/caixun-desktop-macos-arm64.dmg">macOS ARM64</a></div>
+        </section>
+
+        <section class="card">
+          <div class="status">Web</div>
+          <h3>Web Client</h3>
+          <p>如果你希望直接开始使用，Web 仍然是功能最完整、最稳定的入口。</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="/">立即进入 Web</a>
+            <a class="btn btn-secondary" href="/downloads/client.json">查看下载配置</a>
+          </div>
+          <div class="tip">安装包只要放入宿主机目录并重启 `service-core` 容器即可生效。</div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>

@@ -56,6 +56,23 @@ docker compose --env-file docker-compose.env ps
 - 受控执行器 / 系统控制台：[`docs/deployment/ops-executor.md`](docs/deployment/ops-executor.md)
 - Admin 运行时联调基线：[`docs/deployment/admin-runtime-baseline.md`](docs/deployment/admin-runtime-baseline.md)
 
+## 客户端下载分发
+
+当前生产环境中的客户端下载页已并入主站静态目录，不再依赖独立 `website` 发布链路。
+
+- 下载页入口：`/downloads`
+- 下载配置：`server/public/downloads/client.json`
+- 安装包目录：`server/public/downloads/client/`
+
+如果你已经按仓库文档通过 `docker compose` 部署主站，只需要将安装包复制到上述目录，然后执行：
+
+```bash
+cd /var/www/tailchat-source
+docker compose --env-file docker-compose.env up -d --remove-orphans
+```
+
+即可让 `/downloads/client/*` 被主站直接提供访问。
+
 ## 使用说明文档
 
 - 群组内容语法说明：[`docs/usage/group-content-syntax.md`](docs/usage/group-content-syntax.md)

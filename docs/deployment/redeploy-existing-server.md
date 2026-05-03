@@ -141,6 +141,45 @@ docker compose logs --tail=100 service-all-plugins
 - 群组详情页可访问
 - Socket.IO 连接正常
 
+### 5. 客户端下载分发
+
+客户端下载页已并入主站静态目录，不再依赖独立 `website` 发布链路。
+
+下载相关文件位于：
+
+- `server/public/downloads/index.html`
+- `server/public/downloads/client.json`
+- `server/public/downloads/client/`
+
+如果你需要更新安装包，请先把文件复制到：
+
+```bash
+cd /var/www/tailchat-source
+mkdir -p server/public/downloads/client
+```
+
+固定文件名如下：
+
+- `caixun-android-release.apk`
+- `caixun-desktop-windows.zip`
+- `caixun-desktop-macos.dmg`
+- `caixun-desktop-macos-arm64.dmg`
+- `caixun-desktop-linux.AppImage`
+
+复制完成后执行：
+
+```bash
+docker compose --env-file docker-compose.env up -d --remove-orphans
+```
+
+然后验证：
+
+```bash
+curl -I http://127.0.0.1:11000/downloads
+curl -I http://127.0.0.1:11000/downloads/client.json
+curl -I http://127.0.0.1:11000/downloads/client/caixun-android-release.apk
+```
+
 ## 版本确认
 
 建议每次重部署后记录当前提交：
