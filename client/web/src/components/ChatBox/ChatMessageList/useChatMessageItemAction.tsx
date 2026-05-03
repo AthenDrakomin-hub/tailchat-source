@@ -80,15 +80,15 @@ export function useChatMessageItemAction(
         icon: <Icon icon="mdi:reply" />,
         onClick: () => sharedEvent.emit('replyMessage', payload),
       },
-      (isGroupOwner || isMessageAuthor) && {
+      isMessageAuthor && {
         key: 'recall',
         label: t('撤回'),
         icon: <Icon icon="mdi:restore" />,
         onClick: handleRecallMessage,
       },
-      hasDeleteMessagePermission && {
+      hasDeleteMessagePermission && !isMessageAuthor && {
         key: 'delete',
-        label: t('删除'),
+        label: isGroupOwner ? t('删除消息') : t('删除'),
         danger: true,
         icon: <Icon icon="mdi:delete-outline" />,
         onClick: handleDeleteMessage,

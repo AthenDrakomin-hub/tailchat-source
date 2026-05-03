@@ -56,7 +56,7 @@ const MessageQuote: React.FC<{ payload: ChatMessage }> = React.memo(
 MessageQuote.displayName = 'MessageQuote';
 
 const MessageActionIcon: React.FC<{ icon: string }> = (props) => (
-  <div className="px-0.5 w-6 h-6 flex justify-center items-center opacity-60 hover:opacity-100">
+  <div className="px-1 w-7 h-7 flex justify-center items-center opacity-60 hover:opacity-100">
     <Icon icon={props.icon} />
   </div>
 );
@@ -242,7 +242,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
         {!disableOperate && (
           <div
             className={clsx(
-              'bg-white dark:bg-[#1f1f1f] rounded absolute right-2 cursor-pointer -top-3 shadow-sm flex border border-black/5 dark:border-white/10',
+              'bg-white/95 dark:bg-[#1f1f1f]/95 rounded-full absolute right-2 cursor-pointer -top-3 shadow-[0_6px_18px_rgba(15,23,42,0.12)] flex border border-black/5 dark:border-white/10 backdrop-blur-sm',
               {
                 'opacity-0 group-hover:opacity-100 bg-opacity-80 hover:bg-opacity-100':
                   !isActionBtnActive,
