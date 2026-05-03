@@ -57,3 +57,22 @@ export interface AgentSceneConfig {
   groupIds: string[];
   enabled: boolean;
 }
+
+export interface AgentAnalyticsEvent {
+  agentId: string;
+  eventType: string;
+  sourceSceneId?: string;
+  groupId?: string;
+  roleId?: string;
+  conversionLabel?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface AgentComplianceRule {
+  action: string;
+  blocked: boolean;
+  reason?: string;
+  scopeSceneId?: string;
+  scopeGroupId?: string;
+  scopeRoleId?: string;
+}

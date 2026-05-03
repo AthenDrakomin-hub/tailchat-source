@@ -10,6 +10,8 @@ import {
   SceneAccessConfigForm,
   SceneAccessConfigFormValues,
 } from './SceneAccessConfigForm';
+import { AnalyticsPanel } from './AnalyticsPanel';
+import { CompliancePanel } from './CompliancePanel';
 
 export const AgentControlPanel: React.FC = React.memo(() => {
   const [list, setList] = useState<any[]>([]);
@@ -129,6 +131,16 @@ export const AgentControlPanel: React.FC = React.memo(() => {
           ]}
           data={sceneList}
         />
+      </Card>
+
+      <Card>
+        <Typography.Title heading={6}>数据分析与转化追踪</Typography.Title>
+        <AnalyticsPanel />
+      </Card>
+
+      <Card>
+        <Typography.Title heading={6}>风控与合规边界控制</Typography.Title>
+        <CompliancePanel />
       </Card>
     </Space>
   );
