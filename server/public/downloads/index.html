@@ -18,12 +18,12 @@
         color: #f8fafc;
       }
       .wrap {
-        max-width: 1080px;
+        max-width: 1120px;
         margin: 0 auto;
         padding: 56px 24px 72px;
       }
       .hero {
-        margin-bottom: 32px;
+        margin-bottom: 28px;
       }
       .badge {
         display: inline-flex;
@@ -46,9 +46,42 @@
         line-height: 1.8;
         font-size: 16px;
       }
+      .recommend {
+        margin: 24px 0 28px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: linear-gradient(135deg, rgba(11, 74, 139, 0.38), rgba(15, 23, 42, 0.86));
+        border-radius: 24px;
+        padding: 22px;
+      }
+      .recommend-title {
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #93c5fd;
+      }
+      .recommend-text {
+        margin-top: 10px;
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1.5;
+      }
+      .recommend-subtext {
+        margin-top: 10px;
+        color: rgba(248, 250, 252, 0.72);
+        line-height: 1.8;
+      }
+      .recommend-actions,
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .recommend-actions {
+        margin-top: 18px;
+      }
       .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 20px;
       }
       .card {
@@ -58,11 +91,29 @@
         padding: 24px;
         backdrop-filter: blur(10px);
       }
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
       .status {
         color: #93c5fd;
         font-size: 12px;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+      }
+      .card-badge {
+        display: none;
+        align-items: center;
+        border-radius: 999px;
+        padding: 5px 10px;
+        background: rgba(212, 175, 55, 0.16);
+        color: #f6d87d;
+        font-size: 12px;
+      }
+      .card-badge.active {
+        display: inline-flex;
       }
       h3 {
         margin: 14px 0 10px;
@@ -74,20 +125,21 @@
         line-height: 1.8;
       }
       .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
         margin-top: 20px;
       }
       .btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 124px;
+        min-width: 132px;
         padding: 12px 18px;
         border-radius: 14px;
         text-decoration: none;
         font-weight: 600;
+        transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
       }
       .btn-primary {
         background: #d4af37;
@@ -97,6 +149,54 @@
         background: rgba(255, 255, 255, 0.08);
         color: #f8fafc;
       }
+      .btn-recommended {
+        outline: 2px solid rgba(212, 175, 55, 0.55);
+        outline-offset: 2px;
+      }
+      .btn-disabled {
+        pointer-events: none;
+        opacity: 0.45;
+        background: rgba(148, 163, 184, 0.14);
+        color: rgba(248, 250, 252, 0.6);
+      }
+      .download-list {
+        margin-top: 18px;
+        display: grid;
+        gap: 12px;
+      }
+      .download-item {
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.04);
+        padding: 14px;
+      }
+      .download-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .download-meta {
+        margin-top: 8px;
+        font-size: 12px;
+        color: rgba(248, 250, 252, 0.58);
+        line-height: 1.8;
+      }
+      .quick-links {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .quick-link {
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(248, 250, 252, 0.82);
+        text-decoration: none;
+        padding: 8px 12px;
+        font-size: 13px;
+      }
       .tip {
         margin-top: 16px;
         font-size: 13px;
@@ -104,6 +204,20 @@
       }
       .tip a {
         color: #93c5fd;
+      }
+      .muted {
+        color: rgba(248, 250, 252, 0.54);
+      }
+      @media (max-width: 640px) {
+        .wrap {
+          padding: 40px 16px 56px;
+        }
+        h1 {
+          font-size: 32px;
+        }
+        .recommend-text {
+          font-size: 20px;
+        }
       }
     </style>
   </head>
@@ -113,45 +227,252 @@
         <div class="badge">客户端分发中心</div>
         <h1>下载財訊客户端</h1>
         <div class="desc">
-          当前页面已经跟随主站一起部署。你可以直接下载桌面端与 Android 客户端，也可以继续使用 Web
-          端作为最稳定的入口。
+          所有安装入口已统一收口到当前页面。系统会根据你当前设备自动推荐下载方式，并实时显示安装包是否可用。
+        </div>
+        <div class="quick-links">
+          <a class="quick-link" href="#mobile">Android 下载</a>
+          <a class="quick-link" href="#desktop">桌面端下载</a>
+          <a class="quick-link" href="#web">Web 入口</a>
         </div>
       </div>
 
+      <section class="recommend" aria-live="polite">
+        <div class="recommend-title">智能推荐</div>
+        <div class="recommend-text" id="device-summary">正在识别你当前的设备环境…</div>
+        <div class="recommend-subtext" id="device-detail">
+          页面会根据你的设备优先高亮可用下载项；如果当前平台暂未提供安装包，会明确提示你改用 Web 或其他设备。
+        </div>
+        <div class="recommend-actions" id="recommend-actions"></div>
+      </section>
+
       <div class="grid">
-        <section class="card">
-          <div class="status">移动端</div>
+        <section class="card" id="mobile">
+          <div class="card-header">
+            <div class="status">移动端</div>
+            <div class="card-badge" data-recommend-badge="android">推荐当前设备</div>
+          </div>
           <h3>Android App</h3>
-          <p>适合查看消息、联系人、发现与我的页面。正式安装包放入服务器目录后即可直接下载。</p>
-          <div class="actions">
-            <a class="btn btn-primary" href="/downloads/client/caixun-android-release.apk">Android</a>
+          <p>适合查看消息、联系人、发现与我的页面。当前已支持通过主站直接分发 APK 安装包。</p>
+          <div class="download-list">
+            <div class="download-item">
+              <div class="download-title">
+                <span>Android 安装包</span>
+                <a class="btn btn-primary" data-download-key="android" href="/downloads/client/caixun-android-release.apk">检测中…</a>
+              </div>
+              <div class="download-meta" data-download-meta="android">正在读取版本、大小与更新时间…</div>
+            </div>
           </div>
-          <div class="tip">放包路径：`server/public/downloads/client/caixun-android-release.apk`</div>
         </section>
 
-        <section class="card">
-          <div class="status">桌面端</div>
+        <section class="card" id="desktop">
+          <div class="card-header">
+            <div class="status">桌面端</div>
+            <div class="card-badge" data-recommend-badge="desktop">推荐当前设备</div>
+          </div>
           <h3>Desktop Client</h3>
-          <p>适合长期在线、群组讨论常驻、多会话并行与资料整理。Windows、macOS 与 Linux 都使用固定文件名分发。</p>
-          <div class="actions">
-            <a class="btn btn-primary" href="/downloads/client/caixun-desktop-windows.zip">Windows</a>
-            <a class="btn btn-secondary" href="/downloads/client/caixun-desktop-macos.dmg">macOS</a>
-            <a class="btn btn-secondary" href="/downloads/client/caixun-desktop-linux.AppImage">Linux</a>
+          <p>适合长期在线、群组讨论常驻、多会话并行与资料整理。Windows、macOS 与 Linux 安装包分别独立分发。</p>
+          <div class="download-list">
+            <div class="download-item">
+              <div class="download-title">
+                <span>Windows</span>
+                <a class="btn btn-secondary" data-download-key="windows" href="/downloads/client/caixun-desktop-windows.zip">检测中…</a>
+              </div>
+              <div class="download-meta" data-download-meta="windows">正在读取版本、大小与更新时间…</div>
+            </div>
+            <div class="download-item">
+              <div class="download-title">
+                <span>macOS</span>
+                <a class="btn btn-secondary" data-download-key="darwin" href="/downloads/client/caixun-desktop-macos.dmg">检测中…</a>
+              </div>
+              <div class="download-meta" data-download-meta="darwin">正在读取版本、大小与更新时间…</div>
+            </div>
+            <div class="download-item">
+              <div class="download-title">
+                <span>macOS Apple Silicon</span>
+                <a class="btn btn-secondary" data-download-key="darwin-arm64" href="/downloads/client/caixun-desktop-macos-arm64.dmg">检测中…</a>
+              </div>
+              <div class="download-meta" data-download-meta="darwin-arm64">正在读取版本、大小与更新时间…</div>
+            </div>
+            <div class="download-item">
+              <div class="download-title">
+                <span>Linux</span>
+                <a class="btn btn-secondary" data-download-key="linux" href="/downloads/client/caixun-desktop-linux.AppImage">检测中…</a>
+              </div>
+              <div class="download-meta" data-download-meta="linux">正在读取版本、大小与更新时间…</div>
+            </div>
           </div>
-          <div class="tip">Apple Silicon：<a href="/downloads/client/caixun-desktop-macos-arm64.dmg">macOS ARM64</a></div>
         </section>
 
-        <section class="card">
-          <div class="status">Web</div>
+        <section class="card" id="web">
+          <div class="card-header">
+            <div class="status">Web</div>
+            <div class="card-badge active">始终可用</div>
+          </div>
           <h3>Web Client</h3>
-          <p>如果你希望直接开始使用，Web 仍然是功能最完整、最稳定的入口。</p>
+          <p>如果你希望直接开始使用，Web 仍然是功能最完整、最稳定的入口。在没有合适安装包时，可直接先从 Web 端开始。</p>
           <div class="actions">
             <a class="btn btn-primary" href="/">立即进入 Web</a>
             <a class="btn btn-secondary" href="/downloads/client.json">查看下载配置</a>
           </div>
-          <div class="tip">安装包只要放入宿主机目录并重启 `service-core` 容器即可生效。</div>
+          <div class="tip">安装包目录：<span class="muted">`server/public/downloads/client/`</span></div>
         </section>
       </div>
     </div>
+
+    <script>
+      const platformNames = {
+        android: 'Android',
+        windows: 'Windows',
+        darwin: 'macOS',
+        'darwin-arm64': 'macOS Apple Silicon',
+        linux: 'Linux',
+      };
+
+      function formatBytes(bytes) {
+        if (!Number.isFinite(bytes) || bytes <= 0) {
+          return '未知大小';
+        }
+        const units = ['B', 'KB', 'MB', 'GB'];
+        let size = bytes;
+        let unitIndex = 0;
+        while (size >= 1024 && unitIndex < units.length - 1) {
+          size /= 1024;
+          unitIndex += 1;
+        }
+        return `${size.toFixed(size >= 10 || unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
+      }
+
+      function formatDate(dateValue) {
+        if (!dateValue) {
+          return '未知时间';
+        }
+        const date = new Date(dateValue);
+        if (Number.isNaN(date.getTime())) {
+          return '未知时间';
+        }
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+      }
+
+      function detectPlatform() {
+        const ua = navigator.userAgent.toLowerCase();
+        const platform = (navigator.platform || '').toLowerCase();
+
+        if (/android/.test(ua)) {
+          return { name: 'Android 设备', recommendedKeys: ['android'], badge: 'android' };
+        }
+
+        if (/iphone|ipad|ipod/.test(ua)) {
+          return { name: 'iPhone / iPad', recommendedKeys: [], badge: 'web', message: '当前未提供 iOS 安装包，建议先使用 Web 版。' };
+        }
+
+        if (platform.includes('win')) {
+          return { name: 'Windows 电脑', recommendedKeys: ['windows'], badge: 'desktop' };
+        }
+
+        if (platform.includes('mac')) {
+          return { name: 'macOS 设备', recommendedKeys: ['darwin', 'darwin-arm64'], badge: 'desktop' };
+        }
+
+        if (platform.includes('linux') || ua.includes('linux')) {
+          return { name: 'Linux 设备', recommendedKeys: ['linux'], badge: 'desktop' };
+        }
+
+        return { name: '当前设备', recommendedKeys: [], badge: 'web', message: '未能准确识别你的设备，建议按系统手动选择，或直接使用 Web 版。' };
+      }
+
+      async function probeDownload(url) {
+        try {
+          const response = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+          if (!response.ok) {
+            return { ok: false };
+          }
+          return {
+            ok: true,
+            size: Number(response.headers.get('content-length')),
+            updatedAt: response.headers.get('last-modified'),
+          };
+        } catch (err) {
+          return { ok: false };
+        }
+      }
+
+      function setButtonUnavailable(button, meta, versionLabel) {
+        button.classList.add('btn-disabled');
+        button.removeAttribute('href');
+        button.textContent = '暂未提供';
+        meta.textContent = `版本：${versionLabel} · 当前还没有可下载文件`;
+      }
+
+      async function initDownloads() {
+        const device = detectPlatform();
+        const summary = document.getElementById('device-summary');
+        const detail = document.getElementById('device-detail');
+        const recommendActions = document.getElementById('recommend-actions');
+
+        summary.textContent = `已识别：${device.name}`;
+        detail.textContent = device.message || '页面已按你的设备类型高亮推荐对应平台；如果你要为其他设备下载，也可以直接在下方手动选择。';
+
+        try {
+          const response = await fetch('/downloads/client.json', { cache: 'no-store' });
+          const config = await response.json();
+          const availableDownloads = [];
+
+          for (const button of document.querySelectorAll('[data-download-key]')) {
+            const key = button.getAttribute('data-download-key');
+            const meta = document.querySelector(`[data-download-meta="${key}"]`);
+            const item = config[key];
+
+            if (!item || !item.url) {
+              setButtonUnavailable(button, meta, '未配置');
+              continue;
+            }
+
+            const result = await probeDownload(item.url);
+            if (!result.ok) {
+              setButtonUnavailable(button, meta, item.version || 'latest');
+              continue;
+            }
+
+            button.href = item.url;
+            button.textContent = '立即下载';
+            meta.textContent = `版本：${item.version || 'latest'} · 大小：${formatBytes(result.size)} · 更新时间：${formatDate(result.updatedAt)}`;
+            availableDownloads.push({
+              key,
+              name: platformNames[key] || key,
+              url: item.url,
+              buttonClass: button.classList.contains('btn-primary') ? 'btn btn-primary' : 'btn btn-secondary',
+            });
+
+            if (device.recommendedKeys.includes(key)) {
+              button.classList.add('btn-recommended');
+            }
+          }
+
+          if (device.badge) {
+            const badge = document.querySelector(`[data-recommend-badge="${device.badge}"]`);
+            if (badge) {
+              badge.classList.add('active');
+            }
+          }
+
+          const recommendedDownloads = availableDownloads.filter((item) => device.recommendedKeys.includes(item.key));
+          if (recommendedDownloads.length > 0) {
+            recommendActions.innerHTML = recommendedDownloads
+              .map(
+                (item) =>
+                  `<a class="${item.buttonClass} btn-recommended" href="${item.url}">下载 ${item.name}</a>`
+              )
+              .join('');
+          } else {
+            recommendActions.innerHTML = `<a class="btn btn-primary" href="/">先进入 Web</a>`;
+          }
+        } catch (error) {
+          detail.textContent = '当前未能读取下载配置，请稍后刷新页面重试，或先直接使用 Web 版。';
+          recommendActions.innerHTML = `<a class="btn btn-primary" href="/">先进入 Web</a>`;
+        }
+      }
+
+      initDownloads();
+    </script>
   </body>
 </html>

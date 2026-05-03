@@ -142,6 +142,24 @@ export const LoginView: React.FC = React.memo(() => {
             查看客户端分发页
           </a>
         </div>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <a
+            href="/downloads"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center justify-center rounded-2xl bg-[#d4af37] px-4 py-2.5 text-sm font-semibold text-[#111827] shadow-[0_12px_24px_rgba(212,175,55,0.18)] transition hover:brightness-105"
+          >
+            下载客户端
+          </a>
+          <a
+            href="/downloads#web"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.06)] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[rgba(255,255,255,0.1)]"
+          >
+            查看 Web 入口
+          </a>
+        </div>
       </div>
 
       <div>

@@ -10,6 +10,7 @@ import { pluginCustomPanel } from '@/plugin/common';
 import { NavbarCustomNavItem } from './CustomNavItem';
 import { QuickSwitcherNav } from './QuickSwitcherNav';
 import { FeedNav } from './FeedNav';
+import { DownloadNav } from './DownloadNav';
 
 /**
  * 导航栏组件
@@ -32,6 +33,8 @@ export const Navbar: React.FC = React.memo(() => {
           <GroupsNav />
 
           <FeedNav />
+
+          <DownloadNav />
 
           <QuickSwitcherNav />
 
