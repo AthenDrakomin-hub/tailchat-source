@@ -30,18 +30,13 @@ curl -fsSL https://raw.githubusercontent.com/AthenDrakomin-hub/tailchat-source/m
 
 ```bash
 cd /var/www/tailchat-source
-git fetch origin
-git checkout main
-git pull --rebase origin main
-bash scripts/env-lint.sh docker-compose.env
-docker compose --env-file docker-compose.env build --pull
-docker compose --env-file docker-compose.env up -d --remove-orphans
-docker compose --env-file docker-compose.env ps
+bash scripts/deploy-all.sh
 ```
 
 完整说明见：
 
 - [`docs/deployment/redeploy-existing-server.md`](docs/deployment/redeploy-existing-server.md)
+- [`docs/deployment/client-release-workflow.md`](docs/deployment/client-release-workflow.md)
 
 ### 部署失败排查
 
@@ -64,20 +59,41 @@ docker compose --env-file docker-compose.env ps
 - 下载配置：`server/public/downloads/client.json`
 - 安装包目录：`server/public/downloads/client/`
 
-如果你已经按仓库文档通过 `docker compose` 部署主站，只需要将安装包复制到上述目录，然后执行：
+推荐统一使用以下脚本：
 
 ```bash
 cd /var/www/tailchat-source
-docker compose --env-file docker-compose.env up -d --remove-orphans
+bash scripts/build-android-release.sh
 ```
 
-即可让 `/downloads/client/*` 被主站直接提供访问。
+用于：
+
+- 在服务器上构建 Android APK
+- 自动发布到下载目录
+- 自动更新 `client.json`
+- 自动验证 Android 下载地址
+
+如果你要发布 Windows / macOS / Linux 外部产物，使用：
+
+```bash
+cd /var/www/tailchat-source
+
+bash scripts/publish-client-assets.sh \
+  --windows /tmp/caixun-desktop-windows.zip --windows-version 1.0.0 \
+  --macos /tmp/caixun-desktop-macos.dmg --macos-version 1.0.0 \
+  --macos-arm64 /tmp/caixun-desktop-macos-arm64.dmg --macos-arm64-version 1.0.0
+```
+
+完整说明见：
+
+- [`docs/deployment/client-release-workflow.md`](docs/deployment/client-release-workflow.md)
 
 ## 使用说明文档
 
 - 群组内容语法说明：[`docs/usage/group-content-syntax.md`](docs/usage/group-content-syntax.md)
 - 版本变更记录：[`CHANGELOG.md`](CHANGELOG.md)
 - 已部署服务器重部署：[`docs/deployment/redeploy-existing-server.md`](docs/deployment/redeploy-existing-server.md)
+- 客户端分包发布：[`docs/deployment/client-release-workflow.md`](docs/deployment/client-release-workflow.md)
 - 部署排障手册：[`docs/deployment/troubleshooting.md`](docs/deployment/troubleshooting.md)
 
 ## 关键环境变量

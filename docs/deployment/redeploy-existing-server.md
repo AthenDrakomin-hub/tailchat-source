@@ -21,13 +21,18 @@ curl -fsSL https://raw.githubusercontent.com/AthenDrakomin-hub/tailchat-source/m
 
 ```bash
 cd /var/www/tailchat-source
+bash scripts/deploy-all.sh
+```
 
+等价展开命令如下：
+
+```bash
+cd /var/www/tailchat-source
 git fetch origin
 git checkout main
+git restore client/mobile/yarn.lock || true
 git pull --rebase origin main
-
 bash scripts/env-lint.sh docker-compose.env
-
 docker compose --env-file docker-compose.env build --pull
 docker compose --env-file docker-compose.env up -d --remove-orphans
 docker compose --env-file docker-compose.env ps
@@ -151,14 +156,27 @@ docker compose logs --tail=100 service-all-plugins
 - `server/public/downloads/client.json`
 - `server/public/downloads/client/`
 
-如果你需要更新安装包，请先把文件复制到：
+如果你需要更新安装包，推荐直接使用：
 
 ```bash
 cd /var/www/tailchat-source
-mkdir -p server/public/downloads/client
+bash scripts/build-android-release.sh
 ```
 
-固定文件名如下：
+它会在服务器上构建 Android 并自动发布。
+
+如果要发布 Windows / macOS / Linux 外部产物，请使用：
+
+```bash
+cd /var/www/tailchat-source
+
+bash scripts/publish-client-assets.sh \
+  --windows /tmp/caixun-desktop-windows.zip --windows-version 1.0.0 \
+  --macos /tmp/caixun-desktop-macos.dmg --macos-version 1.0.0 \
+  --macos-arm64 /tmp/caixun-desktop-macos-arm64.dmg --macos-arm64-version 1.0.0
+```
+
+下载中心统一使用以下文件名：
 
 - `caixun-android-release.apk`
 - `caixun-desktop-windows.zip`
@@ -166,19 +184,17 @@ mkdir -p server/public/downloads/client
 - `caixun-desktop-macos-arm64.dmg`
 - `caixun-desktop-linux.AppImage`
 
-复制完成后执行：
-
-```bash
-docker compose --env-file docker-compose.env up -d --remove-orphans
-```
-
 然后验证：
 
 ```bash
-curl -I http://127.0.0.1:11000/downloads
-curl -I http://127.0.0.1:11000/downloads/client.json
-curl -I http://127.0.0.1:11000/downloads/client/caixun-android-release.apk
+curl -m 10 -sS -o /dev/null -w "GET /downloads -> %{http_code}\n" http://127.0.0.1:11000/downloads
+curl -m 10 -sS -o /dev/null -w "GET /downloads/client.json -> %{http_code}\n" http://127.0.0.1:11000/downloads/client.json
+curl -m 10 -sS -o /dev/null -w "GET /downloads/client/caixun-android-release.apk -> %{http_code}\n" http://127.0.0.1:11000/downloads/client/caixun-android-release.apk
 ```
+
+更完整的多端发布流程见：
+
+- [`client-release-workflow.md`](./client-release-workflow.md)
 
 ## 版本确认
 

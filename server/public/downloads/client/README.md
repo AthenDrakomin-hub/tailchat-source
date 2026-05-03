@@ -1,6 +1,6 @@
 # 財訊客户端下载目录
 
-将客户端安装包放到当前目录后，主站会直接提供以下下载地址：
+主站会直接提供以下下载地址：
 
 - `/downloads/client/caixun-android-release.apk`
 - `/downloads/client/caixun-desktop-windows.zip`
@@ -8,9 +8,28 @@
 - `/downloads/client/caixun-desktop-macos-arm64.dmg`
 - `/downloads/client/caixun-desktop-linux.AppImage`
 
-如果你已经在服务器上通过 `docker compose` 部署主站，只需要：
+推荐不要手工复制文件，而是统一使用：
 
-1. 将安装包复制到 `server/public/downloads/client/`
-2. 执行 `docker compose --env-file docker-compose.env up -d --remove-orphans`
+## Android 服务器构建并发布
 
-无需单独发布 `website`。
+```bash
+cd /var/www/tailchat-source
+bash scripts/build-android-release.sh
+```
+
+## Windows / macOS / Linux 外部产物发布
+
+```bash
+cd /var/www/tailchat-source
+
+bash scripts/publish-client-assets.sh \
+  --windows /tmp/caixun-desktop-windows.zip --windows-version 1.0.0 \
+  --macos /tmp/caixun-desktop-macos.dmg --macos-version 1.0.0 \
+  --macos-arm64 /tmp/caixun-desktop-macos-arm64.dmg --macos-arm64-version 1.0.0
+```
+
+这样会同时：
+
+- 将文件复制到当前目录
+- 更新 `server/public/downloads/client.json`
+- 验证下载地址是否可访问
