@@ -8,7 +8,7 @@ import { LegalView } from '../LegalView';
 import { TrustView } from '../TrustView';
 
 describe('caixun entry trust surface', () => {
-  test('shows the current event banner and trust links', () => {
+  test('shows the brand banner and trust links', () => {
     render(
       <MemoryRouter>
         <EventBanner />
@@ -16,7 +16,7 @@ describe('caixun entry trust surface', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('第十屆交流會')).toBeTruthy();
+    expect(screen.getByText('品牌资讯')).toBeTruthy();
     expect(screen.getByRole('link', { name: '關於我們' })).toBeTruthy();
     expect(screen.getByRole('link', { name: '安全與合規' })).toBeTruthy();
   });

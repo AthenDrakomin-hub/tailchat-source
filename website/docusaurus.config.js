@@ -110,8 +110,8 @@ const presetClassicOptions = {
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
   title: '財訊',
-  tagline: '日斗投資財富論壇第十屆交流會官方內部平台',
-  url: 'https://tailchat.msgbyte.com', // TODO: 待修改成文档主页
+  tagline: '高质量交流与即时沟通平台',
+  url: 'https://caixun.im',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',

@@ -121,7 +121,7 @@ export const Entry: React.FC = React.memo(() => {
               <TouchableOpacity
                 style={styles.supportActionBtn}
                 onPress={() => {
-                  Linking.openURL('https://tailchat.msgbyte.com/docs/intro');
+                  Linking.openURL('https://caixun.im/docs/intro');
                 }}
               >
                 <Text style={styles.supportActionText}>查看文档</Text>
@@ -129,7 +129,7 @@ export const Entry: React.FC = React.memo(() => {
               <TouchableOpacity
                 style={styles.supportActionBtn}
                 onPress={() => {
-                  Linking.openURL('https://tailchat.msgbyte.com/entry/trust');
+                  Linking.openURL('https://caixun.im/entry/trust');
                 }}
               >
                 <Text style={styles.supportActionText}>安全与合规</Text>
@@ -137,7 +137,7 @@ export const Entry: React.FC = React.memo(() => {
               <TouchableOpacity
                 style={styles.supportActionBtn}
                 onPress={() => {
-                  Linking.openURL('https://tailchat.msgbyte.com/downloads');
+                  Linking.openURL('https://caixun.im/downloads');
                 }}
               >
                 <Text style={styles.supportActionText}>下载说明</Text>
@@ -214,7 +214,7 @@ export const Entry: React.FC = React.memo(() => {
           </Text>
         </TouchableOpacity>
         <Text style={styles.footerText}>
-          当前版本建议先通过 Web 与默认工作区完成主链路体验，再进入移动端验证窄屏使用感受。
+          如需下载桌面端或 Android 安装包，可通过財訊官网分发页获取。
         </Text>
       </View>
 

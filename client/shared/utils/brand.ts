@@ -1,17 +1,17 @@
 export const BRAND_NAME_FULL = '財訊';
 export const BRAND_NAME_SHORT = '財訊';
 export const BRAND_NAME_ADMIN = '財訊後台';
-export const BRAND_SUBTITLE = '日斗投資財富論壇';
+export const BRAND_SUBTITLE = '高质量交流与即时沟通平台';
 export const BRAND_COMPANY = '日斗投資諮詢有限公司';
-export const BRAND_EVENT_NAME = '第十屆交流會';
-export const BRAND_EVENT_FULL = '第十屆投資財富交流會';
-export const BRAND_TAGLINE = '內部通訊 · 投資論壇 · 語音互動';
+export const BRAND_EVENT_NAME = '品牌资讯';
+export const BRAND_EVENT_FULL = '財訊即时沟通平台';
+export const BRAND_TAGLINE = '即時通訊 · 社區交流 · 語音互動';
 export const PRIVACY_TITLE = '隱私政策';
 export const TERMS_TITLE = '用戶協議';
 export const COMMUNITY_TITLE = '社區公約';
 export const TRUST_TITLE = '財訊 · 安全與合規';
 export const ENTRY_META_DESCRIPTION =
-  '財訊｜日斗投資財富交流會第十屆。專為日斗投資諮詢有限公司會員打造的內部通訊與投資論壇，實時交流、語音互動。';
+  '財訊｜高质量交流与即时沟通平台，支持即時交流、群组协作与语音互动。';
 
 export type Quote = {
   text: string;

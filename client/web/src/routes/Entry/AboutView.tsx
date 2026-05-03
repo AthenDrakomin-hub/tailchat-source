@@ -15,7 +15,7 @@ export const AboutView: React.FC = React.memo(() => {
         <section>
           <div className="text-base font-semibold text-white mb-2">{BRAND_NAME_FULL}</div>
           <p>
-            {BRAND_NAME_FULL} 是面向日斗投資財富論壇內部成員的正式通訊與交流產品，用於承接即時消息、投資觀點討論、語音互動與陪伴式學習交流。
+            {BRAND_NAME_FULL} 是面向高质量交流场景的即时沟通平台，用於承接即時消息、群组协作、语音互动与长期交流。
           </p>
         </section>
 
@@ -23,15 +23,15 @@ export const AboutView: React.FC = React.memo(() => {
           <div className="text-base font-semibold text-white mb-2">平台定位</div>
           <p>{BRAND_TAGLINE}</p>
           <p>
-            平台以穩健、理性、合規的交流氛圍為核心，服務於內部論壇成員的長期交流與觀點沉澱。
+            平台以穩健、理性、合規的交流氛圍為核心，服務於用戶日常沟通、协作与内容沉淀。
           </p>
         </section>
 
         <section>
-          <div className="text-base font-semibold text-white mb-2">主體與活動</div>
+          <div className="text-base font-semibold text-white mb-2">主體與品牌</div>
           <p>主體公司：{BRAND_COMPANY}</p>
           <p>社群名稱：{BRAND_SUBTITLE}</p>
-          <p>當前活動：{BRAND_EVENT_NAME}</p>
+          <p>平台介紹：{BRAND_EVENT_NAME}</p>
         </section>
       </div>
     </DocumentLayout>

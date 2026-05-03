@@ -24,7 +24,7 @@ export const JoinCommunity: React.FC = React.memo(() => {
           data-umami-event="joingroup"
           data-tianji-event="joingroup"
         >
-          <Translate>Join Tailchat Group</Translate>
+          <Translate>Join Caixun Group</Translate>
         </Link>
       </div>
 
@@ -49,7 +49,7 @@ export const JoinCommunity: React.FC = React.memo(() => {
         >
           <img
             src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=382080&theme=light"
-            alt="Tailchat - The&#0032;next&#0045;generation&#0032;noIM&#0032;Application&#0032;in&#0032;your&#0032;own&#0032;workspace | Product Hunt"
+            alt="Caixun community page | Product Hunt"
             style={{ width: 250, height: 54 }}
             width="250"
             height="54"

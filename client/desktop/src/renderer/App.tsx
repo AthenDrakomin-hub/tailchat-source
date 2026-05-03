@@ -1,4 +1,4 @@
-import icon from '../../assets/icon.svg';
+import icon from '../../assets/icon.png';
 import { ServerItem } from './ServerItem';
 import React from 'react';
 import { defaultServerList, useServerStore } from './store/server';
@@ -11,6 +11,13 @@ const Hello: React.FC = React.memo(() => {
   const allServers = [...defaultServerList, ...serverList];
   const [enteringServerUrl, setEnteringServerUrl] = React.useState<string | null>(
     null
+  );
+  const websiteBaseUrl = allServers[0]?.url ?? 'https://caixun.im/';
+  const openSiteLink = React.useCallback(
+    (pathname: string) => {
+      window.open(new URL(pathname, websiteBaseUrl).toString());
+    },
+    [websiteBaseUrl]
   );
 
   return (
@@ -34,7 +41,7 @@ const Hello: React.FC = React.memo(() => {
         <div className="hero-tips">
           <span>推荐 Windows 长时间使用</span>
           <span>支持自定义服务器</span>
-          <span>后续继续推进移动端上架准备</span>
+          <span>支持站内下载与分发</span>
         </div>
       </div>
 
@@ -115,7 +122,7 @@ const Hello: React.FC = React.memo(() => {
           <button
             type="button"
             onClick={() => {
-              window.open('https://tailchat.msgbyte.com/docs/intro');
+              openSiteLink('/docs/intro');
             }}
           >
             查看文档
@@ -123,7 +130,7 @@ const Hello: React.FC = React.memo(() => {
           <button
             type="button"
             onClick={() => {
-              window.open('https://tailchat.msgbyte.com/entry/trust');
+              openSiteLink('/entry/trust');
             }}
           >
             查看安全与合规
@@ -131,7 +138,7 @@ const Hello: React.FC = React.memo(() => {
           <button
             type="button"
             onClick={() => {
-              window.open('https://tailchat.msgbyte.com/downloads');
+              openSiteLink('/downloads');
             }}
           >
             查看客户端下载说明
@@ -145,7 +152,7 @@ const Hello: React.FC = React.memo(() => {
           type="button"
           disabled={Boolean(enteringServerUrl)}
           onClick={() => {
-            window.open('https://tailchat.msgbyte.com/');
+            openSiteLink('/');
           }}
         >
           访问官网
@@ -155,7 +162,7 @@ const Hello: React.FC = React.memo(() => {
           type="button"
           disabled={Boolean(enteringServerUrl)}
           onClick={() => {
-            window.open('https://tailchat.msgbyte.com/downloads');
+            openSiteLink('/downloads');
           }}
         >
           查看下载与平台说明

@@ -121,7 +121,7 @@ export const SettingsStatus: React.FC = React.memo(() => {
           <a href="/entry/trust" target="_blank" rel="noreferrer" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
             查看安全与合规
           </a>
-          <a href="https://tailchat.msgbyte.com/downloads" target="_blank" rel="noreferrer" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
+          <a href="/downloads" target="_blank" rel="noreferrer" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
             查看客户端下载说明
           </a>
         </div>

@@ -45,25 +45,25 @@ const DEFAULT_CARDS: BeidouStarCardConfig[] = [
     bio: '从国家部委到百亿私募掌门人，知名财经大V“股道热肠也”，被投资者誉为“万倍叔”。坚信“便宜是硬道理，成长是真功夫”。',
     tags: ['深度价值', '万倍叔', '创始人'],
     verifiedText: '认证档案',
-    footerLeftText: 'RIDOU INVESTMENT',
+    footerLeftText: '財訊',
   },
   {
     id: 'zou-wen',
     name: '邹文',
     title: '投资总监',
-    bio: '日斗投资核心基金经理，秉承“稳健进取，价值取胜”理念，深研高现金流与高分红标的，为组合构建坚实的安全边际。',
+    bio: '核心基金经理，秉承“稳健进取，价值取胜”理念，深研高现金流与高分红标的，为组合构建坚实的安全边际。',
     tags: ['稳健进取', '高分红', '投资总监'],
     verifiedText: '认证档案',
-    footerLeftText: 'RIDOU INVESTMENT',
+    footerLeftText: '財訊',
   },
   {
     id: 'zhang-wenyong',
     name: '张文勇',
     title: '基金经理',
-    bio: '日斗投资核心基金经理，共同践行“低估值、高现金流、高分红、业务长期可持续、有梦想”的五大选股标准。',
+    bio: '核心基金经理，共同践行“低估值、高现金流、高分红、业务长期可持续、有梦想”的五大选股标准。',
     tags: ['低估值', '五大标准', '基金经理'],
     verifiedText: '认证档案',
-    footerLeftText: 'RIDOU INVESTMENT',
+    footerLeftText: '財訊',
   },
   {
     id: 'class-9',
@@ -72,7 +72,7 @@ const DEFAULT_CARDS: BeidouStarCardConfig[] = [
     bio: '带领第九届学员深入探讨逆向投资策略，组织实地调研，用脚底板丈量企业护城河。',
     tags: ['第九届', '实地调研', '学习标兵'],
     verifiedText: '认证档案',
-    footerLeftText: 'RIDOU INVESTMENT',
+    footerLeftText: '財訊',
   },
   {
     id: 'class-8',
@@ -81,7 +81,7 @@ const DEFAULT_CARDS: BeidouStarCardConfig[] = [
     bio: '第八届学习会核心组织者，专注“高分红与现金流”课题，协助成员建立稳健的组合结构。',
     tags: ['第八届', '课题研讨', '现金流'],
     verifiedText: '认证档案',
-    footerLeftText: 'RIDOU INVESTMENT',
+    footerLeftText: '財訊',
   },
   {
     id: 'class-5',
@@ -90,16 +90,16 @@ const DEFAULT_CARDS: BeidouStarCardConfig[] = [
     bio: '第五届老学员领袖，常年组织内部读书会，深谙“去人少的地方”这一核心投资哲学。',
     tags: ['第五届', '读书会', '逆向思维'],
     verifiedText: '认证档案',
-    footerLeftText: 'RIDOU INVESTMENT',
+    footerLeftText: '財訊',
   },
   {
     id: 'class-3',
     name: '林班长',
     title: '第三届学习班长',
-    bio: '日斗投资早期追随者与第三届班长，见证了长期主义的力量，擅长分享周期穿越经验。',
+    bio: '早期成员与第三届班长，见证了长期主义的力量，擅长分享周期穿越经验。',
     tags: ['第三届', '早期成员', '穿越周期'],
     verifiedText: '认证档案',
-    footerLeftText: 'RIDOU INVESTMENT',
+    footerLeftText: '財訊',
   },
 ];
 
@@ -181,7 +181,7 @@ const ProfileCard: React.FC<{ profile: StarProfile }> = React.memo(
 
             <div className="mt-6 flex items-center justify-between pt-4 border-t border-[rgba(255,255,255,0.1)]">
               <div className="text-xs text-[rgba(255,255,255,0.5)] tracking-wider">
-                {profile.footerLeftText || 'RIDOU INVESTMENT'}
+                {profile.footerLeftText || '財訊'}
               </div>
               {profile.verifiedText ? (
                 <div className="flex items-center gap-2 text-xs text-[rgba(212,175,55,0.8)] font-medium">

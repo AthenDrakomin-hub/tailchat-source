@@ -104,7 +104,7 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
           content: (
             <SettingsLinkPanel
               title="社區公約"
-              description="查看日斗投資財富論壇交流規範，禁止黑嘴、詐騙、刷屏與惡意帶節奏。"
+              description="查看社区交流规范，了解平台禁止行为与秩序要求。"
               href="/entry/community"
             />
           ),
@@ -127,7 +127,7 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
             <SettingsLinkPanel
               title="下載說明"
               description="查看桌面端、移動端與 Web 的使用入口與下載方式。"
-              href="https://tailchat.msgbyte.com/downloads"
+              href="/downloads"
             />
           ),
         },

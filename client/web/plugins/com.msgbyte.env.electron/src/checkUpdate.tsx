@@ -3,7 +3,7 @@ import React from 'react';
 import { Translate } from './translate';
 import { getDeviceInfo } from './utils';
 
-const url = 'https://tailchat.msgbyte.com/downloads/client.json';
+const url = '/downloads/client.json';
 
 export async function checkUpdate(): Promise<boolean> {
   const deviceInfo = getDeviceInfo();

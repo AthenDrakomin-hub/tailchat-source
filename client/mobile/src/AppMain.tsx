@@ -251,7 +251,7 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
             <View style={styles.meMenuGroup}>
               <TouchableOpacity
                 style={styles.meMenuRow}
-                onPress={() => Linking.openURL('https://tailchat.msgbyte.com/entry/trust')}
+                onPress={() => Linking.openURL(`${normalizedHost}/entry/trust`)}
               >
                 <Text style={styles.meMenuLabel}>安全与合规</Text>
                 <Text style={styles.meMenuArrow}>›</Text>
@@ -279,14 +279,14 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.meMenuRow}
-                onPress={() => Linking.openURL('https://tailchat.msgbyte.com/downloads')}
+                onPress={() => Linking.openURL(`${normalizedHost}/downloads`)}
               >
                 <Text style={styles.meMenuLabel}>下载说明</Text>
                 <Text style={styles.meMenuArrow}>›</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.meMenuRow}
-                onPress={() => Linking.openURL('https://tailchat.msgbyte.com/docs/intro')}
+                onPress={() => Linking.openURL(`${normalizedHost}/docs/intro`)}
               >
                 <Text style={styles.meMenuLabel}>使用文档</Text>
                 <Text style={styles.meMenuArrow}>›</Text>

@@ -55,7 +55,7 @@ export const LoginView: React.FC = React.memo(() => {
   );
 
   useEffect(() => {
-    document.title = '財訊 - 第十屆投資財富交流會';
+    document.title = '財訊';
     tryAutoLogin()
       .then(() => {
         navigate('/main');
@@ -111,7 +111,7 @@ export const LoginView: React.FC = React.memo(() => {
         <div className="mt-3 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
           <div className="rounded-2xl bg-[rgba(255,255,255,0.06)] px-3 py-3">
             <div className="text-xs text-[rgba(255,255,255,0.62)]">Web</div>
-            <div className="mt-1 text-sm font-medium text-white">当前主入口</div>
+            <div className="mt-1 text-sm font-medium text-white">推荐使用</div>
             <div className="mt-1 text-xs leading-5 text-[rgba(255,255,255,0.68)]">
               推荐先通过 Web 熟悉动态、群组和私信主链路。
             </div>
@@ -135,7 +135,7 @@ export const LoginView: React.FC = React.memo(() => {
           下载与平台说明：
           <a
             className="ml-1 underline underline-offset-4 hover:text-white"
-            href="https://tailchat.msgbyte.com/downloads"
+            href="/downloads"
             target="_blank"
             rel="noreferrer"
           >

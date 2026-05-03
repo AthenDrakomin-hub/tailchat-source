@@ -22,9 +22,9 @@ interface ServerStoreState {
 
 export const defaultServerList: ServerInfo[] = [
   {
-    name: 'Tailchat',
-    url: 'https://nightly.paw.msgbyte.com/',
-    version: 'nightly',
+    name: '財訊',
+    url: 'https://caixun.im/',
+    version: 'stable',
   },
 ];
 
@@ -34,22 +34,22 @@ export const useServerStore = create<ServerStoreState>()(
       serverList: [],
       addServer: async (url: string) => {
         try {
-          // 获取 Tailchat 客户端配置
+          // 获取客户端配置
           const res = await fetch(urlResolve(url, './tailchat.manifest'));
           const clientConfig = await res.json();
           const { version, serviceUrl } = clientConfig;
-          console.log('获取Tailchat客户端配置成功', clientConfig);
+          console.log('获取客户端配置成功', clientConfig);
 
-          // 获取 Tailchat 服务端配置
+          // 获取服务端配置
           const res2 = await fetch(
             urlResolve(serviceUrl ?? url, './api/config/client')
           );
           const serviceConfig = (await res2.json()).data;
-          console.log('获取Tailchat服务端配置成功', serviceConfig);
+          console.log('获取服务端配置成功', serviceConfig);
 
           set((state) => {
             state.serverList.push({
-              name: serviceConfig.serverName ?? 'Tailchat',
+              name: serviceConfig.serverName ?? '財訊',
               url,
               version,
             });

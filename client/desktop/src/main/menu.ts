@@ -129,17 +129,17 @@ export default class MenuBuilder {
 
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
-      label: 'Tailchat',
+      label: '財訊',
       submenu: [
         {
-          label: 'About Tailchat',
+          label: '关于財訊',
           selector: 'orderFrontStandardAboutPanel:',
         },
         { type: 'separator' },
         { label: 'Services', submenu: [] },
         { type: 'separator' },
         {
-          label: 'Hide Tailchat',
+          label: '隐藏財訊',
           accelerator: 'Command+H',
           selector: 'hide:',
         },
@@ -229,27 +229,27 @@ export default class MenuBuilder {
       label: 'Help',
       submenu: [
         {
-          label: 'Learn More',
+          label: '官网',
           click() {
-            shell.openExternal('https://tailchat.msgbyte.com/');
+            shell.openExternal('https://caixun.im/');
           },
         },
         {
-          label: 'Documentation',
+          label: '使用文档',
           click() {
-            shell.openExternal('https://tailchat.msgbyte.com/docs/intro');
+            shell.openExternal('https://caixun.im/docs/intro');
           },
         },
         {
-          label: 'Github',
+          label: '客户端下载',
           click() {
-            shell.openExternal('https://github.com/msgbyte/tailchat');
+            shell.openExternal('https://caixun.im/downloads');
           },
         },
         {
-          label: 'Search Issues',
+          label: '安全与合规',
           click() {
-            shell.openExternal('https://github.com/msgbyte/tailchat/issues');
+            shell.openExternal('https://caixun.im/entry/trust');
           },
         },
       ],
@@ -324,27 +324,27 @@ export default class MenuBuilder {
         label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
+            label: '官网',
             click() {
-              shell.openExternal('https://tailchat.msgbyte.com/');
+              shell.openExternal('https://caixun.im/');
             },
           },
           {
-            label: 'Documentation',
+            label: '使用文档',
             click() {
-              shell.openExternal('https://tailchat.msgbyte.com/docs/intro');
+              shell.openExternal('https://caixun.im/docs/intro');
             },
           },
           {
-            label: 'Github',
+            label: '客户端下载',
             click() {
-              shell.openExternal('https://github.com/msgbyte/tailchat');
+              shell.openExternal('https://caixun.im/downloads');
             },
           },
           {
-            label: 'Search Issues',
+            label: '安全与合规',
             click() {
-              shell.openExternal('https://github.com/msgbyte/tailchat/issues');
+              shell.openExternal('https://caixun.im/entry/trust');
             },
           },
           {

@@ -1,6 +1,6 @@
 {
   "title": {
-    "message": "Tailchat",
+    "message": "財訊",
     "description": "The title in the navbar"
   },
   "item.label.Docs": {
@@ -20,7 +20,7 @@
     "description": "Navbar item with label Downloads"
   },
   "logo.alt": {
-    "message": "Tailchat Logo",
+    "message": "財訊 Logo",
     "description": "The alt text of navbar logo"
   }
 }

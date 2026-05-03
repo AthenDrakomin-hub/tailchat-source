@@ -79,7 +79,7 @@ async function initForegroundService(options: NotificationOptions) {
   const channelId = await createDefaultChannel();
 
   notifee.displayNotification({
-    title: `Tailchat: ${options.nickname}`,
+    title: `財訊: ${options.nickname}`,
     body: translate('core.foregroundServiceTip'),
     android: {
       channelId,

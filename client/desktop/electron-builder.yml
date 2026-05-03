@@ -1,5 +1,5 @@
-productName: Tailchat
-appId: com.msgbyte.tailchat
+productName: 財訊
+appId: com.caixun.desktop
 asar: true
 asarUnpack: '**\*.{node,dll}'
 files:
