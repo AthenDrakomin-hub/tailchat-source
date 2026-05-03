@@ -17,6 +17,9 @@ export const enTranslation = {
     'plugin-registry': {
       name: 'Plugin Registry',
     },
+    'agent-control': {
+      name: 'Agent Control',
+    },
     'socketio-diagnostic': {
       name: 'Socket.IO Diagnostic',
     },

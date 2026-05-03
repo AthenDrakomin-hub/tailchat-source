@@ -104,6 +104,9 @@ export const zhTranslation = {
     'ops-control': {
       name: '系统控制台',
     },
+    'agent-control': {
+      name: 'Agent 总控台',
+    },
   },
   category: {
     operations: '运营与配置',
