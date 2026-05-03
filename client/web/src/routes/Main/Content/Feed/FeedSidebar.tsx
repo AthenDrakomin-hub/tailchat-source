@@ -13,7 +13,7 @@ export const FeedSidebar: React.FC = React.memo(() => {
       <SectionHeader>{t('动态')}</SectionHeader>
 
       <div className="p-3 space-y-3 overflow-y-auto overflow-x-hidden">
-        <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-black/[0.03] dark:bg-white/[0.03] px-4 py-3">
+        <div className="rounded-2xl border border-black/5 dark:border-white/10 bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-3">
           <div className="text-sm font-semibold text-gray-900 dark:text-white">
             社区动态
           </div>
@@ -22,7 +22,7 @@ export const FeedSidebar: React.FC = React.memo(() => {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-black/[0.03] dark:bg-white/[0.03] px-4 py-3">
+        <div className="rounded-2xl border border-black/5 dark:border-white/10 bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-3">
           <div className="text-sm font-semibold text-gray-900 dark:text-white">
             当前视图
           </div>
@@ -31,7 +31,7 @@ export const FeedSidebar: React.FC = React.memo(() => {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-black/[0.03] dark:bg-white/[0.03] px-4 py-3">
+        <div className="rounded-2xl border border-black/5 dark:border-white/10 bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-3">
           <div className="text-sm font-semibold text-gray-900 dark:text-white">
             主场联动
           </div>

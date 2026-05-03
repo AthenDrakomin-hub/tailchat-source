@@ -10,7 +10,7 @@ const CommentItem: React.FC<{ comment: FeedComment }> = React.memo(({ comment })
   const user = useCachedUserInfo(comment.author);
 
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-3 rounded-2xl bg-[#fafafa] px-3 py-3">
       <Avatar src={user.avatar} name={user.nickname} />
       <div className="min-w-0 flex-1">
         <div className="text-sm font-medium text-gray-900 dark:text-white">

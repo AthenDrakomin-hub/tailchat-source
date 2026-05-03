@@ -19,7 +19,7 @@ export const FeedCard: React.FC<FeedCardProps> = React.memo(({ post, onRemoved }
   const author = useCachedUserInfo(post.author);
 
   return (
-    <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-4 shadow-sm">
+    <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white px-5 py-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3 min-w-0">
           <Avatar src={author.avatar} name={author.nickname} />
@@ -42,7 +42,7 @@ export const FeedCard: React.FC<FeedCardProps> = React.memo(({ post, onRemoved }
           {post.groupId && (
             <Link
               to={`/main/group/${post.groupId}`}
-              className="text-xs text-[#0b4a8b] dark:text-[#8db8ff] underline underline-offset-4"
+              className="text-xs text-[#07c160] dark:text-[#8db8ff] underline underline-offset-4"
             >
               查看关联群组
             </Link>
@@ -73,7 +73,7 @@ export const FeedCard: React.FC<FeedCardProps> = React.memo(({ post, onRemoved }
       <div className="mt-4 flex items-center gap-5 text-xs text-gray-500 dark:text-gray-400">
         <button
           type="button"
-          className="hover:text-gray-900 dark:hover:text-white"
+          className="hover:text-[#07c160] dark:hover:text-white"
           onClick={() => {
             likeFeedPost(post._id)
               .then((res) => setLikesCount(res.likesCount))

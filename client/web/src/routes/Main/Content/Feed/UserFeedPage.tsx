@@ -31,7 +31,7 @@ export const UserFeedPage: React.FC = React.memo(() => {
     <PageContent sidebar={<FeedSidebar />}>
       <div className="w-full max-w-4xl mx-auto px-4 py-5 mobile:px-3 space-y-4 overflow-y-auto">
         <div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="text-2xl font-semibold text-gray-900 dark:text-white">
             {user.nickname ?? '成员'}的动态
           </div>
           <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">

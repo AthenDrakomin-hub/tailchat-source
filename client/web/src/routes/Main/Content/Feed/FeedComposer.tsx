@@ -12,12 +12,12 @@ export const FeedComposer: React.FC<FeedComposerProps> = React.memo(
     const [submitting, setSubmitting] = useState(false);
 
     return (
-      <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/90 dark:bg-white/5 px-5 py-4 shadow-sm">
+      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white px-5 py-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
         <div className="text-sm font-semibold text-gray-900 dark:text-white">
           发布动态
         </div>
         <textarea
-          className="mt-3 min-h-[112px] w-full resize-none rounded-2xl border border-black/10 dark:border-white/10 bg-transparent px-4 py-3 text-sm outline-none"
+          className="mt-3 min-h-[112px] w-full resize-none rounded-2xl border border-black/5 dark:border-white/10 bg-[#fafafa] px-4 py-3 text-sm outline-none"
           placeholder="分享今天的想法、观察或公开动态"
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -29,7 +29,7 @@ export const FeedComposer: React.FC<FeedComposerProps> = React.memo(
           </div>
           <button
             type="button"
-            className="rounded-2xl bg-[#0b4a8b] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="rounded-2xl bg-[#07c160] px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-[#06ad56]"
             disabled={submitting || content.trim() === ''}
             onClick={async () => {
               try {

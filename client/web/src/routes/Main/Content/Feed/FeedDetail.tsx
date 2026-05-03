@@ -26,7 +26,7 @@ const RecentMessageItem: React.FC<{ message: ChatMessage }> = React.memo(({ mess
     : '刚刚';
 
   return (
-    <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-3 py-2">
+    <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-3 py-2">
       <div className="flex items-center justify-between gap-3 text-[11px] text-gray-500 dark:text-gray-400">
         <span className="truncate">{author.nickname ?? '群成员'}</span>
         <span>{createdAtText}</span>
@@ -102,7 +102,7 @@ export const FeedDetail: React.FC = React.memo(() => {
   return (
     <PageContent sidebar={<FeedSidebar />}>
       <div className="w-full max-w-4xl mx-auto px-4 py-5 mobile:px-3 space-y-5 overflow-y-auto">
-        <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-5 shadow-sm">
+        <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white px-5 py-5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-3">
               <Avatar src={author.avatar} name={author.nickname} />
@@ -121,7 +121,7 @@ export const FeedDetail: React.FC = React.memo(() => {
             {post.groupId && (
               <Link
                 to={`/main/group/${post.groupId}`}
-                className="text-xs text-[#0b4a8b] dark:text-[#8db8ff] underline underline-offset-4"
+                className="text-xs text-[#07c160] dark:text-[#8db8ff] underline underline-offset-4"
               >
                 返回关联群组
               </Link>
@@ -139,7 +139,7 @@ export const FeedDetail: React.FC = React.memo(() => {
         </div>
 
         {post.groupId && relatedGroup && (
-          <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-5 shadow-sm">
+          <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white px-5 py-5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <div className="text-base font-semibold text-gray-900 dark:text-white truncate">
@@ -151,7 +151,7 @@ export const FeedDetail: React.FC = React.memo(() => {
               </div>
               <Link
                 to={`/main/group/${post.groupId}`}
-                className="rounded-2xl bg-[#0b4a8b] px-4 py-2 text-sm font-medium text-white"
+                className="rounded-2xl bg-[#07c160] px-4 py-2 text-sm font-medium text-white hover:bg-[#06ad56]"
               >
                 去群里参与讨论
               </Link>
@@ -164,7 +164,7 @@ export const FeedDetail: React.FC = React.memo(() => {
                 ? `当前群最近仍有互动，最近活跃时间：${latestRecentMessageTime}`
                 : '当前群最近暂无可感知活跃记录，更适合先浏览群说明再决定是否进入。'}
             </div>
-            <div className="mt-4 border-t border-black/10 dark:border-white/10 pt-4">
+            <div className="mt-4 border-t border-black/5 dark:border-white/10 pt-4">
               <div className="text-xs font-semibold text-gray-900 dark:text-white">
                 群最近消息
               </div>
@@ -187,7 +187,7 @@ export const FeedDetail: React.FC = React.memo(() => {
           </div>
         )}
 
-        <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-5 shadow-sm space-y-4">
+        <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white px-5 py-5 shadow-[0_8px_20px_rgba(15,23,42,0.04)] space-y-4">
           <div className="text-base font-semibold text-gray-900 dark:text-white">
             评论区
           </div>

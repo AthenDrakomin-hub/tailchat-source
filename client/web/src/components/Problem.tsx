@@ -21,10 +21,12 @@ export const Problem: React.FC<ProblemProps> = React.memo((props) => {
       )}
       style={props.style}
     >
-      <img className="w-40 h-40 m-auto mb-6 opacity-80" src={problemSvg} />
+      <div className="rounded-[28px] border border-black/5 bg-white px-8 py-8 shadow-[0_10px_30px_rgba(15,23,42,0.04)]">
+        <img className="w-36 h-36 m-auto mb-5 opacity-75" src={problemSvg} />
 
-      <div className="text-base font-medium text-gray-700 dark:text-gray-300 px-6 max-w-md leading-7">
-        {props.text ?? t('出现了一些问题')}
+        <div className="text-base font-medium text-gray-700 dark:text-gray-300 px-6 max-w-md leading-7">
+          {props.text ?? t('出现了一些问题')}
+        </div>
       </div>
     </div>
   );

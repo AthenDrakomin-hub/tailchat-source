@@ -46,13 +46,13 @@ const FeedHome: React.FC = React.memo(() => {
     <PageContent data-tc-role="content-feed" sidebar={<FeedSidebar />}>
       <div className="w-full max-w-4xl mx-auto px-4 py-5 mobile:px-3 space-y-4 overflow-y-auto">
         <div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="text-2xl font-semibold text-gray-900 dark:text-white">
             {heading}
           </div>
           <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             面向社区的公开内容流，用于观点发布、信息同步和群组联动。
           </div>
-          <details className="mt-4 rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-4 py-3 shadow-sm">
+          <details className="mt-4 rounded-[24px] border border-black/5 dark:border-white/10 bg-white px-4 py-3 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
             <summary className="cursor-pointer text-sm font-semibold text-gray-900 dark:text-white">
               查看动态使用建议
             </summary>
@@ -63,10 +63,10 @@ const FeedHome: React.FC = React.memo(() => {
             </div>
           </details>
           {!groupId && (
-            <div className="mt-4 inline-flex rounded-2xl border border-black/10 dark:border-white/10 p-1 bg-black/[0.03] dark:bg-white/[0.03]">
+            <div className="mt-4 inline-flex rounded-full border border-black/5 dark:border-white/10 p-1 bg-[#ededed] dark:bg-white/[0.03]">
               <Link
                 to="/main/feed"
-                className={`rounded-xl px-4 py-2 text-sm ${
+                className={`rounded-full px-4 py-2 text-sm ${
                   view === 'all'
                     ? 'bg-white dark:bg-black/30 text-gray-900 dark:text-white shadow-sm'
                     : 'text-gray-500 dark:text-gray-400'
@@ -76,7 +76,7 @@ const FeedHome: React.FC = React.memo(() => {
               </Link>
               <Link
                 to="/main/feed?view=mine"
-                className={`rounded-xl px-4 py-2 text-sm ${
+                className={`rounded-full px-4 py-2 text-sm ${
                   view === 'mine'
                     ? 'bg-white dark:bg-black/30 text-gray-900 dark:text-white shadow-sm'
                     : 'text-gray-500 dark:text-gray-400'

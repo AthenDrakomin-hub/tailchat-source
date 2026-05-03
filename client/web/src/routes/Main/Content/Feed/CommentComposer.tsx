@@ -12,7 +12,7 @@ export const CommentComposer: React.FC<CommentComposerProps> = React.memo(
     const [submitting, setSubmitting] = useState(false);
 
     return (
-      <div className="rounded-2xl border border-black/10 dark:border-white/10 px-4 py-3">
+      <div className="rounded-2xl border border-black/5 dark:border-white/10 bg-[#fafafa] px-4 py-3">
         <textarea
           className="min-h-[84px] w-full resize-none bg-transparent text-sm outline-none"
           placeholder="补充你的观点、问题或互动评论"
@@ -22,7 +22,7 @@ export const CommentComposer: React.FC<CommentComposerProps> = React.memo(
         <div className="mt-3 flex justify-end">
           <button
             type="button"
-            className="rounded-2xl bg-[#0b4a8b] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="rounded-2xl bg-[#07c160] px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-[#06ad56]"
             disabled={submitting || content.trim() === ''}
             onClick={async () => {
               try {
