@@ -183,6 +183,60 @@
         color: rgba(248, 250, 252, 0.58);
         line-height: 1.8;
       }
+      .qr-section {
+        margin-top: 16px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.04);
+        padding: 16px;
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 16px;
+        align-items: center;
+      }
+      .qr-box {
+        width: 120px;
+        height: 120px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .qr-box img {
+        width: 120px;
+        height: 120px;
+        display: block;
+      }
+      .qr-title {
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .qr-desc {
+        margin-top: 8px;
+        font-size: 13px;
+        line-height: 1.8;
+        color: rgba(248, 250, 252, 0.62);
+      }
+      .link-tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .link-tool-btn {
+        border: 0;
+        border-radius: 999px;
+        padding: 8px 12px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.08);
+        color: #f8fafc;
+        font-size: 13px;
+      }
+      .link-tool-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
       .quick-links {
         margin-top: 18px;
         display: flex;
@@ -217,6 +271,9 @@
         }
         .recommend-text {
           font-size: 20px;
+        }
+        .qr-section {
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -268,6 +325,21 @@
                 <span class="btn btn-secondary btn-disabled">即将推出</span>
               </div>
               <div class="download-meta">当前未提供 iOS 安装包，建议先使用 Web 版；后续可接入 TestFlight 或 App Store。</div>
+            </div>
+          </div>
+          <div class="qr-section">
+            <div class="qr-box">
+              <img id="android-qr-image" alt="Android 下载二维码" />
+            </div>
+            <div>
+              <div class="qr-title">扫码下载 Android</div>
+              <div class="qr-desc" id="android-qr-desc">
+                如果你正在电脑上访问下载中心，可直接使用手机扫码打开 Android 安装包链接；也可以复制链接后发给用户。
+              </div>
+              <div class="link-tools">
+                <button class="link-tool-btn" id="copy-android-link" type="button">复制 Android 链接</button>
+                <a class="link-tool-btn" id="open-android-link" href="/downloads/client/caixun-android-release.apk" target="_blank" rel="noreferrer">打开下载直链</a>
+              </div>
             </div>
           </div>
         </section>
@@ -422,6 +494,43 @@
         meta.textContent = `版本：${versionLabel} · 当前还没有可下载文件`;
       }
 
+      function initAndroidQr(available, url) {
+        const qrImage = document.getElementById('android-qr-image');
+        const qrDesc = document.getElementById('android-qr-desc');
+        const copyButton = document.getElementById('copy-android-link');
+        const openLink = document.getElementById('open-android-link');
+        const absoluteUrl = new URL(url, window.location.origin).toString();
+
+        if (!available) {
+          qrImage.alt = 'Android 下载二维码暂不可用';
+          qrImage.style.display = 'none';
+          qrDesc.textContent = '当前 Android 安装包还未上传，因此二维码和下载直链暂不可用。';
+          copyButton.disabled = true;
+          openLink.classList.add('btn-disabled');
+          openLink.removeAttribute('href');
+          return;
+        }
+
+        qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(absoluteUrl)}`;
+        qrDesc.textContent = `当前二维码将直接打开 Android 安装包下载链接：${absoluteUrl}`;
+        openLink.href = absoluteUrl;
+        copyButton.disabled = false;
+        copyButton.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(absoluteUrl);
+            copyButton.textContent = '已复制';
+            setTimeout(() => {
+              copyButton.textContent = '复制 Android 链接';
+            }, 1600);
+          } catch (err) {
+            copyButton.textContent = '复制失败';
+            setTimeout(() => {
+              copyButton.textContent = '复制 Android 链接';
+            }, 1600);
+          }
+        });
+      }
+
       async function initDownloads() {
         const device = detectPlatform();
         const summary = document.getElementById('device-summary');
@@ -466,6 +575,11 @@
               button.classList.add('btn-recommended');
             }
           }
+
+          initAndroidQr(
+            availableDownloads.some((item) => item.key === 'android'),
+            (config.android && config.android.url) || '/downloads/client/caixun-android-release.apk'
+          );
 
           if (device.badge) {
             const badge = document.querySelector(`[data-recommend-badge="${device.badge}"]`);
