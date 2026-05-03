@@ -26,7 +26,7 @@ export const RoleSummary: React.FC<RoleSummaryProps> = React.memo((props) => {
   });
 
   return (
-    <div className="px-2">
+    <div className="px-3 py-2">
       <FullModalField
         title={t('身份组名称')}
         value={props.currentRoleInfo.name}
@@ -35,7 +35,7 @@ export const RoleSummary: React.FC<RoleSummaryProps> = React.memo((props) => {
         onSave={props.onChangeRoleName}
       />
 
-      <Button type="primary" danger={true} onClick={handleDeleteRole}>
+      <Button danger={true} onClick={handleDeleteRole}>
         {t('删除身份组')}
       </Button>
     </div>

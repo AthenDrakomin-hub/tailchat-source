@@ -72,7 +72,7 @@ export const GroupPanel: React.FC<{
         {t('面板管理')}
       </FullModalCommonTitle>
 
-      <div className="max-h-160 overflow-auto border rounded border-black border-opacity-20 p-1">
+      <div className="max-h-160 overflow-auto rounded-[24px] border border-black/5 bg-white p-2 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
         <GroupPanelTree
           groupId={groupId}
           groupPanels={editingGroupPanels}
@@ -81,7 +81,7 @@ export const GroupPanel: React.FC<{
       </div>
 
       {!_isEqual(groupPanels, editingGroupPanels) && (
-        <div className="space-x-1 mt-2">
+        <div className="space-x-2 mt-3">
           <Button type="primary" loading={loading} onClick={handleSave}>
             {t('保存')}
           </Button>

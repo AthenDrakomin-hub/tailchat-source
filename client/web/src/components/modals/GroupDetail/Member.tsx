@@ -52,12 +52,13 @@ export const GroupMember: React.FC<{ groupId: string }> = React.memo(
             placeholder={t('搜索成员')}
             size="large"
             suffix={<Icon fontSize={20} color="grey" icon="mdi:magnify" />}
+            className="rounded-2xl"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
         </div>
 
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto rounded-[24px] border border-black/5 bg-white shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
           <Virtuoso
             className="h-full"
             data={isSearching ? filteredGroupMembers : userInfos}

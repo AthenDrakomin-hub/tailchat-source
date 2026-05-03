@@ -47,20 +47,23 @@ export const GroupConfig: React.FC<{
   const config = groupInfo.config ?? {};
 
   return (
-    <div>
+    <div className="space-y-3">
       <FullModalCommonTitle>{t('群组配置')}</FullModalCommonTitle>
 
       <FullModalField
         title={t('隐藏成员完整名称')}
         tip={t('群组隐私控制，防止通过群组恶意获取成员信息')}
         content={
-          <Switch
-            disabled={loading}
-            checked={config['hideGroupMemberDiscriminator'] ?? false}
-            onChange={(checked) =>
-              handleModifyConfig('hideGroupMemberDiscriminator', checked)
-            }
-          />
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-sm text-gray-500">{t('保护群成员完整账号信息')}</span>
+            <Switch
+              disabled={loading}
+              checked={config['hideGroupMemberDiscriminator'] ?? false}
+              onChange={(checked) =>
+                handleModifyConfig('hideGroupMemberDiscriminator', checked)
+              }
+            />
+          </div>
         }
       />
 
@@ -69,19 +72,22 @@ export const GroupConfig: React.FC<{
         title={t('禁止在群组发起私信')}
         tip={t('群组隐私控制，防止通过群组恶意骚扰用户。')}
         content={
-          <Switch
-            disabled={
-              loading || config['hideGroupMemberDiscriminator'] === true
-            }
-            checked={
-              (config['hideGroupMemberDiscriminator'] === true ||
-                config['disableCreateConverseFromGroup']) ??
-              false
-            }
-            onChange={(checked) =>
-              handleModifyConfig('disableCreateConverseFromGroup', checked)
-            }
-          />
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-sm text-gray-500">{t('减少群内陌生打扰')}</span>
+            <Switch
+              disabled={
+                loading || config['hideGroupMemberDiscriminator'] === true
+              }
+              checked={
+                (config['hideGroupMemberDiscriminator'] === true ||
+                  config['disableCreateConverseFromGroup']) ??
+                false
+              }
+              onChange={(checked) =>
+                handleModifyConfig('disableCreateConverseFromGroup', checked)
+              }
+            />
+          </div>
         }
       />
 

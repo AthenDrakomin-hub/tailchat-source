@@ -138,7 +138,7 @@ export const FullModalField: React.FC<FullModalFieldProps> = React.memo(
     const allowEditor = props.editable === true && !_isNil(props.renderEditor);
 
     return (
-      <div className="mb-4">
+      <div className="mb-3 rounded-2xl border border-black/5 bg-white px-4 py-3 shadow-[0_4px_14px_rgba(15,23,42,0.03)]">
         <div className="text-xs text-gray-400 mb-2 flex items-center">
           <span>{props.title}</span>
           {props.tip && (
@@ -147,7 +147,7 @@ export const FullModalField: React.FC<FullModalFieldProps> = React.memo(
             </span>
           )}
         </div>
-        <div className="min-h-10 text-base truncate">
+        <div className="min-h-10 text-base truncate text-[#111827]">
           {allowEditor === true ? (
             <FullModalFieldEditor {...props} />
           ) : (

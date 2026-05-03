@@ -80,9 +80,9 @@ export const RoleMember: React.FC<RoleMemberProps> = React.memo((props) => {
   );
 
   return (
-    <div>
+    <div className="px-3 py-2">
       {/* 管理成员 */}
-      <div className="text-right mb-2 flex space-x-1">
+      <div className="text-right mb-3 flex space-x-1">
         <Button type="primary" onClick={handleAddMember}>
           {t('添加成员')}
         </Button>
@@ -92,25 +92,28 @@ export const RoleMember: React.FC<RoleMemberProps> = React.memo((props) => {
             placeholder={t('搜索成员')}
             size="middle"
             suffix={<Icon fontSize={20} color="grey" icon="mdi:magnify" />}
+            className="rounded-2xl"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
         )}
       </div>
 
-      {(isSearching ? filterMembers : userInfoList).map((m) => (
-        <UserListItem
-          key={m._id}
-          userId={m._id}
-          actions={[
-            <IconBtn
-              key="remove"
-              icon="mdi:close"
-              onClick={() => handleRemoveMember(m._id)}
-            />,
-          ]}
-        />
-      ))}
+      <div className="rounded-[24px] border border-black/5 bg-white overflow-hidden shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+        {(isSearching ? filterMembers : userInfoList).map((m) => (
+          <UserListItem
+            key={m._id}
+            userId={m._id}
+            actions={[
+              <IconBtn
+                key="remove"
+                icon="mdi:close"
+                onClick={() => handleRemoveMember(m._id)}
+              />,
+            ]}
+          />
+        ))}
+      </div>
     </div>
   );
 });

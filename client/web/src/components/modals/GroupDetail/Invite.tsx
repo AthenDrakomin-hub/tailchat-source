@@ -21,6 +21,7 @@ import copy from 'copy-to-clipboard';
 import { generateInviteCodeUrl } from '@/utils/url-helper';
 import { SensitiveText } from 'tailchat-design';
 import { EditGroupInvite } from '../EditGroupInvite';
+import { FullModalCommonTitle } from '@/components/FullModal/CommonTitle';
 
 export const GroupInvite: React.FC<{
   groupId: string;
@@ -160,19 +161,28 @@ export const GroupInvite: React.FC<{
 
   return (
     <LoadingOnFirst spinning={loading}>
-      <div className="text-right mb-2">
-        <Button type="primary" onClick={handleCreateInvite}>
-          {t('创建邀请码')}
-        </Button>
-      </div>
+      <FullModalCommonTitle
+        extra={
+          <Button type="primary" onClick={handleCreateInvite}>
+            {t('创建邀请码')}
+          </Button>
+        }
+      >
+        {t('邀请管理')}
+      </FullModalCommonTitle>
 
-      <Table
-        columns={columns}
-        dataSource={value}
-        pagination={{
-          hideOnSinglePage: true,
-        }}
-      />
+      <div className="rounded-[24px] border border-black/5 bg-white px-3 py-3 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+        <div className="mb-3 text-sm text-gray-500">
+          {t('管理入群邀请码、有效期、使用次数和分发链接。')}
+        </div>
+        <Table
+          columns={columns}
+          dataSource={value}
+          pagination={{
+            hideOnSinglePage: true,
+          }}
+        />
+      </div>
     </LoadingOnFirst>
   );
 });

@@ -10,9 +10,9 @@ export const RoleItem: React.FC<
   return (
     <div
       className={clsx(
-        'px-2 py-1 rounded cursor-pointer mb-1 hover:bg-black hover:bg-opacity-20',
+        'px-3 py-2.5 rounded-2xl cursor-pointer mb-1 text-sm text-gray-600 hover:bg-white hover:text-gray-900 transition-colors',
         {
-          'bg-black bg-opacity-20': props.active,
+          'bg-white text-gray-900 shadow-[0_4px_14px_rgba(15,23,42,0.06)]': props.active,
         }
       )}
       onClick={props.onClick}
