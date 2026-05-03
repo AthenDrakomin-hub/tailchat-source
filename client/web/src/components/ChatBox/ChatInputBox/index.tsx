@@ -22,6 +22,8 @@ import _uniq from 'lodash/uniq';
 import { ChatDropArea } from './ChatDropArea';
 import { Icon } from 'tailchat-design';
 import { usePasteHandler } from './usePasteHandler';
+import { getSendErrorMessage } from '../chatEnhancement';
+import clsx from 'clsx';
 
 interface ChatInputBoxProps {
   groupId?: string;
@@ -35,6 +37,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState('');
   const [mentions, setMentions] = useState<string[]>([]);
+  const [sendError, setSendError] = useState<string | null>(null);
   const { disabled } = useChatInputMentionsContext();
   const { runPasteHandlers, pasteHandlerContainer } = usePasteHandler();
 
@@ -43,9 +46,16 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
       if (!msg.trim()) {
         return;
       }
-      await props.onSendMsg(msg, meta);
-      setMessage('');
-      inputRef.current?.focus();
+      try {
+        await props.onSendMsg(msg, meta);
+        setSendError(null);
+        setMessage('');
+        inputRef.current?.focus();
+      } catch (err) {
+        setSendError(getSendErrorMessage(err));
+        inputRef.current?.focus();
+        throw err;
+      }
     }
   );
 
@@ -141,6 +151,9 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
               onChange={(message, mentions) => {
                 setMessage(message);
                 setMentions(mentions);
+                if (sendError) {
+                  setSendError(null);
+                }
               }}
               onKeyDown={handleKeyDown}
               onPaste={handlePaste}
@@ -173,9 +186,22 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
           )}
         </div>
         {!disabled && (
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 px-2 text-[11px] leading-5 text-gray-400 dark:text-gray-500 mobile:hidden">
-            <span>Enter 发送</span>
-            <span>点击 `+` 发送图片或文件</span>
+          <div
+            className={clsx(
+              'mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 px-2 text-[11px] leading-5 mobile:hidden',
+              sendError
+                ? 'text-[#ef4444] dark:text-[#f87171]'
+                : 'text-gray-400 dark:text-gray-500'
+            )}
+          >
+            {sendError ? (
+              <span>{sendError}</span>
+            ) : (
+              <>
+                <span>Enter 发送</span>
+                <span>点击 `+` 发送图片或文件</span>
+              </>
+            )}
           </div>
         )}
       </div>

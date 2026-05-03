@@ -42,6 +42,11 @@ export interface SharedEventMap {
   sendMessage: (payload: SendMessagePayload) => void;
 
   /**
+   * 发送消息失败
+   */
+  sendMessageError: (errorMessage: string) => void;
+
+  /**
    * 回复消息事件
    *
    * 如果为null则是清空

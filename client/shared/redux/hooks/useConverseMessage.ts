@@ -64,7 +64,7 @@ function useHandleSendMessage() {
       })
     );
 
-    sendMessage(payload)
+    return sendMessage(payload)
       .then((message) => {
         dispatch(
           chatActions.deleteMessageById({
@@ -83,6 +83,10 @@ function useHandleSendMessage() {
       })
       .catch((err) => {
         showErrorToasts(err);
+        sharedEvent.emit(
+          'sendMessageError',
+          err instanceof Error && err.message ? err.message : t('消息发送失败，请稍后重试')
+        );
         dispatch(
           chatActions.updateMessageInfo({
             messageId: localMessageId,
@@ -91,6 +95,7 @@ function useHandleSendMessage() {
             },
           })
         );
+        throw err;
       });
   });
 
