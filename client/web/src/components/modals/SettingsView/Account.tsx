@@ -6,7 +6,7 @@ import {
 import { openModal } from '@/components/Modal';
 import { closeModal, pluginUserExtraInfo } from '@/plugin/common';
 import { setUserJWT } from '@/utils/jwt-helper';
-import { Button, Divider, Tag, Typography } from 'antd';
+import { Button, Tag } from 'antd';
 import React, { useCallback } from 'react';
 import { Avatar } from 'tailchat-design';
 import {
@@ -88,79 +88,87 @@ export const SettingsAccount: React.FC = React.memo(() => {
   }
 
   return (
-    <div>
-      <div className="flex flex-wrap">
-        <div className="w-1/3 mobile:w-full">
-          <AvatarUploader
-            circle={true}
-            usage="user"
-            onUploadSuccess={handleUserAvatarChange}
-          >
-            <Avatar size={128} src={userInfo.avatar} name={userInfo.nickname} />
-          </AvatarUploader>
+    <div className="space-y-6">
+      <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 p-6">
+        <div className="text-lg font-bold text-gray-900 dark:text-white mb-5">
+          個人資料
         </div>
-        <div className="w-2/3 mobile:w-full">
-          {isAlphaMode && (
-            <FullModalField title={t('用户ID')} content={userInfo._id} />
-          )}
-          <FullModalField
-            title={t('用户昵称')}
-            value={userInfo.nickname}
-            editable={true}
-            renderEditor={DefaultFullModalInputEditorRender}
-            onSave={handleUpdateNickName}
-          />
+        <div className="flex flex-wrap">
+          <div className="w-1/3 mobile:w-full">
+            <AvatarUploader
+              circle={true}
+              usage="user"
+              onUploadSuccess={handleUserAvatarChange}
+            >
+              <Avatar size={128} src={userInfo.avatar} name={userInfo.nickname} />
+            </AvatarUploader>
+          </div>
+          <div className="w-2/3 mobile:w-full">
+            {isAlphaMode && (
+              <FullModalField title={t('用户ID')} content={userInfo._id} />
+            )}
+            <FullModalField
+              title={t('用户昵称')}
+              value={userInfo.nickname}
+              editable={true}
+              renderEditor={DefaultFullModalInputEditorRender}
+              onSave={handleUpdateNickName}
+            />
 
-          <FullModalField
-            title={t('账号')}
-            content={
-              <div>
-                <span className="mr-1">{userInfo.email}</span>
-                {userInfo.temporary && (
-                  <Tag color="warning" className="select-none">
-                    {t('临时账号')}
-                  </Tag>
-                )}
-              </div>
-            }
-          />
+            <FullModalField
+              title={t('账号')}
+              content={
+                <div>
+                  <span className="mr-1">{userInfo.email}</span>
+                  {userInfo.temporary && (
+                    <Tag color="warning" className="select-none">
+                      {t('临时账号')}
+                    </Tag>
+                  )}
+                </div>
+              }
+            />
 
-          {pluginUserExtraInfo.map((item, i) => {
-            if (item.component && item.component.editor) {
-              const Component = item.component.editor;
+            {pluginUserExtraInfo.map((item, i) => {
+              if (item.component && item.component.editor) {
+                const Component = item.component.editor;
+                return (
+                  <Component
+                    key={item.name + i}
+                    value={userExtra[item.name]}
+                    onSave={(val) => handleUpdateExtraInfo(item.name, val)}
+                  />
+                );
+              }
+
               return (
-                <Component
+                <FullModalField
                   key={item.name + i}
-                  value={userExtra[item.name]}
+                  title={item.label}
+                  value={userExtra[item.name] ? String(userExtra[item.name]) : ''}
+                  editable={true}
+                  renderEditor={DefaultFullModalInputEditorRender}
                   onSave={(val) => handleUpdateExtraInfo(item.name, val)}
                 />
               );
-            }
-
-            return (
-              <FullModalField
-                key={item.name + i}
-                title={item.label}
-                value={userExtra[item.name] ? String(userExtra[item.name]) : ''}
-                editable={true}
-                renderEditor={DefaultFullModalInputEditorRender}
-                onSave={(val) => handleUpdateExtraInfo(item.name, val)}
-              />
-            );
-          })}
+            })}
+          </div>
         </div>
       </div>
 
-      <Divider />
+      <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 p-6">
+        <div className="text-lg font-bold text-gray-900 dark:text-white mb-5">
+          賬號與安全
+        </div>
+        <Button type="primary" onClick={handleUpdatePassword}>
+          {t('修改密码')}
+        </Button>
+      </div>
 
-      <Typography.Title level={4}>{t('密码')}</Typography.Title>
-      <Button type="primary" onClick={handleUpdatePassword}>
-        {t('修改密码')}
-      </Button>
-
-      <Divider />
-
-      <div>
+      <div className="rounded-3xl border border-red-200 dark:border-red-900/40 bg-red-50/80 dark:bg-red-500/10 p-6">
+        <div className="text-lg font-bold text-red-600 dark:text-red-300 mb-5">
+          賬號操作
+        </div>
         <Button type="primary" danger={true} onClick={handleLogout}>
           {t('退出登录')}
         </Button>

@@ -191,13 +191,14 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
               </View>
               <View style={styles.meProfileMain}>
                 <Text style={styles.meProfileName}>{props.serverName}</Text>
-                <Text style={styles.meProfileDesc}>当前工作区</Text>
+                <Text style={styles.meProfileDesc}>个人资料</Text>
                 <Text style={styles.meProfileHost}>{props.host}</Text>
               </View>
+              <Text style={styles.meProfileArrow}>›</Text>
             </View>
             <View style={styles.meMenuGroup}>
               <View style={styles.meMenuRow}>
-                <Text style={styles.meMenuLabel}>连接状态</Text>
+                <Text style={styles.meMenuLabel}>服务状态</Text>
                 <Text
                   style={[
                     styles.meMenuValue,
@@ -213,21 +214,21 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
                 style={styles.meMenuRow}
                 onPress={() => switchTab('messages')}
               >
-                <Text style={styles.meMenuLabel}>进入消息</Text>
+                <Text style={styles.meMenuLabel}>消息</Text>
                 <Text style={styles.meMenuArrow}>›</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.meMenuRow}
                 onPress={() => switchTab('contacts')}
               >
-                <Text style={styles.meMenuLabel}>进入通讯录</Text>
+                <Text style={styles.meMenuLabel}>通讯录</Text>
                 <Text style={styles.meMenuArrow}>›</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.meMenuRow}
                 onPress={() => switchTab('discover')}
               >
-                <Text style={styles.meMenuLabel}>进入发现</Text>
+                <Text style={styles.meMenuLabel}>发现</Text>
                 <Text style={styles.meMenuArrow}>›</Text>
               </TouchableOpacity>
             </View>
@@ -236,14 +237,44 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
                 style={styles.meMenuRow}
                 onPress={() => recoverCurrentPage('正在重新连接当前工作区…')}
               >
-                <Text style={styles.meMenuLabel}>重新连接当前工作区</Text>
+                <Text style={styles.meMenuLabel}>系统设置</Text>
                 <Text style={styles.meMenuArrow}>›</Text>
               </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.meMenuRow}
+                onPress={() => recoverCurrentPage('正在重新连接当前工作区…')}
+              >
+                <Text style={styles.meMenuLabel}>刷新当前页面</Text>
+                <Text style={styles.meMenuArrow}>›</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.meMenuGroup}>
               <TouchableOpacity
                 style={styles.meMenuRow}
                 onPress={() => Linking.openURL('https://tailchat.msgbyte.com/entry/trust')}
               >
                 <Text style={styles.meMenuLabel}>安全与合规</Text>
+                <Text style={styles.meMenuArrow}>›</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.meMenuRow}
+                onPress={() => Linking.openURL('/entry/terms')}
+              >
+                <Text style={styles.meMenuLabel}>用户协议</Text>
+                <Text style={styles.meMenuArrow}>›</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.meMenuRow}
+                onPress={() => Linking.openURL('/entry/privacy')}
+              >
+                <Text style={styles.meMenuLabel}>隐私政策</Text>
+                <Text style={styles.meMenuArrow}>›</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.meMenuRow}
+                onPress={() => Linking.openURL('/entry/community')}
+              >
+                <Text style={styles.meMenuLabel}>社区公约</Text>
                 <Text style={styles.meMenuArrow}>›</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -258,6 +289,13 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
                 onPress={() => Linking.openURL('https://tailchat.msgbyte.com/docs/intro')}
               >
                 <Text style={styles.meMenuLabel}>使用文档</Text>
+                <Text style={styles.meMenuArrow}>›</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.meMenuRow}
+                onPress={() => Linking.openURL('/entry/about')}
+              >
+                <Text style={styles.meMenuLabel}>关于</Text>
                 <Text style={styles.meMenuArrow}>›</Text>
               </TouchableOpacity>
             </View>
@@ -522,7 +560,7 @@ const styles = StyleSheet.create({
   },
   meContent: {
     paddingTop: 12,
-    paddingBottom: 20,
+    paddingBottom: 24,
   },
   meProfileCard: {
     flexDirection: 'row',
@@ -531,6 +569,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 18,
     marginBottom: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#eef2f7',
   },
   meAvatar: {
     width: 58,
@@ -564,13 +604,17 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginTop: 4,
   },
+  meProfileArrow: {
+    color: '#cbd5e1',
+    fontSize: 24,
+    lineHeight: 24,
+  },
   meMenuGroup: {
     backgroundColor: '#ffffff',
-    backgroundColor: '#ffffff',
+    marginBottom: 12,
   },
-  meCardTitle: {
   meMenuRow: {
-    flexWrap: 'wrap',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 18,
@@ -596,7 +640,7 @@ const styles = StyleSheet.create({
     color: '#94a3b8',
     fontSize: 22,
     lineHeight: 22,
-  loadingOverlay: {
+  },
   loadingOverlay: {
     position: 'absolute',
     top: 24,
@@ -607,7 +651,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
-  },
+  loadingOverlay: {
   loadingText: {
     marginLeft: 8,
     color: '#334155',

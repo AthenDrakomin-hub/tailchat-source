@@ -85,8 +85,8 @@ export const SettingsStatus: React.FC = React.memo(() => {
         : '异常';
 
   return (
-    <div>
-      <div className="mb-4 rounded-3xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.04] px-5 py-5">
+    <div className="space-y-6">
+      <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-5">
         <div className="text-lg font-bold text-gray-900 dark:text-white">
           服务状态中心
         </div>
@@ -136,30 +136,39 @@ export const SettingsStatus: React.FC = React.memo(() => {
           </div>
         </details>
       </div>
-      <Button
-        className="mb-2"
-        type="primary"
-        loading={loading}
-        onClick={refetch}
-      >
-        {t('刷新')}
-      </Button>
-      <Loading spinning={loading}>
-        {inspectServices.map((service) => (
-          <div key={service.name} className="flex items-center">
-            <span className="mr-1">{service.label}:</span>
-            {availableServices?.includes(service.name) ? (
-              <span title={t('当前服务可用')}>
-                <Icon icon="emojione:white-heavy-check-mark" />
-              </span>
-            ) : (
-              <span title={t('服务异常')}>
-                <Icon icon="emojione:cross-mark-button" />
-              </span>
-            )}
+      <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-base font-bold text-gray-900 dark:text-white">
+            服务明细
           </div>
-        ))}
-      </Loading>
+          <Button type="primary" loading={loading} onClick={refetch}>
+            {t('刷新')}
+          </Button>
+        </div>
+        <Loading spinning={loading}>
+          <div className="space-y-3">
+            {inspectServices.map((service) => (
+              <div
+                key={service.name}
+                className="flex items-center justify-between rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-3"
+              >
+                <span className="text-sm text-gray-700 dark:text-gray-200">
+                  {service.label}
+                </span>
+                {availableServices?.includes(service.name) ? (
+                  <span title={t('当前服务可用')}>
+                    <Icon icon="emojione:white-heavy-check-mark" />
+                  </span>
+                ) : (
+                  <span title={t('服务异常')}>
+                    <Icon icon="emojione:cross-mark-button" />
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </Loading>
+      </div>
     </div>
   );
 });

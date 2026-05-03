@@ -11,6 +11,7 @@ import { SettingsAbout } from './About';
 import { SettingsAccount } from './Account';
 import { SettingsDebug } from './Debug';
 import { SettingsLinkPanel } from './LinkPanel';
+import { SettingsStatus } from './Status';
 import { SettingsSystem } from './System';
 
 interface SettingsViewProps {
@@ -27,19 +28,24 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
   );
 
   const menu: SidebarViewMenuType[] = useMemo(() => {
-    const common: SidebarViewMenuType = {
+    const accountCenter: SidebarViewMenuType = {
       type: 'group',
-      title: t('通用'),
+      title: t('我的中心'),
       children: [
         {
           type: 'item',
-          title: t('账户信息'),
+          title: t('个人资料'),
           content: <SettingsAccount />,
         },
         {
           type: 'item',
-          title: t('系统设置'),
+          title: t('偏好设置'),
           content: <SettingsSystem />,
+        },
+        {
+          type: 'item',
+          title: t('服务与支持'),
+          content: <SettingsStatus />,
         },
         {
           type: 'item',
@@ -50,7 +56,7 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
     };
     if (isDevelopment) {
       // 仅用于开发环境
-      common.children.push({
+      accountCenter.children.push({
         type: 'item',
         title: t('调试'),
         content: <SettingsDebug />,
@@ -65,10 +71,10 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
         content: React.createElement(p.render),
       }));
 
-    const menu: SidebarViewMenuType[] = [common];
+    const menu: SidebarViewMenuType[] = [accountCenter];
     menu.push({
       type: 'group',
-      title: t('協議與信任'),
+      title: t('协议与合规'),
       children: [
         {
           type: 'item',
@@ -111,6 +117,17 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
               title="財訊 · 安全與合規"
               description="查看 TLS 1.3、HSTS、日本東京數據節點、每日備份與信任標識。"
               href="/entry/trust"
+            />
+          ),
+        },
+        {
+          type: 'item',
+          title: t('下載說明'),
+          content: (
+            <SettingsLinkPanel
+              title="下載說明"
+              description="查看桌面端、移動端與 Web 的使用入口與下載方式。"
+              href="https://tailchat.msgbyte.com/downloads"
             />
           ),
         },
