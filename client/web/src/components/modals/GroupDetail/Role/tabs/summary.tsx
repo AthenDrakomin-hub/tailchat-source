@@ -14,6 +14,7 @@ import {
   useAsyncRequest,
   useMemoizedFn,
 } from 'tailchat-shared';
+import { buildAgentBindingDisplay } from './agentBindingDisplay';
 
 interface RoleSummaryProps {
   groupId: string;
@@ -26,6 +27,9 @@ export const RoleSummary: React.FC<RoleSummaryProps> = React.memo((props) => {
   const { currentRoleInfo } = props;
   const [agentOptions, setAgentOptions] = useState<
     Array<{ label: string; value: string }>
+  >([]);
+  const [agentDefinitions, setAgentDefinitions] = useState<
+    model.agent.AgentDefinition[]
   >([]);
   const [agentId, setAgentId] = useState('');
   const [triggerMode, setTriggerMode] =
@@ -60,6 +64,7 @@ export const RoleSummary: React.FC<RoleSummaryProps> = React.memo((props) => {
     model.agent
       .listAgentDefinitions()
       .then((list) => {
+        setAgentDefinitions(list);
         setAgentOptions(
           list.map((item) => ({
             label: `${item.name} (${item.agentId})`,
@@ -69,6 +74,8 @@ export const RoleSummary: React.FC<RoleSummaryProps> = React.memo((props) => {
       })
       .catch(showErrorToasts);
   }, []);
+
+  const agentDisplay = buildAgentBindingDisplay(agentDefinitions, agentId);
 
   useEffect(() => {
     model.agent
@@ -92,23 +99,56 @@ export const RoleSummary: React.FC<RoleSummaryProps> = React.memo((props) => {
       />
 
       <div className="mb-3 rounded-2xl border border-black/5 bg-white px-4 py-3 shadow-[0_4px_14px_rgba(15,23,42,0.03)]">
-        <div className="text-xs text-gray-400 mb-2">{t('绑定 Agent')}</div>
+        <div className="text-xs text-gray-400 mb-2">{t('绑定外部 Agent')}</div>
         <div className="space-y-3">
           <Select
             className="w-full"
             value={agentId || undefined}
-            placeholder={t('选择一个角色 Agent')}
+            placeholder={t('选择一个外部 Agent')}
             options={agentOptions}
             onChange={setAgentId}
           />
+
+          {agentDisplay && (
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              <div>
+                <span className="text-slate-400">{t('接入对象')}：</span>
+                {agentDisplay.label}
+              </div>
+              <div>
+                <span className="text-slate-400">{t('外部 Agent ID')}：</span>
+                {agentDisplay.externalAgentId}
+              </div>
+              <div className="flex flex-wrap gap-x-4 gap-y-1">
+                <span>
+                  <span className="text-slate-400">{t('来源')}：</span>
+                  {agentDisplay.provider}
+                </span>
+                <span>
+                  <span className="text-slate-400">{t('运行模式')}：</span>
+                  {agentDisplay.runtimeMode}
+                </span>
+                <span>
+                  <span className="text-slate-400">{t('行业域')}：</span>
+                  {agentDisplay.domain}
+                </span>
+              </div>
+              {agentDisplay.description && (
+                <div>
+                  <span className="text-slate-400">{t('接入说明')}：</span>
+                  {agentDisplay.description}
+                </div>
+              )}
+            </div>
+          )}
 
           <Select
             className="w-full"
             value={triggerMode}
             options={[
               { label: t('仅提及时触发'), value: 'mention-only' },
-              { label: t('提及或剧本触发'), value: 'mention-or-script' },
-              { label: t('仅剧本触发'), value: 'script-only' },
+              { label: t('提及或场景触发'), value: 'mention-or-script' },
+              { label: t('仅场景触发'), value: 'script-only' },
             ]}
             onChange={setTriggerMode}
           />
@@ -131,7 +171,7 @@ export const RoleSummary: React.FC<RoleSummaryProps> = React.memo((props) => {
                 }
               }}
             >
-              {t('保存 Agent 绑定')}
+              {t('保存外部 Agent 绑定')}
             </Button>
           </div>
         </div>
