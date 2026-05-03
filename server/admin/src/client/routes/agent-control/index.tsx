@@ -9,11 +9,16 @@ import {
 
 export const AgentControlPanel: React.FC = React.memo(() => {
   const [list, setList] = useState<any[]>([]);
+  const [scriptList, setScriptList] = useState<any[]>([]);
 
   const [{ loading }, fetchList] = useAsyncRequest(async () => {
-    const data = await callAction('agent.definition.list', {});
-    setList(Array.isArray(data?.data) ? data.data : []);
-    return data;
+    const [agentData, scriptData] = await Promise.all([
+      callAction('agent.definition.list', {}),
+      callAction('agent.script.list', {}),
+    ]);
+    setList(Array.isArray(agentData?.data) ? agentData.data : []);
+    setScriptList(Array.isArray(scriptData?.data) ? scriptData.data : []);
+    return { agentData, scriptData };
   });
 
   const [{ loading: creating }, createAgent] = useAsyncRequest(
@@ -64,6 +69,22 @@ export const AgentControlPanel: React.FC = React.memo(() => {
             { title: '状态', dataIndex: 'status' },
           ]}
           data={list}
+        />
+      </Card>
+
+      <Card>
+        <Typography.Title heading={6}>剧本模板骨架</Typography.Title>
+        <Table
+          pagination={false}
+          rowKey={(row: any) => row.scriptId}
+          columns={[
+            { title: '模板 ID', dataIndex: 'scriptId' },
+            { title: '名称', dataIndex: 'name' },
+            { title: '行业域', dataIndex: 'domain' },
+            { title: '阶段', dataIndex: 'stages' },
+            { title: '论坛沉淀', dataIndex: 'forumSinkMode' },
+          ]}
+          data={scriptList}
         />
       </Card>
     </Space>

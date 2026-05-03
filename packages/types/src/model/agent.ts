@@ -31,3 +31,18 @@ export interface AgentRoleBinding {
   triggerMode: AgentTriggerMode;
   active: boolean;
 }
+
+export type AgentForumSinkMode =
+  | 'topic-thread'
+  | 'knowledge-base'
+  | 'qa-archive';
+
+export interface AgentScriptTemplate {
+  scriptId: string;
+  name: string;
+  domain: string;
+  stages: string[];
+  entryTrigger?: string;
+  conversionGoal?: string;
+  forumSinkMode: AgentForumSinkMode;
+}
