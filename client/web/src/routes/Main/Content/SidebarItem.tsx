@@ -7,6 +7,7 @@ import { Avatar } from 'tailchat-design';
 
 interface SidebarItemProps {
   name: React.ReactNode;
+  subtitle?: React.ReactNode;
   to: string;
   badge?: boolean | number;
   icon?: string | React.ReactElement;
@@ -14,7 +15,7 @@ interface SidebarItemProps {
   avatarName?: string;
 }
 export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
-  const { icon, name, to, badge, avatarName } = props;
+  const { icon, name, subtitle, to, badge, avatarName } = props;
   const location = useLocation();
   const isActive = location.pathname.startsWith(to);
 
@@ -43,7 +44,14 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
           className="flex-1 min-w-0 text-gray-900 dark:text-white"
           ellipsis={true}
         >
-          {name}
+          <div className="min-w-0">
+            <div className="truncate">{name}</div>
+            {subtitle && (
+              <div className="truncate text-[11px] text-[#9ca3af] mt-0.5">
+                {subtitle}
+              </div>
+            )}
+          </div>
         </Typography.Text>
 
         {badge === true ? (

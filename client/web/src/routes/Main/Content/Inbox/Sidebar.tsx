@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import {
   BasicInboxItem,
   chatActions,
+  formatShortTime,
   InboxItem,
   isValidStr,
   model,
@@ -50,6 +51,7 @@ export const InboxSidebar: React.FC = React.memo(() => {
           title={title}
           desc={getMessageRender(payload.messageSnippet ?? '')}
           source={'財訊'}
+          time={item.createdAt ? formatShortTime(item.createdAt) : ''}
           readed={item.readed}
           to={buildLink(item._id)}
         />
@@ -67,6 +69,7 @@ export const InboxSidebar: React.FC = React.memo(() => {
           title={title}
           desc={t('点击查看详情')}
           source={payload.source ?? '財訊'}
+          time={item.createdAt ? formatShortTime(item.createdAt) : ''}
           readed={item.readed}
           to={buildLink(item._id)}
         />
@@ -85,6 +88,7 @@ export const InboxSidebar: React.FC = React.memo(() => {
           title={preview.title}
           desc={preview.desc}
           source={info.source ?? 'Unknown'}
+          time={_item.createdAt ? formatShortTime(_item.createdAt) : ''}
           readed={_item.readed}
           to={buildLink(_item._id)}
         />
@@ -174,6 +178,7 @@ const InboxSidebarItem: React.FC<{
   title: React.ReactNode;
   desc: React.ReactNode;
   source: string;
+  time: string;
   readed: boolean;
   to: string;
 }> = React.memo((props) => {
@@ -195,9 +200,10 @@ const InboxSidebarItem: React.FC<{
           {!props.readed && (
             <span className="w-2 h-2 rounded-full bg-[#07c160] flex-shrink-0" />
           )}
-          <div className="truncate text-[15px] font-medium text-gray-800 dark:text-white">
+          <div className="truncate flex-1 text-[15px] font-medium text-gray-800 dark:text-white">
             {props.title || <span>&nbsp;</span>}
           </div>
+          <div className="text-[11px] text-[#9ca3af] flex-shrink-0">{props.time}</div>
         </div>
         <div className="line-clamp-2 break-words text-[#6b7280] dark:text-opacity-80 dark:text-white text-[13px] mt-1.5 pl-3 border-l border-gray-200 dark:border-gray-600 overflow-hidden">
           {props.desc}

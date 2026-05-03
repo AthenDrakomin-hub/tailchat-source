@@ -51,7 +51,7 @@ export const GroupUserPopover: React.FC<{
   }, [userInfo.avatar]);
 
   return (
-    <div className="w-80 -mx-4 -my-3 bg-inherit">
+    <div className="w-80 -mx-2 -my-2 bg-transparent">
       <UserProfileContainer userInfo={userInfo}>
         <div className="text-xl">
           <span className="font-semibold">

@@ -61,7 +61,7 @@ export const GroupSummary: React.FC<{
     <div>
       <FullModalCommonTitle>{t('群组概述')}</FullModalCommonTitle>
 
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap rounded-[24px] border border-black/5 bg-white p-5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
         <div className="w-1/3 mobile:w-full mobile:text-center">
           <AvatarUploader
             circle={true}

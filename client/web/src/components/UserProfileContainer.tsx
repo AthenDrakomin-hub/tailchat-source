@@ -23,16 +23,16 @@ export const UserProfileContainer: React.FC<
   }, [userInfo.avatar]);
 
   return (
-    <div className="relative bg-inherit">
+    <div className="relative bg-white rounded-[24px] border border-black/5 overflow-hidden shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
       <div
         style={{
           width: '100%',
-          height: 60,
+          height: 76,
           backgroundColor: bannerColor,
         }}
       />
 
-      <div className="absolute p-1 rounded-1/2 -mt-11 ml-3 bg-inherit">
+      <div className="absolute p-1 rounded-1/2 -mt-11 ml-4 bg-white">
         <AvatarWithPreview
           size={80}
           src={userInfo.avatar}
@@ -41,7 +41,7 @@ export const UserProfileContainer: React.FC<
         />
       </div>
 
-      <div className="p-2 mt-10">{props.children}</div>
+      <div className="p-4 pt-12">{props.children}</div>
     </div>
   );
 });

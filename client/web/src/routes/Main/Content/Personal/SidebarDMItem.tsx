@@ -1,6 +1,7 @@
 import {
   chatActions,
   ChatConverseState,
+  formatShortTime,
   getCachedUserInfo,
   model,
   useAppDispatch,
@@ -96,6 +97,7 @@ export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
           />
         }
         icon={icon}
+        subtitle={converse.updatedAt ? formatShortTime(converse.updatedAt) : undefined}
         to={getPersonalChatPath(converseId)}
         badge={hasUnread}
         avatarName={name}
