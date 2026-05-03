@@ -14,27 +14,27 @@ export const DocumentLayout: React.FC<Props> = React.memo((props) => {
   }, [props.title]);
 
   return (
-    <div className="w-full text-white">
+    <div className="w-full text-[#111827]">
       <div className="mb-6 flex justify-center overflow-hidden">
         <BrandLogo alt="財訊" className="w-32 max-w-full h-auto mobile:w-28" />
       </div>
 
       <div className="text-center mb-6">
-        <div className="font-extrabold text-2xl tracking-wide text-white">
+        <div className="font-bold text-2xl tracking-tight text-[#111827]">
           {props.title}
         </div>
         {props.subtitle && (
-          <div className="mt-2 text-sm text-[rgba(255,255,255,0.78)]">
+          <div className="mt-2 text-sm text-[#6b7280]">
             {props.subtitle}
           </div>
         )}
       </div>
 
-      <div className="rounded-3xl border border-white/10 bg-[rgba(255,255,255,0.05)] px-5 py-5 shadow-[0_16px_42px_rgba(0,0,0,0.24)]">
+      <div className="rounded-[28px] border border-black/5 bg-white px-5 py-5 shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
         {props.children}
       </div>
 
-      <div className="mt-5 flex flex-wrap gap-4 text-xs text-[rgba(255,255,255,0.72)]">
+      <div className="mt-5 flex flex-wrap gap-4 text-xs text-[#6b7280]">
         <Link to="/entry/login" className="underline underline-offset-4">
           返回登錄
         </Link>

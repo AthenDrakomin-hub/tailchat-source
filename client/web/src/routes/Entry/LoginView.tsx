@@ -93,48 +93,48 @@ export const LoginView: React.FC = React.memo(() => {
       </div>
 
       <div className="text-center mb-8">
-        <div className="font-extrabold text-2xl mobile:text-xl tracking-wide text-white">
+        <div className="font-bold text-[28px] mobile:text-xl tracking-tight text-[#111827]">
           {BRAND_NAME_FULL}
         </div>
-        <div className="mt-2 text-sm text-[rgba(255,255,255,0.82)]">
+        <div className="mt-2 text-sm text-[#6b7280]">
           {BRAND_SUBTITLE}
         </div>
-        <div className="mt-3 text-sm text-[rgba(255,255,255,0.85)] italic font-serif">
+        <div className="mt-3 text-sm text-[#6b7280] italic">
           "{dailyQuote}"
         </div>
       </div>
 
       <EventBanner />
 
-      <div className="mb-6 rounded-3xl border border-white/10 bg-[rgba(255,255,255,0.06)] px-4 py-4 backdrop-blur-sm">
-        <div className="text-sm font-semibold text-white">客户端使用建议</div>
+      <div className="mb-6 rounded-[28px] border border-black/5 bg-white px-4 py-4 shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
+        <div className="text-sm font-semibold text-[#111827]">客户端使用建议</div>
         <div className="mt-3 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
-          <div className="rounded-2xl bg-[rgba(255,255,255,0.06)] px-3 py-3">
-            <div className="text-xs text-[rgba(255,255,255,0.62)]">Web</div>
-            <div className="mt-1 text-sm font-medium text-white">推荐使用</div>
-            <div className="mt-1 text-xs leading-5 text-[rgba(255,255,255,0.68)]">
+          <div className="rounded-2xl bg-[#f7f7f7] px-3 py-3">
+            <div className="text-xs text-[#6b7280]">Web</div>
+            <div className="mt-1 text-sm font-medium text-[#111827]">推荐使用</div>
+            <div className="mt-1 text-xs leading-5 text-[#6b7280]">
               推荐先通过 Web 熟悉动态、群组和私信主链路。
             </div>
           </div>
-          <div className="rounded-2xl bg-[rgba(255,255,255,0.06)] px-3 py-3">
-            <div className="text-xs text-[rgba(255,255,255,0.62)]">Desktop</div>
-            <div className="mt-1 text-sm font-medium text-white">适合长期使用</div>
-            <div className="mt-1 text-xs leading-5 text-[rgba(255,255,255,0.68)]">
+          <div className="rounded-2xl bg-[#f7f7f7] px-3 py-3">
+            <div className="text-xs text-[#6b7280]">Desktop</div>
+            <div className="mt-1 text-sm font-medium text-[#111827]">适合长期使用</div>
+            <div className="mt-1 text-xs leading-5 text-[#6b7280]">
               适合盯盘、群讨论常驻与多会话并行使用。
             </div>
           </div>
-          <div className="rounded-2xl bg-[rgba(255,255,255,0.06)] px-3 py-3">
-            <div className="text-xs text-[rgba(255,255,255,0.62)]">Mobile</div>
-            <div className="mt-1 text-sm font-medium text-white">持续完善中</div>
-            <div className="mt-1 text-xs leading-5 text-[rgba(255,255,255,0.68)]">
+          <div className="rounded-2xl bg-[#f7f7f7] px-3 py-3">
+            <div className="text-xs text-[#6b7280]">Mobile</div>
+            <div className="mt-1 text-sm font-medium text-[#111827]">持续完善中</div>
+            <div className="mt-1 text-xs leading-5 text-[#6b7280]">
               移动端入口已支持底部菜单结构，可继续在手机上体验消息、通讯录、发现与我的页面。
             </div>
           </div>
         </div>
-        <div className="mt-3 text-xs text-[rgba(255,255,255,0.62)]">
+        <div className="mt-3 text-xs text-[#6b7280]">
           下载与平台说明：
           <a
-            className="ml-1 underline underline-offset-4 hover:text-white"
+            className="ml-1 underline underline-offset-4 hover:text-[#111827]"
             href="/downloads"
             target="_blank"
             rel="noreferrer"
@@ -147,7 +147,7 @@ export const LoginView: React.FC = React.memo(() => {
             href="/downloads"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center justify-center rounded-2xl bg-[#d4af37] px-4 py-2.5 text-sm font-semibold text-[#111827] shadow-[0_12px_24px_rgba(212,175,55,0.18)] transition hover:brightness-105"
+            className="inline-flex items-center justify-center rounded-2xl bg-[#07c160] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#06ad56]"
           >
             下载客户端
           </a>
@@ -155,7 +155,7 @@ export const LoginView: React.FC = React.memo(() => {
             href="/downloads#web"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.06)] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[rgba(255,255,255,0.1)]"
+            className="inline-flex items-center justify-center rounded-2xl border border-[#d9d9d9] bg-[#f7f7f7] px-4 py-2.5 text-sm font-medium text-[#374151] transition hover:bg-[#f1f1f1]"
           >
             查看 Web 入口
           </a>
@@ -164,7 +164,7 @@ export const LoginView: React.FC = React.memo(() => {
 
       <div>
         <div className="mb-4">
-          <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
+          <div className="mb-2 text-sm font-medium text-[#374151]">
             {t('账号')}
           </div>
           <EntryInput
@@ -176,7 +176,7 @@ export const LoginView: React.FC = React.memo(() => {
           />
         </div>
         <div className="mb-4">
-          <div className="mb-2 text-sm font-medium text-[rgba(255,255,255,0.82)]">
+          <div className="mb-2 text-sm font-medium text-[#374151]">
             {t('密码')}
           </div>
           <EntryInput
@@ -190,7 +190,7 @@ export const LoginView: React.FC = React.memo(() => {
 
         {loading === false && error && (
           <div className="flex justify-between mb-4">
-            <p className="text-red-300 text-sm">{error.message}</p>
+            <p className="text-red-500 text-sm">{error.message}</p>
           </div>
         )}
 
@@ -215,7 +215,7 @@ export const LoginView: React.FC = React.memo(() => {
         })}
       </div>
 
-      <div className="mt-6 text-xs text-[rgba(255,255,255,0.55)] leading-6">
+      <div className="mt-6 text-xs text-[#9ca3af] leading-6">
         <div>{BRAND_COMPANY}</div>
         <div>TLS 1.3 傳輸保護 · 日本數據節點部署</div>
       </div>

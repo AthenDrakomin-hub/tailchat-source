@@ -22,13 +22,13 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
     <Link to={to}>
       <div
         className={clsx(
-          'w-full min-w-0 overflow-hidden border border-transparent hover:border-black hover:border-opacity-5 dark:hover:border-white dark:hover:border-opacity-10 hover:bg-black hover:bg-opacity-10 dark:hover:bg-white dark:hover:bg-opacity-10 cursor-pointer text-gray-700 dark:text-white rounded-2xl px-3 h-11 flex items-center text-base group mb-0.5 transition-all duration-200',
+          'w-full min-w-0 overflow-hidden border-b border-black/5 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white dark:hover:bg-opacity-10 cursor-pointer text-gray-700 dark:text-white rounded-none px-3 h-14 flex items-center text-[15px] group transition-colors duration-150',
           {
-            'bg-green-500 bg-opacity-10 border-green-500 border-opacity-20 text-green-700 dark:text-green-300 dark:bg-green-500 dark:bg-opacity-10': isActive,
+            'bg-white text-[#111827] border-l-[3px] border-l-[#07c160]': isActive,
           }
         )}
       >
-        <div className="flex h-8 items-center justify-center text-2xl w-8 mr-3 flex-shrink-0">
+        <div className="flex h-10 items-center justify-center text-2xl w-10 mr-3 flex-shrink-0">
           {React.isValidElement(icon) ? (
             icon
           ) : (

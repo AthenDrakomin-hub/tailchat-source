@@ -95,7 +95,7 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
     const sidebarEl = _isNil(sidebar) ? null : (
       <div
         className={clsx(
-          'bg-sidebar-light dark:bg-sidebar-dark flex-shrink-0 transition-width w-60 min-w-0 overflow-hidden'
+          'bg-[#f7f7f7] dark:bg-sidebar-dark flex-shrink-0 transition-width w-[17rem] min-w-0 overflow-hidden border-r border-black/5'
         )}
       >
         {props.sidebar}
@@ -109,7 +109,7 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
     const contentMaskEl = showMask ? (
       <div
         className="absolute right-0 top-0 bottom-0 z-10"
-        style={{ width: 'calc(100% - 15rem)' }} // 15rem is "w-60" which sidebar with
+        style={{ width: 'calc(100% - 17rem)' }}
         onClick={handleHideSidebar}
       />
     ) : null;
@@ -124,11 +124,11 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
 
         <div
           className={clsx(
-            'flex min-w-0 flex-auto bg-content-light dark:bg-content-dark overflow-hidden',
+            'flex min-w-0 flex-auto bg-[#f5f5f5] dark:bg-content-dark overflow-hidden',
             isMobile &&
               'transform left-0 w-full h-full absolute transition-transform',
             isMobile && {
-              'translate-x-60': showSidebar,
+              'translate-x-[17rem]': showSidebar,
               'translate-x-0': !showSidebar,
             }
           )}

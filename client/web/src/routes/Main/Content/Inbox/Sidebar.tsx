@@ -184,25 +184,25 @@ const InboxSidebarItem: React.FC<{
     <Link to={props.to}>
       <div
         className={clsx(
-          'mx-2 my-1 p-3 overflow-hidden cursor-pointer border border-transparent hover:border-black hover:border-opacity-5 dark:hover:border-white dark:hover:border-opacity-10 hover:bg-black hover:bg-opacity-5 dark:hover:bg-white dark:hover:bg-opacity-5 rounded-2xl transition-all duration-200',
+          'mx-0 my-0 px-4 py-3 overflow-hidden cursor-pointer border-b border-black/5 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white dark:hover:bg-opacity-5 transition-colors duration-150',
           {
-            'bg-green-500 bg-opacity-10 border-green-500 border-opacity-20 dark:bg-green-500 dark:bg-opacity-10': isActive,
+            'bg-white border-l-[3px] border-l-[#07c160]': isActive,
           },
-          props.readed ? '' : 'shadow-sm'
+          props.readed ? '' : ''
         )}
       >
         <div className="flex items-center gap-2">
           {!props.readed && (
-            <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-[#07c160] flex-shrink-0" />
           )}
-          <div className="truncate text-base font-medium text-gray-700 dark:text-white">
+          <div className="truncate text-[15px] font-medium text-gray-800 dark:text-white">
             {props.title || <span>&nbsp;</span>}
           </div>
         </div>
-        <div className="line-clamp-2 break-words text-opacity-80 text-black dark:text-opacity-80 dark:text-white text-sm mt-2 pl-3 border-l-2 border-gray-300 dark:border-gray-600 overflow-hidden">
+        <div className="line-clamp-2 break-words text-[#6b7280] dark:text-opacity-80 dark:text-white text-[13px] mt-1.5 pl-3 border-l border-gray-200 dark:border-gray-600 overflow-hidden">
           {props.desc}
         </div>
-        <div className="truncate text-[11px] mt-2 text-opacity-50 text-black dark:text-opacity-50 dark:text-white">
+        <div className="truncate text-[11px] mt-2 text-[#9ca3af] dark:text-opacity-50 dark:text-white">
           {t('来自')}: {props.source}
         </div>
       </div>

@@ -124,7 +124,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
       }}
     >
       <div className="px-4 py-2 min-w-0">
-        <div className="bg-white dark:bg-gray-600 flex min-w-0 rounded-md items-center relative">
+        <div className="bg-white dark:bg-gray-600 flex min-w-0 rounded-[24px] items-center relative border border-black/5 shadow-none">
           {/* This w-0 is magic to ensure show mention and long text */}
           <div className="flex-1 w-0">
             <ChatInputBoxInput
@@ -142,7 +142,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
           {pasteHandlerContainer}
 
           {!disabled && (
-            <div className="px-2 flex flex-shrink-0 space-x-1">
+            <div className="px-3 flex flex-shrink-0 space-x-1 items-center">
               {pluginChatInputButtons.map((item, i) =>
                 React.cloneElement(item.render(), {
                   key: `plugin-chatinput-btn#${i}`,
@@ -155,7 +155,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
               {message ? (
                 <Icon
                   icon="mdi:send-circle-outline"
-                  className="text-2xl cursor-pointer"
+                  className="text-[28px] text-[#07c160] cursor-pointer"
                   onClick={handleSendMsg}
                 />
               ) : (
@@ -165,10 +165,9 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
           )}
         </div>
         {!disabled && (
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 px-1 text-[11px] leading-5 text-gray-400 dark:text-gray-500">
-            <span>支持 `Enter` 快速发送消息</span>
-            <span>可直接拖拽或粘贴图片</span>
-            <span>更适合用简短直接的表达开始长期沟通</span>
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 px-2 text-[11px] leading-5 text-gray-400 dark:text-gray-500">
+            <span>Enter 发送</span>
+            <span>图片拖拽 / 粘贴</span>
           </div>
         )}
       </div>

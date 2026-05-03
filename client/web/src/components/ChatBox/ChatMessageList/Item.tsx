@@ -5,6 +5,7 @@ import {
   shouldShowMessageTime,
   SYSTEM_USERID,
   t,
+  useUserInfo,
   useCachedUserInfo,
   MessageHelper,
   showMessageTime,
@@ -66,6 +67,8 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
   (props) => {
     const { showAvatar, payload, hideAction = false } = props;
     const userInfo = useCachedUserInfo(payload.author ?? '');
+    const currentUser = useUserInfo();
+    const isSelf = payload.author === currentUser?._id;
     const [isActionBtnActive, setIsActionBtnActive] = useState(false);
     const { settings } = useUserSettings();
 
@@ -87,16 +90,16 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
     return (
       <div
         className={clsx(
-          'chat-message-item flex min-w-0 px-2 mobile:px-0 group relative select-text text-sm',
+          'chat-message-item flex min-w-0 px-3 py-1 mobile:px-0 group relative select-text text-sm',
           {
-            'bg-black bg-opacity-10': isActionBtnActive,
-            'hover:bg-black hover:bg-opacity-5': !isActionBtnActive,
+            'bg-black bg-opacity-5': isActionBtnActive,
+            'hover:bg-black hover:bg-opacity-[0.02]': !isActionBtnActive,
           }
         )}
         data-message-id={payload._id}
       >
         {/* 头像 */}
-        <div className="w-18 mobile:w-14 flex-shrink-0 flex items-start justify-center pt-0.5">
+          <div className="w-14 mobile:w-12 flex-shrink-0 flex items-start justify-center pt-0.5">
           {showAvatar ? (
             <Popover
               content={
@@ -109,7 +112,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
             >
               <Avatar
                 className="cursor-pointer"
-                size={40}
+                size={36}
                 src={userInfo.avatar}
                 name={userInfo.nickname}
               />
@@ -154,7 +157,14 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                 </div>
               }
             >
-              <div className="chat-message-item_body min-w-0 leading-6 break-words overflow-x-hidden">
+              <div
+                className={clsx(
+                  'chat-message-item_body min-w-0 leading-6 break-words overflow-x-hidden rounded-[18px] px-3.5 py-2.5 max-w-[820px]',
+                  isSelf
+                    ? 'bg-[#95ec69] text-[#111827]'
+                    : 'bg-white text-[#111827] border border-black/5'
+                )}
+              >
                 <MessageQuote payload={payload} />
 
                 <span>{getMessageRender(payload.content)}</span>

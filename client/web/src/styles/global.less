@@ -10,35 +10,29 @@ body {
 #tailchat-app {
   @apply text-typography-light bg-content-light;
 
-  --tc-background-image: url(../../assets/images/custom/ridou-bg-canvas.png);
+  --tc-background-image: '';
   --tc-content-background-image: '';
-  --tc-content-background-image-opacity: 0.2;
-  --tc-content-background-color: rgba(243, 244, 246, 1); // copy from bg-content-light
+  --tc-content-background-image-opacity: 0;
+  --tc-content-background-color: rgba(245, 245, 245, 1);
 
   .tc-background {
     @apply bg-center bg-no-repeat;
     background-size: cover;
     position: relative;
     overflow: hidden;
-    background-color: #070b14;
+    background-color: #f5f5f5;
     background-image:
       radial-gradient(
-        1000px 760px at 75% 60%,
-        rgba(212, 175, 55, 0.22) 0%,
-        rgba(212, 175, 55, 0) 60%
+        960px 720px at 100% 0%,
+        rgba(7, 193, 96, 0.08) 0%,
+        rgba(7, 193, 96, 0) 60%
       ),
       radial-gradient(
-        880px 640px at 28% 25%,
-        rgba(255, 255, 255, 0.08) 0%,
-        rgba(255, 255, 255, 0) 55%
+        840px 620px at 0% 100%,
+        rgba(0, 0, 0, 0.035) 0%,
+        rgba(0, 0, 0, 0) 58%
       ),
-      repeating-linear-gradient(
-        120deg,
-        rgba(212, 175, 55, 0.06) 0,
-        rgba(212, 175, 55, 0.06) 1px,
-        rgba(0, 0, 0, 0) 88px
-      ),
-      linear-gradient(135deg, rgba(5, 8, 15, 1) 0%, rgba(11, 25, 44, 1) 55%, rgba(5, 8, 15, 1) 100%);
+      linear-gradient(180deg, #f7f7f7 0%, #efefef 100%);
   }
 
   .tc-background::after {
@@ -103,7 +97,7 @@ body {
   // 深色模式覆盖
   &.dark {
     @apply text-typography-dark bg-content-dark;
-    --tc-content-background-color: rgba(55, 65, 81, 1);; // copy from bg-content-light
+    --tc-content-background-color: rgba(26, 26, 26, 1);
 
     h1,h2,h3,h4,h5,h6 {
       @apply text-typography-dark;
