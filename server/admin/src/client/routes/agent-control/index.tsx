@@ -7,22 +7,22 @@ import {
   AgentDefinitionFormValues,
 } from './AgentDefinitionForm';
 import {
-  ScriptTemplateForm,
-  ScriptTemplateFormValues,
-} from './ScriptTemplateForm';
+  SceneAccessConfigForm,
+  SceneAccessConfigFormValues,
+} from './SceneAccessConfigForm';
 
 export const AgentControlPanel: React.FC = React.memo(() => {
   const [list, setList] = useState<any[]>([]);
-  const [scriptList, setScriptList] = useState<any[]>([]);
+  const [sceneList, setSceneList] = useState<any[]>([]);
 
   const [{ loading }, fetchList] = useAsyncRequest(async () => {
-    const [agentData, scriptData] = await Promise.all([
+    const [agentData, sceneData] = await Promise.all([
       callAction('agent.definition.list', {}),
-      callAction('agent.script.list', {}),
+      callAction('agent.scene.list', {}),
     ]);
     setList(Array.isArray(agentData?.data) ? agentData.data : []);
-    setScriptList(Array.isArray(scriptData?.data) ? scriptData.data : []);
-    return { agentData, scriptData };
+    setSceneList(Array.isArray(sceneData?.data) ? sceneData.data : []);
+    return { agentData, sceneData };
   });
 
   const [{ loading: creating }, createAgent] = useAsyncRequest(
@@ -30,25 +30,23 @@ export const AgentControlPanel: React.FC = React.memo(() => {
       await callAction('agent.definition.create', values);
     }
   );
-  const [{ loading: creatingScript }, createScript] = useAsyncRequest(
-    async (values: ScriptTemplateFormValues) => {
+  const [{ loading: creatingScene }, createScene] = useAsyncRequest(
+    async (values: SceneAccessConfigFormValues) => {
       const normalizeList = (text?: string) =>
         String(text ?? '')
           .split(/[\n,，]/)
           .map((item) => item.trim())
           .filter(Boolean);
 
-      await callAction('agent.script.create', {
-        scriptId: values.scriptId,
+      await callAction('agent.scene.create', {
+        sceneId: values.sceneId,
         name: values.name,
         domain: values.domain,
-        stages: normalizeList(values.stagesText),
-        entryTrigger: values.entryTrigger,
-        conversionGoal: values.conversionGoal,
-        forumSinkMode: values.forumSinkMode,
-        forumTargetCategory: values.forumTargetCategory,
-        forumPostTitleTemplate: values.forumPostTitleTemplate,
-        archiveTags: normalizeList(values.archiveTagsText),
+        target: values.target,
+        enabledActions: values.enabledActions ?? [],
+        roleIds: normalizeList(values.roleIdsText),
+        groupIds: normalizeList(values.groupIdsText),
+        enabled: values.enabled,
       });
     }
   );
@@ -62,7 +60,7 @@ export const AgentControlPanel: React.FC = React.memo(() => {
       <Card>
         <Typography.Title heading={4}>OpenClaw 接入底座</Typography.Title>
         <Typography.Paragraph>
-          在这里统一管理外部 Agent 接入、角色绑定、剧本模板和运行时调度。本项目只负责场景、关系、入口和沉淀，不负责 Agent 人格与推理本体。
+          在这里统一管理外部 Agent 接入、角色绑定、场景接入和运行时调度。本项目只负责场景、关系、入口和连接配置，不负责剧本编排与 Agent 推理本体。
         </Typography.Paragraph>
       </Card>
 
@@ -101,35 +99,35 @@ export const AgentControlPanel: React.FC = React.memo(() => {
       </Card>
 
       <Card>
-        <Typography.Title heading={6}>剧本模板骨架</Typography.Title>
-        <ScriptTemplateForm
-          loading={creatingScript}
+        <Typography.Title heading={6}>场景接入配置</Typography.Title>
+        <SceneAccessConfigForm
+          loading={creatingScene}
           onSubmit={async (values) => {
             try {
-              await createScript(values);
-              Message.success('剧本模板已创建');
+              await createScene(values);
+              Message.success('场景接入配置已创建');
               await fetchList();
             } catch (err) {
-              Message.error(formatAdminError(err, '创建剧本模板失败'));
+              Message.error(formatAdminError(err, '创建场景接入配置失败'));
             }
           }}
         />
       </Card>
 
       <Card>
-        <Typography.Title heading={6}>剧本模板列表</Typography.Title>
+        <Typography.Title heading={6}>场景接入配置列表</Typography.Title>
         <Table
           pagination={false}
-          rowKey={(row: any) => row.scriptId}
+          rowKey={(row: any) => row.sceneId}
           columns={[
-            { title: '模板 ID', dataIndex: 'scriptId' },
+            { title: '场景 ID', dataIndex: 'sceneId' },
             { title: '名称', dataIndex: 'name' },
             { title: '行业域', dataIndex: 'domain' },
-            { title: '阶段', dataIndex: 'stages' },
-            { title: '论坛沉淀', dataIndex: 'forumSinkMode' },
-            { title: '目标分类', dataIndex: 'forumTargetCategory' },
+            { title: '场景目标', dataIndex: 'target' },
+            { title: '允许动作', dataIndex: 'enabledActions' },
+            { title: '启用', dataIndex: 'enabled' },
           ]}
-          data={scriptList}
+          data={sceneList}
         />
       </Card>
     </Space>

@@ -33,20 +33,27 @@ export interface AgentRoleBinding {
   active: boolean;
 }
 
-export type AgentForumSinkMode =
-  | 'topic-thread'
-  | 'knowledge-base'
-  | 'qa-archive';
+export type AgentSceneTarget =
+  | 'personal-dm'
+  | 'friendship'
+  | 'group'
+  | 'feed'
+  | 'forum';
 
-export interface AgentScriptTemplate {
-  scriptId: string;
+export type AgentSceneAction =
+  | 'publish-post'
+  | 'add-friend'
+  | 'reply-dm'
+  | 'join-group'
+  | 'engage-group';
+
+export interface AgentSceneConfig {
+  sceneId: string;
   name: string;
   domain: string;
-  stages: string[];
-  entryTrigger?: string;
-  conversionGoal?: string;
-  forumSinkMode: AgentForumSinkMode;
-  forumTargetCategory?: string;
-  forumPostTitleTemplate?: string;
-  archiveTags: string[];
+  target: AgentSceneTarget;
+  enabledActions: AgentSceneAction[];
+  roleIds: string[];
+  groupIds: string[];
+  enabled: boolean;
 }
