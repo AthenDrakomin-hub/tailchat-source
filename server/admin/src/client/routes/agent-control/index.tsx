@@ -6,6 +6,7 @@ import {
   AgentDefinitionForm,
   AgentDefinitionFormValues,
 } from './AgentDefinitionForm';
+import { GatewayOverview } from './GatewayOverview';
 import {
   SceneAccessConfigForm,
   SceneAccessConfigFormValues,
@@ -13,18 +14,24 @@ import {
 import { AnalyticsPanel } from './AnalyticsPanel';
 import { CompliancePanel } from './CompliancePanel';
 
-export const AgentControlPanel: React.FC = React.memo(() => {
+export const OpenClawGatewayPanel: React.FC = React.memo(() => {
   const [list, setList] = useState<any[]>([]);
   const [sceneList, setSceneList] = useState<any[]>([]);
+  const [analyticsList, setAnalyticsList] = useState<any[]>([]);
+  const [complianceList, setComplianceList] = useState<any[]>([]);
 
   const [{ loading }, fetchList] = useAsyncRequest(async () => {
-    const [agentData, sceneData] = await Promise.all([
+    const [agentData, sceneData, analyticsData, complianceData] = await Promise.all([
       callAction('agent.definition.list', {}),
       callAction('agent.scene.list', {}),
+      callAction('agent.analytics.list', {}),
+      callAction('agent.compliance.list', {}),
     ]);
     setList(Array.isArray(agentData?.data) ? agentData.data : []);
     setSceneList(Array.isArray(sceneData?.data) ? sceneData.data : []);
-    return { agentData, sceneData };
+    setAnalyticsList(Array.isArray(analyticsData?.data) ? analyticsData.data : []);
+    setComplianceList(Array.isArray(complianceData?.data) ? complianceData.data : []);
+    return { agentData, sceneData, analyticsData, complianceData };
   });
 
   const [{ loading: creating }, createAgent] = useAsyncRequest(
@@ -65,6 +72,17 @@ export const AgentControlPanel: React.FC = React.memo(() => {
           在这里统一管理外部 Agent 接入、角色绑定、场景接入和运行时调度。本项目只负责场景、关系、入口和连接配置，不负责剧本编排与 Agent 推理本体。
         </Typography.Paragraph>
       </Card>
+
+      <GatewayOverview
+        agentCount={list.length}
+        sceneCount={sceneList.length}
+        analyticsCount={analyticsList.length}
+        complianceCount={complianceList.length}
+        providers={[...new Set(list.map((item) => item.provider).filter(Boolean))]}
+        runtimeModes={[
+          ...new Set(list.map((item) => item.runtimeMode).filter(Boolean)),
+        ]}
+      />
 
       <Card>
         <AgentDefinitionForm
@@ -146,4 +164,4 @@ export const AgentControlPanel: React.FC = React.memo(() => {
   );
 });
 
-AgentControlPanel.displayName = 'AgentControlPanel';
+OpenClawGatewayPanel.displayName = 'OpenClawGatewayPanel';

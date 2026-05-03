@@ -37,7 +37,7 @@ import { SystemNotify } from './routes/system/notify';
 import { DefenseControlPanel } from './routes/defense-control';
 import { PluginPermissions } from './routes/plugin-permissions';
 import { OpsControlPanel } from './routes/ops-control';
-import { AgentControlPanel } from './routes/agent-control';
+import { OpenClawGatewayPanel } from './routes/agent-control';
 
 const dataProvider = jsonServerProvider('/admin/api', authHTTPClient);
 
@@ -57,7 +57,7 @@ function App() {
           <OpsControlPanel />
         </CustomRoute>
         <CustomRoute name="agent-control" icon={<IconUserGroup />}>
-          <AgentControlPanel />
+          <OpenClawGatewayPanel />
         </CustomRoute>
         <CustomRoute name="system-notify" icon={<IconNotification />}>
           <SystemNotify />
