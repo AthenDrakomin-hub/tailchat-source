@@ -113,10 +113,27 @@ let welcomeWindow: BrowserWindow | null = null;
 let mainWindow: BrowserWindow | null = null;
 let capturerSourcePickerWindow: BrowserWindow | null = null;
 let currentWorkspaceUrl: string | null = null;
+let currentWorkspaceStatus = '未连接';
 let isShowingRecoveryDialog = false;
+
+const rebuildMainMenu = () => {
+  if (!mainWindow) {
+    return;
+  }
+
+  const menuBuilder = new MenuBuilder(
+    mainWindow,
+    switchBackToWorkspaceSelector,
+    currentWorkspaceUrl ?? undefined,
+    reconnectCurrentWorkspace,
+    currentWorkspaceStatus
+  );
+  menuBuilder.buildMenu();
+};
 
 const switchBackToWorkspaceSelector = () => {
   currentWorkspaceUrl = null;
+  currentWorkspaceStatus = '未连接';
 
   if (!welcomeWindow) {
     createWelcomeWindow();
@@ -135,8 +152,10 @@ const reconnectCurrentWorkspace = () => {
     return;
   }
 
+  currentWorkspaceStatus = '正在重新连接';
   mainWindow.setTitle('財訊桌面端 · 正在重新连接工作区');
   mainWindow.setProgressBar(0.2);
+  rebuildMainMenu();
   mainWindow.loadURL(currentWorkspaceUrl);
 };
 
@@ -188,6 +207,7 @@ const createMainWindow = async (url: string) => {
     }
 
     currentWorkspaceUrl = url;
+    currentWorkspaceStatus = '正在连接';
     const RESOURCES_PATH = app.isPackaged
       ? path.join(process.resourcesPath, 'assets')
       : path.join(__dirname, '../../assets');
@@ -241,8 +261,10 @@ const createMainWindow = async (url: string) => {
 
     mainWindow.webContents.on('did-start-navigation', () => {
       if (mainWindow) {
+        currentWorkspaceStatus = '正在连接';
         applyWindowTitle('正在连接工作区');
         mainWindow.setProgressBar(0.15);
+        rebuildMainMenu();
         mainWindow.webContents.executeJavaScript(generateInjectedScript());
       }
     });
@@ -252,8 +274,10 @@ const createMainWindow = async (url: string) => {
         return;
       }
 
+      currentWorkspaceStatus = '正在同步';
       applyWindowTitle('正在同步页面内容');
       mainWindow.setProgressBar(0.45);
+      rebuildMainMenu();
     });
 
     mainWindow.webContents.on('did-stop-loading', () => {
@@ -261,8 +285,10 @@ const createMainWindow = async (url: string) => {
         return;
       }
 
+      currentWorkspaceStatus = '已就绪';
       applyWindowTitle('工作区内容已就绪');
       mainWindow.setProgressBar(-1);
+      rebuildMainMenu();
     });
 
     mainWindow.webContents.on(
@@ -281,8 +307,10 @@ const createMainWindow = async (url: string) => {
         }
 
         log.error('main window load failed:', errorCode, errorDescription);
+        currentWorkspaceStatus = '加载失败';
         applyWindowTitle('工作区加载失败');
         mainWindow.setProgressBar(-1);
+        rebuildMainMenu();
 
         if (isShowingRecoveryDialog) {
           return;
@@ -348,13 +376,7 @@ const createMainWindow = async (url: string) => {
     });
 
     log.info('Build menu');
-    const menuBuilder = new MenuBuilder(
-      mainWindow,
-      switchBackToWorkspaceSelector,
-      currentWorkspaceUrl ?? undefined,
-      reconnectCurrentWorkspace
-    );
-    menuBuilder.buildMenu();
+    rebuildMainMenu();
 
     // Open urls in the user's browser
     mainWindow.webContents.setWindowOpenHandler((edata) => {

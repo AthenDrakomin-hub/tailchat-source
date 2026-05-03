@@ -111,8 +111,24 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
           </View>
         )}
         {!loading && !errorMessage && (
-          <View style={styles.topbarStatusWrap}>
-            <Text style={styles.topbarStatusText}>{statusText}</Text>
+          <View
+            style={[
+              styles.topbarStatusWrap,
+              statusText.includes('稳定') || statusText.includes('已连接')
+                ? styles.topbarStatusWrapStable
+                : styles.topbarStatusWrapActive,
+            ]}
+          >
+            <Text
+              style={[
+                styles.topbarStatusText,
+                statusText.includes('稳定') || statusText.includes('已连接')
+                  ? styles.topbarStatusTextStable
+                  : styles.topbarStatusTextActive,
+              ]}
+            >
+              {statusText}
+            </Text>
           </View>
         )}
       </View>
@@ -317,14 +333,24 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignSelf: 'flex-start',
     borderRadius: 999,
-    backgroundColor: '#eef2ff',
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
+  topbarStatusWrapActive: {
+    backgroundColor: '#eef2ff',
+  },
+  topbarStatusWrapStable: {
+    backgroundColor: '#ecfdf5',
+  },
   topbarStatusText: {
-    color: '#0b4a8b',
     fontSize: 11,
     fontWeight: '600',
+  },
+  topbarStatusTextActive: {
+    color: '#0b4a8b',
+  },
+  topbarStatusTextStable: {
+    color: '#047857',
   },
   progressBar: {
     height: '100%',

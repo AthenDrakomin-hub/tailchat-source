@@ -18,17 +18,20 @@ export default class MenuBuilder {
   onSwitchWorkspace?: () => void;
   onReconnectWorkspace?: () => void;
   workspaceUrl?: string;
+  workspaceStatus?: string;
 
   constructor(
     mainWindow: BrowserWindow,
     onSwitchWorkspace?: () => void,
     workspaceUrl?: string,
-    onReconnectWorkspace?: () => void
+    onReconnectWorkspace?: () => void,
+    workspaceStatus?: string
   ) {
     this.mainWindow = mainWindow;
     this.onSwitchWorkspace = onSwitchWorkspace;
     this.workspaceUrl = workspaceUrl;
     this.onReconnectWorkspace = onReconnectWorkspace;
+    this.workspaceStatus = workspaceStatus;
   }
 
   buildMenu(): Menu {
@@ -79,6 +82,12 @@ export default class MenuBuilder {
     return [
       {
         label: workspaceHost ? `当前工作区：${workspaceHost}` : '当前工作区：未连接',
+        enabled: false,
+      },
+      {
+        label: this.workspaceStatus
+          ? `连接状态：${this.workspaceStatus}`
+          : '连接状态：未知',
         enabled: false,
       },
       {
