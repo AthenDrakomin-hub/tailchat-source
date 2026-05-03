@@ -1,5 +1,5 @@
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   t,
   useAsyncRequest,
@@ -8,7 +8,7 @@ import {
   useGroupPanelInfo,
   useEvent,
   ALL_PERMISSION,
-  AlphaContainer,
+  useGroupInfo,
 } from 'tailchat-shared';
 import { ModalWrapper } from '../../Modal';
 import { WebMetaForm } from 'tailchat-design';
@@ -18,6 +18,7 @@ import { useGroupPanelFields } from './useGroupPanelFields';
 import { AdvanceGroupPanelPermission } from './AdvanceGroupPanelPermission';
 import { CollapseView } from '@/components/CollapseView';
 import _omit from 'lodash/omit';
+import { GroupSpeakPolicyEditor } from './GroupSpeakPolicyEditor';
 
 /**
  * 修改群组面板
@@ -28,9 +29,15 @@ export const ModalModifyGroupPanel: React.FC<{
   onSuccess?: () => void;
 }> = React.memo((props) => {
   const groupPanelInfo = useGroupPanelInfo(props.groupId, props.groupPanelId);
+  const groupInfo = useGroupInfo(props.groupId);
   const [currentValues, setValues] = useState<GroupPanelValues>(
     pickValuesFromGroupPanelInfo(groupPanelInfo)
   );
+  useEffect(() => {
+    if (groupPanelInfo) {
+      setValues(pickValuesFromGroupPanelInfo(groupPanelInfo));
+    }
+  }, [groupPanelInfo]);
 
   const [, handleSubmit] = useAsyncRequest(async () => {
     await modifyGroupPanel(
@@ -88,6 +95,15 @@ export const ModalModifyGroupPanel: React.FC<{
                 }}
               />
             </CollapseView>
+            {groupInfo && (
+              <CollapseView title={t('发言治理')} className="mb-2">
+                <GroupSpeakPolicyEditor
+                  roles={groupInfo.roles}
+                  value={currentValues.speakPolicy as any}
+                  onChange={(speakPolicy) => handleUpdateValues({ speakPolicy })}
+                />
+              </CollapseView>
+            )}
           ),
         }}
       />

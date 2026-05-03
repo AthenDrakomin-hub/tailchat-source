@@ -12,6 +12,7 @@ import {
   useUserInfoList,
   UserBaseInfo,
   useUserSettings,
+  useGroupInfo,
 } from 'tailchat-shared';
 import { useRenderPluginMessageInterpreter } from './useRenderPluginMessageInterpreter';
 import { getMessageRender, pluginMessageExtraParsers } from '@/plugin/common';
@@ -29,6 +30,7 @@ import { UserPopover } from '@/components/popover/UserPopover';
 import _isEmpty from 'lodash/isEmpty';
 import type { LocalChatMessage } from 'tailchat-shared/model/message';
 import { getChatMessageLayout } from './layout';
+import { getGroupPanelRoleStyle } from './roleStyle';
 import './Item.less';
 
 /**
@@ -73,11 +75,18 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
       payload,
       hideAction = false,
       isGroup,
+      groupId,
+      panelId,
     } = props;
     const userInfo = useCachedUserInfo(payload.author ?? '');
     const currentUser = useUserInfo();
+    const groupInfo = useGroupInfo(groupId ?? '');
     const isSelf = payload.author === currentUser?._id;
     const layout = getChatMessageLayout({ isGroup, isSelf });
+    const roleStyle =
+      !isSelf && isGroup
+        ? getGroupPanelRoleStyle(groupInfo, panelId, payload.author)
+        : undefined;
     const [isActionBtnActive, setIsActionBtnActive] = useState(false);
     const { settings } = useUserSettings();
 
@@ -135,6 +144,13 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                 size={36}
                 src={userInfo.avatar}
                 name={userInfo.nickname}
+                style={
+                  roleStyle?.avatarRingColor
+                    ? {
+                        boxShadow: `0 0 0 2px ${roleStyle.avatarRingColor}`,
+                      }
+                    : undefined
+                }
               />
             </Popover>
           ) : (
@@ -166,7 +182,14 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
           >
             {showAvatar && layout.showNickname && (
               <div className="flex min-w-0 items-center mb-0.5 px-1">
-                <div className="text-[12px] text-gray-500 dark:text-gray-400 truncate">
+                <div
+                  className="text-[12px] text-gray-500 dark:text-gray-400 truncate"
+                  style={
+                    roleStyle?.nicknameColor
+                      ? { color: roleStyle.nicknameColor }
+                      : undefined
+                  }
+                >
                   {userInfo.nickname || <span>&nbsp;</span>}
                 </div>
                 <div className="hidden group-hover:block opacity-40 ml-1 text-sm flex-shrink-0">
@@ -206,6 +229,11 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                 style={{
                   alignSelf:
                     layout.bubbleAlign === 'right' ? 'flex-end' : 'flex-start',
+                  ...(roleStyle?.sideAccentColor && !isSelf
+                    ? {
+                        boxShadow: `inset 3px 0 0 ${roleStyle.sideAccentColor}, 0 1px 2px rgba(0, 0, 0, 0.04)`,
+                      }
+                    : {}),
                 }}
               >
                 <MessageQuote payload={payload} />
@@ -323,6 +351,8 @@ interface ChatMessageItemProps {
   isMergedNext: boolean;
   payload: LocalChatMessage;
   isGroup: boolean;
+  groupId?: string;
+  panelId?: string;
   hideAction?: boolean;
 }
 const ChatMessageItem: React.FC<ChatMessageItemProps> = React.memo((props) => {
@@ -357,7 +387,9 @@ ChatMessageItem.displayName = 'ChatMessageItem';
 export function buildMessageItemRow(
   messages: LocalChatMessage[],
   index: number,
-  isGroup: boolean
+  isGroup: boolean,
+  groupId?: string,
+  panelId?: string
 ) {
   const message = messages[index];
 
@@ -422,6 +454,8 @@ export function buildMessageItemRow(
             isMergedNext={isMergedNext}
             payload={message}
             isGroup={isGroup}
+            groupId={groupId}
+            panelId={panelId}
           />
         </div>
       ) : (
@@ -435,6 +469,8 @@ export function buildMessageItemRow(
             isMergedNext={isMergedNext}
             payload={message}
             isGroup={isGroup}
+            groupId={groupId}
+            panelId={panelId}
           />
         </MessageAckContainer>
       )}

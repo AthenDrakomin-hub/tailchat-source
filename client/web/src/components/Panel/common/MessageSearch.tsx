@@ -1,6 +1,7 @@
-import { NormalMessage } from '@/components/ChatBox/ChatMessageList/Item';
+import { MessageHighlightContainer } from '@/components/ChatBox/ChatMessageList/MessageHighlightContainer';
+import { NormalMessage, buildMessageItemRow } from '@/components/ChatBox/ChatMessageList/Item';
 import { Empty, Input } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ChatMessage,
   model,
@@ -14,6 +15,18 @@ export const MessageSearchPanel: React.FC<{
   converseId: string;
 }> = React.memo((props) => {
   const { groupId, converseId } = props;
+  const [focusedMessageId, setFocusedMessageId] = useState<string | null>(null);
+  const [{ loading: nearbyLoading, value: nearbyMessages = [] }, handleLoadNearby] =
+    useAsyncRequest(async (messageId: string) => {
+      setFocusedMessageId(messageId);
+      return (
+        (await model.message.fetchNearbyMessage({
+          groupId,
+          converseId,
+          messageId,
+        })) ?? []
+      );
+    });
   const [{ loading, value = [] }, handleSearch] = useAsyncRequest(
     async (searchText: string) => {
       if (searchText.length < 3) {
@@ -48,13 +61,36 @@ export const MessageSearchPanel: React.FC<{
         )}
 
         {searchedMessages.map((message) => (
-          <NormalMessage
+          <div
             key={message._id}
-            showAvatar={true}
-            payload={message}
-            hideAction={true}
-          />
+            className="cursor-pointer"
+            onClick={() => handleLoadNearby(message._id)}
+          >
+            <NormalMessage
+              showAvatar={true}
+              isMergedPrev={false}
+              isMergedNext={false}
+              payload={message}
+              isGroup={Boolean(groupId)}
+              groupId={groupId}
+              panelId={converseId}
+              hideAction={true}
+            />
+          </div>
         ))}
+
+        {(nearbyMessages as ChatMessage[]).length > 0 && (
+          <div className="mt-4 rounded-2xl border border-black/5 dark:border-white/10 bg-white/80 dark:bg-[#232323] p-2">
+            <div className="px-2 pb-2 text-xs text-gray-400">
+              {nearbyLoading ? t('加载上下文中') : t('消息上下文')}
+            </div>
+            <MessageHighlightContainer messageId={focusedMessageId ?? ''}>
+              {(nearbyMessages as ChatMessage[]).map((message, index, arr) =>
+                buildMessageItemRow(arr, index, Boolean(groupId), groupId, converseId)
+              )}
+            </MessageHighlightContainer>
+          </div>
+        )}
       </div>
     </div>
   );

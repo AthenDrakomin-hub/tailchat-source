@@ -82,7 +82,13 @@ export const VirtualizedMessageList: React.FC<MessageListProps> = React.memo(
     const itemContent = useMemoizedFn((virtuosoIndex: number) => {
       const index = virtuosoIndex + numItemsPrepended - PREPEND_OFFSET;
 
-      return buildMessageItemRow(props.messages, index, props.isGroup);
+      return buildMessageItemRow(
+        props.messages,
+        index,
+        props.isGroup,
+        props.groupId,
+        props.panelId
+      );
     });
 
     const [showScrollToBottom, setShowScrollToBottom] = useState(false);

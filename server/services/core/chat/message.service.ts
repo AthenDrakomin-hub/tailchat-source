@@ -19,6 +19,11 @@ import {
 import type { Group } from '../../../models/group/group';
 import { isValidStr } from '../../../lib/utils';
 import _ from 'lodash';
+import { createGroupSpeakRateLimiter } from './utils/groupSpeakRateLimit';
+import {
+  assertSpeakRuleAllowed,
+  getMostStrictSpeakRule,
+} from './utils/groupSpeakPolicy';
 
 interface MessageService
   extends TcService,
@@ -208,6 +213,56 @@ class MessageService extends TcService {
         if (new Date(member.muteUntil).valueOf() > new Date().valueOf()) {
           throw new Error(t('您因为被禁言无法发送消息'));
         }
+      }
+
+      const panelInfo = groupInfo.panels.find((p) => String(p.id) === converseId);
+      const speakPolicy = panelInfo?.meta?.speakPolicy;
+      if (panelInfo && speakPolicy?.enabled === true) {
+        const userInfo = await call(ctx).getUserInfo(userId);
+        const isBotUser =
+          userInfo?.type === 'openapiBot' || userInfo?.type === 'pluginBot';
+        const matchedRules = (member?.roles ?? [])
+          .map((roleId) => speakPolicy.roleRules?.[roleId])
+          .filter(Boolean);
+        const effectiveRule = isBotUser
+          ? speakPolicy.botRule ?? speakPolicy.defaultRule
+          : getMostStrictSpeakRule(matchedRules, speakPolicy.defaultRule);
+
+        assertSpeakRuleAllowed(effectiveRule, content, meta as any, {
+          noText: t('当前面板不允许发送文字消息'),
+          noRich: t('当前面板不允许发送富媒体消息'),
+        });
+
+        const limiter = createGroupSpeakRateLimiter({
+          get: async (key) => {
+            if (!this.broker.cacher) {
+              return undefined;
+            }
+            const value = await this.broker.cacher.get(key);
+            return typeof value === 'string' ? value : undefined;
+          },
+          set: async (key, value, ttlSeconds) => {
+            if (!this.broker.cacher) {
+              return;
+            }
+            await this.broker.cacher.set(key, value, ttlSeconds);
+          },
+        });
+
+        await limiter.assertWithinRateLimit({
+          groupId,
+          panelId: panelInfo.id,
+          userId,
+          rule: effectiveRule,
+          plain: plain ?? content,
+        });
+        await limiter.assertDuplicateWindow({
+          groupId,
+          panelId: panelInfo.id,
+          userId,
+          plain: plain ?? content,
+          floodControl: speakPolicy.floodControl,
+        });
       }
     }
 

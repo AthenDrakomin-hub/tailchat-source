@@ -35,7 +35,13 @@ export const VirtualizedMessageList: React.FC<MessageListProps> = React.memo(
     // });
 
     const itemContent = useMemoizedFn((item: ChatMessage, index: number) => {
-      return buildMessageItemRow(props.messages, index, props.isGroup);
+      return buildMessageItemRow(
+        props.messages,
+        index,
+        props.isGroup,
+        props.groupId,
+        props.panelId
+      );
     });
 
     const getItemKey = useCallback((item: ChatMessage) => {

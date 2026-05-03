@@ -6,10 +6,25 @@ import {
   GroupInfo as IGroupInfo,
   GroupBasicInfo,
   GroupInvite,
+  GroupPanelSpeakPolicy,
+  GroupPanelSpeakRule,
+  GroupPanelFloodControlRule,
+  GroupPanelReadabilityRule,
+  GroupPanelRoleStyle,
 } from 'tailchat-types';
 
 export { GroupPanelType };
-export type { GroupPanel, GroupRole, GroupBasicInfo, GroupInvite };
+export type {
+  GroupPanel,
+  GroupRole,
+  GroupBasicInfo,
+  GroupInvite,
+  GroupPanelSpeakPolicy,
+  GroupPanelSpeakRule,
+  GroupPanelFloodControlRule,
+  GroupPanelReadabilityRule,
+  GroupPanelRoleStyle,
+};
 
 export const groupConfigNames = [
   // 隐藏群组成员标识位
@@ -317,6 +332,8 @@ export async function createGroupPanel(
     provider?: string;
     pluginPanelName?: string;
     meta?: Record<string, unknown>;
+    permissionMap?: Record<string, string[]>;
+    fallbackPermissions?: string[];
   }
 ) {
   await request.post('/api/group/createGroupPanel', {

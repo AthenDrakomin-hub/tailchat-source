@@ -39,6 +39,44 @@ export interface GroupMember {
   muteUntil?: string;
 }
 
+export interface GroupPanelSpeakRule {
+  allowText?: boolean;
+  allowRichContent?: boolean;
+  rateLimitWindowSec?: number;
+  rateLimitCount?: number;
+}
+
+export interface GroupPanelFloodControlRule {
+  enabled?: boolean;
+  duplicateWindowSec?: number;
+  duplicateLimit?: number;
+}
+
+export interface GroupPanelRoleStyle {
+  nicknameColor?: string;
+  avatarRingColor?: string;
+  sideAccentColor?: string;
+}
+
+export interface GroupPanelReadabilityRule {
+  roleStyleMode?:
+    | 'none'
+    | 'nickname'
+    | 'avatar-ring'
+    | 'side-accent'
+    | 'combined';
+  roleStyleMap?: Record<string, GroupPanelRoleStyle>;
+}
+
+export interface GroupPanelSpeakPolicy {
+  enabled?: boolean;
+  defaultRule?: GroupPanelSpeakRule;
+  roleRules?: Record<string, GroupPanelSpeakRule>;
+  botRule?: GroupPanelSpeakRule;
+  floodControl?: GroupPanelFloodControlRule;
+  readability?: GroupPanelReadabilityRule;
+}
+
 export enum GroupPanelType {
   TEXT = 0,
   GROUP = 1,
@@ -64,7 +102,9 @@ export interface GroupPanel {
   /**
    * 面板的其他数据
    */
-  meta?: Record<string, any>;
+  meta?: Record<string, any> & {
+    speakPolicy?: GroupPanelSpeakPolicy;
+  };
 
   /**
    * 身份组或者用户的权限

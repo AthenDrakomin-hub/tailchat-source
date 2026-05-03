@@ -19,11 +19,20 @@ export const MessageHighlightContainer: React.FC<Props> = React.memo(
       const style = document.createElement('style');
       style.innerHTML = `
 .${className} [data-message-id="${props.messageId}"] {
-  background: #e0e7ff !important;
+  background: linear-gradient(90deg, rgba(250, 204, 21, 0.22), rgba(250, 204, 21, 0.08)) !important;
+  box-shadow: inset 3px 0 0 #f59e0b;
+  animation: tc-message-highlight-pulse 1.2s ease-in-out 2;
 }
 
 .dark .${className} [data-message-id="${props.messageId}"] {
-  background: rgba(0, 0, 0, 0.15) !important;
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.16), rgba(245, 158, 11, 0.05)) !important;
+  box-shadow: inset 3px 0 0 rgba(245, 158, 11, 0.9);
+}
+
+@keyframes tc-message-highlight-pulse {
+  0% { transform: translateZ(0); }
+  50% { filter: brightness(1.03); }
+  100% { transform: translateZ(0); }
 }
       `;
       style.setAttribute('highlight-message-id', props.messageId);

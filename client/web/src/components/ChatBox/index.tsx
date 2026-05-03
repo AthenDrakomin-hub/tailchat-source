@@ -75,6 +75,8 @@ const ChatBoxInner: React.FC<ChatBoxProps> = React.memo((props) => {
           key={converseId}
           title={converseTitle}
           isGroup={props.isGroup}
+          groupId={props.groupId}
+          panelId={props.converseId}
           messages={messages}
           isLoadingMore={isLoadingMore}
           hasMoreMessage={hasMoreMessage}
