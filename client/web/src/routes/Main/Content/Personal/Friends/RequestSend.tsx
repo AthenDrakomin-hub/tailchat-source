@@ -33,22 +33,22 @@ export const RequestSend: React.FC<{
         {props.requests.map(({ _id, to }, index) => {
           const userInfo = userInfos[index];
           return (
-          <UserListItem
-            key={to}
-            userId={to}
-            popover={userInfo ? <UserPopover userInfo={userInfo} /> : undefined}
-            actions={[
-              <Tooltip key="cancel" title={t('取消')}>
-                <div>
-                  <IconBtn
-                    icon="mdi:close"
-                    disabled={loading}
-                    onClick={() => handleCancel(_id)}
-                  />
-                </div>
-              </Tooltip>,
-            ]}
-          />
+            <UserListItem
+              key={to}
+              userId={to}
+              popover={userInfo ? <UserPopover userInfo={userInfo} /> : undefined}
+              actions={[
+                <Tooltip key="cancel" title={t('取消')}>
+                  <div>
+                    <IconBtn
+                      icon="mdi:close"
+                      disabled={loading}
+                      onClick={() => handleCancel(_id)}
+                    />
+                  </div>
+                </Tooltip>,
+              ]}
+            />
           );
         })}
       </div>

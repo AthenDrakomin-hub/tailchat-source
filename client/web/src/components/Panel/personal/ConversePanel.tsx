@@ -22,7 +22,7 @@ import { MessageSearchPanel } from '../common/MessageSearch';
 import { ChatInputMentionsContextProvider } from '@/components/ChatBox/ChatInputBox/context';
 import { getPanelPersonalChatPath } from '@/utils/personal-route';
 import { useNavigate } from 'react-router';
-import { UserPopover } from '@/components/popover/UserPopover';
+import { ProfilePanel } from './ProfilePanel';
 
 const ConversePanelTitle: React.FC<{ converse: ChatConverseState }> =
   React.memo(({ converse }) => {
@@ -125,11 +125,7 @@ export const ConversePanel: React.FC<ConversePanelProps> = React.memo(
 
                   setRightPanel({
                     name: t('联系人资料'),
-                    panel: (
-                      <div className="p-3">
-                        <UserPopover userInfo={targetUser} />
-                      </div>
-                    ),
+                    panel: <ProfilePanel userInfo={targetUser} />,
                   });
                 }}
               />

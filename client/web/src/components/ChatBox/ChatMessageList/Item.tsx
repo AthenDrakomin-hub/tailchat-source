@@ -175,7 +175,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
             >
               <div
                 className={clsx(
-                  'chat-message-item_body min-w-0 leading-6 break-words overflow-x-hidden px-3.5 py-2.5 max-w-[820px]',
+                  'chat-message-item_body min-w-0 leading-6 break-words overflow-x-hidden px-3.5 py-2.5 max-w-[72%] mobile:max-w-[82%]',
                   isSelf
                     ? 'bg-[#95ec69] text-[#111827]'
                     : 'bg-white text-[#111827] border border-black/5 dark:bg-[#2b2b2b] dark:text-[#f3f4f6] dark:border-white/10',
