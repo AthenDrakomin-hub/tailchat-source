@@ -68,7 +68,7 @@ const DEFAULT_CARDS: BeidouStarCardConfig[] = [
   {
     id: 'class-9',
     name: '李班长',
-    title: '第九届财富交流学习班长',
+    title: '第九届学习班长',
     bio: '带领第九届学员深入探讨逆向投资策略，组织实地调研，用脚底板丈量企业护城河。',
     tags: ['第九届', '实地调研', '学习标兵'],
     verifiedText: '认证档案',
@@ -77,7 +77,7 @@ const DEFAULT_CARDS: BeidouStarCardConfig[] = [
   {
     id: 'class-8',
     name: '赵班长',
-    title: '第八届财富交流学习班长',
+    title: '第八届学习班长',
     bio: '第八届学习会核心组织者，专注“高分红与现金流”课题，协助成员建立稳健的组合结构。',
     tags: ['第八届', '课题研讨', '现金流'],
     verifiedText: '认证档案',
@@ -86,7 +86,7 @@ const DEFAULT_CARDS: BeidouStarCardConfig[] = [
   {
     id: 'class-5',
     name: '陈班长',
-    title: '第五届财富交流学习班长',
+    title: '第五届学习班长',
     bio: '第五届老学员领袖，常年组织内部读书会，深谙“去人少的地方”这一核心投资哲学。',
     tags: ['第五届', '读书会', '逆向思维'],
     verifiedText: '认证档案',
@@ -95,7 +95,7 @@ const DEFAULT_CARDS: BeidouStarCardConfig[] = [
   {
     id: 'class-3',
     name: '林班长',
-    title: '第三届财富交流学习班长',
+    title: '第三届学习班长',
     bio: '日斗投资早期追随者与第三届班长，见证了长期主义的力量，擅长分享周期穿越经验。',
     tags: ['第三届', '早期成员', '穿越周期'],
     verifiedText: '认证档案',

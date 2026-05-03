@@ -18,14 +18,14 @@ export const FeedComposer: React.FC<FeedComposerProps> = React.memo(
         </div>
         <textarea
           className="mt-3 min-h-[112px] w-full resize-none rounded-2xl border border-black/10 dark:border-white/10 bg-transparent px-4 py-3 text-sm outline-none"
-          placeholder="分享今天的市场观察或活动预告"
+          placeholder="分享今天的想法、观察或公开动态"
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
 
         <div className="mt-3 flex items-center justify-between">
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {groupId ? '这条动态将关联当前群组' : '这条动态将发布到财富论坛动态流'}
+            {groupId ? '这条动态将关联当前群组' : '这条动态将发布到公开动态流'}
           </div>
           <button
             type="button"

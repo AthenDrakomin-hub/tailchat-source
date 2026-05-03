@@ -15,10 +15,10 @@ export const FeedSidebar: React.FC = React.memo(() => {
       <div className="p-3 space-y-3 overflow-y-auto overflow-x-hidden">
         <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-black/[0.03] dark:bg-white/[0.03] px-4 py-3">
           <div className="text-sm font-semibold text-gray-900 dark:text-white">
-            财富论坛动态
+            社区动态
           </div>
           <div className="mt-2 text-xs leading-6 text-gray-600 dark:text-gray-300">
-            发布观点、活动预告、学习摘要和公开交流内容，让聊天、群组与内容场形成联动。
+            发布观点、近况、摘要和公开交流内容，让聊天、群组与内容场形成联动。
           </div>
         </div>
 
@@ -36,7 +36,7 @@ export const FeedSidebar: React.FC = React.memo(() => {
             主场联动
           </div>
           <div className="mt-2 text-xs leading-6 text-gray-600 dark:text-gray-300">
-            先在动态做内容预热，再回到群组承接讨论；也可以从群组回看关联动态，形成完整运营链路。
+            可以先在动态里发布内容，再回到群组承接讨论；也可以从群组回看关联动态，形成完整交流链路。
           </div>
         </div>
       </div>

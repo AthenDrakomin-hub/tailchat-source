@@ -44,7 +44,7 @@ function App() {
   return (
     <Tushan
       basename="/admin"
-      header={'日斗投资财富交流会 Admin'}
+      header={'財訊 Admin'}
       footer={'Build with Ridou'}
       dashboard={<Dashboard />}
       dataProvider={dataProvider}

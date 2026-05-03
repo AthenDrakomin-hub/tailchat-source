@@ -35,7 +35,7 @@ export const UserFeedPage: React.FC = React.memo(() => {
             {user.nickname ?? '成员'}的动态
           </div>
           <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            查看该成员公开发布的财富论坛动态内容。
+            查看该成员公开发布的动态内容。
           </div>
         </div>
 

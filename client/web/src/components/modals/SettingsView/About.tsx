@@ -53,10 +53,10 @@ export const SettingsAbout: React.FC = React.memo(() => {
 
       <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.04] px-5 py-5 mb-4">
         <div className="font-bold text-base text-gray-900 dark:text-white">
-          Web 试运营帮助
+          使用帮助
         </div>
         <div className="mt-3 text-sm leading-7 text-gray-600 dark:text-gray-300">
-          当前 Web 端已作为试运营主入口使用。建议先验证动态、群组与私信三条主链路；若遇到登录、聊天或群组异常，先回到“状态”页查看服务健康度，再决定是否继续。
+          建议先熟悉动态、群组与私信三条主链路；若遇到登录、聊天或群组异常，先回到“状态”页查看服务健康度，再决定下一步操作。
         </div>
         <div className="mt-4 flex flex-wrap gap-3 text-xs">
           <a

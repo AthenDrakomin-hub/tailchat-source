@@ -88,7 +88,7 @@ export const SettingsStatus: React.FC = React.memo(() => {
     <div>
       <div className="mb-4 rounded-3xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.04] px-5 py-5">
         <div className="text-lg font-bold text-gray-900 dark:text-white">
-          Web 试运营状态中心
+          服务状态中心
         </div>
         <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
           <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4">

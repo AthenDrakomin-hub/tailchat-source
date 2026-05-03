@@ -40,12 +40,12 @@ export const Entry: React.FC = React.memo(() => {
       <ScrollView style={styles.main}>
         <View style={styles.hero}>
           <Text style={styles.kicker}>財訊移动客户端</Text>
-          <Text style={styles.title}>先选择工作区，再开始移动端内测体验</Text>
+          <Text style={styles.title}>先选择工作区，再开始移动端体验</Text>
           <Text style={styles.description}>
             推荐优先使用默认工作区开始体验，进入后通过底部菜单查看消息、通讯录、发现和我的页面。
           </Text>
           <View style={styles.tipRow}>
-            <Text style={styles.tip}>移动端内测</Text>
+            <Text style={styles.tip}>移动端入口</Text>
             <Text style={styles.tip}>支持添加自定义服务器</Text>
             <Text style={styles.tip}>底部菜单结构</Text>
           </View>
@@ -103,10 +103,10 @@ export const Entry: React.FC = React.memo(() => {
           <View style={styles.supportPanel}>
             <Text style={styles.supportTitle}>移动端使用建议</Text>
             <Text style={styles.supportDesc}>
-              移动端建议作为 Web 的补充验证端使用。推荐顺序是：先在 Web 完成主链路，再回到移动端验证窄屏浏览、底部菜单切换、刷新与恢复体验。
+              推荐先在消息、通讯录、发现之间切换，确认窄屏浏览、底部菜单切换、刷新与恢复体验是否顺畅。
             </Text>
             <View style={styles.supportCard}>
-              <Text style={styles.supportCardTitle}>推荐验证项</Text>
+              <Text style={styles.supportCardTitle}>建议查看项</Text>
               <Text style={styles.supportCardText}>1. 底部菜单切换是否顺畅</Text>
               <Text style={styles.supportCardText}>2. 动态浏览与详情滚动是否顺畅</Text>
               <Text style={styles.supportCardText}>3. 刷新、重试与恢复反馈是否明确</Text>

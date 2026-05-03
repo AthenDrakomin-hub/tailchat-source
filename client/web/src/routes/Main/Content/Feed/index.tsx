@@ -50,16 +50,16 @@ const FeedHome: React.FC = React.memo(() => {
             {heading}
           </div>
           <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            面向财富论坛的公开内容流，用于观点发布、活动预热和群组联动。
+            面向社区的公开内容流，用于观点发布、信息同步和群组联动。
           </div>
           <details className="mt-4 rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-4 py-3 shadow-sm">
             <summary className="cursor-pointer text-sm font-semibold text-gray-900 dark:text-white">
               查看动态使用建议
             </summary>
             <div className="mt-3 space-y-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
-              <div>1. 先看公共动态，快速判断今天有哪些话题、活动和可承接的群讨论。</div>
-              <div>2. 再发布你的观点，也可以围绕活动主题或关联群继续承接讨论。</div>
-              <div>3. 打开动态详情查看关联群状态，再决定是否进入群组参与实时交流。</div>
+              <div>1. 先看公共动态，快速了解最近的话题和公开交流内容。</div>
+              <div>2. 再发布你的观点，也可以围绕相关群组继续承接讨论。</div>
+              <div>3. 打开动态详情查看关联群状态，再决定是否进入群组参与交流。</div>
             </div>
           </details>
           {!groupId && (

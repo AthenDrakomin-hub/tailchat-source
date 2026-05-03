@@ -129,8 +129,8 @@ export const zhTranslation = {
       newUserCount: '用户新增',
       messageCount: '消息数',
       tip: {
-        github: '日斗投资财富交流会是您专属的内部交流平台',
-        tushan: '财富中心后台',
+        github: '財訊是您专属的内部交流平台',
+        tushan: '管理后台',
       },
     },
     file: {

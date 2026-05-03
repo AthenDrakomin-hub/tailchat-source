@@ -31,7 +31,7 @@ export const FeedCard: React.FC<FeedCardProps> = React.memo(({ post, onRemoved }
               {author.nickname ?? '财讯成员'}
             </Link>
             <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              财富论坛动态
+              社区动态
             </div>
             <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
               {new Date(post.createdAt).toLocaleString('zh-CN')}

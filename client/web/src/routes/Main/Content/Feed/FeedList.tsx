@@ -10,7 +10,7 @@ interface FeedListProps {
 
 export const FeedList: React.FC<FeedListProps> = React.memo(({ posts, onRemoved }) => {
   if (posts.length === 0) {
-    return <Problem text={t('还没有动态，发布第一条市场观察或活动预告吧')} />;
+    return <Problem text={t('还没有动态，发布第一条内容吧')} />;
   }
 
   return (

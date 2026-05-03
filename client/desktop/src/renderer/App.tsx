@@ -99,7 +99,7 @@ const Hello: React.FC = React.memo(() => {
         <summary className="section-title">查看桌面端使用建议</summary>
         <div className="support-grid">
           <div className="support-card">
-            <div className="support-card__title">推荐体验顺序</div>
+            <div className="support-card__title">使用建议</div>
             <div className="support-card__desc">
               建议先用 Web 完成动态、群组和私信主链路，再回到桌面端验证长时间常驻、工作区切换和恢复链路。
             </div>

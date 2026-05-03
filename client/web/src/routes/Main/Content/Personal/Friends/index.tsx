@@ -32,11 +32,11 @@ export const FriendPanel: React.FC = React.memo(() => {
       <div className="px-4 pt-4">
         <details className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-4 shadow-sm">
           <summary className="cursor-pointer text-sm font-semibold text-gray-900 dark:text-white">
-            查看联系人与试运营建议
+            查看联系人使用建议
           </summary>
           <div className="mt-3 space-y-2 text-sm leading-7 text-gray-500 dark:text-gray-400">
             <div>联系人是私信与长期协作的起点，建议先整理联系人关系，再进入最近聊天持续沟通。</div>
-            <div>如果你正在参与 Web 端试运营，建议按“动态、群组、私信”顺序体验主链路。</div>
+            <div>建议按“动态、群组、私信”顺序体验主链路，便于更快熟悉内容、讨论和一对一沟通场景。</div>
           </div>
           <div className="mt-4 flex flex-wrap gap-3 text-xs">
             <Link to="/main/feed" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 no-underline text-gray-600 dark:text-gray-300">
