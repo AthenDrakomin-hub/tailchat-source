@@ -73,7 +73,7 @@ export const NormalMessageList: React.FC<MessageListProps> = React.memo(
       >
         <div>
           {props.messages.map((message, index, arr) =>
-            buildMessageItemRow(arr, index)
+            buildMessageItemRow(arr, index, props.isGroup)
           )}
         </div>
 

@@ -128,6 +128,14 @@ export const FriendList: React.FC<{
                     />
                   </div>
                 </Tooltip>,
+                <Tooltip key="feed" title={t('查看动态')}>
+                  <div>
+                    <IconBtn
+                      icon="mdi:post-outline"
+                      onClick={() => navigate(`/main/feed/user/${item._id}`)}
+                    />
+                  </div>
+                </Tooltip>,
                 <div key="more">
                   <Dropdown
                     menu={{

@@ -28,17 +28,11 @@ const ConversePanelTitle: React.FC<{ converse: ChatConverseState }> =
 
     return (
       <div className="min-w-0">
-        <div className="truncate">{t('与 {{name}} 的聊天', { name })}</div>
-        <div className="mt-2 flex items-center gap-2 overflow-hidden">
-          <span className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-2 py-0.5 text-[10px] leading-4 text-gray-500 dark:text-gray-300">
-            私密会话
-          </span>
-          <span className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-2 py-0.5 text-[10px] leading-4 text-gray-500 dark:text-gray-300">
-            长期跟进
-          </span>
+        <div className="truncate text-[15px] font-semibold text-[#111827] dark:text-white">
+          {name}
         </div>
         <div className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400 truncate">
-          适合处理一对一跟进、观点确认、资料交换与长期协作沟通
+          {t('私聊')}
         </div>
       </div>
     );

@@ -28,6 +28,7 @@ import { MessageAckContainer } from './MessageAckContainer';
 import { UserPopover } from '@/components/popover/UserPopover';
 import _isEmpty from 'lodash/isEmpty';
 import type { LocalChatMessage } from 'tailchat-shared/model/message';
+import { getChatMessageLayout } from './layout';
 import './Item.less';
 
 /**
@@ -65,10 +66,11 @@ const MessageActionIcon: React.FC<{ icon: string }> = (props) => (
  */
 export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
   (props) => {
-    const { showAvatar, payload, hideAction = false } = props;
+    const { showAvatar, payload, hideAction = false, isGroup } = props;
     const userInfo = useCachedUserInfo(payload.author ?? '');
     const currentUser = useUserInfo();
     const isSelf = payload.author === currentUser?._id;
+    const layout = getChatMessageLayout({ isGroup, isSelf });
     const [isActionBtnActive, setIsActionBtnActive] = useState(false);
     const { settings } = useUserSettings();
 
@@ -94,12 +96,22 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
           {
             'bg-black bg-opacity-5 dark:bg-white/5': isActionBtnActive,
             'hover:bg-black hover:bg-opacity-[0.02] dark:hover:bg-white/5': !isActionBtnActive,
+            'justify-end': layout.rowAlign === 'right',
+            'justify-start': layout.rowAlign === 'left',
           }
         )}
         data-message-id={payload._id}
       >
         {/* 头像 */}
-        <div className="w-14 mobile:w-12 flex-shrink-0 flex items-start justify-center pt-0.5">
+        <div
+          className={clsx(
+            'w-14 mobile:w-12 flex-shrink-0 flex items-start justify-center pt-0.5',
+            {
+              'order-2': layout.rowAlign === 'right',
+              'order-1': layout.rowAlign === 'left',
+            }
+          )}
+        >
           {showAvatar ? (
             <Popover
               content={
@@ -133,10 +145,13 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
           onOpenChange={setIsActionBtnActive}
         >
           <div
-            className="flex min-w-0 flex-col flex-1 overflow-hidden group"
+            className={clsx('flex min-w-0 flex-col flex-1 overflow-hidden group', {
+              'items-end order-1': layout.rowAlign === 'right',
+              'items-start order-2': layout.rowAlign === 'left',
+            })}
             onContextMenu={stopPropagation}
           >
-            {showAvatar && (
+            {showAvatar && layout.showNickname && (
               <div className="flex min-w-0 items-center">
                 <div className="font-bold truncate">
                   {userInfo.nickname || <span>&nbsp;</span>}
@@ -164,6 +179,10 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                     ? 'bg-[#95ec69] text-[#111827]'
                     : 'bg-white text-[#111827] border border-black/5 dark:bg-[#2b2b2b] dark:text-[#f3f4f6] dark:border-white/10'
                 )}
+                style={{
+                  alignSelf:
+                    layout.bubbleAlign === 'right' ? 'flex-end' : 'flex-start',
+                }}
               >
                 <MessageQuote payload={payload} />
 
@@ -204,6 +223,8 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                 'opacity-0 group-hover:opacity-100 bg-opacity-80 hover:bg-opacity-100':
                   !isActionBtnActive,
                 'opacity-100 bg-opacity-100': isActionBtnActive,
+                'right-2': layout.rowAlign === 'left',
+                'left-16 mobile:left-12 right-auto': layout.rowAlign === 'right',
               }
             )}
           >
@@ -274,6 +295,7 @@ SystemMessageWithNickname.displayName = 'SystemMessageWithNickname';
 interface ChatMessageItemProps {
   showAvatar: boolean;
   payload: LocalChatMessage;
+  isGroup: boolean;
   hideAction?: boolean;
 }
 const ChatMessageItem: React.FC<ChatMessageItemProps> = React.memo((props) => {
@@ -307,7 +329,8 @@ ChatMessageItem.displayName = 'ChatMessageItem';
  */
 export function buildMessageItemRow(
   messages: LocalChatMessage[],
-  index: number
+  index: number,
+  isGroup: boolean
 ) {
   const message = messages[index];
 
@@ -351,14 +374,22 @@ export function buildMessageItemRow(
 
       {message.isLocal === true ? (
         <div className="opacity-50">
-          <ChatMessageItem showAvatar={showAvatar} payload={message} />
+          <ChatMessageItem
+            showAvatar={showAvatar}
+            payload={message}
+            isGroup={isGroup}
+          />
         </div>
       ) : (
         <MessageAckContainer
           converseId={message.converseId}
           messageId={message._id}
         >
-          <ChatMessageItem showAvatar={showAvatar} payload={message} />
+          <ChatMessageItem
+            showAvatar={showAvatar}
+            payload={message}
+            isGroup={isGroup}
+          />
         </MessageAckContainer>
       )}
     </div>
