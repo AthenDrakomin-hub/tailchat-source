@@ -35,9 +35,9 @@ const SidebarViewMenuItemTitle: React.FC<
 > = (props) => (
   <div
     className={clsx(
-      'rounded-sm px-1.5 py-2.5 mb-1 text-gray-700 dark:text-gray-300 cursor-pointer  hover:bg-black hover:bg-opacity-10 hover:text-gray-800 dark:hover:text-gray-200',
+      'rounded-2xl px-3 py-2.5 mb-1 text-gray-700 dark:text-gray-300 cursor-pointer hover:bg-white hover:text-gray-800 dark:hover:text-gray-200 transition-colors',
       {
-        'bg-black bg-opacity-10 text-gray-900 dark:text-white': props.active,
+        'bg-white text-gray-900 dark:text-white shadow-[0_4px_14px_rgba(15,23,42,0.06)]': props.active,
         'text-red-500': props.isDanger,
       }
     )}
@@ -81,8 +81,8 @@ const SidebarViewMenuItem: React.FC<SidebarViewMenuProps> = React.memo(
 
     if (menu.type === 'group') {
       return (
-        <div className="pb-2.5 mb-2.5 border-b last:border-0">
-          <div className="px-1.5 py-2.5 pt-0 text-xs font-bold uppercase">
+        <div className="pb-2.5 mb-2.5 border-b border-black/5 last:border-0">
+          <div className="px-2 py-2 pt-0 text-[11px] font-semibold uppercase text-gray-500 tracking-wide">
             {menu.title}
           </div>
           <div>
@@ -148,7 +148,7 @@ export const SidebarView: React.FC<SidebarViewProps> = React.memo((props) => {
     <SidebarViewContext.Provider value={{ content, setContent }}>
       <div className="flex w-full h-full mobile:flex-col mobile:overflow-auto">
         <div
-          className="bg-black bg-opacity-10 flex flex-col justify-start items-end py-20 px-2.5 mobile:items-start mobile:py-10 text-sm"
+          className="bg-[#ededed] flex flex-col justify-start items-end py-16 px-3 mobile:items-start mobile:py-10 text-sm border-r border-black/5"
           style={{ flex: '1 0 218px' }}
         >
           {menu.map((item, i) => (
@@ -157,7 +157,7 @@ export const SidebarView: React.FC<SidebarViewProps> = React.memo((props) => {
         </div>
 
         <div
-          className="pt-24 pb-20 px-10 mobile:pt-10 mobile:px-2 desktop:overflow-auto"
+          className="pt-20 pb-20 px-10 mobile:pt-10 mobile:px-2 desktop:overflow-auto bg-[#f5f5f5]"
           style={{ flex: '1 1 800px' }}
         >
           {content}

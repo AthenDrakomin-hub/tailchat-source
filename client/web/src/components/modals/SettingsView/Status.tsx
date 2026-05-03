@@ -86,24 +86,24 @@ export const SettingsStatus: React.FC = React.memo(() => {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-5">
-        <div className="text-lg font-bold text-gray-900 dark:text-white">
+      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white px-5 py-5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+        <div className="text-lg font-semibold text-gray-900 dark:text-white">
           服务状态中心
         </div>
         <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
-          <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4">
+          <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
             <div className="text-xs text-gray-500 dark:text-gray-400">整体状态</div>
             <div className="mt-2 text-base font-semibold text-gray-900 dark:text-white">
               {healthLevel}
             </div>
           </div>
-          <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4">
+          <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
             <div className="text-xs text-gray-500 dark:text-gray-400">可用服务</div>
             <div className="mt-2 text-base font-semibold text-gray-900 dark:text-white">
               {availableCount ?? 0} / {totalCount}
             </div>
           </div>
-          <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4">
+          <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
             <div className="text-xs text-gray-500 dark:text-gray-400">建议动作</div>
             <div className="mt-2 text-sm font-semibold text-gray-900 dark:text-white">
               {healthLevel === '健康'
@@ -115,17 +115,17 @@ export const SettingsStatus: React.FC = React.memo(() => {
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-3 text-xs">
-          <a href="/entry/about" target="_blank" rel="noreferrer" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
+          <a href="/entry/about" target="_blank" rel="noreferrer" className="rounded-full bg-[#f2f2f2] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
             查看关于我们
           </a>
-          <a href="/entry/trust" target="_blank" rel="noreferrer" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
+          <a href="/entry/trust" target="_blank" rel="noreferrer" className="rounded-full bg-[#f2f2f2] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
             查看安全与合规
           </a>
-          <a href="/downloads" target="_blank" rel="noreferrer" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
+          <a href="/downloads" target="_blank" rel="noreferrer" className="rounded-full bg-[#f2f2f2] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
             查看客户端下载说明
           </a>
         </div>
-        <details className="mt-4 rounded-2xl bg-white/80 dark:bg-white/5 px-4 py-3">
+        <details className="mt-4 rounded-2xl bg-[#f8f8f8] dark:bg-white/5 px-4 py-3">
           <summary className="cursor-pointer text-sm font-semibold text-gray-900 dark:text-white">
             查看状态页使用建议
           </summary>
@@ -136,9 +136,9 @@ export const SettingsStatus: React.FC = React.memo(() => {
           </div>
         </details>
       </div>
-      <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-5">
+      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white px-5 py-5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-base font-bold text-gray-900 dark:text-white">
+          <div className="text-base font-semibold text-gray-900 dark:text-white">
             服务明细
           </div>
           <Button type="primary" loading={loading} onClick={refetch}>
@@ -150,7 +150,7 @@ export const SettingsStatus: React.FC = React.memo(() => {
             {inspectServices.map((service) => (
               <div
                 key={service.name}
-                className="flex items-center justify-between rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-3"
+                className="flex items-center justify-between rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-3"
               >
                 <span className="text-sm text-gray-700 dark:text-gray-200">
                   {service.label}

@@ -54,9 +54,9 @@ export const PersonalSidebar: React.FC = React.memo(() => {
 
   return (
     <CommonSidebarWrapper data-tc-role="sidebar-personal">
-      <SectionHeader>{t('消息')}</SectionHeader>
+      <SectionHeader>{t('微信式会话')}</SectionHeader>
 
-      <div className="p-2 space-y-1 overflow-y-auto overflow-x-hidden">
+      <div className="p-0 overflow-y-auto overflow-x-hidden">
         <SidebarSection
           action={
             <Icon
@@ -73,7 +73,7 @@ export const PersonalSidebar: React.FC = React.memo(() => {
             return <SidebarDMItem key={converse._id} converse={converse} />;
           })
         ) : (
-          <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-3 py-3 text-xs leading-6 text-gray-500 dark:text-gray-400">
+          <div className="mx-4 mb-3 rounded-2xl bg-[#f0f0f0] dark:bg-white/[0.03] px-3 py-3 text-xs leading-6 text-gray-500 dark:text-gray-400">
             当前还没有最近聊天。你可以先从下方联系人开始，或点击右上角 `+` 新建私信会话。
           </div>
         )}

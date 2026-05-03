@@ -29,8 +29,8 @@ export const FriendPanel: React.FC = React.memo(() => {
 
   return (
     <div className="w-full h-full min-w-0">
-      <div className="px-4 pt-4">
-        <details className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-4 shadow-sm">
+      <div className="px-4 pt-4 bg-[#f5f5f5]">
+        <details className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white px-5 py-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
           <summary className="cursor-pointer text-sm font-semibold text-gray-900 dark:text-white">
             查看联系人使用建议
           </summary>
@@ -39,16 +39,16 @@ export const FriendPanel: React.FC = React.memo(() => {
             <div>建议按“动态、群组、私信”顺序体验主链路，便于更快熟悉内容、讨论和一对一沟通场景。</div>
           </div>
           <div className="mt-4 flex flex-wrap gap-3 text-xs">
-            <Link to="/main/feed" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 no-underline text-gray-600 dark:text-gray-300">
+            <Link to="/main/feed" className="rounded-full bg-[#f2f2f2] dark:bg-white/[0.08] px-3 py-1.5 no-underline text-gray-600 dark:text-gray-300">
               先看动态
             </Link>
-            <Link to="/main/group" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 no-underline text-gray-600 dark:text-gray-300">
+            <Link to="/main/group" className="rounded-full bg-[#f2f2f2] dark:bg-white/[0.08] px-3 py-1.5 no-underline text-gray-600 dark:text-gray-300">
               再进群组
             </Link>
-            <a href="/entry/trust" target="_blank" rel="noreferrer" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
+            <a href="/entry/trust" target="_blank" rel="noreferrer" className="rounded-full bg-[#f2f2f2] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
               查看安全与合规
             </a>
-            <a href="/downloads" target="_blank" rel="noreferrer" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
+            <a href="/downloads" target="_blank" rel="noreferrer" className="rounded-full bg-[#f2f2f2] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
               查看客户端下载说明
             </a>
           </div>

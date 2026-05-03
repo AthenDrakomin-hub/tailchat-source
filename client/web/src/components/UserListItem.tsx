@@ -18,14 +18,14 @@ export const UserListItem: React.FC<UserListItemProps> = React.memo((props) => {
   const userName = userInfo.nickname;
 
   return (
-    <div className="flex items-center h-14 px-2.5 rounded group bg-black bg-opacity-0 hover:bg-opacity-20 dark:bg-white dark:bg-opacity-0 dark:hover:bg-opacity-20">
+    <div className="flex items-center h-16 px-3.5 border-b border-black/5 rounded-none group bg-transparent hover:bg-white dark:bg-white dark:bg-opacity-0 dark:hover:bg-opacity-20">
       <Skeleton
         loading={_isEmpty(userInfo)}
         avatar={true}
         title={false}
         active={true}
       >
-        <div className="mr-2">
+        <div className="mr-3">
           {props.popover ? (
             <Popover content={props.popover} placement="left" trigger="click">
               <Avatar
@@ -39,7 +39,7 @@ export const UserListItem: React.FC<UserListItemProps> = React.memo((props) => {
             <Avatar src={userInfo.avatar} name={userName} isOnline={isOnline} />
           )}
         </div>
-        <div className="flex-1 text-gray-900 dark:text-white">
+        <div className="flex-1 text-gray-900 dark:text-white min-w-0">
           <UserName
             userId={props.userId}
             showDiscriminator={!hideDiscriminator}

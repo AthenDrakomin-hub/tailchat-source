@@ -89,8 +89,8 @@ export const SettingsAccount: React.FC = React.memo(() => {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 p-6">
-        <div className="text-lg font-bold text-gray-900 dark:text-white mb-5">
+      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white p-6 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+        <div className="text-lg font-semibold text-gray-900 dark:text-white mb-5">
           個人資料
         </div>
         <div className="flex flex-wrap">
@@ -156,8 +156,8 @@ export const SettingsAccount: React.FC = React.memo(() => {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 p-6">
-        <div className="text-lg font-bold text-gray-900 dark:text-white mb-5">
+      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white p-6 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+        <div className="text-lg font-semibold text-gray-900 dark:text-white mb-5">
           賬號與安全
         </div>
         <Button type="primary" onClick={handleUpdatePassword}>
@@ -165,8 +165,8 @@ export const SettingsAccount: React.FC = React.memo(() => {
         </Button>
       </div>
 
-      <div className="rounded-3xl border border-red-200 dark:border-red-900/40 bg-red-50/80 dark:bg-red-500/10 p-6">
-        <div className="text-lg font-bold text-red-600 dark:text-red-300 mb-5">
+      <div className="rounded-[24px] border border-red-200 dark:border-red-900/40 bg-red-50/80 dark:bg-red-500/10 p-6">
+        <div className="text-lg font-semibold text-red-600 dark:text-red-300 mb-5">
           賬號操作
         </div>
         <Button type="primary" danger={true} onClick={handleLogout}>

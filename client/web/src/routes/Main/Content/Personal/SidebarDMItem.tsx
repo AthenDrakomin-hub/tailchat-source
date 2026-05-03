@@ -79,7 +79,7 @@ export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
           <div className="min-w-0 flex items-center gap-2">
             <span className="truncate">{name}</span>
             {roleLabel && (
-              <span className="rounded-full bg-black/5 dark:bg-white/10 px-2 py-0.5 text-[10px] leading-4 text-gray-500 dark:text-gray-300">
+              <span className="rounded-full bg-[#e5e7eb] dark:bg-white/10 px-2 py-0.5 text-[10px] leading-4 text-gray-500 dark:text-gray-300">
                 {roleLabel}
               </span>
             )}
