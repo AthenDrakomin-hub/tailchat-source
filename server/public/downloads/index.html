@@ -230,8 +230,9 @@
           所有安装入口已统一收口到当前页面。系统会根据你当前设备自动推荐下载方式，并实时显示安装包是否可用。
         </div>
         <div class="quick-links">
-          <a class="quick-link" href="#mobile">Android 下载</a>
-          <a class="quick-link" href="#desktop">桌面端下载</a>
+          <a class="quick-link" href="#mobile">Android / iOS</a>
+          <a class="quick-link" href="#desktop">Windows / macOS</a>
+          <a class="quick-link" href="#more-platforms">更多平台</a>
           <a class="quick-link" href="#web">Web 入口</a>
         </div>
       </div>
@@ -252,7 +253,7 @@
             <div class="card-badge" data-recommend-badge="android">推荐当前设备</div>
           </div>
           <h3>Android App</h3>
-          <p>适合查看消息、联系人、发现与我的页面。当前已支持通过主站直接分发 APK 安装包。</p>
+          <p>适合查看消息、联系人、发现与我的页面。当前已支持通过主站直接分发 Android 安装包；iPhone 用户可先查看 iOS 入口状态。</p>
           <div class="download-list">
             <div class="download-item">
               <div class="download-title">
@@ -260,6 +261,13 @@
                 <a class="btn btn-primary" data-download-key="android" href="/downloads/client/caixun-android-release.apk">检测中…</a>
               </div>
               <div class="download-meta" data-download-meta="android">正在读取版本、大小与更新时间…</div>
+            </div>
+            <div class="download-item">
+              <div class="download-title">
+                <span>iOS / iPhone</span>
+                <span class="btn btn-secondary btn-disabled">即将推出</span>
+              </div>
+              <div class="download-meta">当前未提供 iOS 安装包，建议先使用 Web 版；后续可接入 TestFlight 或 App Store。</div>
             </div>
           </div>
         </section>
@@ -270,7 +278,7 @@
             <div class="card-badge" data-recommend-badge="desktop">推荐当前设备</div>
           </div>
           <h3>Desktop Client</h3>
-          <p>适合长期在线、群组讨论常驻、多会话并行与资料整理。Windows、macOS 与 Linux 安装包分别独立分发。</p>
+          <p>适合长期在线、群组讨论常驻、多会话并行与资料整理。当前主推 Windows 与 macOS，适合绝大多数桌面用户。</p>
           <div class="download-list">
             <div class="download-item">
               <div class="download-title">
@@ -293,6 +301,17 @@
               </div>
               <div class="download-meta" data-download-meta="darwin-arm64">正在读取版本、大小与更新时间…</div>
             </div>
+          </div>
+        </section>
+
+        <section class="card" id="more-platforms">
+          <div class="card-header">
+            <div class="status">其他平台</div>
+            <div class="card-badge" data-recommend-badge="linux">当前设备</div>
+          </div>
+          <h3>More Platforms</h3>
+          <p>Linux 客户端保留在下载中心中，但不作为主推平台。若你使用 Ubuntu、Debian 或其他 Linux 桌面发行版，可在这里获取安装包。</p>
+          <div class="download-list">
             <div class="download-item">
               <div class="download-title">
                 <span>Linux</span>
@@ -362,7 +381,7 @@
         }
 
         if (/iphone|ipad|ipod/.test(ua)) {
-          return { name: 'iPhone / iPad', recommendedKeys: [], badge: 'web', message: '当前未提供 iOS 安装包，建议先使用 Web 版。' };
+          return { name: 'iPhone / iPad', recommendedKeys: [], badge: 'web', message: '当前未提供 iOS 安装包，建议先使用 Web 版；后续可通过 TestFlight 或 App Store 提供下载。' };
         }
 
         if (platform.includes('win')) {
