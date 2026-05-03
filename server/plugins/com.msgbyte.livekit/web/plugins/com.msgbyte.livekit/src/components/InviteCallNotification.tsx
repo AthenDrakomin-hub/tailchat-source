@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Translate } from '../translate';
-import { IconBtn, UserNamePure } from '@capital/component';
+import { Button, UserNamePure } from '@capital/component';
 
 const Root = styled.div`
   padding: 1rem 1rem 0.875rem;
@@ -45,9 +45,11 @@ const InviteCallNotification: React.FC<InviteCallNotificationProps> =
           </b>{' '}
           {Translate.inviteJoinCall}
         </div>
-        <div className="tip">加入后可直接在当前应用内接听和继续聊天。</div>
+        <div className="tip">点击接听后可直接在当前应用内进入语音通话。</div>
         <div className="actions">
-          <IconBtn icon="mdi:phone-in-talk" onClick={props.onJoin} />
+          <Button type="primary" onClick={props.onJoin} icon="mdi:phone-in-talk">
+            接听
+          </Button>
         </div>
       </Root>
     );

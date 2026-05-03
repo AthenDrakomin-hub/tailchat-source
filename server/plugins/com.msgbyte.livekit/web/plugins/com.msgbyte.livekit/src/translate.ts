@@ -10,16 +10,16 @@ export const Translate = {
     'en-US': 'Voice Call',
   }),
   preJoinTitle: localTrans({
-    'zh-CN': '准备加入通话',
-    'en-US': 'Ready to join the call',
+    'zh-CN': '准备进入通话',
+    'en-US': 'Ready to enter the call',
   }),
   preJoinTip: localTrans({
-    'zh-CN': '确认昵称和麦克风后即可进入当前会话通话。',
-    'en-US': 'Confirm your name and microphone before joining this call.',
+    'zh-CN': '确认昵称和麦克风后即可进入当前语音通话。',
+    'en-US': 'Confirm your name and microphone before entering this voice call.',
   }),
   joinLabel: localTrans({
-    'zh-CN': '加入通话',
-    'en-US': 'Join Call',
+    'zh-CN': '进入通话',
+    'en-US': 'Enter Call',
   }),
   micLabel: localTrans({
     'zh-CN': '麦克风',
@@ -106,20 +106,20 @@ export const Translate = {
     'en-US': 'Current browser does not support DOM full screen',
   }),
   startCall: localTrans({
-    'zh-CN': '发起通话',
-    'en-US': 'Start Call',
+    'zh-CN': '语音通话',
+    'en-US': 'Voice Call',
   }),
   isCalling: localTrans({
-    'zh-CN': '正在呼叫',
-    'en-US': 'Is calling',
+    'zh-CN': '正在呼叫对方',
+    'en-US': 'Calling',
   }),
   callFailed: localTrans({
-    'zh-CN': '用户呼叫失败，该用户离线',
-    'en-US': 'The user call failed because of offline',
+    'zh-CN': '发起失败，对方当前不在线',
+    'en-US': 'Call failed because the other user is offline',
   }),
   inviteJoinCall: localTrans({
-    'zh-CN': '邀请你加入通话',
-    'en-US': 'invite you to join call',
+    'zh-CN': '邀请你进行语音通话',
+    'en-US': 'invites you to a voice call',
   }),
   notFoundMeeting: localTrans({
     'zh-CN': '没有找到可加入的通话',

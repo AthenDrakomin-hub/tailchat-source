@@ -86,7 +86,7 @@ const IncomingCallUI: React.FC<{ onAnswer: () => void; onDecline: () => void }> 
         }}>
           <Icon icon="mdi:phone-incoming" style={{ fontSize: 48, color: '#fff' }} />
         </div>
-        <h2 style={{ fontSize: 28, fontWeight: 600, margin: 0, color: '#fff' }}>专属语音通话</h2>
+        <h2 style={{ fontSize: 28, fontWeight: 600, margin: 0, color: '#fff' }}>语音通话</h2>
         <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', marginTop: 8 }}>有新的通话邀请</p>
       </div>
 

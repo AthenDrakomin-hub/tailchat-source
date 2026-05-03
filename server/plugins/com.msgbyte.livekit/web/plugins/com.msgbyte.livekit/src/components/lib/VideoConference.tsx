@@ -42,22 +42,44 @@ export interface VideoConferenceProps
 
 const IsCallingContainer = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
-  padding: 8px 12px;
-  background: rgba(15, 23, 42, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
   position: absolute;
-  right: 16px;
-  top: 16px;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
   color: rgba(255, 255, 255, 0.92);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
   backdrop-filter: blur(10px);
+  min-width: 260px;
+  z-index: 4;
+
+  .tc-call-status-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
 
   .tc-call-status-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.94);
+  }
+
+  .tc-call-status-tip {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.72);
+  }
+
+  .tc-call-status-users {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
   }
 `;
 
@@ -162,10 +184,17 @@ export const VideoConference: React.FC<VideoConferenceProps> = React.memo(
 
               {Array.isArray(invitingUserIds) && invitingUserIds.length > 0 && (
                 <IsCallingContainer>
-                  <span className="tc-call-status-label">{Translate.isCalling}:</span>
-                  {invitingUserIds.map((userId) => (
-                    <UserAvatar key={userId} userId={userId} />
-                  ))}
+                  <div className="tc-call-status-main">
+                    <span className="tc-call-status-label">
+                      {Translate.isCalling}
+                    </span>
+                    <span className="tc-call-status-tip">等待对方接听…</span>
+                  </div>
+                  <div className="tc-call-status-users">
+                    {invitingUserIds.map((userId) => (
+                      <UserAvatar key={userId} userId={userId} />
+                    ))}
+                  </div>
                 </IsCallingContainer>
               )}
 

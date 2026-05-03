@@ -33,7 +33,7 @@ const IncomingCallUI: React.FC<{ info: LinkInfo; onAccept: () => void }> = ({
         <div className="absolute inset-0 bg-white/20 rounded-full animate-ping z-0 scale-150" />
       </div>
       <h2 className="mt-8 text-2xl font-bold">{info.inviterName}</h2>
-      <p className="mt-2 text-gray-400">邀请您进行专属语音通话</p>
+      <p className="mt-2 text-gray-400">邀请您进行语音通话</p>
       <p className="mt-1 text-xs text-gray-500">接听后将在当前页面内直接进入通话。</p>
     </div>
 
