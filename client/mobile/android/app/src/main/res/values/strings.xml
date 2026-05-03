@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">Tailchat</string>
+    <string name="app_name">財訊</string>
+    <string name="GETUI_APPID"></string>
+    <string name="GETUI_APPKEY"></string>
+    <string name="GETUI_APPSECRET"></string>
 </resources>
