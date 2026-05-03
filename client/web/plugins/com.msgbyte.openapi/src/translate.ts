@@ -83,6 +83,22 @@ export const Translate = {
       'en-US':
         'The bot will send a request to this address when it is mentioned (callback will be sent when the inbox receives new content)',
     }),
+    runtimeMode: localTrans({
+      'zh-CN': '运行模式',
+      'en-US': 'Runtime Mode',
+    }),
+    bridgeEndpoint: localTrans({
+      'zh-CN': 'Bridge 地址',
+      'en-US': 'Bridge Endpoint',
+    }),
+    bridgeToken: localTrans({
+      'zh-CN': 'Bridge Token',
+      'en-US': 'Bridge Token',
+    }),
+    runtimeModeTip: localTrans({
+      'zh-CN': '默认使用 HTTP 回调；如接入 OpenClaw，可切换到 Bridge 模式',
+      'en-US': 'HTTP callback by default; switch to bridge mode when using OpenClaw',
+    }),
   },
   oauth: {
     open: localTrans({
