@@ -92,7 +92,7 @@ export const ChatInputAddon: React.FC = React.memo(() => {
     >
       <div>
         <Icon
-          className={clsx('text-[26px] text-gray-500 dark:text-gray-300 cursor-pointer transition transform hover:text-[#07c160]', {
+          className={clsx('text-[24px] text-gray-500 dark:text-gray-300 cursor-pointer transition transform hover:text-[#07c160]', {
             'rotate-45': open,
           })}
           icon="mdi:plus-circle-outline"

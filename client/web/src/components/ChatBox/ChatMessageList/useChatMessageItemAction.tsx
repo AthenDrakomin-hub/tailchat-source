@@ -68,17 +68,17 @@ export function useChatMessageItemAction(
   return {
     onClick: options.onClick,
     items: _compact([
-      {
-        key: 'copy',
-        label: t('复制'),
-        icon: <Icon icon="mdi:content-copy" />,
-        onClick: handleCopy,
-      },
       context.hasContext && {
         key: 'reply',
         label: t('回复'),
         icon: <Icon icon="mdi:reply" />,
         onClick: () => sharedEvent.emit('replyMessage', payload),
+      },
+      {
+        key: 'copy',
+        label: t('复制'),
+        icon: <Icon icon="mdi:content-copy" />,
+        onClick: handleCopy,
       },
       isMessageAuthor && {
         key: 'recall',

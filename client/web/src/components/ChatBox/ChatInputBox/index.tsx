@@ -150,7 +150,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
           {pasteHandlerContainer}
 
           {!disabled && (
-            <div className="px-3 mobile:px-2 flex flex-shrink-0 space-x-1.5 items-center">
+            <div className="px-3 mobile:px-2 flex flex-shrink-0 space-x-1 items-center">
               {pluginChatInputButtons.map((item, i) =>
                 React.cloneElement(item.render(), {
                   key: `plugin-chatinput-btn#${i}`,
