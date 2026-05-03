@@ -85,7 +85,7 @@ export const GroupSpeakPolicyEditor: React.FC<Props> = React.memo((props) => {
         <div>
           <div className="font-semibold">{t('发言治理')}</div>
           <div className="text-xs text-gray-400">
-            {t('控制默认成员、角色发言规则，并定义角色在消息流中的人格化表现')}
+            {t('控制默认成员、系统接入对象与角色发言规则，并定义角色在消息流中的人格化表现')}
           </div>
         </div>
         <Switch
@@ -100,7 +100,7 @@ export const GroupSpeakPolicyEditor: React.FC<Props> = React.memo((props) => {
         onChange={(defaultRule) => updatePolicy({ defaultRule })}
       />
 
-      <Divider orientation="left">{t('机器人规则')}</Divider>
+      <Divider orientation="left">{t('系统接入规则')}</Divider>
       <RuleEditor
         value={policy.botRule}
         onChange={(botRule) => updatePolicy({ botRule })}

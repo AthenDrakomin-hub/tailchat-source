@@ -23,6 +23,7 @@ import { getPersonalChatPath } from '@/utils/personal-route';
 import { getUserRelationshipState } from './relationship';
 import { SetFriendNickname } from '@/components/modals/SetFriendNickname';
 import { openModal } from '@/components/Modal';
+import { getUserIdentityTags } from './identityTags';
 
 export const GroupUserPopover: React.FC<{
   userInfo: UserBaseInfo;
@@ -49,6 +50,7 @@ export const GroupUserPopover: React.FC<{
     friendRequests,
   });
   const [requested, setRequested] = useState(false);
+  const identityTags = getUserIdentityTags(userInfo);
 
   const allowSendMessage =
     !hideGroupMemberDiscriminator &&
@@ -102,15 +104,11 @@ export const GroupUserPopover: React.FC<{
           {friendInfo?.nickname && <Tag>{t('已设置备注')}</Tag>}
           {groupInfo.owner === userId && <Tag color="gold">{t('创建者')}</Tag>}
 
-          {userInfo.type === 'openapiBot' && (
-            <Tag color="orange">{t('开放平台机器人')}</Tag>
-          )}
-
-          {userInfo.type === 'pluginBot' && (
-            <Tag color="orange">{t('插件机器人')}</Tag>
-          )}
-
-          {userInfo.temporary && <Tag color="processing">{t('游客')}</Tag>}
+          {identityTags.map((tag) => (
+            <Tag key={tag} color="processing">
+              {t(tag)}
+            </Tag>
+          ))}
 
           {roleNames.map((name) => (
             <Tag key={name} color={getTextColorHex(name)}>

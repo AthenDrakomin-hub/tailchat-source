@@ -20,6 +20,7 @@ import { getUserRelationshipState } from './relationship';
 import { getPersonalChatPath } from '@/utils/personal-route';
 import { SetFriendNickname } from '@/components/modals/SetFriendNickname';
 import { openModal } from '@/components/Modal';
+import { getUserIdentityTags } from './identityTags';
 
 export const PersonalUserPopover: React.FC<{
   userInfo: UserBaseInfo;
@@ -41,6 +42,7 @@ export const PersonalUserPopover: React.FC<{
     friendRequests,
   });
   const [requested, setRequested] = useState(false);
+  const identityTags = getUserIdentityTags(userInfo);
   const [, handleCreateConverse] = useAsyncRequest(async () => {
     const converse = await createDMConverse([userInfo._id]);
     navigate(getPersonalChatPath(converse._id));
@@ -84,15 +86,11 @@ export const PersonalUserPopover: React.FC<{
             <Tag color="processing">{t('已发送申请')}</Tag>
           )}
           {friendInfo?.nickname && <Tag>{t('已设置备注')}</Tag>}
-          {userInfo.type === 'openapiBot' && (
-            <Tag color="orange">{t('开放平台机器人')}</Tag>
-          )}
-
-          {userInfo.type === 'pluginBot' && (
-            <Tag color="orange">{t('插件机器人')}</Tag>
-          )}
-
-          {userInfo.temporary && <Tag color="processing">{t('游客')}</Tag>}
+          {identityTags.map((tag) => (
+            <Tag key={tag} color="processing">
+              {t(tag)}
+            </Tag>
+          ))}
         </Space>
 
         <div className="pt-2">{pluginUserExtraInfoEl}</div>
