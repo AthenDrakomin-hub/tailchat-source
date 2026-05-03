@@ -651,7 +651,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
-  loadingOverlay: {
+  },
   loadingText: {
     marginLeft: 8,
     color: '#334155',
