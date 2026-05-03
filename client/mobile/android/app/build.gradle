@@ -104,12 +104,12 @@ android {
         versionName "1.0.0"
 
         manifestPlaceholders = [
-            GETUI_APPID: project.env.get("GETUI_APPID"),
+            GETUI_APPID: project.env.get("GETUI_APPID") ?: "",
 
             MEIZU_APP_ID    : "",
             MEIZU_APP_KEY   : "",
 
-            HUAWEI_APP_ID   : project.env.get("GETUI_HUAWEI_APP_ID"),
+            HUAWEI_APP_ID   : project.env.get("GETUI_HUAWEI_APP_ID") ?: "",
 
             XIAOMI_APP_ID   : "",
             XIAOMI_APP_KEY  : "",
