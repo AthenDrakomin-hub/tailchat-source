@@ -8,6 +8,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -23,8 +24,15 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
-          // Packages that cannot be autolinked yet can be added manually here, for example:
-          packages.add(new GetuiPackage());
+          if (BuildConfig.ENABLE_GETUI_PUSH) {
+            try {
+              Class<?> getuiPackageClass = Class.forName("com.msgbyte.tailchat.GetuiPackage");
+              ReactPackage getuiPackage = (ReactPackage) getuiPackageClass.getDeclaredConstructor().newInstance();
+              packages.add(getuiPackage);
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          }
           return packages;
         }
 
@@ -53,7 +61,15 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-    GetuiModule.initPush(this);
+    if (BuildConfig.ENABLE_GETUI_PUSH) {
+      try {
+        Class<?> getuiModuleClass = Class.forName("com.msgbyte.tailchat.GetuiModule");
+        Method initPushMethod = getuiModuleClass.getMethod("initPush", android.content.Context.class);
+        initPushMethod.invoke(null, this);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       DefaultNewArchitectureEntryPoint.load();

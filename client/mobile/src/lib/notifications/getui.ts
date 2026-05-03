@@ -6,6 +6,10 @@ const GetuiModule = NativeModules.GetuiModule;
  * user for server push
  */
 export function bindAlias(userId: string) {
+  if (!GetuiModule) {
+    return;
+  }
+
   getClientId().then((cid) => {
     console.log('getui cid:', cid);
   });
@@ -16,6 +20,11 @@ export function bindAlias(userId: string) {
 
 export function getClientId() {
   return new Promise<string>((resolve) => {
+    if (!GetuiModule) {
+      resolve('');
+      return;
+    }
+
     GetuiModule.clientId((param: string) => {
       resolve(param);
     });
