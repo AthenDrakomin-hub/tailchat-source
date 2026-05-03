@@ -85,9 +85,9 @@ export const CreateInviteCode: React.FC<CreateInviteCodeProps> = React.memo(
     return (
       <div>
         {createdInvite ? (
-          <div>
+          <div className="rounded-2xl border border-black/5 bg-[#f8f8f8] px-4 py-4">
             <Typography.Title
-              className="bg-white bg-opacity-30 dark:bg-black dark:bg-opacity-30 px-2 py-1 select-text text-lg rounded border border-black border-opacity-20"
+              className="bg-white dark:bg-[#2b2b2b] px-3 py-2 select-text text-base rounded-2xl border border-black/5 dark:border-white/10"
               level={4}
               copyable={true}
             >

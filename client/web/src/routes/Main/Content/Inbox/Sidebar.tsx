@@ -191,7 +191,8 @@ const InboxSidebarItem: React.FC<{
         className={clsx(
           'mx-0 my-0 px-4 py-3 overflow-hidden cursor-pointer border-b border-black/5 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white dark:hover:bg-opacity-5 transition-colors duration-150',
           {
-            'bg-white border-l-[3px] border-l-[#07c160]': isActive,
+            'bg-white border-l-[3px] border-l-[#07c160] dark:bg-[#2b2b2b]': isActive,
+            'bg-[#f8fffb] dark:bg-[#253228]': !props.readed,
           },
           props.readed ? '' : ''
         )}

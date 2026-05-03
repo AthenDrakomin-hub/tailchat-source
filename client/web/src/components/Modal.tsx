@@ -58,6 +58,7 @@ export const Modal: React.FC<ModalProps> = React.memo((props) => {
     maskClosable = true,
   } = props;
   const [showing, setShowing] = useState(true);
+  const isMobile = useIsMobile();
 
   const closeModal = useCallback(() => {
     setShowing(false);
@@ -89,15 +90,18 @@ export const Modal: React.FC<ModalProps> = React.memo((props) => {
       appear={true}
     >
       <div
-        className="absolute left-0 right-0 top-0 bottom-0 bg-black bg-opacity-60 flex justify-center items-center z-10"
+        className="absolute left-0 right-0 top-0 bottom-0 bg-black bg-opacity-50 flex justify-center items-center z-10 p-3 mobile:p-2"
         onClick={handleClose}
         data-tc-role="modal-mask"
       >
         <ModalContext.Provider value={{ closeModal }}>
           {/* Inner */}
           <div
-            className="modal-inner bg-content-light dark:bg-content-dark rounded overflow-auto relative z-10"
-            style={{ maxHeight: '80vh', maxWidth: '80vw' }}
+            className="modal-inner bg-content-light dark:bg-content-dark rounded-[24px] overflow-auto relative z-10 border border-black/5 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.18)]"
+            style={{
+              maxHeight: isMobile ? 'calc(100vh - 24px)' : '80vh',
+              maxWidth: isMobile ? 'calc(100vw - 16px)' : '80vw',
+            }}
             onClick={stopPropagation}
             data-tc-role="modal"
           >
@@ -259,15 +263,15 @@ export const ModalWrapper: React.FC<
   const isMobile = useIsMobile();
 
   const title = _isString(props.title) ? (
-    <Typography.Title level={4} className="text-center mb-4">
+    <Typography.Title level={4} className="text-center mb-4 dark:text-white">
       {props.title}
     </Typography.Title>
   ) : null;
 
   return (
     <div
-      className={clsx('tc-modal', 'p-4', props.className)}
-      style={{ minWidth: isMobile ? 290 : 420, ...props.style }}
+      className={clsx('tc-modal', 'p-4 mobile:p-3', props.className)}
+      style={{ minWidth: isMobile ? 280 : 420, ...props.style }}
     >
       {title}
       {props.children}

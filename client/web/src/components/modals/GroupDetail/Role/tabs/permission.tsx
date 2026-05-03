@@ -30,8 +30,8 @@ export const RolePermission: React.FC<RolePermissionProps> = React.memo(
 
     // 权限概述
     return (
-      <div>
-        <div className="mb-2 space-x-2 text-right">
+      <div className="px-3 py-2">
+        <div className="mb-3 space-x-2 text-right">
           <Button onClick={handleResetPermission}>{t('重置为默认值')}</Button>
           <Button
             type="primary"
@@ -42,10 +42,12 @@ export const RolePermission: React.FC<RolePermissionProps> = React.memo(
           </Button>
         </div>
 
-        <PermissionList
-          value={editingPermission}
-          onChange={setEditingPermission}
-        />
+        <div className="rounded-[24px] border border-black/5 bg-white p-3 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+          <PermissionList
+            value={editingPermission}
+            onChange={setEditingPermission}
+          />
+        </div>
       </div>
     );
   }

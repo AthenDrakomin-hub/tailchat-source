@@ -28,33 +28,26 @@ export const CreateGroupInvite: React.FC<CreateGroupInviteProps> = React.memo(
     }
 
     return (
-      <ModalWrapper>
-        {/* <div>邀请好友加入群组 {groupInfo.name}</div>
+      <ModalWrapper title={t('邀请加入群聊')}>
+        <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#232323] px-5 py-5 text-center shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+          <Icon
+            className="text-6xl block m-auto opacity-30 mb-4 mt-2 text-[#07c160]"
+            icon="mdi:email-edit-outline"
+          />
 
-      <div>
-        <Input.Search
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          onSearch={handleSearch}
-        />
-      </div>
+          <div className="text-[#111827] dark:text-white font-semibold text-lg mb-1">
+            {groupInfo.name}
+          </div>
+          <div className="text-gray-500 dark:text-gray-400 text-sm mb-5">
+            {t('创建链接并发送给外部联系人')}
+          </div>
 
-      <Divider>或者创建链接并发送给外部好友</Divider> */}
-
-        <Icon
-          className="text-6xl block m-auto opacity-30 mb-4 mt-2"
-          icon="mdi:email-edit-outline"
-        />
-
-        <div className="text-gray-400 font-bold text-lg mb-2">
-          {t('创建链接并发送给外部联系人')}
+          <CreateInviteCode
+            groupId={groupId}
+            onInviteCreated={props.onInviteCreated}
+            onInviteUpdated={props.onInviteUpdated}
+          />
         </div>
-
-        <CreateInviteCode
-          groupId={groupId}
-          onInviteCreated={props.onInviteCreated}
-          onInviteUpdated={props.onInviteUpdated}
-        />
       </ModalWrapper>
     );
   }

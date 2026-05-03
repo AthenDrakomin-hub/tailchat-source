@@ -90,10 +90,10 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
     return (
       <div
         className={clsx(
-          'chat-message-item flex min-w-0 px-3 py-1 mobile:px-0 group relative select-text text-sm',
+          'chat-message-item flex min-w-0 px-3 py-1.5 mobile:px-0 group relative select-text text-sm',
           {
-            'bg-black bg-opacity-5': isActionBtnActive,
-            'hover:bg-black hover:bg-opacity-[0.02]': !isActionBtnActive,
+            'bg-black bg-opacity-5 dark:bg-white/5': isActionBtnActive,
+            'hover:bg-black hover:bg-opacity-[0.02] dark:hover:bg-white/5': !isActionBtnActive,
           }
         )}
         data-message-id={payload._id}
@@ -152,7 +152,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
               maxHeight={340}
               backgroundColor="var(--tc-content-background-color)"
               showFullText={
-                <div className="inline-block rounded-full bg-white dark:bg-black opacity-80 py-2 px-3 hover:opacity-100">
+                <div className="inline-block rounded-full bg-white dark:bg-[#2b2b2b] opacity-80 py-2 px-3 hover:opacity-100 border border-black/5 dark:border-white/10">
                   {t('点击展开更多')}
                 </div>
               }
@@ -162,7 +162,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                   'chat-message-item_body min-w-0 leading-6 break-words overflow-x-hidden rounded-[18px] px-3.5 py-2.5 max-w-[820px]',
                   isSelf
                     ? 'bg-[#95ec69] text-[#111827]'
-                    : 'bg-white text-[#111827] border border-black/5'
+                    : 'bg-white text-[#111827] border border-black/5 dark:bg-[#2b2b2b] dark:text-[#f3f4f6] dark:border-white/10'
                 )}
               >
                 <MessageQuote payload={payload} />
@@ -199,7 +199,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
         {!disableOperate && (
           <div
             className={clsx(
-              'bg-white dark:bg-black rounded absolute right-2 cursor-pointer -top-3 shadow-sm flex',
+              'bg-white dark:bg-[#1f1f1f] rounded absolute right-2 cursor-pointer -top-3 shadow-sm flex border border-black/5 dark:border-white/10',
               {
                 'opacity-0 group-hover:opacity-100 bg-opacity-80 hover:bg-opacity-100':
                   !isActionBtnActive,
@@ -243,8 +243,8 @@ NormalMessage.displayName = 'NormalMessage';
 const SystemMessage: React.FC<ChatMessageItemProps> = React.memo(
   ({ payload }) => {
     return (
-      <div className="text-center">
-        <div className="bg-black bg-opacity-20 rounded inline-block py-0.5 px-2 my-1 mx-2 text-sm">
+      <div className="text-center py-1">
+        <div className="bg-[#e5e7eb] dark:bg-[#2b2b2b] text-[#6b7280] dark:text-[#d1d5db] rounded-full inline-block py-1 px-3 my-1 mx-2 text-[12px]">
           {payload.content}
         </div>
       </div>
@@ -342,8 +342,10 @@ export function buildMessageItemRow(
   return (
     <div key={message._id}>
       {showDate && (
-        <Divider className="text-sm opacity-40 px-6 font-normal select-text">
-          {showMessageTime(messageCreatedAt)}
+        <Divider className="text-xs opacity-100 px-6 font-normal select-text border-black/5 dark:border-white/10">
+          <span className="inline-flex rounded-full bg-[#e5e7eb] dark:bg-[#2b2b2b] text-[#6b7280] dark:text-[#d1d5db] px-3 py-1">
+            {showMessageTime(messageCreatedAt)}
+          </span>
         </Divider>
       )}
 

@@ -108,7 +108,7 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
 
     const contentMaskEl = showMask ? (
       <div
-        className="absolute right-0 top-0 bottom-0 z-10"
+        className="absolute right-0 top-0 bottom-0 z-10 bg-black/20 backdrop-blur-[1px]"
         style={{ width: 'calc(100% - 17rem)' }}
         onClick={handleHideSidebar}
       />
@@ -126,7 +126,7 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
           className={clsx(
             'flex min-w-0 flex-auto bg-[#f5f5f5] dark:bg-content-dark overflow-hidden',
             isMobile &&
-              'transform left-0 w-full h-full absolute transition-transform',
+              'transform left-0 w-full h-full absolute transition-transform duration-200 ease-out',
             isMobile && {
               'translate-x-[17rem]': showSidebar,
               'translate-x-0': !showSidebar,

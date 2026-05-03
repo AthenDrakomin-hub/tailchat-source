@@ -23,9 +23,9 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
     <Link to={to}>
       <div
         className={clsx(
-          'w-full min-w-0 overflow-hidden border-b border-black/5 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white dark:hover:bg-opacity-10 cursor-pointer text-gray-700 dark:text-white rounded-none px-3 h-14 flex items-center text-[15px] group transition-colors duration-150',
+          'w-full min-w-0 overflow-hidden border-b border-black/5 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white dark:hover:bg-opacity-10 cursor-pointer text-gray-700 dark:text-white rounded-none px-3 h-14 mobile:h-16 flex items-center text-[15px] group transition-colors duration-150',
           {
-            'bg-white text-[#111827] border-l-[3px] border-l-[#07c160]': isActive,
+            'bg-white text-[#111827] border-l-[3px] border-l-[#07c160] dark:bg-[#2b2b2b]': isActive,
           }
         )}
       >
@@ -55,7 +55,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
         </Typography.Text>
 
         {badge === true ? (
-          <Badge status="error" />
+          <Badge color="#07c160" />
         ) : (
           <Badge count={Number(badge) || 0} />
         )}
