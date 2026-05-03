@@ -90,9 +90,6 @@ export const SettingsStatus: React.FC = React.memo(() => {
         <div className="text-lg font-bold text-gray-900 dark:text-white">
           Web 试运营状态中心
         </div>
-        <div className="mt-2 text-sm leading-7 text-gray-500 dark:text-gray-400">
-          这里用于确认当前 Web 端是否适合继续承接试运营主链路。建议在出现登录异常、聊天异常、联系人异常或群组异常时，先看这里再决定是否继续操作。
-        </div>
         <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
           <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4">
             <div className="text-xs text-gray-500 dark:text-gray-400">整体状态</div>
@@ -128,6 +125,16 @@ export const SettingsStatus: React.FC = React.memo(() => {
             查看客户端下载说明
           </a>
         </div>
+        <details className="mt-4 rounded-2xl bg-white/80 dark:bg-white/5 px-4 py-3">
+          <summary className="cursor-pointer text-sm font-semibold text-gray-900 dark:text-white">
+            查看状态页使用建议
+          </summary>
+          <div className="mt-3 space-y-2 text-sm leading-7 text-gray-500 dark:text-gray-400">
+            <div>1. 出现登录、聊天、联系人或群组异常时，先回到这里确认整体健康度。</div>
+            <div>2. 如果只是局部异常，优先继续验证未受影响链路。</div>
+            <div>3. 如果基础服务大量异常，先暂停继续操作，避免把技术问题误判为产品问题。</div>
+          </div>
+        </details>
       </div>
       <Button
         className="mb-2"
@@ -138,16 +145,6 @@ export const SettingsStatus: React.FC = React.memo(() => {
         {t('刷新')}
       </Button>
       <Loading spinning={loading}>
-        <div className="mb-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-5">
-          <div className="text-sm font-semibold text-gray-900 dark:text-white">
-            试运营建议
-          </div>
-          <div className="mt-3 space-y-2 text-sm leading-7 text-gray-500 dark:text-gray-400">
-            <div>1. 先确认 `全局配置`、`服务网关`、`用户服务`、`聊天服务` 和 `群组服务` 都正常。</div>
-            <div>2. 如果这里只是局部异常，优先继续验证动态、群组和联系人等未受影响链路。</div>
-            <div>3. 如果基础服务大量异常，先暂停继续试运营，避免把技术问题误判为产品问题。</div>
-          </div>
-        </div>
         {inspectServices.map((service) => (
           <div key={service.name} className="flex items-center">
             <span className="mr-1">{service.label}:</span>

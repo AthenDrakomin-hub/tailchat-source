@@ -30,62 +30,21 @@ export const FriendPanel: React.FC = React.memo(() => {
   return (
     <div className="w-full h-full min-w-0">
       <div className="px-4 pt-4">
-        <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-5 shadow-sm">
-          <div className="text-lg font-bold text-gray-900 dark:text-white">
-            联系人是私信与长期协作的起点
-          </div>
-          <div className="mt-3 text-sm leading-7 text-gray-500 dark:text-gray-400">
-            先整理你的联系人关系，再发起私信、查看已发送申请，或处理待确认邀请。联系人页更适合作为一对一交流和后续会话沉淀的起点。
-          </div>
-          <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
-            <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4">
-              <div className="text-sm font-semibold text-gray-900 dark:text-white">先看全部联系人</div>
-              <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
-                快速确认你已经能直接开始私信的对象。
-              </div>
-            </div>
-            <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4">
-              <div className="text-sm font-semibold text-gray-900 dark:text-white">处理申请</div>
-              <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
-                把待处理申请和已发送申请都集中在这里完成。
-              </div>
-            </div>
-            <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4">
-              <div className="text-sm font-semibold text-gray-900 dark:text-white">再进入聊天</div>
-              <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
-                联系人确认后，就可以在左侧最近聊天里持续沉淀一对一交流。
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="mt-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-5 shadow-sm">
-          <div className="text-lg font-bold text-gray-900 dark:text-white">
-            试运营起步建议
-          </div>
-          <div className="mt-3 text-sm leading-7 text-gray-500 dark:text-gray-400">
-            如果你正在参与 Web 端试运营，建议先按“动态、群组、私信”顺序体验主链路，这样更容易判断内容场、讨论场和一对一沟通场是否都顺畅。
-          </div>
-          <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
-            <Link to="/main/feed" className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4 no-underline hover:opacity-90">
-              <div className="text-sm font-semibold text-gray-900 dark:text-white">先看动态</div>
-              <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
-                验证内容流、详情页、评论和互动反馈是否顺畅。
-              </div>
-            </Link>
-            <Link to="/main/group" className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4 no-underline hover:opacity-90">
-              <div className="text-sm font-semibold text-gray-900 dark:text-white">再进群组</div>
-              <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
-                验证群入口、群讨论和群信息承接是否清楚稳定。
-              </div>
-            </Link>
-            <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] px-4 py-4">
-              <div className="text-sm font-semibold text-gray-900 dark:text-white">最后发私信</div>
-              <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
-                从联系人确认关系后，在左侧最近聊天里发起一对一沟通，验证长期跟进链路。
-              </div>
-            </div>
+        <details className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-5 py-4 shadow-sm">
+          <summary className="cursor-pointer text-sm font-semibold text-gray-900 dark:text-white">
+            查看联系人与试运营建议
+          </summary>
+          <div className="mt-3 space-y-2 text-sm leading-7 text-gray-500 dark:text-gray-400">
+            <div>联系人是私信与长期协作的起点，建议先整理联系人关系，再进入最近聊天持续沟通。</div>
+            <div>如果你正在参与 Web 端试运营，建议按“动态、群组、私信”顺序体验主链路。</div>
           </div>
           <div className="mt-4 flex flex-wrap gap-3 text-xs">
+            <Link to="/main/feed" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 no-underline text-gray-600 dark:text-gray-300">
+              先看动态
+            </Link>
+            <Link to="/main/group" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 no-underline text-gray-600 dark:text-gray-300">
+              再进群组
+            </Link>
             <a href="/entry/trust" target="_blank" rel="noreferrer" className="rounded-full bg-black/[0.04] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
               查看安全与合规
             </a>
@@ -93,7 +52,7 @@ export const FriendPanel: React.FC = React.memo(() => {
               查看客户端下载说明
             </a>
           </div>
-        </div>
+        </details>
       </div>
       <PillTabs
         className="h-full"

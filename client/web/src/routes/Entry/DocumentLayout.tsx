@@ -15,8 +15,8 @@ export const DocumentLayout: React.FC<Props> = React.memo((props) => {
 
   return (
     <div className="w-full text-white">
-      <div className="mb-6 flex justify-center">
-        <BrandLogo alt="財訊" className="max-h-20 max-w-[80%]" />
+      <div className="mb-6 flex justify-center overflow-hidden">
+        <BrandLogo alt="財訊" className="w-32 max-w-full h-auto mobile:w-28" />
       </div>
 
       <div className="text-center mb-6">

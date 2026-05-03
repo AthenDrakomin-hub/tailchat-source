@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { generateInjectedScript } from './lib/inject';
 import { handleTailchatMessage } from './lib/inject/message-handler';
@@ -16,6 +16,8 @@ interface Props {
   host: string;
   serverName: string;
 }
+type MobileTabKey = 'messages' | 'contacts' | 'discover' | 'me';
+
 export const AppMain: React.FC<Props> = React.memo((props) => {
   const webviewRef = useRef<WebView>(null);
   const nextLoadStatusTextRef = useRef<string | null>(null);
@@ -31,6 +33,18 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
   const [slowNetworkHint, setSlowNetworkHint] = useState(false);
   const [statusText, setStatusText] = useState('正在连接当前工作区…');
   const [recoverSuccessVisible, setRecoverSuccessVisible] = useState(false);
+  const normalizedHost = useMemo(() => props.host.replace(/\/$/, ''), [props.host]);
+  const tabConfig = useMemo(
+    () => ({
+      messages: { label: '消息', path: '/main/personal' },
+      contacts: { label: '通讯录', path: '/main/personal/contacts' },
+      discover: { label: '发现', path: '/main/feed' },
+      me: { label: '我', path: null },
+    }),
+    []
+  );
+  const [currentTab, setCurrentTab] = useState<MobileTabKey>('messages');
+  const [currentUrl, setCurrentUrl] = useState(`${normalizedHost}/main/personal`);
 
   useEffect(() => {
     if (!loading) {
@@ -53,7 +67,30 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
     };
   }, []);
 
+  useEffect(() => {
+    setCurrentUrl(`${normalizedHost}/main/personal`);
+    setCurrentTab('messages');
+  }, [normalizedHost]);
+
+  const switchTab = (tab: MobileTabKey) => {
+    setCurrentTab(tab);
+
+    const path = tabConfig[tab].path;
+    if (path) {
+      setErrorMessage(null);
+      setLoading(true);
+      setSlowNetworkHint(false);
+      setRecoverSuccessVisible(false);
+      setCurrentUrl(`${normalizedHost}${path}`);
+    }
+  };
+
   const recoverCurrentPage = (status: string) => {
+    if (currentTab === 'me') {
+      setStatusText('当前工作区连接稳定');
+      return;
+    }
+
     showRecoverSuccessRef.current = true;
     nextLoadStatusTextRef.current = status;
     setErrorMessage(null);
@@ -68,49 +105,60 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
   return (
     <View style={styles.root}>
       <View style={styles.topbar}>
-        <View style={styles.topbarMain}>
-          <Text style={styles.topbarKicker}>当前工作区</Text>
-          <Text style={styles.topbarTitle}>{props.serverName}</Text>
-          <Text style={styles.topbarHost}>{props.host}</Text>
-        </View>
-        <View style={styles.topbarActions}>
-          <TouchableOpacity
-            style={[styles.ghostBtn, !canGoBack && styles.disabledBtn]}
-            disabled={!canGoBack}
-            onPress={() => {
-              webviewRef.current?.goBack();
-            }}
-          >
-            <Text
-              style={[styles.ghostBtnText, !canGoBack && styles.disabledBtnText]}
+        <View style={styles.topbarRow}>
+          <View style={styles.topbarSide}>
+            {currentTab !== 'me' ? (
+              <TouchableOpacity
+                style={[styles.topActionTextBtn, !canGoBack && styles.disabledTextBtn]}
+                disabled={!canGoBack}
+                onPress={() => {
+                  webviewRef.current?.goBack();
+                }}
+              >
+                <Text
+                  style={[
+                    styles.topActionText,
+                    !canGoBack && styles.disabledBtnText,
+                  ]}
+                >
+                  返回
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.topbarPlaceholder} />
+            )}
+          </View>
+          <View style={styles.topbarCenter}>
+            <Text style={styles.topbarTitle}>{tabConfig[currentTab].label}</Text>
+          </View>
+          <View style={[styles.topbarSide, styles.topbarSideRight]}>
+            {currentTab !== 'me' && (
+              <TouchableOpacity
+                style={[styles.topActionTextBtn, loading && styles.disabledTextBtn]}
+                disabled={loading}
+                onPress={() => {
+                  recoverCurrentPage('正在重新连接当前工作区…');
+                }}
+              >
+                <Text style={styles.topActionText}>刷新</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={styles.topActionTextBtn}
+              onPress={() => {
+                clearSelectedServer();
+              }}
             >
-              返回
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.ghostBtn}
-            onPress={() => {
-              clearSelectedServer();
-            }}
-          >
-            <Text style={styles.ghostBtnText}>切换</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.primaryBtn, loading && styles.disabledPrimaryBtn]}
-            disabled={loading}
-            onPress={() => {
-              recoverCurrentPage('正在重新连接当前工作区…');
-            }}
-          >
-            <Text style={styles.primaryBtnText}>刷新</Text>
-          </TouchableOpacity>
+              <Text style={styles.topActionText}>切换</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         {loading && (
           <View style={styles.progressWrap}>
             <View style={[styles.progressBar, { width: `${Math.max(progress * 100, 8)}%` }]} />
           </View>
         )}
-        {!loading && !errorMessage && (
+        {!loading && !errorMessage && currentTab !== 'me' && (
           <View
             style={[
               styles.topbarStatusWrap,
@@ -133,9 +181,91 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
         )}
       </View>
       <View style={styles.webviewWrap}>
-        <WebView
-          ref={webviewRef}
-          source={{ uri: props.host }}
+        {currentTab === 'me' ? (
+          <ScrollView style={styles.meWrap} contentContainerStyle={styles.meContent}>
+            <View style={styles.meProfileCard}>
+              <View style={styles.meAvatar}>
+                <Text style={styles.meAvatarText}>
+                  {props.serverName.slice(0, 1) || '财'}
+                </Text>
+              </View>
+              <View style={styles.meProfileMain}>
+                <Text style={styles.meProfileName}>{props.serverName}</Text>
+                <Text style={styles.meProfileDesc}>当前工作区</Text>
+                <Text style={styles.meProfileHost}>{props.host}</Text>
+              </View>
+            </View>
+            <View style={styles.meMenuGroup}>
+              <View style={styles.meMenuRow}>
+                <Text style={styles.meMenuLabel}>连接状态</Text>
+                <Text
+                  style={[
+                    styles.meMenuValue,
+                    statusText.includes('稳定') || statusText.includes('已连接')
+                      ? styles.meMenuValueStable
+                      : styles.meMenuValueActive,
+                  ]}
+                >
+                  {statusText}
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={styles.meMenuRow}
+                onPress={() => switchTab('messages')}
+              >
+                <Text style={styles.meMenuLabel}>进入消息</Text>
+                <Text style={styles.meMenuArrow}>›</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.meMenuRow}
+                onPress={() => switchTab('contacts')}
+              >
+                <Text style={styles.meMenuLabel}>进入通讯录</Text>
+                <Text style={styles.meMenuArrow}>›</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.meMenuRow}
+                onPress={() => switchTab('discover')}
+              >
+                <Text style={styles.meMenuLabel}>进入发现</Text>
+                <Text style={styles.meMenuArrow}>›</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.meMenuGroup}>
+              <TouchableOpacity
+                style={styles.meMenuRow}
+                onPress={() => recoverCurrentPage('正在重新连接当前工作区…')}
+              >
+                <Text style={styles.meMenuLabel}>重新连接当前工作区</Text>
+                <Text style={styles.meMenuArrow}>›</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.meMenuRow}
+                onPress={() => Linking.openURL('https://tailchat.msgbyte.com/entry/trust')}
+              >
+                <Text style={styles.meMenuLabel}>安全与合规</Text>
+                <Text style={styles.meMenuArrow}>›</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.meMenuRow}
+                onPress={() => Linking.openURL('https://tailchat.msgbyte.com/downloads')}
+              >
+                <Text style={styles.meMenuLabel}>下载说明</Text>
+                <Text style={styles.meMenuArrow}>›</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.meMenuRow}
+                onPress={() => Linking.openURL('https://tailchat.msgbyte.com/docs/intro')}
+              >
+                <Text style={styles.meMenuLabel}>使用文档</Text>
+                <Text style={styles.meMenuArrow}>›</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        ) : (
+          <WebView
+            ref={webviewRef}
+            source={{ uri: currentUrl }}
           mediaPlaybackRequiresUserAction={false}
           injectedJavaScriptBeforeContentLoaded={generateInjectedScript()}
           onLoadStart={() => {
@@ -172,6 +302,15 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
           }}
           onNavigationStateChange={(navState) => {
             setCanGoBack(navState.canGoBack);
+            if (navState.url.startsWith(`${normalizedHost}/main/feed`)) {
+              setCurrentTab('discover');
+            } else if (
+              navState.url.startsWith(`${normalizedHost}/main/personal/contacts`)
+            ) {
+              setCurrentTab('contacts');
+            } else if (navState.url.startsWith(`${normalizedHost}/main/personal`)) {
+              setCurrentTab('messages');
+            }
           }}
           onError={(event) => {
             setLoading(false);
@@ -204,8 +343,9 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
               console.error('webview onmessage:', err);
             }
           }}
-        />
-        {loading && (
+          />
+        )}
+        {loading && currentTab !== 'me' && (
           <View style={styles.loadingOverlay}>
             <ActivityIndicator size="small" color="#0b4a8b" />
             <View>
@@ -219,12 +359,12 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
             </View>
           </View>
         )}
-        {recoverSuccessVisible && !errorMessage && (
+        {recoverSuccessVisible && !errorMessage && currentTab !== 'me' && (
           <View style={styles.recoverSuccessOverlay}>
             <Text style={styles.recoverSuccessText}>已恢复当前工作区内容</Text>
           </View>
         )}
-        {errorMessage && (
+        {errorMessage && currentTab !== 'me' && (
           <View style={styles.errorOverlay}>
             <Text style={styles.errorTitle}>当前页面加载失败</Text>
             <Text style={styles.statusBadge}>{statusText}</Text>
@@ -250,6 +390,34 @@ export const AppMain: React.FC<Props> = React.memo((props) => {
           </View>
         )}
       </View>
+      <View style={styles.bottomTabbar}>
+        {(Object.keys(tabConfig) as MobileTabKey[]).map((tab) => {
+          const active = currentTab === tab;
+
+          return (
+            <TouchableOpacity
+              key={tab}
+              style={styles.bottomTabItem}
+              onPress={() => switchTab(tab)}
+            >
+              <Text
+                style={[
+                  styles.bottomTabText,
+                  active ? styles.bottomTabTextActive : styles.bottomTabTextInactive,
+                ]}
+              >
+                {tabConfig[tab].label}
+              </Text>
+              <View
+                style={[
+                  styles.bottomTabDot,
+                  active ? styles.bottomTabDotActive : styles.bottomTabDotInactive,
+                ]}
+              />
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 });
@@ -261,69 +429,57 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8fafc',
   },
   topbar: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 10,
+    paddingHorizontal: 12,
+    paddingTop: 10,
+    paddingBottom: 8,
     backgroundColor: '#ffffff',
     borderBottomWidth: 1,
     borderBottomColor: '#e2e8f0',
   },
-  topbarMain: {
-    marginBottom: 10,
+  topbarRow: {
+    minHeight: 36,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  topbarKicker: {
-    color: '#64748b',
-    fontSize: 11,
+  topbarSide: {
+    width: 92,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  topbarSideRight: {
+    justifyContent: 'flex-end',
+  },
+  topbarCenter: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  topbarPlaceholder: {
+    width: 44,
+    height: 28,
   },
   topbarTitle: {
     color: '#0f172a',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
-    marginTop: 4,
   },
-  topbarHost: {
-    color: '#64748b',
-    fontSize: 11,
-    marginTop: 4,
+  topActionTextBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginLeft: 8,
   },
-  topbarActions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  ghostBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: '#eef2ff',
-    marginRight: 8,
-  },
-  ghostBtnText: {
-    color: '#334155',
-    fontSize: 12,
+  topActionText: {
+    color: '#111827',
+    fontSize: 14,
     fontWeight: '600',
   },
-  primaryBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: '#0b4a8b',
-  },
-  primaryBtnText: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  disabledBtn: {
-    backgroundColor: '#e2e8f0',
+  disabledTextBtn: {
+    opacity: 0.45,
   },
   disabledBtnText: {
     color: '#94a3b8',
   },
-  disabledPrimaryBtn: {
-    opacity: 0.65,
-  },
   progressWrap: {
-    marginTop: 10,
+    marginTop: 8,
     height: 3,
     borderRadius: 999,
     backgroundColor: '#e2e8f0',
@@ -361,6 +517,86 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
   },
+  meWrap: {
+    flex: 1,
+  },
+  meContent: {
+    paddingTop: 12,
+    paddingBottom: 20,
+  },
+  meProfileCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 18,
+    paddingVertical: 18,
+    marginBottom: 12,
+  },
+  meAvatar: {
+    width: 58,
+    height: 58,
+    borderRadius: 16,
+    backgroundColor: '#07c160',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 14,
+  },
+  meAvatarText: {
+    color: '#ffffff',
+    fontSize: 22,
+    fontWeight: '700',
+  },
+  meProfileMain: {
+    flex: 1,
+  },
+  meProfileName: {
+    color: '#111827',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  meProfileDesc: {
+    color: '#64748b',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  meProfileHost: {
+    color: '#94a3b8',
+    fontSize: 11,
+    marginTop: 4,
+  },
+  meMenuGroup: {
+    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff',
+  },
+  meCardTitle: {
+  meMenuRow: {
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#eef2f7',
+  },
+  meMenuLabel: {
+    color: '#111827',
+    fontSize: 15,
+  },
+  meMenuValue: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  meMenuValueActive: {
+    color: '#0b4a8b',
+  },
+  meMenuValueStable: {
+    color: '#07c160',
+  },
+  meMenuArrow: {
+    color: '#94a3b8',
+    fontSize: 22,
+    lineHeight: 22,
+  loadingOverlay: {
   loadingOverlay: {
     position: 'absolute',
     top: 24,
@@ -449,5 +685,63 @@ const styles = StyleSheet.create({
   errorActions: {
     flexDirection: 'row',
     marginTop: 14,
+  },
+  ghostBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: '#eef2ff',
+    marginRight: 8,
+  },
+  ghostBtnText: {
+    color: '#334155',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  primaryBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: '#0b4a8b',
+  },
+  primaryBtnText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  bottomTabbar: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    borderTopWidth: 1,
+    borderTopColor: '#e2e8f0',
+    paddingTop: 8,
+    paddingBottom: 10,
+  },
+  bottomTabItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bottomTabText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  bottomTabTextActive: {
+    color: '#07c160',
+  },
+  bottomTabTextInactive: {
+    color: '#64748b',
+  },
+  bottomTabDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 999,
+    marginTop: 6,
+  },
+  bottomTabDotActive: {
+    backgroundColor: '#07c160',
+  },
+  bottomTabDotInactive: {
+    backgroundColor: 'transparent',
   },
 });

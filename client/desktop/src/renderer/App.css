@@ -157,6 +157,15 @@ button + button {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.support-panel > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.support-panel > summary::-webkit-details-marker {
+  display: none;
+}
+
 .support-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

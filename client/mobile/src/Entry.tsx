@@ -26,6 +26,7 @@ export const Entry: React.FC = React.memo(() => {
   const [loading, setLoading] = useState(false);
   const [selectedServer, setSelectedServer] = useState('');
   const [cid, setCid] = useState('');
+  const [showGuide, setShowGuide] = useState(false);
   const { toastEl, showToast } = useToast();
 
   useEffect(() => {
@@ -41,12 +42,12 @@ export const Entry: React.FC = React.memo(() => {
           <Text style={styles.kicker}>財訊移动客户端</Text>
           <Text style={styles.title}>先选择工作区，再开始移动端内测体验</Text>
           <Text style={styles.description}>
-            当前移动端已进入客户端入口完善阶段，适合内部测试用户随时查看动态、群讨论和消息流。推荐优先使用默认工作区开始体验。
+            推荐优先使用默认工作区开始体验，进入后通过底部菜单查看消息、通讯录、发现和我的页面。
           </Text>
           <View style={styles.tipRow}>
             <Text style={styles.tip}>移动端内测</Text>
             <Text style={styles.tip}>支持添加自定义服务器</Text>
-            <Text style={styles.tip}>后续继续推进商城上架准备</Text>
+            <Text style={styles.tip}>底部菜单结构</Text>
           </View>
         </View>
 
@@ -90,50 +91,60 @@ export const Entry: React.FC = React.memo(() => {
           onPress={() => setDialogVisible(true)}
         />
 
-        <View style={styles.supportPanel}>
-          <Text style={styles.supportTitle}>试运营起步建议</Text>
-          <Text style={styles.supportDesc}>
-            移动端建议作为 Web 试运营的补充验证端使用。推荐顺序是：先在 Web 完成动态、群组和私信主链路，再回到移动端验证窄屏浏览、返回、刷新与恢复体验。
+        <TouchableOpacity
+          style={styles.guideToggle}
+          onPress={() => setShowGuide((prev) => !prev)}
+        >
+          <Text style={styles.guideToggleText}>
+            {showGuide ? '收起移动端使用建议' : '查看移动端使用建议'}
           </Text>
-          <View style={styles.supportCard}>
-            <Text style={styles.supportCardTitle}>推荐验证项</Text>
-            <Text style={styles.supportCardText}>1. 动态浏览与详情滚动是否顺畅</Text>
-            <Text style={styles.supportCardText}>2. 群组进入与返回是否稳定</Text>
-            <Text style={styles.supportCardText}>3. 刷新、重试与恢复反馈是否明确</Text>
+        </TouchableOpacity>
+        {showGuide && (
+          <View style={styles.supportPanel}>
+            <Text style={styles.supportTitle}>移动端使用建议</Text>
+            <Text style={styles.supportDesc}>
+              移动端建议作为 Web 的补充验证端使用。推荐顺序是：先在 Web 完成主链路，再回到移动端验证窄屏浏览、底部菜单切换、刷新与恢复体验。
+            </Text>
+            <View style={styles.supportCard}>
+              <Text style={styles.supportCardTitle}>推荐验证项</Text>
+              <Text style={styles.supportCardText}>1. 底部菜单切换是否顺畅</Text>
+              <Text style={styles.supportCardText}>2. 动态浏览与详情滚动是否顺畅</Text>
+              <Text style={styles.supportCardText}>3. 刷新、重试与恢复反馈是否明确</Text>
+            </View>
+            <View style={styles.supportCard}>
+              <Text style={styles.supportCardTitle}>出现问题先做什么</Text>
+              <Text style={styles.supportCardText}>1. 先刷新当前工作区</Text>
+              <Text style={styles.supportCardText}>2. 再切换工作区确认是否为单环境问题</Text>
+              <Text style={styles.supportCardText}>3. 必要时回到 Web 状态中心确认服务健康度</Text>
+            </View>
+            <View style={styles.supportActions}>
+              <TouchableOpacity
+                style={styles.supportActionBtn}
+                onPress={() => {
+                  Linking.openURL('https://tailchat.msgbyte.com/docs/intro');
+                }}
+              >
+                <Text style={styles.supportActionText}>查看文档</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.supportActionBtn}
+                onPress={() => {
+                  Linking.openURL('https://tailchat.msgbyte.com/entry/trust');
+                }}
+              >
+                <Text style={styles.supportActionText}>安全与合规</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.supportActionBtn}
+                onPress={() => {
+                  Linking.openURL('https://tailchat.msgbyte.com/downloads');
+                }}
+              >
+                <Text style={styles.supportActionText}>下载说明</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          <View style={styles.supportCard}>
-            <Text style={styles.supportCardTitle}>出现问题先做什么</Text>
-            <Text style={styles.supportCardText}>1. 先刷新当前工作区</Text>
-            <Text style={styles.supportCardText}>2. 再切换工作区确认是否为单环境问题</Text>
-            <Text style={styles.supportCardText}>3. 必要时回到 Web 状态中心确认服务健康度</Text>
-          </View>
-          <View style={styles.supportActions}>
-            <TouchableOpacity
-              style={styles.supportActionBtn}
-              onPress={() => {
-                Linking.openURL('https://tailchat.msgbyte.com/docs/intro');
-              }}
-            >
-              <Text style={styles.supportActionText}>查看文档</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.supportActionBtn}
-              onPress={() => {
-                Linking.openURL('https://tailchat.msgbyte.com/entry/trust');
-              }}
-            >
-              <Text style={styles.supportActionText}>安全与合规</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.supportActionBtn}
-              onPress={() => {
-                Linking.openURL('https://tailchat.msgbyte.com/downloads');
-              }}
-            >
-              <Text style={styles.supportActionText}>下载说明</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        )}
 
         <ActionSheet
           visible={!!selectedServer}
@@ -307,6 +318,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderWidth: 1,
     borderColor: '#d7dee7',
+  },
+  guideToggle: {
+    marginTop: 14,
+    marginBottom: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 14,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#d7dee7',
+  },
+  guideToggleText: {
+    color: '#0f172a',
+    fontSize: 13,
+    fontWeight: '700',
   },
   supportTitle: {
     fontSize: 16,

@@ -4,7 +4,9 @@ import {
   FeedPost,
   listFeedPosts,
   listOwnFeedPosts,
+  listUserFeedPosts,
   showErrorToasts,
+  useUserInfo,
 } from 'tailchat-shared';
 import { PageContent } from '../PageContent';
 import { FeedSidebar } from './FeedSidebar';
@@ -18,6 +20,7 @@ const FeedHome: React.FC = React.memo(() => {
   const groupId = searchParams.get('groupId') ?? undefined;
   const view = searchParams.get('view') ?? 'all';
   const [posts, setPosts] = useState<FeedPost[]>([]);
+  const userInfo = useUserInfo();
 
   useEffect(() => {
     document.title = '动态 - 財訊';
@@ -25,10 +28,14 @@ const FeedHome: React.FC = React.memo(() => {
 
   useEffect(() => {
     const fetcher =
-      view === 'mine' ? listOwnFeedPosts() : listFeedPosts(groupId);
+      view === 'mine'
+        ? userInfo?._id
+          ? listUserFeedPosts(userInfo._id)
+          : listOwnFeedPosts()
+        : listFeedPosts(groupId);
 
     Promise.resolve(fetcher).then(setPosts).catch(showErrorToasts);
-  }, [groupId, view]);
+  }, [groupId, userInfo?._id, view]);
 
   const heading = useMemo(
     () => (groupId ? '群组关联动态' : view === 'mine' ? '我的动态' : '动态'),
@@ -45,35 +52,16 @@ const FeedHome: React.FC = React.memo(() => {
           <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             面向财富论坛的公开内容流，用于观点发布、活动预热和群组联动。
           </div>
-          <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
-            <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-4 py-4 shadow-sm">
-              <div className="text-xs text-gray-500 dark:text-gray-400">第 1 步</div>
-              <div className="mt-1 text-sm font-semibold text-gray-900 dark:text-white">
-                先看公共动态
-              </div>
-              <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
-                从全部动态快速判断今天有哪些话题、活动和可承接的群讨论。
-              </div>
+          <details className="mt-4 rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-4 py-3 shadow-sm">
+            <summary className="cursor-pointer text-sm font-semibold text-gray-900 dark:text-white">
+              查看动态使用建议
+            </summary>
+            <div className="mt-3 space-y-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+              <div>1. 先看公共动态，快速判断今天有哪些话题、活动和可承接的群讨论。</div>
+              <div>2. 再发布你的观点，也可以围绕活动主题或关联群继续承接讨论。</div>
+              <div>3. 打开动态详情查看关联群状态，再决定是否进入群组参与实时交流。</div>
             </div>
-            <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-4 py-4 shadow-sm">
-              <div className="text-xs text-gray-500 dark:text-gray-400">第 2 步</div>
-              <div className="mt-1 text-sm font-semibold text-gray-900 dark:text-white">
-                发布你的观点
-              </div>
-              <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
-                可以直接发帖，也可以围绕活动主题或关联群继续承接讨论。
-              </div>
-            </div>
-            <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-4 py-4 shadow-sm">
-              <div className="text-xs text-gray-500 dark:text-gray-400">第 3 步</div>
-              <div className="mt-1 text-sm font-semibold text-gray-900 dark:text-white">
-                进入群继续互动
-              </div>
-              <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
-                打开任意动态详情，查看关联群状态，再决定是否进入群组参与实时交流。
-              </div>
-            </div>
-          </div>
+          </details>
           {!groupId && (
             <div className="mt-4 inline-flex rounded-2xl border border-black/10 dark:border-white/10 p-1 bg-black/[0.03] dark:bg-white/[0.03]">
               <Link

@@ -24,7 +24,7 @@ const Hello: React.FC = React.memo(() => {
           </div>
         </div>
         <p className="hero-description">
-          桌面端适合长期盯盘、观点沉淀、群组讨论和会话常驻。当前版本已进入内测阶段，推荐优先使用默认工作区开始体验。
+          桌面端适合长期盯盘、群组讨论和会话常驻，建议优先从默认工作区开始体验。
         </p>
         {enteringServerUrl && (
           <div className="hero-entering">
@@ -95,8 +95,8 @@ const Hello: React.FC = React.memo(() => {
         <AddServerItem />
       </div>
 
-      <div className="support-panel">
-        <div className="section-title">试运营支持</div>
+      <details className="support-panel">
+        <summary className="section-title">查看桌面端使用建议</summary>
         <div className="support-grid">
           <div className="support-card">
             <div className="support-card__title">推荐体验顺序</div>
@@ -108,12 +108,6 @@ const Hello: React.FC = React.memo(() => {
             <div className="support-card__title">出现问题先看什么</div>
             <div className="support-card__desc">
               优先检查当前工作区状态，必要时直接重新连接当前工作区；如果依旧异常，再返回工作区选择或切回 Web 主入口确认服务状态。
-            </div>
-          </div>
-          <div className="support-card">
-            <div className="support-card__title">当前阶段定位</div>
-            <div className="support-card__desc">
-              Desktop 已适合作为 Web 试运营的辅助端，重点验证长期使用感、恢复能力和主窗稳定性。
             </div>
           </div>
         </div>
@@ -143,7 +137,7 @@ const Hello: React.FC = React.memo(() => {
             查看客户端下载说明
           </button>
         </div>
-      </div>
+      </details>
 
       <div className="actions">
         <button
