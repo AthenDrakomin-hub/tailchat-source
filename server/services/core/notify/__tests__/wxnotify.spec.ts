@@ -1,6 +1,5 @@
 import {
   buildWxNotifyLogQuery,
-  buildWxNotifyMessage,
   buildWxNotifyTestMessage,
   detectMentionAll,
   maskWxNotifyUid,
@@ -33,18 +32,6 @@ describe('wxnotify helper', () => {
       isBound: true,
       isEnabled: true,
       uid: 'UID_123',
-    });
-  });
-
-  test('builds mention push message with sender and scene', () => {
-    expect(
-      buildWxNotifyMessage({
-        authorName: '主讲老师',
-        messageSnippet: '@你 今天晚上八点直播复盘',
-        sceneName: '投教训练营',
-      })
-    ).toMatchObject({
-      summary: '主讲老师 在 投教训练营 提醒了你',
     });
   });
 

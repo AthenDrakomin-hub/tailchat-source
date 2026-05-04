@@ -7,7 +7,6 @@ import {
 } from 'tailchat-server-sdk';
 import {
   buildWxNotifyLogQuery,
-  buildWxNotifyMessage,
   buildWxNotifyTestMessage,
   detectMentionAll,
   getWxNotifyBinding,

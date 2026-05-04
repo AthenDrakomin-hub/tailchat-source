@@ -25,19 +25,6 @@ export function getWxNotifyBinding(extra?: Record<string, any>) {
   };
 }
 
-export function buildWxNotifyMessage(input: {
-  authorName: string;
-  messageSnippet: string;
-  sceneName: string;
-}) {
-  const snippet = input.messageSnippet.replace(/\s+/g, ' ').trim().slice(0, 80);
-
-  return {
-    summary: `${input.authorName} 在 ${input.sceneName} 提醒了你`,
-    content: `<h3>${input.authorName} 提醒了你</h3><p>${snippet}</p><p>来源：${input.sceneName}</p>`,
-  };
-}
-
 export function buildWxNotifyTestMessage(appName: string) {
   return {
     summary: '财讯微信通知测试',
