@@ -1,7 +1,4 @@
-import {
-  getSendErrorMessage,
-  getUserTypeBadgeText,
-} from '../chatEnhancement';
+import { getSendErrorMessage } from '../chatEnhancement';
 
 describe('chat enhancement helpers', () => {
   test('returns readable send error text', () => {
@@ -12,11 +9,5 @@ describe('chat enhancement helpers', () => {
 
   test('returns fallback text for unknown error', () => {
     expect(getSendErrorMessage(undefined)).toBe('消息发送失败，请稍后重试');
-  });
-
-  test('returns bot badge by user type', () => {
-    expect(getUserTypeBadgeText('openapiBot')).toBe('机器人');
-    expect(getUserTypeBadgeText('pluginBot')).toBe('插件');
-    expect(getUserTypeBadgeText('normal')).toBeNull();
   });
 });

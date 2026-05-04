@@ -105,6 +105,14 @@ export const userFields = [
       hidden: true,
     },
   }),
+  createTextField('extra.wxNotifyBinding.uid', {
+    list: {
+      width: 180,
+    },
+    edit: {
+      hidden: true,
+    },
+  }),
   createDateTimeField('createdAt', {
     format: 'iso',
     edit: {

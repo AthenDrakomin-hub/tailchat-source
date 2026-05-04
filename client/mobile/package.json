@@ -5,6 +5,7 @@
   "scripts": {
     "GetuiConfigure": "node node_modules/react-native-getui/GetuiConfiguration.js",
     "android": "react-native run-android",
+    "bundle:android": "mkdir -p build && react-native bundle --platform android --dev false --entry-file index.js --bundle-output build/index.android.bundle --assets-dest build",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
@@ -12,7 +13,8 @@
     "patch-package": "patch-package",
     "postinstall": "patch-package",
     "plugins:all": "ministar buildPlugin all",
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@formatjs/intl": "^2.6.9",

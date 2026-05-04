@@ -36,8 +36,10 @@
   "main": "./src/main/main.ts",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
+    "build:ci": "yarn build",
     "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts",
     "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
+    "install:ci": "ELECTRON_SKIP_BINARY_DOWNLOAD=1 yarn install --ignore-scripts --frozen-lockfile",
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "package": "cross-env DEBUG_PROD=true yarn package:nodebug --config.asar=false",

@@ -14,7 +14,9 @@ describe('GroupSpeakPolicyEditor', () => {
 
     expect(screen.getByText('发言治理')).toBeTruthy();
     expect(screen.getByText('默认成员规则')).toBeTruthy();
-    expect(screen.getByText('机器人规则')).toBeTruthy();
+    expect(screen.getByText('系统接入规则')).toBeTruthy();
     expect(screen.getByText('管理员')).toBeTruthy();
+    expect(screen.getByText('气泡背景色')).toBeTruthy();
+    expect(screen.getByText('角色徽标')).toBeTruthy();
   });
 });

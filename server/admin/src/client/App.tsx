@@ -37,6 +37,7 @@ import { SystemNotify } from './routes/system/notify';
 import { DefenseControlPanel } from './routes/defense-control';
 import { PluginPermissions } from './routes/plugin-permissions';
 import { OpsControlPanel } from './routes/ops-control';
+import { OpenClawGatewayPanel } from './routes/agent-control';
 
 const dataProvider = jsonServerProvider('/admin/api', authHTTPClient);
 
@@ -55,11 +56,17 @@ function App() {
         <CustomRoute name="ops-control" icon={<IconDashboard />}>
           <OpsControlPanel />
         </CustomRoute>
+        <CustomRoute name="agent-control" icon={<IconUserGroup />}>
+          <OpenClawGatewayPanel />
+        </CustomRoute>
         <CustomRoute name="system-notify" icon={<IconNotification />}>
           <SystemNotify />
         </CustomRoute>
         <CustomRoute name="site-config" icon={<IconSettings />}>
           <SystemConfig />
+        </CustomRoute>
+        <CustomRoute name="plugin-center" icon={<IconExperiment />}>
+          <PluginPermissions />
         </CustomRoute>
       </Category>
 
@@ -108,9 +115,6 @@ function App() {
         </CustomRoute>
         <CustomRoute name="cache" icon={<IconStorage />}>
           <CacheManager />
-        </CustomRoute>
-        <CustomRoute name="plugin-registry" icon={<IconExperiment />}>
-          <PluginPermissions />
         </CustomRoute>
       </Category>
     </Tushan>

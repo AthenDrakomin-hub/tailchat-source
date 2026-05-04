@@ -16,6 +16,7 @@ import { SidebarItem } from '../SidebarItem';
 import { CombinedAvatar, Icon } from 'tailchat-design';
 import _without from 'lodash/without';
 import { getPersonalChatPath } from '@/utils/personal-route';
+import { buildConversePreview } from './conversePreview';
 
 interface SidebarDMItemProps {
   converse: ChatConverseState;
@@ -68,12 +69,28 @@ export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
       );
     }, [converse.members, userId]);
 
+    const { value: lastSenderName } = useAsync(async () => {
+      if (!lastMessage?.author || lastMessage.author === userId) {
+        return undefined;
+      }
+
+      const user = await getCachedUserInfo(lastMessage.author);
+      return user.nickname;
+    }, [lastMessage?.author, userId]);
+
     const [, handleRemove] = useAsyncRequest(async () => {
       dispatch(chatActions.removeConverse({ converseId }));
       await model.user.removeUserDMConverse(converseId);
     }, [converseId]);
     const roleLabel = getConverseRoleLabel(name);
-    const previewText = getConversePreview(lastMessage, roleLabel);
+    const previewText = buildConversePreview({
+      hasMessage: Boolean(lastMessage),
+      content: typeof lastMessage?.content === 'string' ? lastMessage.content : '',
+      hasRecall: lastMessage?.hasRecall,
+      roleLabel,
+      senderName: lastSenderName,
+      isMultiMember: converse.members.length > 2,
+    });
 
     return (
       <SidebarItem
@@ -99,22 +116,3 @@ export const SidebarDMItem: React.FC<SidebarDMItemProps> = React.memo(
     );
   }
 );
-SidebarDMItem.displayName = 'SidebarDMItem';
-
-function getConversePreview(
-  message: ChatConverseState['messages'][number] | undefined,
-  roleLabel: string | null
-) {
-  if (!message) {
-    return roleLabel ? `[${roleLabel}]` : '暂无消息';
-  }
-
-  const text =
-    (typeof message.content === 'string' ? message.content.trim() : '') ||
-    (message.hasRecall ? '撤回了一条消息' : '') ||
-    '新消息';
-
-  const compactText = text.replace(/\s+/g, ' ').slice(0, 30);
-
-  return roleLabel ? `[${roleLabel}] ${compactText}` : compactText;
-}

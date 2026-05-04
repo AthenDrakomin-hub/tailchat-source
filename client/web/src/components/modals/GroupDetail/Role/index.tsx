@@ -75,6 +75,7 @@ export const GroupRole: React.FC<GroupPermissionProps> = React.memo((props) => {
                   <>
                     {currentRoleInfo && (
                       <RoleSummary
+                        groupId={groupId}
                         currentRoleInfo={currentRoleInfo}
                         onChangeRoleName={handleChangeRoleName}
                         onDeleteRole={async () => {

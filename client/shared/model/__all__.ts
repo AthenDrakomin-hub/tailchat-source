@@ -1,4 +1,5 @@
 export * as common from './common';
+export * as agent from './agent';
 export * as config from './config';
 export * as converse from './converse';
 export * as friend from './friend';

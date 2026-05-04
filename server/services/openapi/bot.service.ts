@@ -1,8 +1,6 @@
 import { TcService, config, TcContext, call } from 'tailchat-server-sdk';
-import { isValidStr, isValidUrl } from '../../lib/utils';
+import { isValidStr } from '../../lib/utils';
 import type { OpenApp } from '../../models/openapi/app';
-import got from 'got';
-import _ from 'lodash';
 
 class OpenBotService extends TcService {
   get serviceName(): string {
@@ -37,23 +35,17 @@ class OpenBotService extends TcService {
       // 是合法的机器人id
 
       const appId = botId.replace('open_', '');
-      const appInfo: OpenApp | null = await ctx.call('openapi.app.get', {
-        appId,
-      });
-      const callbackUrl = _.get(appInfo, 'bot.callbackUrl');
+      const appInfo: OpenApp | null = await ctx.call('openapi.app.get', { appId });
 
-      if (!isValidUrl(callbackUrl)) {
-        this.logger.info('机器人回调地址不是一个可用的url, skip.');
+      if (!appInfo?.bot) {
         return;
       }
 
-      got
-        .post(callbackUrl, {
-          json: payload,
-          headers: {
-            'X-TC-Payload-Type': 'inbox',
-          },
-        })
+      ctx.call('agent.runtime.dispatchOpenAppBotEvent', {
+        appId,
+        eventType: 'inbox',
+        payload,
+      })
         .then(() => {
           this.logger.info('调用机器人通知接口回调成功');
         })

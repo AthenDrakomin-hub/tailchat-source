@@ -21,6 +21,7 @@ import { getPersonalChatPath } from '@/utils/personal-route';
 import { getUserRelationshipState } from '@/components/popover/UserPopover/relationship';
 import { openModal } from '@/components/Modal';
 import { SetFriendNickname } from '@/components/modals/SetFriendNickname';
+import { UserIdentityTags } from '@/components/popover/UserPopover/UserIdentityTags';
 
 export const ProfilePanel: React.FC<{
   userInfo: UserBaseInfo;
@@ -95,7 +96,7 @@ export const ProfilePanel: React.FC<{
             <Tag color="processing">{t('已发送申请')}</Tag>
           )}
           {friendInfo?.nickname && <Tag>{t('已设置备注')}</Tag>}
-          {userInfo.temporary && <Tag color="processing">{t('游客')}</Tag>}
+          <UserIdentityTags userInfo={userInfo} />
         </div>
       </UserProfileContainer>
 

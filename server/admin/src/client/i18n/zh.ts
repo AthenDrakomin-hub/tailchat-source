@@ -80,8 +80,8 @@ export const zhTranslation = {
         createdAt: '创建时间',
       },
     },
-    'plugin-registry': {
-      name: '插件注册表',
+    'plugin-center': {
+      name: '插件中心',
     },
     'site-config': {
       name: '站点配置',
@@ -104,6 +104,9 @@ export const zhTranslation = {
     'ops-control': {
       name: '系统控制台',
     },
+    'agent-control': {
+      name: 'OpenClaw 接入底座',
+    },
   },
   category: {
     operations: '运营与配置',
@@ -122,6 +125,11 @@ export const zhTranslation = {
       addGroupMemberTitle: '选择用户并添加为群组成员',
       addGroupMemberRequiredTip: '你需要选择用户',
       selectUser: '选择用户',
+      wxNotifyStatus: '微信通知状态',
+      wxNotifyBound: '是否已绑定',
+      wxNotifyProvider: '提供方',
+      wxNotifyUid: '绑定 UID',
+      wxNotifyBoundAt: '绑定时间',
     },
     dashboard: {
       file: '文件',
@@ -206,6 +214,34 @@ export const zhTranslation = {
         '所有用户不包含临时用户。另外，如果用户很多，可能会无法立即通知所有用户',
       specifiedUser: '指定用户',
       notifySuccess: '发送成功，已发送给 ${count} 名用户',
+    },
+    wxnotify: {
+      title: '微信通知管理',
+      tip: '在这里查看微信通知通道状态、默认规则，并向指定用户发送后台测试通知。',
+      available: '通道可用',
+      unavailable: '通道未配置',
+      token: 'AppToken',
+      boundUserCount: '已绑定用户数',
+      successCount: '最近成功数',
+      failedCount: '最近失败数',
+      defaultRules: '默认通知规则',
+      testUser: '测试用户',
+      sendTest: '发送后台测试通知',
+      testSuccess: '微信测试通知已发送',
+      refresh: '刷新状态',
+      filterAllType: '全部类型',
+      filterAllStatus: '全部状态',
+      filter7Days: '最近 7 天',
+      filter30Days: '最近 30 天',
+      filter90Days: '最近 90 天',
+      filterTarget: '按目标用户ID筛选',
+      logType: '类型',
+      logStatus: '状态',
+      logTarget: '目标用户',
+      logUid: '目标 UID',
+      logSummary: '摘要',
+      logTime: '时间',
+      logError: '错误信息',
     },
   },
 };

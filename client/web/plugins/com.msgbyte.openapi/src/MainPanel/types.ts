@@ -12,6 +12,9 @@ export interface OpenAppOAuth {
 
 export interface OpenAppBot {
   callbackUrl: string;
+  runtimeMode?: 'openapi-http' | 'openapi-ws' | 'openclaw-bridge';
+  bridgeEndpoint?: string;
+  bridgeToken?: string;
 }
 
 export interface OpenApp {

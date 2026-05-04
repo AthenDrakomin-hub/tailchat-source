@@ -13,6 +13,7 @@ import { SettingsDebug } from './Debug';
 import { SettingsLinkPanel } from './LinkPanel';
 import { SettingsStatus } from './Status';
 import { SettingsSystem } from './System';
+import { SettingsWechatNotify } from './WechatNotify';
 
 interface SettingsViewProps {
   onClose: () => void;
@@ -46,6 +47,11 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
           type: 'item',
           title: t('服务与支持'),
           content: <SettingsStatus />,
+        },
+        {
+          type: 'item',
+          title: t('微信通知'),
+          content: <SettingsWechatNotify />,
         },
         {
           type: 'item',
