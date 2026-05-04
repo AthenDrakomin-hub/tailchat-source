@@ -51,6 +51,7 @@ export const Personal: React.FC = React.memo(() => {
           element={<LegacyPersonalConverseRedirect />}
         />
         <Route path="/contacts" element={<FriendPanel />} />
+        {/* 插件页路由暂时保留用于兼容已有实现，但不再作为财讯客户端公开产品入口 */}
         {!disablePluginStore && (
           <Route path="/plugins" element={<PluginsPanel />} />
         )}

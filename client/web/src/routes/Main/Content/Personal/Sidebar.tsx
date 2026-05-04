@@ -4,8 +4,6 @@ import { SidebarItem } from '../SidebarItem';
 import {
   t,
   useDMConverseList,
-  useUserInfo,
-  useGlobalConfigStore,
   useAppSelector,
 } from 'tailchat-shared';
 import { SidebarDMItem } from './SidebarDMItem';
@@ -39,19 +37,12 @@ SidebarSection.displayName = 'SidebarSection';
  */
 export const PersonalSidebar: React.FC = React.memo(() => {
   const converseList = useDMConverseList();
-  const userInfo = useUserInfo();
-  const disablePluginStore = useGlobalConfigStore(
-    (state) => state.disablePluginStore
-  );
   const hasFriendRequest = useAppSelector(
     (state) =>
       state.user.friendRequests.findIndex(
         (item) => item.to === state.user.info?._id
       ) >= 0
   );
-
-  const systemRole = (userInfo as any)?.systemRole ?? 'student';
-
   return (
     <CommonSidebarWrapper data-tc-role="sidebar-personal">
       <SectionHeader>{t('微信式会话')}</SectionHeader>
@@ -91,14 +82,7 @@ export const PersonalSidebar: React.FC = React.memo(() => {
           badge={hasFriendRequest}
         />
 
-        {/* 仅对导师(teacher)或班长(monitor)等非普通学员角色显示插件中心 */}
-        {!disablePluginStore && systemRole !== 'student' && (
-          <SidebarItem
-            name={t('插件中心')}
-            icon={<Icon icon="mdi:puzzle" />}
-            to="/main/personal/plugins"
-          />
-        )}
+        {/* 插件中心入口已从客户端产品面移除，能力是否可用由后台统一配置并投放到具体业务入口 */}
 
         {/* 插件自定义面板 */}
         {pluginCustomPanel
