@@ -132,6 +132,9 @@ const WxNotifyAdminPanel: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [overview, setOverview] = React.useState<any>(null);
+  const [typeFilter, setTypeFilter] = React.useState<string>('all');
+  const [statusFilter, setStatusFilter] = React.useState<string>('all');
+  const [targetKeyword, setTargetKeyword] = React.useState('');
 
   const [{ loading: overviewLoading }, fetchOverview] = useAsyncRequest(
     async () => {
@@ -150,6 +153,29 @@ const WxNotifyAdminPanel: React.FC = React.memo(() => {
   React.useEffect(() => {
     fetchOverview().catch(() => {});
   }, []);
+
+  const filteredLogs = React.useMemo(() => {
+    const logs = Array.isArray(overview?.recentLogs) ? overview.recentLogs : [];
+
+    return logs.filter((item: any) => {
+      if (typeFilter !== 'all' && item.type !== typeFilter) {
+        return false;
+      }
+      if (statusFilter !== 'all' && item.status !== statusFilter) {
+        return false;
+      }
+      if (
+        targetKeyword &&
+        !String(item.targetUserId ?? '')
+          .toLowerCase()
+          .includes(targetKeyword.toLowerCase())
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [overview?.recentLogs, statusFilter, targetKeyword, typeFilter]);
 
   return (
     <Card>
@@ -175,6 +201,9 @@ const WxNotifyAdminPanel: React.FC = React.memo(() => {
           </Typography.Text>
           <Typography.Text>
             {t('custom.wxnotify.failedCount')}: {overview?.failedCount ?? 0}
+          </Typography.Text>
+          <Typography.Text>
+            {t('custom.wxnotify.boundUserCount')}: {overview?.boundUserCount ?? 0}
           </Typography.Text>
         </Space>
 
@@ -224,6 +253,37 @@ const WxNotifyAdminPanel: React.FC = React.memo(() => {
           </Form.Item>
         </Form>
 
+        <Space wrap>
+          <Select
+            style={{ width: 180 }}
+            value={typeFilter}
+            onChange={setTypeFilter}
+            options={[
+              { label: t('custom.wxnotify.filterAllType'), value: 'all' },
+              { label: 'directMessage', value: 'directMessage' },
+              { label: 'voiceCall', value: 'voiceCall' },
+              { label: 'mentionAll', value: 'mentionAll' },
+              { label: 'test', value: 'test' },
+            ]}
+          />
+          <Select
+            style={{ width: 160 }}
+            value={statusFilter}
+            onChange={setStatusFilter}
+            options={[
+              { label: t('custom.wxnotify.filterAllStatus'), value: 'all' },
+              { label: 'success', value: 'success' },
+              { label: 'failed', value: 'failed' },
+            ]}
+          />
+          <Input
+            style={{ width: 220 }}
+            value={targetKeyword}
+            onChange={setTargetKeyword}
+            placeholder={t('custom.wxnotify.filterTarget')}
+          />
+        </Space>
+
         <Table
           loading={overviewLoading}
           pagination={false}
@@ -257,7 +317,7 @@ const WxNotifyAdminPanel: React.FC = React.memo(() => {
               dataIndex: 'error',
             },
           ]}
-          data={overview?.recentLogs ?? []}
+          data={filteredLogs}
         />
       </Space>
     </Card>

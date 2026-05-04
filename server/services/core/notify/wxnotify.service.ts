@@ -227,11 +227,18 @@ class WxNotifyService extends TcService {
   }
 
   async adminOverview() {
+    const userModel = require('../../../models/user/user').default;
     const recentLogs = await this.adapter.model
       .find({})
       .sort({ createdAt: -1 })
       .limit(10)
       .lean();
+    const boundUserCount = await userModel.countDocuments({
+      'extra.wxNotifyBinding.uid': {
+        $exists: true,
+        $ne: '',
+      },
+    });
 
     const successCount = recentLogs.filter((item) => item.status === 'success').length;
     const failedCount = recentLogs.filter((item) => item.status === 'failed').length;
@@ -242,6 +249,7 @@ class WxNotifyService extends TcService {
       appTokenConfigured: this.available,
       appTokenMasked: maskWxNotifyToken(this.appToken),
       defaultRules: getWxNotifyDefaultRules(),
+      boundUserCount,
       successCount,
       failedCount,
       recentLogs,
