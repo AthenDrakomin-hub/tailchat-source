@@ -13,6 +13,7 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { CommonSidebarWrapper } from '@/components/CommonSidebarWrapper';
 import { pluginCustomPanel } from '@/plugin/common';
 import { CustomSidebarItem } from '../CustomSidebarItem';
+import { sortPersonalSidebarConverses } from './converseOrder';
 
 const SidebarSection: React.FC<
   PropsWithChildren<{
@@ -60,7 +61,7 @@ export const PersonalSidebar: React.FC = React.memo(() => {
         </SidebarSection>
 
         {converseList.length > 0 ? (
-          converseList.map((converse) => {
+          sortPersonalSidebarConverses(converseList).map((converse) => {
             return <SidebarDMItem key={converse._id} converse={converse} />;
           })
         ) : (
