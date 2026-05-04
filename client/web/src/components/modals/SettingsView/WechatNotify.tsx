@@ -11,6 +11,7 @@ import {
   checkWxNotifyBindSession,
   createWxNotifyBindSession,
   getWxNotifyStatus,
+  sendWxNotifyTestMessage,
   showErrorToasts,
   showSuccessToasts,
   t,
@@ -39,6 +40,10 @@ export const SettingsWechatNotify: React.FC = React.memo(() => {
     await refreshStatus();
     showSuccessToasts(t('已解除微信通知绑定'));
   }, [refreshStatus]);
+  const [{ loading: testLoading }, handleSendTestMessage] = useAsyncFn(async () => {
+    await sendWxNotifyTestMessage();
+    showSuccessToasts(t('测试通知已发送，请到微信查看'));
+  }, []);
   const {
     value: preferenceValue,
     setValue: setPreference,
@@ -94,6 +99,14 @@ export const SettingsWechatNotify: React.FC = React.memo(() => {
         showIcon
       />
 
+      {status?.isBound && status.uid && (
+        <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
+          {t('当前绑定 UID：{{uid}}', {
+            uid: `${status.uid.slice(0, 8)}...`,
+          })}
+        </Typography.Paragraph>
+      )}
+
       <Space>
         <Button
           type="primary"
@@ -103,6 +116,15 @@ export const SettingsWechatNotify: React.FC = React.memo(() => {
         >
           {t(statusInfo.actionText)}
         </Button>
+
+        {status?.isBound && (
+          <Button
+            loading={testLoading}
+            onClick={() => handleSendTestMessage().catch(showErrorToasts)}
+          >
+            {t('发送测试通知')}
+          </Button>
+        )}
 
         {status?.isBound && (
           <Button

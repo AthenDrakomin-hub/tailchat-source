@@ -36,3 +36,8 @@ export async function unbindWxNotify(): Promise<{ success: boolean }> {
   const { data } = await request.post('/api/wxnotify/unbind', {});
   return data;
 }
+
+export async function sendWxNotifyTestMessage(): Promise<{ success: boolean }> {
+  const { data } = await request.post('/api/wxnotify/test-message', {});
+  return data;
+}

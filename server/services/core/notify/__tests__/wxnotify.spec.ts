@@ -1,5 +1,6 @@
 import {
   buildWxNotifyMessage,
+  buildWxNotifyTestMessage,
   getWxNotifyBinding,
   shouldSendWxNotify,
 } from '../wxnotify.helper';
@@ -90,5 +91,11 @@ describe('wxnotify helper', () => {
         }
       )
     ).toBe(false);
+  });
+
+  test('builds test notify message for self-check', () => {
+    expect(buildWxNotifyTestMessage('财讯助手')).toMatchObject({
+      summary: '财讯微信通知测试',
+    });
   });
 });

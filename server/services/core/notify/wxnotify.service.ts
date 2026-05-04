@@ -6,6 +6,7 @@ import {
 } from 'tailchat-server-sdk';
 import {
   buildWxNotifyMessage,
+  buildWxNotifyTestMessage,
   getWxNotifyBinding,
   shouldSendWxNotify,
 } from './wxnotify.helper';
@@ -79,6 +80,9 @@ class WxNotifyService extends TcService {
     });
     this.registerAction('unbind', this.unbind, {
       rest: 'POST /unbind',
+    });
+    this.registerAction('sendTestMessage', this.sendTestMessage, {
+      rest: 'POST /test-message',
     });
     this.registerAction('pushMention', this.pushMention, {
       visibility: 'public',
@@ -194,6 +198,33 @@ class WxNotifyService extends TcService {
     await ctx.call('user.updateUserExtra', {
       fieldName: 'wxNotifyBinding',
       fieldValue: null,
+    });
+
+    return {
+      success: true,
+    };
+  }
+
+  async sendTestMessage(ctx: TcContext) {
+    if (!this.available) {
+      throw new Error('WxPusher appToken 未配置');
+    }
+
+    const binding = await this.getCurrentBinding(ctx);
+    if (!binding.isBound || !binding.uid) {
+      throw new Error('当前账号尚未绑定微信通知');
+    }
+
+    const message = buildWxNotifyTestMessage('财讯助手');
+
+    await got.post('https://wxpusher.zjiecode.com/api/send/message', {
+      json: {
+        appToken: this.appToken,
+        content: message.content,
+        summary: message.summary,
+        contentType: 2,
+        uids: [binding.uid],
+      },
     });
 
     return {

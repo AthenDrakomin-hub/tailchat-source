@@ -38,6 +38,13 @@ export function buildWxNotifyMessage(input: {
   };
 }
 
+export function buildWxNotifyTestMessage(appName: string) {
+  return {
+    summary: '财讯微信通知测试',
+    content: `<h3>${appName} 微信通知已接通</h3><p>这是一条测试通知。现在你已经可以在微信中接收财讯提醒。</p>`,
+  };
+}
+
 export function shouldSendWxNotify(
   settings: Record<string, any> | undefined,
   event: {
