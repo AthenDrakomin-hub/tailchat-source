@@ -5,6 +5,7 @@
     "declarationMap": true,
     "skipLibCheck": true,
     "typeRoots": ["./node_modules/@types"],
+    "paths": {},
     "rootDir": "./src",
     "outDir": "dist"
   },
