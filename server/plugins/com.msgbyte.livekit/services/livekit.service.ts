@@ -280,6 +280,22 @@ class LivekitService extends TcService {
       roomName,
     });
 
+    const converseInfo = await call(ctx)
+      .getConverseInfo(roomName)
+      .catch(() => null);
+
+    if (converseInfo?.type === 'DM') {
+      await Promise.all(
+        targetUserIds.map((userId) =>
+          ctx.call('wxnotify.pushVoiceCall', {
+            userId,
+            authorId: senderUserId,
+            converseId: roomName,
+          })
+        )
+      );
+    }
+
     return {
       online: targetUserIds.filter((_, i) => isOnlineList[i]),
       offline: targetUserIds.filter((_, i) => !isOnlineList[i]),

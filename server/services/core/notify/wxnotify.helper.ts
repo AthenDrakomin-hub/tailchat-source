@@ -45,18 +45,19 @@ export function buildWxNotifyTestMessage(appName: string) {
   };
 }
 
+export function detectMentionAll(text?: string) {
+  const normalized = String(text ?? '').toLowerCase();
+  return normalized.includes('@所有人') || normalized.includes('@all');
+}
+
 export function shouldSendWxNotify(
   settings: Record<string, any> | undefined,
   event: {
-    type: 'mention' | 'directMessage';
+    type: 'directMessage' | 'voiceCall' | 'mentionAll';
     converseId: string;
     groupId?: string;
   }
 ) {
-  const preference = settings?.wxNotifyPreference ?? {
-    mention: true,
-    directMessage: false,
-  };
   const muteList = Array.isArray(settings?.messageNotificationMuteList)
     ? settings.messageNotificationMuteList
     : [];
@@ -68,9 +69,5 @@ export function shouldSendWxNotify(
     return false;
   }
 
-  if (event.type === 'mention') {
-    return preference.mention !== false;
-  }
-
-  return preference.directMessage === true;
+  return true;
 }

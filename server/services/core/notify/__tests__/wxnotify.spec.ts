@@ -1,6 +1,7 @@
 import {
   buildWxNotifyMessage,
   buildWxNotifyTestMessage,
+  detectMentionAll,
   getWxNotifyBinding,
   shouldSendWxNotify,
 } from '../wxnotify.helper';
@@ -43,51 +44,40 @@ describe('wxnotify helper', () => {
     });
   });
 
-  test('sends mention notify only when mention preference is enabled', () => {
+  test('allows default direct message notify when conversation is not muted', () => {
     expect(
       shouldSendWxNotify(
+        undefined,
         {
-          wxNotifyPreference: {
-            mention: true,
-            directMessage: false,
-          },
-        },
-        {
-          type: 'mention',
+          type: 'directMessage',
           converseId: 'c1',
         }
       )
     ).toBe(true);
+  });
 
+  test('allows voice call notify by default', () => {
     expect(
       shouldSendWxNotify(
+        undefined,
         {
-          wxNotifyPreference: {
-            mention: false,
-            directMessage: true,
-          },
-        },
-        {
-          type: 'mention',
+          type: 'voiceCall',
           converseId: 'c1',
         }
       )
-    ).toBe(false);
+    ).toBe(true);
   });
 
-  test('does not send direct message notify when conversation is muted', () => {
+  test('does not send mention all notify when group is muted', () => {
     expect(
       shouldSendWxNotify(
         {
-          wxNotifyPreference: {
-            mention: true,
-            directMessage: true,
-          },
-          messageNotificationMuteList: ['c1'],
+          messageNotificationMuteList: ['g1'],
         },
         {
-          type: 'directMessage',
+          type: 'mentionAll',
           converseId: 'c1',
+          groupId: 'g1',
         }
       )
     ).toBe(false);
@@ -97,5 +87,11 @@ describe('wxnotify helper', () => {
     expect(buildWxNotifyTestMessage('财讯助手')).toMatchObject({
       summary: '财讯微信通知测试',
     });
+  });
+
+  test('detects group mention all from plain text', () => {
+    expect(detectMentionAll('@所有人 今天八点开始')).toBe(true);
+    expect(detectMentionAll('please ping @all now')).toBe(true);
+    expect(detectMentionAll('@小王 看一下')).toBe(false);
   });
 });

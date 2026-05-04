@@ -7,6 +7,7 @@ import {
 import {
   buildWxNotifyMessage,
   buildWxNotifyTestMessage,
+  detectMentionAll,
   getWxNotifyBinding,
   shouldSendWxNotify,
 } from './wxnotify.helper';
@@ -28,21 +29,6 @@ class WxNotifyService extends TcService {
           ? payload.meta.mentions
           : [];
 
-        if (mentions.length > 0) {
-          await Promise.all(
-            mentions.map((userId: string) =>
-              ctx.call('wxnotify.pushMention', {
-                userId,
-                authorId: payload.author,
-                messageSnippet: payload.plain ?? payload.content ?? '',
-                groupId: payload.groupId,
-                converseId: payload.converseId,
-                notifyType: 'mention',
-              })
-            )
-          );
-        }
-
         if (!payload.groupId) {
           const converseInfo = await call(ctx).getConverseInfo(payload.converseId);
           const members = Array.isArray(converseInfo?.members)
@@ -53,7 +39,7 @@ class WxNotifyService extends TcService {
             const receiverId = members.find((item) => item !== payload.author);
 
             if (receiverId) {
-              await ctx.call('wxnotify.pushMention', {
+              await ctx.call('wxnotify.pushMessageNotify', {
                 userId: receiverId,
                 authorId: payload.author,
                 messageSnippet: payload.plain ?? payload.content ?? '',
@@ -62,6 +48,30 @@ class WxNotifyService extends TcService {
               });
             }
           }
+        }
+
+        if (
+          payload.groupId &&
+          detectMentionAll(payload.plain ?? payload.content ?? '')
+        ) {
+          const group = await call(ctx).getGroupInfo(String(payload.groupId));
+          const members = Array.isArray(group?.members) ? group.members : [];
+
+          await Promise.all(
+            members
+              .map((member: any) => String(member.userId))
+              .filter((userId: string) => userId !== payload.author)
+              .map((userId: string) =>
+                ctx.call('wxnotify.pushMessageNotify', {
+                  userId,
+                  authorId: payload.author,
+                  messageSnippet: payload.plain ?? payload.content ?? '',
+                  groupId: payload.groupId,
+                  converseId: payload.converseId,
+                  notifyType: 'mentionAll',
+                })
+              )
+          );
         }
       }
     );
@@ -84,7 +94,7 @@ class WxNotifyService extends TcService {
     this.registerAction('sendTestMessage', this.sendTestMessage, {
       rest: 'POST /test-message',
     });
-    this.registerAction('pushMention', this.pushMention, {
+    this.registerAction('pushMessageNotify', this.pushMessageNotify, {
       visibility: 'public',
       params: {
         userId: 'string',
@@ -92,7 +102,18 @@ class WxNotifyService extends TcService {
         messageSnippet: 'string',
         groupId: { type: 'string', optional: true },
         converseId: 'string',
-        notifyType: { type: 'enum', values: ['mention', 'directMessage'] },
+        notifyType: {
+          type: 'enum',
+          values: ['directMessage', 'mentionAll'],
+        },
+      },
+    });
+    this.registerAction('pushVoiceCall', this.pushVoiceCall, {
+      visibility: 'public',
+      params: {
+        userId: 'string',
+        authorId: 'string',
+        converseId: 'string',
       },
     });
   }
@@ -232,14 +253,14 @@ class WxNotifyService extends TcService {
     };
   }
 
-  async pushMention(
+  async pushMessageNotify(
     ctx: TcContext<{
       userId: string;
       authorId: string;
       messageSnippet: string;
       groupId?: string;
       converseId: string;
-      notifyType: 'mention' | 'directMessage';
+      notifyType: 'directMessage' | 'mentionAll';
     }>
   ) {
     if (!this.available) {
@@ -282,18 +303,78 @@ class WxNotifyService extends TcService {
           .then((group: any) => group?.name ?? '群消息')
           .catch(() => '群消息')
       : '私聊消息';
-
-    const message = buildWxNotifyMessage({
-      authorName: author?.nickname ?? '新消息',
-      messageSnippet,
-      sceneName,
-    });
+    const authorName = author?.nickname ?? '新消息';
+    const snippet = messageSnippet.replace(/\s+/g, ' ').trim().slice(0, 80);
+    const message =
+      notifyType === 'directMessage'
+        ? {
+            summary: `${authorName} 给你发来私信`,
+            content: `<h3>${authorName} 给你发来私信</h3><p>${snippet}</p>`,
+          }
+        : {
+            summary: `${authorName} 在 ${sceneName} @了所有人`,
+            content: `<h3>${authorName} 在 ${sceneName} @了所有人</h3><p>${snippet}</p>`,
+          };
 
     await got.post('https://wxpusher.zjiecode.com/api/send/message', {
       json: {
         appToken: this.appToken,
         content: message.content,
         summary: message.summary,
+        contentType: 2,
+        uids: [binding.uid],
+      },
+    });
+
+    return true;
+  }
+
+  async pushVoiceCall(
+    ctx: TcContext<{
+      userId: string;
+      authorId: string;
+      converseId: string;
+    }>
+  ) {
+    if (!this.available) {
+      return false;
+    }
+
+    const { userId, authorId, converseId } = ctx.params;
+    const targetUser = await call(ctx).getUserInfo(userId);
+    const binding = getWxNotifyBinding(targetUser?.extra);
+
+    if (!binding.isBound || !binding.isEnabled || !binding.uid) {
+      return false;
+    }
+
+    const settings = await ctx.call(
+      'user.getUserSettings',
+      {},
+      {
+        meta: {
+          userId,
+        },
+      }
+    );
+
+    if (
+      !shouldSendWxNotify(settings as Record<string, any>, {
+        type: 'voiceCall',
+        converseId,
+      })
+    ) {
+      return false;
+    }
+
+    const author = await call(ctx).getUserInfo(authorId);
+    const authorName = author?.nickname ?? '新消息';
+
+    await got.post('https://wxpusher.zjiecode.com/api/send/message', {
+      json: {
+        appToken: this.appToken,
+        content: `<h3>${authorName} 邀请你进行语音通话</h3><p>请尽快回到财讯接听来电。</p>`,
+        summary: `${authorName} 邀请你进行语音通话`,
         contentType: 2,
         uids: [binding.uid],
       },
