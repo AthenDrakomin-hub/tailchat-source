@@ -80,8 +80,8 @@ export const zhTranslation = {
         createdAt: '创建时间',
       },
     },
-    'plugin-registry': {
-      name: '插件注册表',
+    'plugin-center': {
+      name: '插件中心',
     },
     'site-config': {
       name: '站点配置',

@@ -65,6 +65,9 @@ function App() {
         <CustomRoute name="site-config" icon={<IconSettings />}>
           <SystemConfig />
         </CustomRoute>
+        <CustomRoute name="plugin-center" icon={<IconExperiment />}>
+          <PluginPermissions />
+        </CustomRoute>
       </Category>
 
       <Category name="content">
@@ -112,9 +115,6 @@ function App() {
         </CustomRoute>
         <CustomRoute name="cache" icon={<IconStorage />}>
           <CacheManager />
-        </CustomRoute>
-        <CustomRoute name="plugin-registry" icon={<IconExperiment />}>
-          <PluginPermissions />
         </CustomRoute>
       </Category>
     </Tushan>

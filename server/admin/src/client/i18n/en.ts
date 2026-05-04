@@ -14,8 +14,8 @@ export const enTranslation = {
     'site-config': {
       name: 'Site Config',
     },
-    'plugin-registry': {
-      name: 'Plugin Registry',
+    'plugin-center': {
+      name: 'Plugin Center',
     },
     'agent-control': {
       name: 'OpenClaw Gateway',

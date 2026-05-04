@@ -219,6 +219,16 @@ export {
   checkTokenValid,
   modifyUserField,
 } from './model/user';
+export {
+  getWxNotifyStatus,
+  createWxNotifyBindSession,
+  checkWxNotifyBindSession,
+  unbindWxNotify,
+} from './model/wxnotify';
+export type {
+  WxNotifyStatus,
+  WxNotifyBindSession,
+} from './model/wxnotify';
 export type { UserBaseInfo, UserLoginInfo, UserSettings } from './model/user';
 
 // redux
