@@ -128,12 +128,4 @@ module.exports = {
     require.resolve('docusaurus-plugin-image-zoom'),
     require.resolve('docusaurus-plugin-less'),
   ],
-  scripts: [
-    {
-      src: 'https://tianji.moonrailgun.com/tracker.js',
-      async: true,
-      defer: true,
-      'data-website-id': 'clo189w7r0003o65exm2pvdnp',
-    },
-  ],
 };
