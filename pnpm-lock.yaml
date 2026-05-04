@@ -1416,6 +1416,9 @@ importers:
       link-preview-js:
         specifier: ^2.1.10
         version: 2.1.19(encoding@0.1.13)
+      livekit-server-sdk:
+        specifier: ^1.2.7
+        version: 1.2.7(debug@4.4.3)
       lodash:
         specifier: ^4.17.21
         version: 4.18.1
@@ -1909,7 +1912,7 @@ importers:
         version: 4.22.1
       livekit-server-sdk:
         specifier: ^1.2.5
-        version: 1.2.7
+        version: 1.2.7(debug@4.4.3)
       long:
         specifier: ^5.2.3
         version: 5.3.2
@@ -32455,7 +32458,7 @@ snapshots:
       typed-emitter: 2.1.0
       webrtc-adapter: 8.2.4
 
-  livekit-server-sdk@1.2.7:
+  livekit-server-sdk@1.2.7(debug@4.4.3):
     dependencies:
       axios: 1.15.2(debug@4.4.3)
       camelcase-keys: 7.0.2
