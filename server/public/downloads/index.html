@@ -348,8 +348,8 @@
             <div class="status">PWA</div>
             <div class="card-badge" data-recommend-badge="pwa">推荐当前设备</div>
           </div>
-          <h3>桌面浏览器安装为应用</h3>
-          <p>PC 端当前不再单独发布 Windows / macOS / Linux 安装包。推荐直接使用浏览器访问主站，并安装为 PWA 以获得接近桌面应用的体验。</p>
+          <h3>浏览器安装为应用</h3>
+          <p>PC 端当前不再单独发布 Windows / macOS / Linux 安装包。Android 设备可优先尝试直接安装 Web App；iPhone / iPad 请使用“添加到主屏幕”。</p>
           <div class="download-list">
             <div class="download-item">
               <div class="download-title">
@@ -361,6 +361,9 @@
           </div>
           <div class="tip">
             推荐路径：Windows / macOS / Linux 均直接访问主站，然后使用浏览器“安装应用 / 添加到桌面 / 创建快捷方式”功能。
+          </div>
+          <div class="tip" id="pwa-install-tip">
+            iPhone / iPad：点击按钮后会显示“添加到主屏幕”指引；Android：若浏览器支持，会直接弹出安装提示。
           </div>
         </section>
 
@@ -414,28 +417,70 @@
       function detectPlatform() {
         const ua = navigator.userAgent.toLowerCase();
         const platform = (navigator.platform || '').toLowerCase();
+        const isStandalone =
+          window.matchMedia('(display-mode: standalone)').matches ||
+          window.navigator.standalone === true;
 
         if (/android/.test(ua)) {
-          return { name: 'Android 设备', recommendedKeys: ['android'], badge: 'android' };
+          return { name: 'Android 设备', recommendedKeys: ['android', 'pwa'], badge: 'android', isStandalone, isAndroid: true };
         }
 
         if (/iphone|ipad|ipod/.test(ua)) {
-          return { name: 'iPhone / iPad', recommendedKeys: [], badge: 'web', message: '当前未提供 iOS 安装包，建议先使用 Web 版；后续可通过 TestFlight 或 App Store 提供下载。' };
+          return { name: 'iPhone / iPad', recommendedKeys: ['pwa'], badge: 'pwa', isStandalone, isIOS: true, message: '当前未提供 iOS 安装包，建议直接使用 Web，并通过 Safari 的“添加到主屏幕”安装为应用。' };
         }
 
         if (platform.includes('win')) {
-          return { name: 'Windows 电脑', recommendedKeys: ['pwa'], badge: 'pwa' };
+          return { name: 'Windows 电脑', recommendedKeys: ['pwa'], badge: 'pwa', isStandalone };
         }
 
         if (platform.includes('mac')) {
-          return { name: 'macOS 设备', recommendedKeys: ['pwa'], badge: 'pwa' };
+          return { name: 'macOS 设备', recommendedKeys: ['pwa'], badge: 'pwa', isStandalone };
         }
 
         if (platform.includes('linux') || ua.includes('linux')) {
-          return { name: 'Linux 设备', recommendedKeys: ['pwa'], badge: 'pwa' };
+          return { name: 'Linux 设备', recommendedKeys: ['pwa'], badge: 'pwa', isStandalone };
         }
 
-        return { name: '当前设备', recommendedKeys: [], badge: 'web', message: '未能准确识别你的设备，建议按系统手动选择，或直接使用 Web 版。' };
+        return { name: '当前设备', recommendedKeys: ['pwa'], badge: 'pwa', isStandalone, message: '未能准确识别你的设备，建议直接打开 Web；如浏览器支持，也可安装为应用。' };
+      }
+
+      let deferredPwaPrompt = null;
+
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredPwaPrompt = event;
+      });
+
+      async function handlePwaInstall(event, device, installHint) {
+        event.preventDefault();
+
+        if (device.isStandalone) {
+          window.location.href = '/';
+          return;
+        }
+
+        if (device.isIOS) {
+          window.alert('iPhone / iPad 安装步骤：\n1. 点击 Safari 底部“分享”按钮\n2. 选择“添加到主屏幕”\n3. 回到桌面后即可像应用一样打开');
+          return;
+        }
+
+        if (deferredPwaPrompt) {
+          deferredPwaPrompt.prompt();
+          try {
+            await deferredPwaPrompt.userChoice;
+          } catch (err) {
+            // ignore
+          }
+          deferredPwaPrompt = null;
+          return;
+        }
+
+        if (device.isAndroid) {
+          window.alert(installHint || '如果当前浏览器未直接弹出安装提示，请在浏览器菜单中选择“安装应用”或“添加到主屏幕”。');
+          return;
+        }
+
+        window.location.href = '/';
       }
 
       async function probeDownload(url) {
@@ -524,8 +569,9 @@
 
             button.href = item.url;
             if (key === 'pwa') {
-              button.textContent = '立即打开';
+              button.textContent = device.isIOS ? '添加到主屏幕' : device.isAndroid ? '安装 Web App' : '打开 Web / 安装 PWA';
               meta.textContent = item.installHint || '桌面端请直接通过浏览器安装为 PWA 使用。';
+              button.addEventListener('click', (event) => handlePwaInstall(event, device, item.installHint));
             } else {
               const result = await probeDownload(item.url);
               if (!result.ok) {

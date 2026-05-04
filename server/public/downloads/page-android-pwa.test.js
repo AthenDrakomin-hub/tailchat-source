@@ -22,4 +22,16 @@ assert.strictEqual(
   'downloads page should include pwa guidance'
 );
 
+assert.strictEqual(
+  html.includes('beforeinstallprompt'),
+  true,
+  'downloads page should handle deferred pwa install prompt'
+);
+
+assert.strictEqual(
+  html.includes('添加到主屏幕'),
+  true,
+  'downloads page should include ios add-to-home-screen guidance'
+);
+
 console.log('downloads page android+pwa check passed');
