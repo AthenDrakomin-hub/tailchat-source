@@ -19,4 +19,10 @@ assert.strictEqual(
   'deploy-all should use retry-based endpoint checks'
 );
 
+assert.strictEqual(
+  source.includes('check_endpoint "/downloads/"'),
+  true,
+  'deploy-all should check /downloads/ to avoid slash redirect false negatives'
+);
+
 console.log('deploy-all script safety checks passed');

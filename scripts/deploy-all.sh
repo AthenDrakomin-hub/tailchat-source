@@ -51,7 +51,7 @@ echo "== 6. 健康检查 =="
 check_endpoint "/"
 check_endpoint "/admin/"
 check_endpoint "/api/config/client"
-check_endpoint "/downloads"
+check_endpoint "/downloads/"
 check_endpoint "/downloads/client.json"
 
 echo "== 完成 =="
