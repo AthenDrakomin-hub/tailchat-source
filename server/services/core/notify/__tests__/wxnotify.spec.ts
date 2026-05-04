@@ -3,6 +3,8 @@ import {
   buildWxNotifyTestMessage,
   detectMentionAll,
   getWxNotifyBinding,
+  getWxNotifyDefaultRules,
+  maskWxNotifyToken,
   shouldSendWxNotify,
 } from '../wxnotify.helper';
 
@@ -93,5 +95,18 @@ describe('wxnotify helper', () => {
     expect(detectMentionAll('@所有人 今天八点开始')).toBe(true);
     expect(detectMentionAll('please ping @all now')).toBe(true);
     expect(detectMentionAll('@小王 看一下')).toBe(false);
+  });
+
+  test('returns fixed default rules for admin overview', () => {
+    expect(getWxNotifyDefaultRules()).toEqual([
+      '好友私信',
+      '语音电话来电',
+      '群组 @所有人',
+    ]);
+  });
+
+  test('masks app token for admin overview', () => {
+    expect(maskWxNotifyToken('AT_123456789')).toBe('AT_1234****');
+    expect(maskWxNotifyToken('')).toBe('');
   });
 });

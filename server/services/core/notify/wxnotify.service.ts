@@ -3,21 +3,33 @@ import {
   TcContext,
   TcService,
   call,
+  TcDbService,
 } from 'tailchat-server-sdk';
 import {
   buildWxNotifyMessage,
   buildWxNotifyTestMessage,
   detectMentionAll,
   getWxNotifyBinding,
+  getWxNotifyDefaultRules,
+  maskWxNotifyToken,
   shouldSendWxNotify,
 } from './wxnotify.helper';
+import type {
+  WxNotifyLogDocument,
+  WxNotifyLogModel,
+} from '../../../models/notify/wxnotifyLog';
 
+interface WxNotifyService
+  extends TcService,
+    TcDbService<WxNotifyLogDocument, WxNotifyLogModel> {}
 class WxNotifyService extends TcService {
   get serviceName(): string {
     return 'wxnotify';
   }
 
   onInit(): void {
+    this.registerLocalDb(require('../../../models/notify/wxnotifyLog').default);
+
     this.registerEventListener(
       'chat.message.updateMessage',
       async (payload, ctx) => {
@@ -91,8 +103,14 @@ class WxNotifyService extends TcService {
     this.registerAction('unbind', this.unbind, {
       rest: 'POST /unbind',
     });
-    this.registerAction('sendTestMessage', this.sendTestMessage, {
-      rest: 'POST /test-message',
+    this.registerAction('adminOverview', this.adminOverview, {
+      visibility: 'public',
+    });
+    this.registerAction('adminSendTestMessage', this.adminSendTestMessage, {
+      visibility: 'public',
+      params: {
+        userId: 'string',
+      },
     });
     this.registerAction('pushMessageNotify', this.pushMessageNotify, {
       visibility: 'public',
@@ -126,6 +144,73 @@ class WxNotifyService extends TcService {
     return this.appToken.length > 0;
   }
 
+  private async appendLog(input: {
+    type: string;
+    status: 'success' | 'failed';
+    targetUserId?: string;
+    targetUid?: string;
+    authorId?: string;
+    converseId?: string;
+    groupId?: string;
+    summary?: string;
+    error?: string;
+  }) {
+    await this.adapter.model.create({
+      provider: 'wxpusher',
+      ...input,
+    });
+  }
+
+  private async sendWxMessage(input: {
+    uid: string;
+    targetUserId?: string;
+    type: string;
+    summary: string;
+    content: string;
+    authorId?: string;
+    converseId?: string;
+    groupId?: string;
+  }) {
+    try {
+      await got.post('https://wxpusher.zjiecode.com/api/send/message', {
+        json: {
+          appToken: this.appToken,
+          content: input.content,
+          summary: input.summary,
+          contentType: 2,
+          uids: [input.uid],
+        },
+      });
+
+      await this.appendLog({
+        type: input.type,
+        status: 'success',
+        targetUserId: input.targetUserId,
+        targetUid: input.uid,
+        authorId: input.authorId,
+        converseId: input.converseId,
+        groupId: input.groupId,
+        summary: input.summary,
+      });
+
+      return true;
+    } catch (err) {
+      await this.appendLog({
+        type: input.type,
+        status: 'failed',
+        targetUserId: input.targetUserId,
+        targetUid: input.uid,
+        authorId: input.authorId,
+        converseId: input.converseId,
+        groupId: input.groupId,
+        summary: input.summary,
+        error: err instanceof Error ? err.message : String(err),
+      });
+
+      throw err;
+    }
+  }
+
   private async getCurrentBinding(ctx: TcContext | TcContext<any>) {
     const user = await call(ctx).getUserInfo(String(ctx.meta.userId));
     return getWxNotifyBinding(user?.extra);
@@ -138,6 +223,28 @@ class WxNotifyService extends TcService {
       available: this.available,
       provider: 'wxpusher',
       ...binding,
+    };
+  }
+
+  async adminOverview() {
+    const recentLogs = await this.adapter.model
+      .find({})
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .lean();
+
+    const successCount = recentLogs.filter((item) => item.status === 'success').length;
+    const failedCount = recentLogs.filter((item) => item.status === 'failed').length;
+
+    return {
+      available: this.available,
+      provider: 'wxpusher',
+      appTokenConfigured: this.available,
+      appTokenMasked: maskWxNotifyToken(this.appToken),
+      defaultRules: getWxNotifyDefaultRules(),
+      successCount,
+      failedCount,
+      recentLogs,
     };
   }
 
@@ -226,26 +333,25 @@ class WxNotifyService extends TcService {
     };
   }
 
-  async sendTestMessage(ctx: TcContext) {
+  async adminSendTestMessage(ctx: TcContext<{ userId: string }>) {
     if (!this.available) {
       throw new Error('WxPusher appToken 未配置');
     }
 
-    const binding = await this.getCurrentBinding(ctx);
+    const { userId } = ctx.params;
+    const targetUser = await call(ctx).getUserInfo(userId);
+    const binding = getWxNotifyBinding(targetUser?.extra);
     if (!binding.isBound || !binding.uid) {
       throw new Error('当前账号尚未绑定微信通知');
     }
 
     const message = buildWxNotifyTestMessage('财讯助手');
-
-    await got.post('https://wxpusher.zjiecode.com/api/send/message', {
-      json: {
-        appToken: this.appToken,
-        content: message.content,
-        summary: message.summary,
-        contentType: 2,
-        uids: [binding.uid],
-      },
+    await this.sendWxMessage({
+      uid: binding.uid,
+      targetUserId: userId,
+      type: 'test',
+      summary: message.summary,
+      content: message.content,
     });
 
     return {
@@ -316,14 +422,15 @@ class WxNotifyService extends TcService {
             content: `<h3>${authorName} 在 ${sceneName} @了所有人</h3><p>${snippet}</p>`,
           };
 
-    await got.post('https://wxpusher.zjiecode.com/api/send/message', {
-      json: {
-        appToken: this.appToken,
-        content: message.content,
-        summary: message.summary,
-        contentType: 2,
-        uids: [binding.uid],
-      },
+    await this.sendWxMessage({
+      uid: binding.uid,
+      targetUserId: userId,
+      type: notifyType,
+      summary: message.summary,
+      content: message.content,
+      authorId,
+      converseId,
+      groupId,
     });
 
     return true;
@@ -370,14 +477,14 @@ class WxNotifyService extends TcService {
     const author = await call(ctx).getUserInfo(authorId);
     const authorName = author?.nickname ?? '新消息';
 
-    await got.post('https://wxpusher.zjiecode.com/api/send/message', {
-      json: {
-        appToken: this.appToken,
-        content: `<h3>${authorName} 邀请你进行语音通话</h3><p>请尽快回到财讯接听来电。</p>`,
-        summary: `${authorName} 邀请你进行语音通话`,
-        contentType: 2,
-        uids: [binding.uid],
-      },
+    await this.sendWxMessage({
+      uid: binding.uid,
+      targetUserId: userId,
+      type: 'voiceCall',
+      summary: `${authorName} 邀请你进行语音通话`,
+      content: `<h3>${authorName} 邀请你进行语音通话</h3><p>请尽快回到财讯接听来电。</p>`,
+      authorId,
+      converseId,
     });
 
     return true;

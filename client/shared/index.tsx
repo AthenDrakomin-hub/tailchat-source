@@ -224,7 +224,6 @@ export {
   createWxNotifyBindSession,
   checkWxNotifyBindSession,
   unbindWxNotify,
-  sendWxNotifyTestMessage,
 } from './model/wxnotify';
 export type {
   WxNotifyStatus,

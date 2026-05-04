@@ -45,6 +45,18 @@ export function buildWxNotifyTestMessage(appName: string) {
   };
 }
 
+export function getWxNotifyDefaultRules() {
+  return ['好友私信', '语音电话来电', '群组 @所有人'];
+}
+
+export function maskWxNotifyToken(token: string) {
+  if (!token) {
+    return '';
+  }
+
+  return `${token.slice(0, 7)}****`;
+}
+
 export function detectMentionAll(text?: string) {
   const normalized = String(text ?? '').toLowerCase();
   return normalized.includes('@所有人') || normalized.includes('@all');
