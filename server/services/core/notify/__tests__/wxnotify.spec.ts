@@ -1,6 +1,7 @@
 import {
   buildWxNotifyMessage,
   getWxNotifyBinding,
+  shouldSendWxNotify,
 } from '../wxnotify.helper';
 
 describe('wxnotify helper', () => {
@@ -39,5 +40,55 @@ describe('wxnotify helper', () => {
     ).toMatchObject({
       summary: '主讲老师 在 投教训练营 提醒了你',
     });
+  });
+
+  test('sends mention notify only when mention preference is enabled', () => {
+    expect(
+      shouldSendWxNotify(
+        {
+          wxNotifyPreference: {
+            mention: true,
+            directMessage: false,
+          },
+        },
+        {
+          type: 'mention',
+          converseId: 'c1',
+        }
+      )
+    ).toBe(true);
+
+    expect(
+      shouldSendWxNotify(
+        {
+          wxNotifyPreference: {
+            mention: false,
+            directMessage: true,
+          },
+        },
+        {
+          type: 'mention',
+          converseId: 'c1',
+        }
+      )
+    ).toBe(false);
+  });
+
+  test('does not send direct message notify when conversation is muted', () => {
+    expect(
+      shouldSendWxNotify(
+        {
+          wxNotifyPreference: {
+            mention: true,
+            directMessage: true,
+          },
+          messageNotificationMuteList: ['c1'],
+        },
+        {
+          type: 'directMessage',
+          converseId: 'c1',
+        }
+      )
+    ).toBe(false);
   });
 });

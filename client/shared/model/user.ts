@@ -47,6 +47,14 @@ export interface UserSettings {
   disableMessageContextMenu?: boolean;
 
   /**
+   * 微信通知偏好
+   */
+  wxNotifyPreference?: {
+    mention?: boolean;
+    directMessage?: boolean;
+  };
+
+  /**
    * 其他的设置项
    */
   [key: string]: any;

@@ -7,6 +7,7 @@ import {
 import {
   buildWxNotifyMessage,
   getWxNotifyBinding,
+  shouldSendWxNotify,
 } from './wxnotify.helper';
 
 class WxNotifyService extends TcService {
@@ -18,25 +19,49 @@ class WxNotifyService extends TcService {
     this.registerEventListener(
       'chat.message.updateMessage',
       async (payload, ctx) => {
-        if (
-          payload.type !== 'add' ||
-          !Array.isArray(payload.meta?.mentions) ||
-          payload.meta.mentions.length === 0
-        ) {
+        if (payload.type !== 'add') {
           return;
         }
 
-        await Promise.all(
-          payload.meta.mentions.map((userId: string) =>
-            ctx.call('wxnotify.pushMention', {
-              userId,
-              authorId: payload.author,
-              messageSnippet: payload.plain ?? payload.content ?? '',
-              groupId: payload.groupId,
-              converseId: payload.converseId,
-            })
-          )
-        );
+        const mentions = Array.isArray(payload.meta?.mentions)
+          ? payload.meta.mentions
+          : [];
+
+        if (mentions.length > 0) {
+          await Promise.all(
+            mentions.map((userId: string) =>
+              ctx.call('wxnotify.pushMention', {
+                userId,
+                authorId: payload.author,
+                messageSnippet: payload.plain ?? payload.content ?? '',
+                groupId: payload.groupId,
+                converseId: payload.converseId,
+                notifyType: 'mention',
+              })
+            )
+          );
+        }
+
+        if (!payload.groupId) {
+          const converseInfo = await call(ctx).getConverseInfo(payload.converseId);
+          const members = Array.isArray(converseInfo?.members)
+            ? converseInfo.members.map(String)
+            : [];
+
+          if (converseInfo?.type === 'DM' && members.length === 2) {
+            const receiverId = members.find((item) => item !== payload.author);
+
+            if (receiverId) {
+              await ctx.call('wxnotify.pushMention', {
+                userId: receiverId,
+                authorId: payload.author,
+                messageSnippet: payload.plain ?? payload.content ?? '',
+                converseId: payload.converseId,
+                notifyType: 'directMessage',
+              });
+            }
+          }
+        }
       }
     );
 
@@ -63,6 +88,7 @@ class WxNotifyService extends TcService {
         messageSnippet: 'string',
         groupId: { type: 'string', optional: true },
         converseId: 'string',
+        notifyType: { type: 'enum', values: ['mention', 'directMessage'] },
       },
     });
   }
@@ -182,17 +208,39 @@ class WxNotifyService extends TcService {
       messageSnippet: string;
       groupId?: string;
       converseId: string;
+      notifyType: 'mention' | 'directMessage';
     }>
   ) {
     if (!this.available) {
       return false;
     }
 
-    const { userId, authorId, messageSnippet, groupId } = ctx.params;
+    const { userId, authorId, messageSnippet, groupId, converseId, notifyType } =
+      ctx.params;
     const targetUser = await call(ctx).getUserInfo(userId);
     const binding = getWxNotifyBinding(targetUser?.extra);
 
     if (!binding.isBound || !binding.isEnabled || !binding.uid) {
+      return false;
+    }
+
+    const settings = await ctx.call(
+      'user.getUserSettings',
+      {},
+      {
+        meta: {
+          userId,
+        },
+      }
+    );
+
+    if (
+      !shouldSendWxNotify(settings as Record<string, any>, {
+        type: notifyType,
+        converseId,
+        groupId,
+      })
+    ) {
       return false;
     }
 

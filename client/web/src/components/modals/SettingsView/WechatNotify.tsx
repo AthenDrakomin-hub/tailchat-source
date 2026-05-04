@@ -5,6 +5,7 @@ import {
   Space,
   Alert,
   Divider,
+  Switch,
 } from 'antd';
 import {
   checkWxNotifyBindSession,
@@ -16,8 +17,10 @@ import {
   unbindWxNotify,
   useAsyncFn,
   useAsyncRequest,
+  useSingleUserSetting,
   type WxNotifyBindSession,
 } from 'tailchat-shared';
+import { normalizeWxNotifyPreference } from './wxNotifyPreference';
 import { resolveWxNotifyStatus } from './wxNotifyStatus';
 
 export const SettingsWechatNotify: React.FC = React.memo(() => {
@@ -36,6 +39,14 @@ export const SettingsWechatNotify: React.FC = React.memo(() => {
     await refreshStatus();
     showSuccessToasts(t('已解除微信通知绑定'));
   }, [refreshStatus]);
+  const {
+    value: preferenceValue,
+    setValue: setPreference,
+    loading: preferenceLoading,
+  } = useSingleUserSetting('wxNotifyPreference', {
+    mention: true,
+    directMessage: false,
+  });
 
   useEffect(() => {
     if (!session?.code) {
@@ -71,6 +82,7 @@ export const SettingsWechatNotify: React.FC = React.memo(() => {
       uid: '',
     }
   );
+  const preference = normalizeWxNotifyPreference(preferenceValue);
 
   return (
     <Space direction="vertical" style={{ width: '100%' }} size="middle">
@@ -101,6 +113,55 @@ export const SettingsWechatNotify: React.FC = React.memo(() => {
             {t('解除绑定')}
           </Button>
         )}
+      </Space>
+
+      <Divider />
+
+      <Space direction="vertical" style={{ width: '100%' }} size="middle">
+        <Typography.Text strong>{t('通知偏好')}</Typography.Text>
+        <Space
+          align="center"
+          style={{ width: '100%', justifyContent: 'space-between' }}
+        >
+          <div>
+            <Typography.Text>{t('@你 的消息')}</Typography.Text>
+            <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
+              {t('当群里有人明确提到你时，通过微信提醒你。')}
+            </Typography.Paragraph>
+          </div>
+          <Switch
+            checked={preference.mention}
+            loading={preferenceLoading}
+            onChange={(checked) =>
+              setPreference({
+                ...preference,
+                mention: checked,
+              }).catch(showErrorToasts)
+            }
+          />
+        </Space>
+
+        <Space
+          align="center"
+          style={{ width: '100%', justifyContent: 'space-between' }}
+        >
+          <div>
+            <Typography.Text>{t('私聊消息')}</Typography.Text>
+            <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
+              {t('当收到新的私聊消息时，通过微信提醒你。')}
+            </Typography.Paragraph>
+          </div>
+          <Switch
+            checked={preference.directMessage}
+            loading={preferenceLoading}
+            onChange={(checked) =>
+              setPreference({
+                ...preference,
+                directMessage: checked,
+              }).catch(showErrorToasts)
+            }
+          />
+        </Space>
       </Space>
 
       {session?.qrcodeUrl && (
