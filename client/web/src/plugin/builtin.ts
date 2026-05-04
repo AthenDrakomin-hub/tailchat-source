@@ -52,18 +52,6 @@ export const builtinPlugins: PluginManifest[] = _compact([
     requireRestart: true,
   },
   {
-    label: 'Intro plugin',
-    'label.zh-CN': '初始引导插件',
-    name: 'com.msgbyte.intro',
-    url: '/plugins/com.msgbyte.intro/index.js',
-    version: '0.0.0',
-    author: 'msgbyte',
-    description:
-      'Turn on the ability to introduce the app for the first time for the app',
-    'description.zh-CN': '为应用首次打开介绍应用的能力',
-    requireRestart: true,
-  },
-  {
     label: 'Markdown Panel',
     'label.zh-CN': 'Markdown 面板',
     name: 'com.msgbyte.mdpanel',
@@ -196,7 +184,6 @@ export const requiredBuiltinPluginIds = [
   'com.msgbyte.webview',
   'com.msgbyte.bbcode',
   'com.msgbyte.notify',
-  'com.msgbyte.intro',
   'com.msgbyte.mdpanel',
   'com.msgbyte.offline-icons',
   'com.msgbyte.wealth',
