@@ -47,6 +47,7 @@
     "i18next": "^20.3.5",
     "ioredis": "^4.27.6",
     "jsonwebtoken": "^8.5.1",
+    "link-preview-js": "^2.1.10",
     "lodash": "^4.17.21",
     "mime": "^2.5.2",
     "minio": "^7.1.1",
