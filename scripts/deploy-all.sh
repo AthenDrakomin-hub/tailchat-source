@@ -11,6 +11,7 @@ echo "== 2. 更新代码 =="
 git fetch origin
 git checkout main
 git restore client/mobile/yarn.lock || true
+git restore server/public/downloads/client.json || true
 git pull --rebase origin main
 
 echo "== 3. 校验环境变量 =="
@@ -23,11 +24,34 @@ docker compose --env-file "$ENV_FILE" up -d --remove-orphans
 echo "== 5. 服务状态 =="
 docker compose --env-file "$ENV_FILE" ps
 
+check_endpoint() {
+  local path="$1"
+  local attempts="${2:-6}"
+  local sleep_seconds="${3:-5}"
+  local url="http://127.0.0.1:11000${path}"
+  local code="000"
+
+  for ((i=1; i<=attempts; i++)); do
+    code="$(curl -m 15 -sS -o /dev/null -w "%{http_code}" "$url" || true)"
+    if [[ "$code" == "200" ]]; then
+      echo "GET ${path} -> ${code}"
+      return 0
+    fi
+
+    if (( i < attempts )); then
+      sleep "$sleep_seconds"
+    fi
+  done
+
+  echo "GET ${path} -> ${code}"
+  return 1
+}
+
 echo "== 6. 健康检查 =="
-curl -m 10 -sS -o /dev/null -w "GET / -> %{http_code}\n" http://127.0.0.1:11000/
-curl -m 10 -sS -o /dev/null -w "GET /admin/ -> %{http_code}\n" http://127.0.0.1:11000/admin/
-curl -m 10 -sS -o /dev/null -w "GET /api/config/client -> %{http_code}\n" http://127.0.0.1:11000/api/config/client
-curl -m 10 -sS -o /dev/null -w "GET /downloads -> %{http_code}\n" http://127.0.0.1:11000/downloads
-curl -m 10 -sS -o /dev/null -w "GET /downloads/client.json -> %{http_code}\n" http://127.0.0.1:11000/downloads/client.json
+check_endpoint "/"
+check_endpoint "/admin/"
+check_endpoint "/api/config/client"
+check_endpoint "/downloads"
+check_endpoint "/downloads/client.json"
 
 echo "== 完成 =="

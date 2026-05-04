@@ -132,10 +132,19 @@ export default class ApiService extends TcService {
       ];
 
       for (const p of candidates) {
-        if (
-          fs.existsSync(path.resolve(p, 'index.html')) &&
-          fs.existsSync(path.resolve(p, 'tailchat.manifest'))
-        ) {
+        const hasIndex = fs.existsSync(path.resolve(p, 'index.html'));
+        const hasLegacyManifest = fs.existsSync(
+          path.resolve(p, 'tailchat.manifest')
+        );
+        const hasPwaManifest = fs.existsSync(
+          path.resolve(p, 'pwa.webmanifest')
+        );
+
+        if (hasIndex && (hasLegacyManifest || hasPwaManifest)) {
+          return p;
+        }
+
+        if (hasIndex) {
           return p;
         }
       }
