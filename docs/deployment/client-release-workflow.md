@@ -6,7 +6,7 @@
 
 - 主站更新
 - Android 包在服务器上构建
-- Windows / macOS / Linux 包发布到下载中心
+- PWA / Web 使用入口与 Android 下载中心同步更新
 - `/downloads` 页面与所有端安装包同步更新
 
 ## 固定目录
@@ -54,15 +54,17 @@ bash scripts/build-android-release.sh
 - 更新 `server/public/downloads/client.json`
 - 验证 `/downloads/client.json` 与 Android 下载地址
 
-## 发布 Windows / macOS / Linux 包
+## PC 端当前策略：Web / PWA
 
-说明：
+当前版本不再作为主线发布 Windows / macOS / Linux 原生安装包。
 
-- Windows 包建议在 Windows 环境构建
-- macOS 包建议在 macOS 环境构建
-- Linux 包可选，不是主推平台
+PC 端统一采用：
 
-将产物上传到服务器后执行：
+- 浏览器直接访问主站
+- 支持安装为 PWA 的浏览器直接“安装为应用”
+- 下载页明确提示 PC 端走 Web / PWA
+
+如未来需要恢复桌面安装包分发，仍可按需使用：
 
 ```bash
 cd /var/www/tailchat-source
@@ -70,15 +72,7 @@ cd /var/www/tailchat-source
 bash scripts/publish-client-assets.sh \
   --windows /tmp/caixun-desktop-windows.zip --windows-version 1.0.0 \
   --macos /tmp/caixun-desktop-macos.dmg --macos-version 1.0.0 \
-  --macos-arm64 /tmp/caixun-desktop-macos-arm64.dmg --macos-arm64-version 1.0.0
-```
-
-如需补 Linux 包：
-
-```bash
-cd /var/www/tailchat-source
-
-bash scripts/publish-client-assets.sh \
+  --macos-arm64 /tmp/caixun-desktop-macos-arm64.dmg --macos-arm64-version 1.0.0 \
   --linux /tmp/caixun-desktop-linux.AppImage --linux-version 1.0.0
 ```
 
@@ -98,26 +92,13 @@ cd /var/www/tailchat-source
 bash scripts/build-android-release.sh
 ```
 
-### 3. 发布 Windows / macOS / Linux 外部产物
-
-```bash
-cd /var/www/tailchat-source
-
-bash scripts/publish-client-assets.sh \
-  --windows /tmp/caixun-desktop-windows.zip --windows-version 1.0.0 \
-  --macos /tmp/caixun-desktop-macos.dmg --macos-version 1.0.0 \
-  --macos-arm64 /tmp/caixun-desktop-macos-arm64.dmg --macos-arm64-version 1.0.0
-```
-
-### 4. 终检
+### 3. 终检
 
 ```bash
 curl -m 10 -sS -o /dev/null -w "GET /downloads -> %{http_code}\n" http://127.0.0.1:11000/downloads
 curl -m 10 -sS -o /dev/null -w "GET /downloads/client.json -> %{http_code}\n" http://127.0.0.1:11000/downloads/client.json
 curl -m 10 -sS -o /dev/null -w "GET /downloads/client/caixun-android-release.apk -> %{http_code}\n" http://127.0.0.1:11000/downloads/client/caixun-android-release.apk
-curl -m 10 -sS -o /dev/null -w "GET /downloads/client/caixun-desktop-windows.zip -> %{http_code}\n" http://127.0.0.1:11000/downloads/client/caixun-desktop-windows.zip
-curl -m 10 -sS -o /dev/null -w "GET /downloads/client/caixun-desktop-macos.dmg -> %{http_code}\n" http://127.0.0.1:11000/downloads/client/caixun-desktop-macos.dmg
-curl -m 10 -sS -o /dev/null -w "GET /downloads/client/caixun-desktop-macos-arm64.dmg -> %{http_code}\n" http://127.0.0.1:11000/downloads/client/caixun-desktop-macos-arm64.dmg
+curl -m 10 -sS -o /dev/null -w "GET / -> %{http_code}\n" http://127.0.0.1:11000/
 ```
 
 ## iOS 说明
@@ -132,10 +113,8 @@ curl -m 10 -sS -o /dev/null -w "GET /downloads/client/caixun-desktop-macos-arm64
 
 ## 文件命名规范
 
-下载中心统一使用以下文件名：
+当前下载中心主线只要求：
 
 - `caixun-android-release.apk`
-- `caixun-desktop-windows.zip`
-- `caixun-desktop-macos.dmg`
-- `caixun-desktop-macos-arm64.dmg`
-- `caixun-desktop-linux.AppImage`
+
+PC 端默认通过 Web / PWA 使用，不要求同时维护桌面端安装包文件名。

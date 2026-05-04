@@ -3,20 +3,9 @@
     "version": "latest",
     "url": "/downloads/client/caixun-android-release.apk"
   },
-  "windows": {
-    "version": "latest",
-    "url": "/downloads/client/caixun-desktop-windows.zip"
-  },
-  "darwin": {
-    "version": "latest",
-    "url": "/downloads/client/caixun-desktop-macos.dmg"
-  },
-  "darwin-arm64": {
-    "version": "latest",
-    "url": "/downloads/client/caixun-desktop-macos-arm64.dmg"
-  },
-  "linux": {
-    "version": "latest",
-    "url": "/downloads/client/caixun-desktop-linux.AppImage"
+  "pwa": {
+    "version": "web",
+    "url": "/",
+    "installHint": "桌面端默认通过浏览器安装为 PWA 使用。"
   }
 }

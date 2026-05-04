@@ -1,5 +1,4 @@
 import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import React from 'react';
 import Translate from '@docusaurus/Translate';
@@ -20,7 +19,7 @@ export default function Downloads() {
             <div className="intro-badge">客户端分发中心</div>
             <h1>下载財訊客户端</h1>
             <p>
-              Web、桌面端与移动端统一接入同一套工作区。你可以先从 Web 开始，也可以直接下载桌面端或 Android 客户端。
+              Web 与移动端统一接入同一套工作区。当前版本主推 Android 客户端，PC 端默认通过浏览器安装为 PWA 使用。
             </p>
           </div>
 
@@ -36,19 +35,18 @@ export default function Downloads() {
               <p>适合随时查看消息、通讯录、发现与我的页面。Android 安装包可直接下载，iOS 保持后续上架。</p>
 
               <div className="btns">
-                <Link
+                <a
                   className="button button--primary"
-                  to={clients.android.url}
-                  data-tianji-event="download-android"
+                  href={clients.android.url}
                 >
                   Android
-                </Link>
-                <Link
+                </a>
+                <a
                   className="button button--secondary disabled"
-                  data-tianji-event="download-ios"
+                  href="#"
                 >
                   iOS(准备中)
-                </Link>
+                </a>
               </div>
 
               <p className="tip">
@@ -63,37 +61,22 @@ export default function Downloads() {
             </div>
 
             <div className="block">
-              <div className="status">桌面端</div>
-              <h3>Desktop Client</h3>
+              <div className="status">PWA</div>
+              <h3>Desktop via PWA</h3>
 
-              <p>适合长期在线、群组讨论常驻、多会话并行与资料整理。Windows、macOS 与 Linux 均可通过站内分发链接下载。</p>
+              <p>PC 端当前不再单独发布 Windows、macOS 与 Linux 原生安装包。推荐直接访问 Web 主站，并在浏览器中安装为 PWA 应用。</p>
 
               <div className="btns">
-                <Link
+                <a
                   className="button button--primary"
-                  to={clients.windows.url}
-                  data-tianji-event="download-windows"
+                  href={clients.pwa.url}
                 >
-                  Windows
-                </Link>
-                <Link
-                  className="button button--secondary"
-                  to={clients.darwin.url}
-                  data-tianji-event="download-macos"
-                >
-                  macOS
-                </Link>
-                <Link
-                  className="button button--secondary"
-                  to={clients.linux.url}
-                  data-tianji-event="download-linux"
-                >
-                  Linux
-                </Link>
+                  打开 Web / 安装 PWA
+                </a>
               </div>
 
               <p className="tip">
-                桌面端安装包默认读取站内相对地址，你只需要把构建产物放到服务器对应目录即可。
+                支持安装为桌面应用的浏览器，可直接使用“安装应用 / 添加到桌面 / 创建快捷方式”等功能。
               </p>
             </div>
           </div>
@@ -101,11 +84,11 @@ export default function Downloads() {
           <div className="web-card">
             <div className="status">Web</div>
             <h3>Web Client</h3>
-            <p>如果你希望直接开始使用，可以先从 Web 端进入。Web 仍然是最完整、最稳定的使用入口。</p>
+            <p>如果你希望直接开始使用，可以先从 Web 端进入。Web 仍然是最完整、最稳定的使用入口，PWA 也基于当前 Web 主站能力提供。</p>
             <div className="btns">
-              <Link className="button button--primary" to="/">
+              <a className="button button--primary" href="/">
                 立即进入 Web
-              </Link>
+              </a>
             </div>
           </div>
         </div>

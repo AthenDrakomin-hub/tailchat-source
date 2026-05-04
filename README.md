@@ -132,15 +132,9 @@ cd /var/www/tailchat-source
 bash scripts/build-android-release.sh
 ```
 
-### 发布 Windows / macOS / Linux 外部产物
-```bash
-cd /var/www/tailchat-source
-
-bash scripts/publish-client-assets.sh \
-  --windows /tmp/caixun-desktop-windows.zip --windows-version 1.0.0 \
-  --macos /tmp/caixun-desktop-macos.dmg --macos-version 1.0.0 \
-  --macos-arm64 /tmp/caixun-desktop-macos-arm64.dmg --macos-arm64-version 1.0.0
-```
+### 当前客户端分发策略
+- Android：通过 `scripts/build-android-release.sh` 构建并发布 APK
+- PC 端：默认使用 Web / PWA，不再作为当前主线发布 Windows / macOS / Linux 原生安装包
 
 完整说明见：
 - [`docs/deployment/client-release-workflow.md`](docs/deployment/client-release-workflow.md)

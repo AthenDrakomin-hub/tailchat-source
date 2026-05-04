@@ -284,12 +284,11 @@
         <div class="badge">客户端分发中心</div>
         <h1>下载財訊客户端</h1>
         <div class="desc">
-          所有安装入口已统一收口到当前页面。系统会根据你当前设备自动推荐下载方式，并实时显示安装包是否可用。
+          所有安装入口已统一收口到当前页面。当前版本主推 Android 安装包与浏览器 PWA；桌面端请直接通过浏览器安装为应用使用。
         </div>
         <div class="quick-links">
           <a class="quick-link" href="#mobile">Android / iOS</a>
-          <a class="quick-link" href="#desktop">Windows / macOS</a>
-          <a class="quick-link" href="#more-platforms">更多平台</a>
+          <a class="quick-link" href="#pwa">PWA / 桌面使用</a>
           <a class="quick-link" href="#web">Web 入口</a>
         </div>
       </div>
@@ -298,7 +297,7 @@
         <div class="recommend-title">智能推荐</div>
         <div class="recommend-text" id="device-summary">正在识别你当前的设备环境…</div>
         <div class="recommend-subtext" id="device-detail">
-          页面会根据你的设备优先高亮可用下载项；如果当前平台暂未提供安装包，会明确提示你改用 Web 或其他设备。
+          页面会根据你的设备优先高亮 Android 下载或 PWA 安装方式；如果当前平台没有原生安装包，会明确提示你改用 Web / PWA。
         </div>
         <div class="recommend-actions" id="recommend-actions"></div>
       </section>
@@ -344,53 +343,24 @@
           </div>
         </section>
 
-        <section class="card" id="desktop">
+        <section class="card" id="pwa">
           <div class="card-header">
-            <div class="status">桌面端</div>
-            <div class="card-badge" data-recommend-badge="desktop">推荐当前设备</div>
+            <div class="status">PWA</div>
+            <div class="card-badge" data-recommend-badge="pwa">推荐当前设备</div>
           </div>
-          <h3>Desktop Client</h3>
-          <p>适合长期在线、群组讨论常驻、多会话并行与资料整理。当前主推 Windows 与 macOS，适合绝大多数桌面用户。</p>
+          <h3>桌面浏览器安装为应用</h3>
+          <p>PC 端当前不再单独发布 Windows / macOS / Linux 安装包。推荐直接使用浏览器访问主站，并安装为 PWA 以获得接近桌面应用的体验。</p>
           <div class="download-list">
             <div class="download-item">
               <div class="download-title">
-                <span>Windows</span>
-                <a class="btn btn-secondary" data-download-key="windows" href="/downloads/client/caixun-desktop-windows.zip">检测中…</a>
+                <span>PWA / Web App</span>
+                <a class="btn btn-secondary" data-download-key="pwa" href="/">检测中…</a>
               </div>
-              <div class="download-meta" data-download-meta="windows">正在读取版本、大小与更新时间…</div>
-            </div>
-            <div class="download-item">
-              <div class="download-title">
-                <span>macOS</span>
-                <a class="btn btn-secondary" data-download-key="darwin" href="/downloads/client/caixun-desktop-macos.dmg">检测中…</a>
-              </div>
-              <div class="download-meta" data-download-meta="darwin">正在读取版本、大小与更新时间…</div>
-            </div>
-            <div class="download-item">
-              <div class="download-title">
-                <span>macOS Apple Silicon</span>
-                <a class="btn btn-secondary" data-download-key="darwin-arm64" href="/downloads/client/caixun-desktop-macos-arm64.dmg">检测中…</a>
-              </div>
-              <div class="download-meta" data-download-meta="darwin-arm64">正在读取版本、大小与更新时间…</div>
+              <div class="download-meta" data-download-meta="pwa">正在读取安装提示…</div>
             </div>
           </div>
-        </section>
-
-        <section class="card" id="more-platforms">
-          <div class="card-header">
-            <div class="status">其他平台</div>
-            <div class="card-badge" data-recommend-badge="linux">当前设备</div>
-          </div>
-          <h3>More Platforms</h3>
-          <p>Linux 客户端保留在下载中心中，但不作为主推平台。若你使用 Ubuntu、Debian 或其他 Linux 桌面发行版，可在这里获取安装包。</p>
-          <div class="download-list">
-            <div class="download-item">
-              <div class="download-title">
-                <span>Linux</span>
-                <a class="btn btn-secondary" data-download-key="linux" href="/downloads/client/caixun-desktop-linux.AppImage">检测中…</a>
-              </div>
-              <div class="download-meta" data-download-meta="linux">正在读取版本、大小与更新时间…</div>
-            </div>
+          <div class="tip">
+            推荐路径：Windows / macOS / Linux 均直接访问主站，然后使用浏览器“安装应用 / 添加到桌面 / 创建快捷方式”功能。
           </div>
         </section>
 
@@ -400,7 +370,7 @@
             <div class="card-badge active">始终可用</div>
           </div>
           <h3>Web Client</h3>
-          <p>如果你希望直接开始使用，Web 仍然是功能最完整、最稳定的入口。在没有合适安装包时，可直接先从 Web 端开始。</p>
+          <p>如果你希望直接开始使用，Web 仍然是功能最完整、最稳定的入口。PWA 也是基于当前 Web 主站能力提供安装体验。</p>
           <div class="actions">
             <a class="btn btn-primary" href="/">立即进入 Web</a>
             <a class="btn btn-secondary" href="/downloads/client.json">查看下载配置</a>
@@ -413,10 +383,7 @@
     <script>
       const platformNames = {
         android: 'Android',
-        windows: 'Windows',
-        darwin: 'macOS',
-        'darwin-arm64': 'macOS Apple Silicon',
-        linux: 'Linux',
+        pwa: 'PWA',
       };
 
       function formatBytes(bytes) {
@@ -457,15 +424,15 @@
         }
 
         if (platform.includes('win')) {
-          return { name: 'Windows 电脑', recommendedKeys: ['windows'], badge: 'desktop' };
+          return { name: 'Windows 电脑', recommendedKeys: ['pwa'], badge: 'pwa' };
         }
 
         if (platform.includes('mac')) {
-          return { name: 'macOS 设备', recommendedKeys: ['darwin', 'darwin-arm64'], badge: 'desktop' };
+          return { name: 'macOS 设备', recommendedKeys: ['pwa'], badge: 'pwa' };
         }
 
         if (platform.includes('linux') || ua.includes('linux')) {
-          return { name: 'Linux 设备', recommendedKeys: ['linux'], badge: 'desktop' };
+          return { name: 'Linux 设备', recommendedKeys: ['pwa'], badge: 'pwa' };
         }
 
         return { name: '当前设备', recommendedKeys: [], badge: 'web', message: '未能准确识别你的设备，建议按系统手动选择，或直接使用 Web 版。' };
@@ -555,15 +522,19 @@
               continue;
             }
 
-            const result = await probeDownload(item.url);
-            if (!result.ok) {
-              setButtonUnavailable(button, meta, item.version || 'latest');
-              continue;
-            }
-
             button.href = item.url;
-            button.textContent = '立即下载';
-            meta.textContent = `版本：${item.version || 'latest'} · 大小：${formatBytes(result.size)} · 更新时间：${formatDate(result.updatedAt)}`;
+            if (key === 'pwa') {
+              button.textContent = '立即打开';
+              meta.textContent = item.installHint || '桌面端请直接通过浏览器安装为 PWA 使用。';
+            } else {
+              const result = await probeDownload(item.url);
+              if (!result.ok) {
+                setButtonUnavailable(button, meta, item.version || 'latest');
+                continue;
+              }
+              button.textContent = '立即下载';
+              meta.textContent = `版本：${item.version || 'latest'} · 大小：${formatBytes(result.size)} · 更新时间：${formatDate(result.updatedAt)}`;
+            }
             availableDownloads.push({
               key,
               name: platformNames[key] || key,
@@ -597,11 +568,11 @@
               )
               .join('');
           } else {
-            recommendActions.innerHTML = `<a class="btn btn-primary" href="/">先进入 Web</a>`;
+            recommendActions.innerHTML = `<a class="btn btn-primary" href="/">打开 Web / 安装 PWA</a>`;
           }
         } catch (error) {
           detail.textContent = '当前未能读取下载配置，请稍后刷新页面重试，或先直接使用 Web 版。';
-          recommendActions.innerHTML = `<a class="btn btn-primary" href="/">先进入 Web</a>`;
+          recommendActions.innerHTML = `<a class="btn btn-primary" href="/">打开 Web / 安装 PWA</a>`;
         }
       }
 

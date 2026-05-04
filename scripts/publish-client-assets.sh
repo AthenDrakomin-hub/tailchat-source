@@ -98,6 +98,8 @@ config_file, download_dir, android_v, windows_v, macos_v, macos_arm_v, linux_v =
 with open(config_file, "r", encoding="utf-8") as f:
     data = json.load(f)
 
+result = {}
+
 mapping = {
     "android": ("caixun-android-release.apk", android_v),
     "windows": ("caixun-desktop-windows.zip", windows_v),
@@ -108,16 +110,26 @@ mapping = {
 
 for key, (filename, version) in mapping.items():
     full_path = os.path.join(download_dir, filename)
-    entry = data.setdefault(key, {})
-    entry["url"] = f"/downloads/client/{filename}"
-    entry["version"] = version or entry.get("version") or "latest"
-    if os.path.exists(full_path):
-      stat = os.stat(full_path)
-      entry["sizeBytes"] = stat.st_size
-      entry["updatedAt"] = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat()
+    if not os.path.exists(full_path):
+        continue
+
+    entry = {
+        "url": f"/downloads/client/{filename}",
+        "version": version or data.get(key, {}).get("version") or "latest",
+    }
+    stat = os.stat(full_path)
+    entry["sizeBytes"] = stat.st_size
+    entry["updatedAt"] = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat()
+    result[key] = entry
+
+result["pwa"] = {
+    "version": "web",
+    "url": "/",
+    "installHint": "桌面端默认通过浏览器安装为 PWA 使用。",
+}
 
 with open(config_file, "w", encoding="utf-8") as f:
-    json.dump(data, f, ensure_ascii=False, indent=2)
+    json.dump(result, f, ensure_ascii=False, indent=2)
     f.write("\n")
 PY
 
