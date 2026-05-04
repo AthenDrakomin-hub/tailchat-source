@@ -36,6 +36,36 @@ export const UserList: React.FC = React.memo(() => {
         export: true,
         custom: (record) => [
           {
+            key: 'wxNotifyStatus',
+            label: t('custom.action.wxNotifyStatus'),
+            onClick: () => {
+              const binding = record?.extra?.wxNotifyBinding;
+              const isBound = Boolean(binding?.uid);
+              Modal.confirm({
+                title: t('custom.action.wxNotifyStatus'),
+                content: (
+                  <div style={{ lineHeight: 1.9 }}>
+                    <div>
+                      {t('custom.action.wxNotifyBound')}: {isBound ? '是' : '否'}
+                    </div>
+                    <div>
+                      {t('custom.action.wxNotifyProvider')}: {binding?.provider ?? '-'}
+                    </div>
+                    <div>
+                      {t('custom.action.wxNotifyUid')}: {binding?.uid ?? '-'}
+                    </div>
+                    <div>
+                      {t('custom.action.wxNotifyBoundAt')}:{' '}
+                      {binding?.boundAt ?? '-'}
+                    </div>
+                  </div>
+                ),
+                hideCancel: true,
+                okText: t('tushan.common.confirm'),
+              });
+            },
+          },
+          {
             key: 'resetPassword',
             label: t('custom.action.resetPassword'),
             onClick: () => {

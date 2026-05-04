@@ -1,7 +1,9 @@
 import {
+  buildWxNotifyLogQuery,
   buildWxNotifyMessage,
   buildWxNotifyTestMessage,
   detectMentionAll,
+  maskWxNotifyUid,
   getWxNotifyBinding,
   getWxNotifyDefaultRules,
   maskWxNotifyToken,
@@ -108,5 +110,27 @@ describe('wxnotify helper', () => {
   test('masks app token for admin overview', () => {
     expect(maskWxNotifyToken('AT_123456789')).toBe('AT_1234****');
     expect(maskWxNotifyToken('')).toBe('');
+  });
+
+  test('masks bound uid for admin display', () => {
+    expect(maskWxNotifyUid('UID_1234567890')).toBe('UID_1234...7890');
+    expect(maskWxNotifyUid('')).toBe('');
+  });
+
+  test('builds admin log query from filter params', () => {
+    const query = buildWxNotifyLogQuery({
+      type: 'voiceCall',
+      status: 'failed',
+      targetKeyword: 'user_1',
+      days: 7,
+    });
+
+    expect(query.type).toBe('voiceCall');
+    expect(query.status).toBe('failed');
+    expect(query.targetUserId).toEqual({
+      $regex: 'user_1',
+      $options: 'i',
+    });
+    expect(query.createdAt).toBeTruthy();
   });
 });

@@ -57,6 +57,50 @@ export function maskWxNotifyToken(token: string) {
   return `${token.slice(0, 7)}****`;
 }
 
+export function maskWxNotifyUid(uid: string) {
+  if (!uid) {
+    return '';
+  }
+
+  if (uid.length <= 8) {
+    return uid;
+  }
+
+  return `${uid.slice(0, 8)}...${uid.slice(-4)}`;
+}
+
+export function buildWxNotifyLogQuery(input: {
+  type?: string;
+  status?: string;
+  targetKeyword?: string;
+  days?: number;
+}) {
+  const query: Record<string, any> = {};
+
+  if (input.type && input.type !== 'all') {
+    query.type = input.type;
+  }
+
+  if (input.status && input.status !== 'all') {
+    query.status = input.status;
+  }
+
+  if (input.targetKeyword) {
+    query.targetUserId = {
+      $regex: input.targetKeyword,
+      $options: 'i',
+    };
+  }
+
+  if (typeof input.days === 'number' && input.days > 0) {
+    query.createdAt = {
+      $gte: new Date(Date.now() - input.days * 24 * 60 * 60 * 1000),
+    };
+  }
+
+  return query;
+}
+
 export function detectMentionAll(text?: string) {
   const normalized = String(text ?? '').toLowerCase();
   return normalized.includes('@所有人') || normalized.includes('@all');

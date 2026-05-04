@@ -135,10 +135,21 @@ const WxNotifyAdminPanel: React.FC = React.memo(() => {
   const [typeFilter, setTypeFilter] = React.useState<string>('all');
   const [statusFilter, setStatusFilter] = React.useState<string>('all');
   const [targetKeyword, setTargetKeyword] = React.useState('');
+  const [daysFilter, setDaysFilter] = React.useState<number>(7);
 
   const [{ loading: overviewLoading }, fetchOverview] = useAsyncRequest(
-    async () => {
-      const data = await callAction('wxnotify.adminOverview', {});
+    async (params?: {
+      type?: string;
+      status?: string;
+      targetKeyword?: string;
+      days?: number;
+    }) => {
+      const data = await callAction('wxnotify.adminOverview', {
+        type: params?.type,
+        status: params?.status,
+        targetKeyword: params?.targetKeyword,
+        days: params?.days,
+      });
       setOverview(data);
       return data;
     }
@@ -151,31 +162,13 @@ const WxNotifyAdminPanel: React.FC = React.memo(() => {
   });
 
   React.useEffect(() => {
-    fetchOverview().catch(() => {});
+    fetchOverview({
+      type: typeFilter,
+      status: statusFilter,
+      targetKeyword,
+      days: daysFilter,
+    }).catch(() => {});
   }, []);
-
-  const filteredLogs = React.useMemo(() => {
-    const logs = Array.isArray(overview?.recentLogs) ? overview.recentLogs : [];
-
-    return logs.filter((item: any) => {
-      if (typeFilter !== 'all' && item.type !== typeFilter) {
-        return false;
-      }
-      if (statusFilter !== 'all' && item.status !== statusFilter) {
-        return false;
-      }
-      if (
-        targetKeyword &&
-        !String(item.targetUserId ?? '')
-          .toLowerCase()
-          .includes(targetKeyword.toLowerCase())
-      ) {
-        return false;
-      }
-
-      return true;
-    });
-  }, [overview?.recentLogs, statusFilter, targetKeyword, typeFilter]);
 
   return (
     <Card>
@@ -227,7 +220,12 @@ const WxNotifyAdminPanel: React.FC = React.memo(() => {
             try {
               await sendTest(values);
               Message.success(t('custom.wxnotify.testSuccess'));
-              await fetchOverview();
+              await fetchOverview({
+                type: typeFilter,
+                status: statusFilter,
+                targetKeyword,
+                days: daysFilter,
+              });
               form.resetFields();
             } catch (err) {
               Message.error(formatAdminError(err, '发送微信测试通知失败'));
@@ -257,7 +255,15 @@ const WxNotifyAdminPanel: React.FC = React.memo(() => {
           <Select
             style={{ width: 180 }}
             value={typeFilter}
-            onChange={setTypeFilter}
+            onChange={(value) => {
+              setTypeFilter(value);
+              fetchOverview({
+                type: value,
+                status: statusFilter,
+                targetKeyword,
+                days: daysFilter,
+              }).catch(() => {});
+            }}
             options={[
               { label: t('custom.wxnotify.filterAllType'), value: 'all' },
               { label: 'directMessage', value: 'directMessage' },
@@ -269,17 +275,51 @@ const WxNotifyAdminPanel: React.FC = React.memo(() => {
           <Select
             style={{ width: 160 }}
             value={statusFilter}
-            onChange={setStatusFilter}
+            onChange={(value) => {
+              setStatusFilter(value);
+              fetchOverview({
+                type: typeFilter,
+                status: value,
+                targetKeyword,
+                days: daysFilter,
+              }).catch(() => {});
+            }}
             options={[
               { label: t('custom.wxnotify.filterAllStatus'), value: 'all' },
               { label: 'success', value: 'success' },
               { label: 'failed', value: 'failed' },
             ]}
           />
+          <Select
+            style={{ width: 160 }}
+            value={daysFilter}
+            onChange={(value) => {
+              setDaysFilter(value);
+              fetchOverview({
+                type: typeFilter,
+                status: statusFilter,
+                targetKeyword,
+                days: value,
+              }).catch(() => {});
+            }}
+            options={[
+              { label: t('custom.wxnotify.filter7Days'), value: 7 },
+              { label: t('custom.wxnotify.filter30Days'), value: 30 },
+              { label: t('custom.wxnotify.filter90Days'), value: 90 },
+            ]}
+          />
           <Input
             style={{ width: 220 }}
             value={targetKeyword}
-            onChange={setTargetKeyword}
+            onChange={(value) => {
+              setTargetKeyword(value);
+              fetchOverview({
+                type: typeFilter,
+                status: statusFilter,
+                targetKeyword: value,
+                days: daysFilter,
+              }).catch(() => {});
+            }}
             placeholder={t('custom.wxnotify.filterTarget')}
           />
         </Space>
@@ -305,6 +345,10 @@ const WxNotifyAdminPanel: React.FC = React.memo(() => {
               dataIndex: 'targetUserId',
             },
             {
+              title: t('custom.wxnotify.logUid'),
+              dataIndex: 'targetUidMasked',
+            },
+            {
               title: t('custom.wxnotify.logSummary'),
               dataIndex: 'summary',
             },
@@ -317,7 +361,7 @@ const WxNotifyAdminPanel: React.FC = React.memo(() => {
               dataIndex: 'error',
             },
           ]}
-          data={filteredLogs}
+          data={overview?.recentLogs ?? []}
         />
       </Space>
     </Card>

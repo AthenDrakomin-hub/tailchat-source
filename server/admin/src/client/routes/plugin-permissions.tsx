@@ -124,6 +124,23 @@ export const PluginPermissions: React.FC = () => {
             <div>3. 当前默认微信通知规则固定为：好友私信、语音电话来电、群组 `@所有人`。</div>
           </div>
         </div>
+        <div
+          style={{
+            marginBottom: 16,
+            padding: 16,
+            borderRadius: 12,
+            background: '#fefce8',
+            border: '1px solid #fde68a',
+          }}
+        >
+          <div style={{ fontWeight: 600, marginBottom: 8 }}>上线检查清单</div>
+          <div style={{ color: '#854d0e', lineHeight: 1.8 }}>
+            <div>1. 已配置 `WXPUSHER_APP_TOKEN`。</div>
+            <div>2. 后台“微信通知管理”中能看到通道状态正常。</div>
+            <div>3. 至少有一个测试账号已完成微信绑定。</div>
+            <div>4. `LiveKit` 能力已包含，才能对语音电话来电做微信提醒。</div>
+          </div>
+        </div>
         <Table
           loading={loading}
           data={value?.registryData || []}

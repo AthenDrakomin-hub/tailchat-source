@@ -6,12 +6,14 @@ import {
   TcDbService,
 } from 'tailchat-server-sdk';
 import {
+  buildWxNotifyLogQuery,
   buildWxNotifyMessage,
   buildWxNotifyTestMessage,
   detectMentionAll,
   getWxNotifyBinding,
   getWxNotifyDefaultRules,
   maskWxNotifyToken,
+  maskWxNotifyUid,
   shouldSendWxNotify,
 } from './wxnotify.helper';
 import type {
@@ -105,6 +107,12 @@ class WxNotifyService extends TcService {
     });
     this.registerAction('adminOverview', this.adminOverview, {
       visibility: 'public',
+      params: {
+        type: { type: 'string', optional: true },
+        status: { type: 'string', optional: true },
+        targetKeyword: { type: 'string', optional: true },
+        days: { type: 'number', optional: true },
+      },
     });
     this.registerAction('adminSendTestMessage', this.adminSendTestMessage, {
       visibility: 'public',
@@ -226,12 +234,20 @@ class WxNotifyService extends TcService {
     };
   }
 
-  async adminOverview() {
+  async adminOverview(
+    ctx: TcContext<{
+      type?: string;
+      status?: string;
+      targetKeyword?: string;
+      days?: number;
+    }>
+  ) {
     const userModel = require('../../../models/user/user').default;
+    const query = buildWxNotifyLogQuery(ctx.params ?? {});
     const recentLogs = await this.adapter.model
-      .find({})
+      .find(query)
       .sort({ createdAt: -1 })
-      .limit(10)
+      .limit(50)
       .lean();
     const boundUserCount = await userModel.countDocuments({
       'extra.wxNotifyBinding.uid': {
@@ -252,7 +268,10 @@ class WxNotifyService extends TcService {
       boundUserCount,
       successCount,
       failedCount,
-      recentLogs,
+      recentLogs: recentLogs.map((item: any) => ({
+        ...item,
+        targetUidMasked: maskWxNotifyUid(item.targetUid ?? ''),
+      })),
     };
   }
 
