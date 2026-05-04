@@ -129,6 +129,8 @@ export default class ApiService extends TcService {
       const candidates = [
         path.resolve(process.cwd(), 'dist/public'),
         path.resolve(process.cwd(), 'public'),
+        path.resolve(process.cwd(), '../public'),
+        path.resolve(process.cwd(), '../../public'),
       ];
 
       for (const p of candidates) {

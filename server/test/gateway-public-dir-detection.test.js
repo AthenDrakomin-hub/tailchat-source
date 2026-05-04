@@ -13,4 +13,9 @@ assert.strictEqual(
   'gateway public dir detection should support pwa.webmanifest'
 );
 
+assert.strictEqual(
+  source.includes("path.resolve(process.cwd(), '../public')"),
+  true,
+  'gateway public dir detection should support start:service cwd under dist/server'
+);
 console.log('gateway public dir detection check passed');
