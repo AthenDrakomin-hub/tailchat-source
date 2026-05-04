@@ -236,10 +236,18 @@ export const TcMinioService = {
       handler(ctx) {
         return this.Promise.resolve(ctx.params).then(
           ({ bucketName, prefix = '', recursive = false }) => {
+            // 确保 bucketName 永远不会是 undefined/null
+            const finalBucketName =
+              isString(bucketName) && bucketName.trim()
+                ? bucketName.trim()
+                : isString(this.settings.bucketName) && this.settings.bucketName.trim()
+                  ? this.settings.bucketName.trim()
+                  : 'tailchat';
+
             return new this.Promise((resolve, reject) => {
               try {
                 const stream = this.client.listObjects(
-                  bucketName,
+                  finalBucketName,
                   prefix,
                   recursive
                 );
@@ -276,10 +284,18 @@ export const TcMinioService = {
       handler(ctx) {
         return this.Promise.resolve(ctx.params).then(
           ({ bucketName, prefix = '', recursive = false, startAfter = '' }) => {
+            // 确保 bucketName 永远不会是 undefined/null
+            const finalBucketName =
+              isString(bucketName) && bucketName.trim()
+                ? bucketName.trim()
+                : isString(this.settings.bucketName) && this.settings.bucketName.trim()
+                  ? this.settings.bucketName.trim()
+                  : 'tailchat';
+
             return new this.Promise((resolve, reject) => {
               try {
                 const stream = this.client.listObjectsV2(
-                  bucketName,
+                  finalBucketName,
                   prefix,
                   recursive,
                   startAfter
@@ -315,10 +331,18 @@ export const TcMinioService = {
       handler(ctx) {
         return this.Promise.resolve(ctx.params).then(
           ({ bucketName, prefix = '', recursive = false }) => {
+            // 确保 bucketName 永远不会是 undefined/null
+            const finalBucketName =
+              isString(bucketName) && bucketName.trim()
+                ? bucketName.trim()
+                : isString(this.settings.bucketName) && this.settings.bucketName.trim()
+                  ? this.settings.bucketName.trim()
+                  : 'tailchat';
+
             return new this.Promise((resolve, reject) => {
               try {
                 const stream = this.client.listIncompleteUploads(
-                  bucketName,
+                  finalBucketName,
                   prefix,
                   recursive
                 );
@@ -425,15 +449,23 @@ export const TcMinioService = {
         return this.Promise.resolve({
           stream: ctx.params,
           meta: ctx.meta,
-        }).then(({ stream, meta }) =>
-          this.client.putObject(
-            meta.bucketName,
+        }).then(({ stream, meta }) => {
+          // 确保 bucketName 永远不会是 undefined/null
+          const bucketName =
+            isString(meta.bucketName) && meta.bucketName.trim()
+              ? meta.bucketName.trim()
+              : isString(this.settings.bucketName) && this.settings.bucketName.trim()
+                ? this.settings.bucketName.trim()
+                : 'tailchat';
+
+          return this.client.putObject(
+            bucketName,
             meta.objectName,
             stream,
             meta.size,
             meta.metaData
-          )
-        );
+          );
+        });
       },
     },
     /**
@@ -493,6 +525,13 @@ export const TcMinioService = {
       handler(ctx) {
         return this.Promise.resolve(ctx.params).then(
           ({ bucketName, objectName, sourceObject, conditions }) => {
+            const finalBucketName =
+              isString(bucketName) && bucketName.trim()
+                ? bucketName.trim()
+                : isString(this.settings.bucketName) && this.settings.bucketName.trim()
+                  ? this.settings.bucketName.trim()
+                  : 'tailchat';
+
             const _conditions = new CopyConditions();
             if (conditions.modified) {
               _conditions.setModified(new Date(conditions.modified));
@@ -508,7 +547,7 @@ export const TcMinioService = {
             }
             conditions = _conditions;
             return this.client.copyObject(
-              bucketName,
+              finalBucketName,
               objectName,
               sourceObject,
               conditions

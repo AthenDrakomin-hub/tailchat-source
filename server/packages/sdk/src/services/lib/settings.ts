@@ -30,7 +30,7 @@ export const config = {
     ssl: checkEnvTrusty(process.env.MINIO_SSL) ?? false,
     user: process.env.MINIO_USER,
     pass: process.env.MINIO_PASS,
-    bucketName: process.env.MINIO_BUCKET_NAME || 'tailchat',
+    bucketName: (process.env.MINIO_BUCKET_NAME && process.env.MINIO_BUCKET_NAME.trim() !== '' && process.env.MINIO_BUCKET_NAME.trim() !== 'undefined' && process.env.MINIO_BUCKET_NAME.trim() !== 'null') ? process.env.MINIO_BUCKET_NAME.trim() : 'tailchat',
     pathStyle: process.env.MINIO_PATH_STYLE === 'VirtualHosted' ? false : true,
 
     /**

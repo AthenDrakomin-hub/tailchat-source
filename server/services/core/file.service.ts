@@ -29,9 +29,11 @@ class FileService extends TcService {
   }
 
   get bucketName(): string {
-    return (
-      config.storage.bucketName || process.env.MINIO_BUCKET_NAME || 'tailchat'
-    );
+    const bucketName =
+      config.storage.bucketName || process.env.MINIO_BUCKET_NAME || 'tailchat';
+    
+    // 确保 bucketName 永远不会是 undefined/null/空字符串
+    return (bucketName && bucketName.trim()) ? bucketName.trim() : 'tailchat';
   }
 
   onInit(): void {

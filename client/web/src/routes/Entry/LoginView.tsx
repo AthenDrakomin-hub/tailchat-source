@@ -106,62 +106,6 @@ export const LoginView: React.FC = React.memo(() => {
 
       <EventBanner />
 
-      <div className="mb-6 rounded-[28px] border border-black/5 bg-white px-4 py-4 shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
-        <div className="text-sm font-semibold text-[#111827]">客户端使用建议</div>
-        <div className="mt-3 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
-          <div className="rounded-2xl bg-[#f7f7f7] px-3 py-3">
-            <div className="text-xs text-[#6b7280]">Web</div>
-            <div className="mt-1 text-sm font-medium text-[#111827]">推荐使用</div>
-            <div className="mt-1 text-xs leading-5 text-[#6b7280]">
-              推荐先通过 Web 熟悉动态、群组和私信主链路。
-            </div>
-          </div>
-          <div className="rounded-2xl bg-[#f7f7f7] px-3 py-3">
-            <div className="text-xs text-[#6b7280]">Desktop</div>
-            <div className="mt-1 text-sm font-medium text-[#111827]">适合长期使用</div>
-            <div className="mt-1 text-xs leading-5 text-[#6b7280]">
-              适合盯盘、群讨论常驻与多会话并行使用。
-            </div>
-          </div>
-          <div className="rounded-2xl bg-[#f7f7f7] px-3 py-3">
-            <div className="text-xs text-[#6b7280]">Mobile</div>
-            <div className="mt-1 text-sm font-medium text-[#111827]">持续完善中</div>
-            <div className="mt-1 text-xs leading-5 text-[#6b7280]">
-              移动端入口已支持底部菜单结构，可继续在手机上体验消息、通讯录、发现与我的页面。
-            </div>
-          </div>
-        </div>
-        <div className="mt-3 text-xs text-[#6b7280]">
-          下载与平台说明：
-          <a
-            className="ml-1 underline underline-offset-4 hover:text-[#111827]"
-            href="/downloads"
-            target="_blank"
-            rel="noreferrer"
-          >
-            查看客户端分发页
-          </a>
-        </div>
-        <div className="mt-4 flex flex-wrap gap-3">
-          <a
-            href="/downloads"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center justify-center rounded-2xl bg-[#07c160] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#06ad56]"
-          >
-            下载客户端
-          </a>
-          <a
-            href="/downloads#web"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center justify-center rounded-2xl border border-[#d9d9d9] bg-[#f7f7f7] px-4 py-2.5 text-sm font-medium text-[#374151] transition hover:bg-[#f1f1f1]"
-          >
-            查看 Web 入口
-          </a>
-        </div>
-      </div>
-
       <div>
         <div className="mb-4">
           <div className="mb-2 text-sm font-medium text-[#374151]">
