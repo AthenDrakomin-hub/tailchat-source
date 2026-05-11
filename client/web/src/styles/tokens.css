@@ -1,0 +1,104 @@
+:root {
+  /* 品牌色 */
+  --tc-primary: #d4af37;
+  --tc-primary-hover: #c9a432;
+  --tc-primary-active: #b8952d;
+  --tc-primary-light: rgba(212, 175, 55, 0.15);
+  --tc-primary-text: #1a1700;
+
+  /* 语义色 */
+  --tc-success: #07c160;
+  --tc-success-light: rgba(7, 193, 96, 0.12);
+  --tc-danger: #ef4444;
+  --tc-danger-light: rgba(239, 68, 68, 0.12);
+  --tc-warning: #f59e0b;
+  --tc-info: #3b82f6;
+
+  /* 背景层级（由浅到深） */
+  --tc-bg-base: #ffffff;
+  --tc-bg-elevated: #f5f5f5;
+  --tc-bg-sunken: #ededed;
+  --tc-bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* 文字层级（由深到浅） */
+  --tc-text-primary: #111827;
+  --tc-text-secondary: #4b5563;
+  --tc-text-tertiary: #9ca3af;
+  --tc-text-inverse: #ffffff;
+
+  /* 边框 */
+  --tc-border-default: rgba(0, 0, 0, 0.08);
+  --tc-border-strong: rgba(0, 0, 0, 0.16);
+
+  /* 消息气泡专用 */
+  --tc-bubble-self-bg: #dcf8c6;
+  --tc-bubble-self-text: #1a2e0a;
+  --tc-bubble-other-bg: #ffffff;
+  --tc-bubble-other-text: #111827;
+  --tc-bubble-system-bg: #f3f4f6;
+  --tc-bubble-system-text: #4b5563;
+
+  /* 阴影 */
+  --tc-shadow-focus: 0 0 0 2px rgba(212, 175, 55, 0.25);
+
+  /* 字号层级 */
+  --tc-text-h1: 1.5rem;
+  --tc-text-h2: 1.25rem;
+  --tc-text-h3: 1.125rem;
+  --tc-text-body: 0.875rem;
+  --tc-text-sm: 0.75rem;
+  --tc-text-xs: 0.6875rem;
+
+  /* 行高 */
+  --tc-leading-tight: 1.3;
+  --tc-leading-normal: 1.5;
+  --tc-leading-relaxed: 1.65;
+
+  /* 字重 */
+  --tc-font-bold: 700;
+  --tc-font-semibold: 600;
+  --tc-font-medium: 500;
+  --tc-font-regular: 400;
+}
+
+.dark {
+  /* 品牌色 - 暗色模式微调亮度 */
+  --tc-primary: #e5c34d;
+  --tc-primary-hover: #d4af37;
+  --tc-primary-active: #c9a432;
+  --tc-primary-light: rgba(229, 195, 77, 0.18);
+  --tc-primary-text: #1a1700;
+
+  /* 语义色 */
+  --tc-success: #34d399;
+  --tc-success-light: rgba(52, 211, 153, 0.15);
+  --tc-danger: #f87171;
+  --tc-danger-light: rgba(248, 113, 113, 0.15);
+
+  /* 背景层级 */
+  --tc-bg-base: #121212;
+  --tc-bg-elevated: #1a1a1a;
+  --tc-bg-sunken: #232323;
+  --tc-bg-overlay: rgba(0, 0, 0, 0.7);
+
+  /* 文字层级 */
+  --tc-text-primary: rgba(255, 255, 255, 0.92);
+  --tc-text-secondary: rgba(255, 255, 255, 0.65);
+  --tc-text-tertiary: rgba(255, 255, 255, 0.40);
+  --tc-text-inverse: #111827;
+
+  /* 边框 */
+  --tc-border-default: rgba(255, 255, 255, 0.08);
+  --tc-border-strong: rgba(255, 255, 255, 0.16);
+
+  /* 消息气泡 */
+  --tc-bubble-self-bg: #2d5a3d;
+  --tc-bubble-self-text: #bbf7d0;
+  --tc-bubble-other-bg: #232323;
+  --tc-bubble-other-text: rgba(255, 255, 255, 0.92);
+  --tc-bubble-system-bg: #1a1a1a;
+  --tc-bubble-system-text: rgba(255, 255, 255, 0.65);
+
+  /* 阴影 */
+  --tc-shadow-focus: 0 0 0 2px rgba(229, 195, 77, 0.30);
+}

@@ -212,6 +212,50 @@ module.exports = {
           light: colors.coolGray[700],
           dark: 'rgba(255, 255, 255, 0.85)',
         },
+        // Design Token 命名空间 - 阶段1建立令牌体系
+        tc: {
+          primary: {
+            DEFAULT: 'var(--tc-primary)',
+            hover: 'var(--tc-primary-hover)',
+            active: 'var(--tc-primary-active)',
+            light: 'var(--tc-primary-light)',
+            text: 'var(--tc-primary-text)',
+          },
+          success: {
+            DEFAULT: 'var(--tc-success)',
+            light: 'var(--tc-success-light)',
+          },
+          danger: {
+            DEFAULT: 'var(--tc-danger)',
+            light: 'var(--tc-danger-light)',
+          },
+          warning: 'var(--tc-warning)',
+          info: 'var(--tc-info)',
+          bg: {
+            base: 'var(--tc-bg-base)',
+            elevated: 'var(--tc-bg-elevated)',
+            sunken: 'var(--tc-bg-sunken)',
+            overlay: 'var(--tc-bg-overlay)',
+          },
+          text: {
+            primary: 'var(--tc-text-primary)',
+            secondary: 'var(--tc-text-secondary)',
+            tertiary: 'var(--tc-text-tertiary)',
+            inverse: 'var(--tc-text-inverse)',
+          },
+          border: {
+            default: 'var(--tc-border-default)',
+            strong: 'var(--tc-border-strong)',
+          },
+          bubble: {
+            'self-bg': 'var(--tc-bubble-self-bg)',
+            'self-text': 'var(--tc-bubble-self-text)',
+            'other-bg': 'var(--tc-bubble-other-bg)',
+            'other-text': 'var(--tc-bubble-other-text)',
+            'system-bg': 'var(--tc-bubble-system-bg)',
+            'system-text': 'var(--tc-bubble-system-text)',
+          },
+        },
       },
       borderRadius: {
         '1/2': '50%',
