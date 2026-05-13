@@ -1,0 +1,1323 @@
+From 43ea06dd6b690dce814fc91296599228b4039187 Mon Sep 17 00:00:00 2001
+From: Tailchat Dev <dev@tailchat.com>
+Date: Wed, 13 May 2026 20:55:42 +0800
+Subject: [PATCH 1/4] =?UTF-8?q?style(theme):=20=E9=98=B6=E6=AE=B5=E4=B8=80?=
+ =?UTF-8?q?=20-=20=E5=AE=8C=E5=96=84=E8=AE=BE=E8=AE=A1=E4=BB=A4=E7=89=8C?=
+ =?UTF-8?q?=E4=BD=93=E7=B3=BB=EF=BC=8C=E8=A1=A5=E5=85=85::selection?=
+ =?UTF-8?q?=E6=A0=B7=E5=BC=8F?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ client/web/src/styles/tokens.css | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/client/web/src/styles/tokens.css b/client/web/src/styles/tokens.css
+index 09b82cd4a..a835d3528 100755
+--- a/client/web/src/styles/tokens.css
++++ b/client/web/src/styles/tokens.css
+@@ -102,3 +102,8 @@
+   /* 阴影 */
+   --tc-shadow-focus: 0 0 0 2px rgba(229, 195, 77, 0.30);
+ }
++
++::selection {
++  background: var(--tc-primary-light);
++  color: var(--tc-text-primary);
++}
+-- 
+2.34.1
+
+
+From 23b2609fd536079ac8c28c078ee955390ddc3ee3 Mon Sep 17 00:00:00 2001
+From: Tailchat Dev <dev@tailchat.com>
+Date: Wed, 13 May 2026 20:56:53 +0800
+Subject: [PATCH 2/4] =?UTF-8?q?style(theme):=20=E9=98=B6=E6=AE=B5=E4=BA=8C?=
+ =?UTF-8?q?=20-=20=E4=BF=AE=E5=A4=8D=E5=AF=B9=E6=AF=94=E5=BA=A6=E9=97=AE?=
+ =?UTF-8?q?=E9=A2=98=EF=BC=8C=E6=B6=88=E6=81=AF=E6=B0=94=E6=B3=A1/?=
+ =?UTF-8?q?=E8=BE=93=E5=85=A5=E6=A1=86/=E6=A0=87=E9=A2=98=E7=BB=9F?=
+ =?UTF-8?q?=E4=B8=80=E4=BD=BF=E7=94=A8=E4=BB=A4=E7=89=8C=E5=8F=98=E9=87=8F?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .../ChatBox/ChatMessageList/ChatMessageHeader.tsx      |  6 +++---
+ .../src/components/ChatBox/ChatMessageList/Item.tsx    | 10 +++++-----
+ client/web/src/routes/Entry/components/Input.tsx       |  6 +++---
+ 3 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/client/web/src/components/ChatBox/ChatMessageList/ChatMessageHeader.tsx b/client/web/src/components/ChatBox/ChatMessageList/ChatMessageHeader.tsx
+index 7d36a8a0a..dc79bfa2b 100644
+--- a/client/web/src/components/ChatBox/ChatMessageList/ChatMessageHeader.tsx
++++ b/client/web/src/components/ChatBox/ChatMessageList/ChatMessageHeader.tsx
+@@ -6,11 +6,11 @@ export const ChatMessageHeader: React.FC<{
+ }> = React.memo((props) => {
+   return (
+     <div className="px-5 pb-4 pt-7 text-center">
+-      <div className="inline-flex items-center rounded-full bg-[#e5e7eb] px-3 py-1 text-[11px] text-[#6b7280]">
++      <div className="inline-flex items-center rounded-full bg-tc-bg-elevated px-3 py-1 text-tc-text-secondary">
+         会话开始
+       </div>
+-      <div className="font-semibold mt-3 text-[15px] text-[#111827]">{props.title}</div>
+-      <div className="text-[13px] mt-1 text-[#9ca3af]">
++      <div className="font-semibold mt-3 text-tc-text-h3 text-tc-text-primary">{props.title}</div>
++      <div className="text-tc-text-sm mt-1 text-tc-text-tertiary">
+         {t('这里是所有消息的开始，请畅所欲言。')}
+       </div>
+     </div>
+diff --git a/client/web/src/components/ChatBox/ChatMessageList/Item.tsx b/client/web/src/components/ChatBox/ChatMessageList/Item.tsx
+index 9b8ffd9e6..44f7086d8 100644
+--- a/client/web/src/components/ChatBox/ChatMessageList/Item.tsx
++++ b/client/web/src/components/ChatBox/ChatMessageList/Item.tsx
+@@ -214,7 +214,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
+               maxHeight={340}
+               backgroundColor="var(--tc-content-background-color)"
+               showFullText={
+-                <div className="inline-block rounded-full bg-white dark:bg-[#2b2b2b] opacity-80 py-2 px-3 hover:opacity-100 border border-black/5 dark:border-white/10">
++                <div className="inline-block rounded-full bg-tc-bg-base dark:bg-tc-bg-elevated opacity-80 py-2 px-3 hover:opacity-100 border border-tc-border-default">
+                   {t('点击展开更多')}
+                 </div>
+               }
+@@ -223,8 +223,8 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
+                 className={clsx(
+                   'chat-message-item_body min-w-0 leading-6 break-words overflow-x-hidden px-3.5 py-2.5 max-w-[72%] mobile:max-w-[82%]',
+                   isSelf
+-                    ? 'bg-[#95ec69] text-[#111827]'
+-                    : 'bg-white text-[#111827] border border-black/5 dark:bg-[#2b2b2b] dark:text-[#f3f4f6] dark:border-white/10',
++                    ? 'bg-tc-bubble-self-bg text-tc-bubble-self-text'
++                    : 'bg-tc-bubble-other-bg text-tc-bubble-other-text border border-tc-border-default',
+                   layout.rowAlign === 'right'
+                     ? clsx('rounded-[18px]', {
+                         'rounded-tr-[6px]': showAvatar,
+@@ -341,7 +341,7 @@ const SystemMessage: React.FC<ChatMessageItemProps> = React.memo(
+   ({ payload }) => {
+     return (
+       <div className="text-center py-1">
+-        <div className="bg-[#e5e7eb] dark:bg-[#2b2b2b] text-[#6b7280] dark:text-[#d1d5db] rounded-full inline-block py-1 px-3 my-1 mx-2 text-[12px]">
++        <div className="bg-tc-bubble-system-bg text-tc-bubble-system-text rounded-full inline-block py-1 px-3 my-1 mx-2 text-[12px]">
+           {payload.content}
+         </div>
+       </div>
+@@ -463,7 +463,7 @@ export function buildMessageItemRow(
+     <div key={message._id}>
+       {showDate && (
+         <Divider className="text-xs opacity-100 px-6 font-normal select-text border-black/5 dark:border-white/10 my-3">
+-          <span className="inline-flex rounded-full bg-[#f3f4f6] dark:bg-[#2b2b2b] text-[#6b7280] dark:text-[#d1d5db] px-3 py-1 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
++          <span className="inline-flex rounded-full bg-tc-bg-elevated text-tc-text-secondary px-3 py-1 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+             {showMessageTime(messageCreatedAt)}
+           </span>
+         </Divider>
+diff --git a/client/web/src/routes/Entry/components/Input.tsx b/client/web/src/routes/Entry/components/Input.tsx
+index cac581185..6f912915e 100644
+--- a/client/web/src/routes/Entry/components/Input.tsx
++++ b/client/web/src/routes/Entry/components/Input.tsx
+@@ -7,9 +7,9 @@ export const EntryInput: React.FC<InputHTMLAttributes<HTMLInputElement>> =
+       <input
+         {...props}
+         style={{
+-          color: '#111827',
+-          caretColor: '#111827',
+-          WebkitTextFillColor: '#111827',
++          color: 'var(--tc-text-primary)',
++          caretColor: 'var(--tc-primary)',
++          WebkitTextFillColor: 'var(--tc-text-primary)',
+           ...props.style,
+         }}
+         className={clsx(
+-- 
+2.34.1
+
+
+From 191a48c27ce8f255bb9270e59a29cff48b28d661 Mon Sep 17 00:00:00 2001
+From: Tailchat Dev <dev@tailchat.com>
+Date: Wed, 13 May 2026 21:08:50 +0800
+Subject: [PATCH 3/4] =?UTF-8?q?style(theme):=20=E9=98=B6=E6=AE=B5=E4=B8=89?=
+ =?UTF-8?q?=20-=20=E7=BB=9F=E4=B8=80=E9=A2=9C=E8=89=B2=E4=BD=93=E7=B3=BB?=
+ =?UTF-8?q?=EF=BC=8C=E6=89=B9=E9=87=8F=E6=9B=BF=E6=8D=A2=E7=A1=AC=E7=BC=96?=
+ =?UTF-8?q?=E7=A0=81=E9=A2=9C=E8=89=B2=E4=B8=BA=E8=AE=BE=E8=AE=A1=E4=BB=A4?=
+ =?UTF-8?q?=E7=89=8C?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .../components/ChatBox/ChatInputBox/Addon.tsx    |  4 ++--
+ .../ChatBox/ChatInputBox/BaseChatInputButton.tsx |  4 ++--
+ .../ChatBox/ChatInputBox/MuteAllButton.tsx       |  4 ++--
+ .../components/ChatBox/ChatInputBox/index.tsx    |  6 +++---
+ .../components/ChatBox/ChatMessageList/Item.tsx  |  2 +-
+ .../ChatBox/ChatMessageList/NormalList.tsx       |  2 +-
+ .../ChatBox/ChatMessageList/ScrollToBottom.tsx   |  2 +-
+ client/web/src/components/ChatBox/ChatReply.tsx  |  6 +++---
+ client/web/src/components/ChatBox/index.tsx      |  6 +++---
+ .../web/src/components/CommonSidebarWrapper.tsx  |  2 +-
+ .../web/src/components/FullModal/CommonTitle.tsx |  2 +-
+ client/web/src/components/FullModal/Field.tsx    |  2 +-
+ client/web/src/components/JumpToButton.tsx       |  2 +-
+ .../components/Panel/common/MessageSearch.tsx    |  2 +-
+ .../web/src/components/Panel/common/Wrapper.tsx  |  2 +-
+ .../components/Panel/personal/ConversePanel.tsx  |  2 +-
+ .../components/Panel/personal/ProfilePanel.tsx   | 16 ++++++++--------
+ client/web/src/components/SectionHeader.tsx      |  8 ++++----
+ client/web/src/components/SidebarView.tsx        |  2 +-
+ .../CreateGroupInvite/CreateInviteCode.tsx       |  2 +-
+ .../modals/CreateGroupInvite/index.tsx           |  6 +++---
+ .../components/modals/EditGroupInvite/index.tsx  |  2 +-
+ .../components/modals/GroupDetail/Role/index.tsx |  4 ++--
+ .../components/modals/SettingsView/Status.tsx    |  8 ++++----
+ .../popover/UserPopover/GroupUserPopover.tsx     | 10 +++++-----
+ .../popover/UserPopover/PersonalUserPopover.tsx  |  8 ++++----
+ client/web/src/routes/Entry/DocumentLayout.tsx   |  8 ++++----
+ client/web/src/routes/Entry/LoginView.tsx        |  8 ++++----
+ client/web/src/routes/Entry/components/Input.tsx |  2 +-
+ .../src/routes/Entry/components/PrimaryBtn.tsx   |  2 +-
+ .../src/routes/Entry/components/SecondaryBtn.tsx |  2 +-
+ client/web/src/routes/Entry/index.tsx            |  4 ++--
+ .../routes/Main/Content/Feed/CommentComposer.tsx |  2 +-
+ .../src/routes/Main/Content/Feed/FeedCard.tsx    |  4 ++--
+ .../routes/Main/Content/Feed/FeedComposer.tsx    |  2 +-
+ .../src/routes/Main/Content/Feed/FeedDetail.tsx  |  6 +++---
+ .../src/routes/Main/Content/Feed/FeedSidebar.tsx |  6 +++---
+ .../web/src/routes/Main/Content/Groups/index.tsx |  8 ++++----
+ .../Main/Content/Inbox/Content/Markdown.tsx      |  2 +-
+ .../Main/Content/Inbox/Content/Message.tsx       |  2 +-
+ .../src/routes/Main/Content/Inbox/Sidebar.tsx    | 10 +++++-----
+ .../web/src/routes/Main/Content/Inbox/index.tsx  |  6 +++---
+ .../web/src/routes/Main/Content/PageContent.tsx  |  4 ++--
+ .../Main/Content/Personal/Friends/FriendList.tsx |  2 +-
+ .../Main/Content/Personal/Friends/index.tsx      |  2 +-
+ .../web/src/routes/Main/Content/SidebarItem.tsx  |  6 +++---
+ client/web/src/routes/Main/Navbar/NavItem.tsx    |  6 +++---
+ client/web/src/routes/Main/Navbar/index.tsx      |  2 +-
+ client/web/src/styles/global.less                |  4 ++--
+ 49 files changed, 108 insertions(+), 108 deletions(-)
+
+diff --git a/client/web/src/components/ChatBox/ChatInputBox/Addon.tsx b/client/web/src/components/ChatBox/ChatInputBox/Addon.tsx
+index b596edcd6..45ed9dd46 100644
+--- a/client/web/src/components/ChatBox/ChatInputBox/Addon.tsx
++++ b/client/web/src/components/ChatBox/ChatInputBox/Addon.tsx
+@@ -93,9 +93,9 @@ export const ChatInputAddon: React.FC = React.memo(() => {
+       <div>
+         <div
+           className={clsx(
+-            'w-8 h-8 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-300 hover:text-[#07c160] hover:bg-[#f3f4f6] dark:hover:bg-white/10 transition-colors cursor-pointer',
++            'w-8 h-8 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-300 hover:text-tc-primary hover:bg-tc-bg-elevated dark:hover:bg-white/10 transition-colors cursor-pointer',
+             {
+-              'text-[#07c160] bg-[#f3f4f6] dark:bg-white/10': open,
++              'text-tc-primary bg-tc-bg-elevated dark:bg-white/10': open,
+             }
+           )}
+         >
+diff --git a/client/web/src/components/ChatBox/ChatInputBox/BaseChatInputButton.tsx b/client/web/src/components/ChatBox/ChatInputBox/BaseChatInputButton.tsx
+index 1a16bfff4..58eae49dc 100644
+--- a/client/web/src/components/ChatBox/ChatInputBox/BaseChatInputButton.tsx
++++ b/client/web/src/components/ChatBox/ChatInputBox/BaseChatInputButton.tsx
+@@ -34,9 +34,9 @@ export const BaseChatInputButton: React.FC<BaseChatInputButtonProps> =
+       >
+         <div
+           className={clsx(
+-            'w-8 h-8 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-300 hover:text-[#07c160] hover:bg-[#f3f4f6] dark:hover:bg-white/10 transition-colors cursor-pointer',
++            'w-8 h-8 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-300 hover:text-tc-primary hover:bg-tc-bg-elevated dark:hover:bg-white/10 transition-colors cursor-pointer',
+             {
+-              'text-[#07c160] bg-[#f3f4f6] dark:bg-white/10': visible,
++              'text-tc-primary bg-tc-bg-elevated dark:bg-white/10': visible,
+             }
+           )}
+         >
+diff --git a/client/web/src/components/ChatBox/ChatInputBox/MuteAllButton.tsx b/client/web/src/components/ChatBox/ChatInputBox/MuteAllButton.tsx
+index 21285e46b..d85fb679e 100644
+--- a/client/web/src/components/ChatBox/ChatInputBox/MuteAllButton.tsx
++++ b/client/web/src/components/ChatBox/ChatInputBox/MuteAllButton.tsx
+@@ -91,13 +91,13 @@ export const MuteAllButton: React.FC<{ groupId?: string; panelId?: string }> =
+         title={isMuted ? t('解除默认成员发言限制') : t('默认成员禁言')}
+         onClick={handleToggleMute}
+         className={clsx(
+-          'w-8 h-8 rounded-full flex items-center justify-center hover:bg-[#f3f4f6] dark:hover:bg-white/10 transition-colors',
++          'w-8 h-8 rounded-full flex items-center justify-center hover:bg-tc-bg-elevated dark:hover:bg-white/10 transition-colors',
+           isMuted && 'bg-red-50 dark:bg-red-500/10'
+         )}
+       >
+         <Icon
+           className={clsx(
+-            'text-[22px] cursor-pointer text-gray-500 dark:text-gray-300 hover:text-[#07c160]',
++            'text-[22px] cursor-pointer text-gray-500 dark:text-gray-300 hover:text-tc-primary',
+             isMuted && 'text-red-500',
+             loading && 'opacity-50'
+           )}
+diff --git a/client/web/src/components/ChatBox/ChatInputBox/index.tsx b/client/web/src/components/ChatBox/ChatInputBox/index.tsx
+index ea14f669c..75a844b53 100644
+--- a/client/web/src/components/ChatBox/ChatInputBox/index.tsx
++++ b/client/web/src/components/ChatBox/ChatInputBox/index.tsx
+@@ -142,7 +142,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
+       }}
+     >
+       <div className="px-4 py-2 min-w-0 mobile:px-3 mobile:py-2">
+-        <div className="bg-white dark:bg-[#2b2b2b] flex min-w-0 rounded-[24px] items-center relative border border-black/5 dark:border-white/10 shadow-[0_2px_8px_rgba(15,23,42,0.04)]">
++        <div className="bg-white dark:bg-tc-bg-sunken flex min-w-0 rounded-[24px] items-center relative border border-black/5 dark:border-white/10 shadow-[0_2px_8px_rgba(15,23,42,0.04)]">
+           {/* This w-0 is magic to ensure show mention and long text */}
+           <div className="flex-1 w-0">
+             <ChatInputBoxInput
+@@ -176,7 +176,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
+               {message ? (
+                 <Icon
+                   icon="mdi:send-circle"
+-                  className="text-[30px] text-[#07c160] cursor-pointer hover:text-[#06ad56] transition-colors"
++                  className="text-[30px] text-tc-primary cursor-pointer hover:text-tc-primary-hover transition-colors"
+                   onClick={handleSendMsg}
+                 />
+               ) : (
+@@ -190,7 +190,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
+             className={clsx(
+               'mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 px-2 text-[11px] leading-5 mobile:hidden',
+               sendError
+-                ? 'text-[#ef4444] dark:text-[#f87171]'
++                ? 'text-tc-danger dark:text-tc-danger'
+                 : 'text-gray-400 dark:text-gray-500'
+             )}
+           >
+diff --git a/client/web/src/components/ChatBox/ChatMessageList/Item.tsx b/client/web/src/components/ChatBox/ChatMessageList/Item.tsx
+index 44f7086d8..3f8aa965b 100644
+--- a/client/web/src/components/ChatBox/ChatMessageList/Item.tsx
++++ b/client/web/src/components/ChatBox/ChatMessageList/Item.tsx
+@@ -293,7 +293,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
+         {!disableOperate && (
+           <div
+             className={clsx(
+-              'bg-white/95 dark:bg-[#1f1f1f]/95 rounded-full absolute right-2 cursor-pointer -top-3 shadow-[0_6px_18px_rgba(15,23,42,0.12)] flex border border-black/5 dark:border-white/10 backdrop-blur-sm',
++              'bg-white/95 dark:bg-tc-bg-sunken/95 rounded-full absolute right-2 cursor-pointer -top-3 shadow-[0_6px_18px_rgba(15,23,42,0.12)] flex border border-black/5 dark:border-white/10 backdrop-blur-sm',
+               {
+                 'opacity-0 group-hover:opacity-100 bg-opacity-80 hover:bg-opacity-100':
+                   !isActionBtnActive,
+diff --git a/client/web/src/components/ChatBox/ChatMessageList/NormalList.tsx b/client/web/src/components/ChatBox/ChatMessageList/NormalList.tsx
+index 1066ca12a..9f1c99b31 100644
+--- a/client/web/src/components/ChatBox/ChatMessageList/NormalList.tsx
++++ b/client/web/src/components/ChatBox/ChatMessageList/NormalList.tsx
+@@ -67,7 +67,7 @@ export const NormalMessageList: React.FC<MessageListProps> = React.memo(
+ 
+     return (
+       <div
+-        className="flex-1 min-w-0 overflow-y-scroll overflow-x-hidden flex flex-col-reverse bg-[#f5f5f5]"
++        className="flex-1 min-w-0 overflow-y-scroll overflow-x-hidden flex flex-col-reverse bg-tc-bg-elevated"
+         ref={containerRef}
+         onScroll={handleScroll}
+       >
+diff --git a/client/web/src/components/ChatBox/ChatMessageList/ScrollToBottom.tsx b/client/web/src/components/ChatBox/ChatMessageList/ScrollToBottom.tsx
+index 70caa7beb..bed96d956 100644
+--- a/client/web/src/components/ChatBox/ChatMessageList/ScrollToBottom.tsx
++++ b/client/web/src/components/ChatBox/ChatMessageList/ScrollToBottom.tsx
+@@ -11,7 +11,7 @@ interface Props {
+ export const ScrollToBottom: React.FC<Props> = React.memo((props) => {
+   return (
+     <div
+-      className="absolute right-6 bottom-18 px-3 py-2 rounded-full bg-white border border-black/5 shadow-[0_6px_18px_rgba(15,23,42,0.08)] cursor-pointer z-10 w-11 h-11 flex justify-center items-center text-2xl text-[#4b5563] hover:text-[#111827]"
++      className="absolute right-6 bottom-18 px-3 py-2 rounded-full bg-white border border-black/5 shadow-[0_6px_18px_rgba(15,23,42,0.08)] cursor-pointer z-10 w-11 h-11 flex justify-center items-center text-2xl text-tc-text-secondary hover:text-tc-text-primary"
+       onClick={props.onClick}
+     >
+       <Icon icon="mdi:chevron-double-down" />
+diff --git a/client/web/src/components/ChatBox/ChatReply.tsx b/client/web/src/components/ChatBox/ChatReply.tsx
+index a9c9431fd..08ca779e9 100644
+--- a/client/web/src/components/ChatBox/ChatReply.tsx
++++ b/client/web/src/components/ChatBox/ChatReply.tsx
+@@ -23,9 +23,9 @@ export const ChatReply: React.FC = React.memo(() => {
+   return (
+     <div className="relative min-w-0">
+       <div className="absolute bottom-1 left-0 right-0 px-4 mobile:px-3">
+-        <div className="rounded-[18px] border border-black/5 dark:border-white/10 bg-white/95 dark:bg-[#232323]/95 px-4 py-3 max-h-44 min-w-0 overflow-y-auto overflow-x-hidden shadow-[0_8px_20px_rgba(15,23,42,0.08)] relative backdrop-blur-sm">
+-          <div className="absolute left-0 top-3 bottom-3 w-1 rounded-r-full bg-[#07c160]" />
+-          <div className="mb-1 ml-2 text-[12px] font-medium text-[#07c160]">
++        <div className="rounded-[18px] border border-black/5 dark:border-white/10 bg-white/95 dark:bg-tc-bg-elevated/95 px-4 py-3 max-h-44 min-w-0 overflow-y-auto overflow-x-hidden shadow-[0_8px_20px_rgba(15,23,42,0.08)] relative backdrop-blur-sm">
++          <div className="absolute left-0 top-3 bottom-3 w-1 rounded-r-full bg-tc-primary" />
++          <div className="mb-1 ml-2 text-[12px] font-medium text-tc-primary">
+             {t('回复')} {replyMsg.author && <UserName userId={replyMsg.author} />}
+           </div>
+           <div className="break-words text-[13px] leading-6 text-gray-600 dark:text-gray-300 pr-6 ml-2">
+diff --git a/client/web/src/components/ChatBox/index.tsx b/client/web/src/components/ChatBox/index.tsx
+index 9fefe80cf..ef196d4aa 100644
+--- a/client/web/src/components/ChatBox/index.tsx
++++ b/client/web/src/components/ChatBox/index.tsx
+@@ -49,15 +49,15 @@ const ChatBoxInner: React.FC<ChatBoxProps> = React.memo((props) => {
+ 
+   return (
+     <div className="w-full h-full min-w-0 overflow-hidden flex flex-col select-text relative text-sm">
+-      <div className="px-5 h-11 flex items-center border-b border-black/5 dark:border-white/10 bg-[#f7f7f7] dark:bg-[#1f1f1f]">
+-        <div className="text-[11px] font-medium text-[#9ca3af]">
++      <div className="px-5 h-11 flex items-center border-b border-black/5 dark:border-white/10 bg-tc-bg-elevated dark:bg-tc-bg-sunken">
++        <div className="text-[11px] font-medium text-tc-text-tertiary">
+           {props.isGroup
+             ? '群聊消息会按连续发送进行分组显示'
+             : '聊天消息支持 Enter 发送'}
+         </div>
+       </div>
+       {messages.length === 0 ? (
+-        <div className="flex-1 flex flex-col items-center justify-center text-center px-6 bg-[#f5f5f5]">
++        <div className="flex-1 flex flex-col items-center justify-center text-center px-6 bg-tc-bg-elevated">
+           <div className="max-w-xl w-full rounded-[24px] border border-black/5 bg-white px-6 py-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)]">
+             <div className="text-base font-semibold text-gray-800 dark:text-gray-200">
+               从这里开始交流
+diff --git a/client/web/src/components/CommonSidebarWrapper.tsx b/client/web/src/components/CommonSidebarWrapper.tsx
+index ce58c4f64..e083bdf03 100644
+--- a/client/web/src/components/CommonSidebarWrapper.tsx
++++ b/client/web/src/components/CommonSidebarWrapper.tsx
+@@ -10,7 +10,7 @@ export const CommonSidebarWrapper: React.FC<CommonSidebarProps> = React.memo(
+ 
+     return (
+       <div
+-        className="h-full min-w-0 flex flex-col overflow-hidden bg-[#f7f7f7]"
++        className="h-full min-w-0 flex flex-col overflow-hidden bg-tc-bg-elevated"
+         data-tc-role={props['data-tc-role']}
+       >
+         {props.children}
+diff --git a/client/web/src/components/FullModal/CommonTitle.tsx b/client/web/src/components/FullModal/CommonTitle.tsx
+index d9d7ee556..0fcdafb9d 100644
+--- a/client/web/src/components/FullModal/CommonTitle.tsx
++++ b/client/web/src/components/FullModal/CommonTitle.tsx
+@@ -7,7 +7,7 @@ export const FullModalCommonTitle: React.FC<FullModalCommonTitleProps> =
+   React.memo((props) => {
+     return (
+       <div className="mb-4 flex items-center justify-between border-b border-black/5 pb-3">
+-        <div className="text-lg font-semibold text-[#111827]">{props.children}</div>
++        <div className="text-lg font-semibold text-tc-text-primary">{props.children}</div>
+         <div>{props.extra}</div>
+       </div>
+     );
+diff --git a/client/web/src/components/FullModal/Field.tsx b/client/web/src/components/FullModal/Field.tsx
+index 56c9a1632..4c8dd13b0 100644
+--- a/client/web/src/components/FullModal/Field.tsx
++++ b/client/web/src/components/FullModal/Field.tsx
+@@ -147,7 +147,7 @@ export const FullModalField: React.FC<FullModalFieldProps> = React.memo(
+             </span>
+           )}
+         </div>
+-        <div className="min-h-10 text-base truncate text-[#111827]">
++        <div className="min-h-10 text-base truncate text-tc-text-primary">
+           {allowEditor === true ? (
+             <FullModalFieldEditor {...props} />
+           ) : (
+diff --git a/client/web/src/components/JumpToButton.tsx b/client/web/src/components/JumpToButton.tsx
+index 9b3b29673..73e13a220 100644
+--- a/client/web/src/components/JumpToButton.tsx
++++ b/client/web/src/components/JumpToButton.tsx
+@@ -16,7 +16,7 @@ export const JumpToButton: React.FC<Props> = React.memo((props) => {
+   return (
+     <div className="absolute bottom-4 left-0 right-0 text-center">
+       <div
+-        className="px-6 py-2.5 rounded-full inline-block bg-[#07c160] hover:bg-[#06ad56] text-white cursor-pointer shadow-[0_8px_20px_rgba(7,193,96,0.18)]"
++        className="px-6 py-2.5 rounded-full inline-block bg-tc-primary hover:bg-tc-primary-hover text-white cursor-pointer shadow-[0_8px_20px_rgba(7,193,96,0.18)]"
+         onClick={() => {
+           navigate(props.link);
+         }}
+diff --git a/client/web/src/components/Panel/common/MessageSearch.tsx b/client/web/src/components/Panel/common/MessageSearch.tsx
+index e78ea4277..66a03b69a 100644
+--- a/client/web/src/components/Panel/common/MessageSearch.tsx
++++ b/client/web/src/components/Panel/common/MessageSearch.tsx
+@@ -80,7 +80,7 @@ export const MessageSearchPanel: React.FC<{
+         ))}
+ 
+         {(nearbyMessages as ChatMessage[]).length > 0 && (
+-          <div className="mt-4 rounded-2xl border border-black/5 dark:border-white/10 bg-white/80 dark:bg-[#232323] p-2">
++          <div className="mt-4 rounded-2xl border border-black/5 dark:border-white/10 bg-white/80 dark:bg-tc-bg-elevated p-2">
+             <div className="px-2 pb-2 text-xs text-gray-400">
+               {nearbyLoading ? t('加载上下文中') : t('消息上下文')}
+             </div>
+diff --git a/client/web/src/components/Panel/common/Wrapper.tsx b/client/web/src/components/Panel/common/Wrapper.tsx
+index 33478752a..23c8875f2 100644
+--- a/client/web/src/components/Panel/common/Wrapper.tsx
++++ b/client/web/src/components/Panel/common/Wrapper.tsx
+@@ -43,7 +43,7 @@ export const CommonPanelWrapper: React.FC<CommonPanelWrapperProps> = React.memo(
+         {/* 右侧面板 */}
+         <div
+           className={clsx(
+-            'transition-all min-w-0 overflow-hidden border-l border-black/5 dark:border-white/10 flex flex-col bg-[#f5f5f5] dark:bg-[#1f1f1f]',
++            'transition-all min-w-0 overflow-hidden border-l border-black/5 dark:border-white/10 flex flex-col bg-tc-bg-elevated dark:bg-tc-bg-sunken',
+             {
+               'w-[24rem] mobile:w-full': rightPanel,
+               'w-0': !rightPanel,
+diff --git a/client/web/src/components/Panel/personal/ConversePanel.tsx b/client/web/src/components/Panel/personal/ConversePanel.tsx
+index 0fdb07b1c..b2f294573 100644
+--- a/client/web/src/components/Panel/personal/ConversePanel.tsx
++++ b/client/web/src/components/Panel/personal/ConversePanel.tsx
+@@ -47,7 +47,7 @@ const ConversePanelTitle: React.FC<{
+           />
+         )}
+         <div className="min-w-0">
+-          <div className="truncate text-[15px] font-semibold text-[#111827] dark:text-white">
++          <div className="truncate text-[15px] font-semibold text-tc-text-primary dark:text-white">
+             {name}
+           </div>
+           <div className="mt-0.5 text-[11px] font-normal text-gray-500 dark:text-gray-400 truncate">
+diff --git a/client/web/src/components/Panel/personal/ProfilePanel.tsx b/client/web/src/components/Panel/personal/ProfilePanel.tsx
+index 5ece53bac..eda3194f7 100644
+--- a/client/web/src/components/Panel/personal/ProfilePanel.tsx
++++ b/client/web/src/components/Panel/personal/ProfilePanel.tsx
+@@ -81,7 +81,7 @@ export const ProfilePanel: React.FC<{
+   return (
+     <div className="p-4 space-y-4">
+       <UserProfileContainer userInfo={userInfo}>
+-        <div className="text-xl font-semibold text-[#111827] dark:text-white">
++        <div className="text-xl font-semibold text-tc-text-primary dark:text-white">
+           {friendInfo?.nickname || userInfo.nickname}
+           <span className="ml-1 text-sm font-normal text-gray-400">
+             #{userInfo.discriminator}
+@@ -100,8 +100,8 @@ export const ProfilePanel: React.FC<{
+         </div>
+       </UserProfileContainer>
+ 
+-      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#232323] px-4 py-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+-        <div className="text-sm font-semibold text-[#111827] dark:text-white mb-3">
++      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-tc-bg-elevated px-4 py-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
++        <div className="text-sm font-semibold text-tc-text-primary dark:text-white mb-3">
+           {t('常用操作')}
+         </div>
+         <div className="grid grid-cols-2 gap-3">
+@@ -136,27 +136,27 @@ export const ProfilePanel: React.FC<{
+         </div>
+       </div>
+ 
+-      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#232323] px-4 py-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+-        <div className="text-sm font-semibold text-[#111827] dark:text-white mb-3">
++      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-tc-bg-elevated px-4 py-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
++        <div className="text-sm font-semibold text-tc-text-primary dark:text-white mb-3">
+           {t('资料信息')}
+         </div>
+         <div className="space-y-3 text-sm">
+           <div className="flex items-start justify-between gap-3">
+             <span className="text-gray-400">{t('昵称')}</span>
+-            <span className="text-right text-[#111827] dark:text-white">
++            <span className="text-right text-tc-text-primary dark:text-white">
+               {userInfo.nickname}
+             </span>
+           </div>
+           <div className="flex items-start justify-between gap-3">
+             <span className="text-gray-400">{t('标识')}</span>
+-            <span className="text-right text-[#111827] dark:text-white">
++            <span className="text-right text-tc-text-primary dark:text-white">
+               #{userInfo.discriminator}
+             </span>
+           </div>
+           {friendInfo?.nickname && (
+             <div className="flex items-start justify-between gap-3">
+               <span className="text-gray-400">{t('备注')}</span>
+-              <span className="text-right text-[#111827] dark:text-white">
++              <span className="text-right text-tc-text-primary dark:text-white">
+                 {friendInfo.nickname}
+               </span>
+             </div>
+diff --git a/client/web/src/components/SectionHeader.tsx b/client/web/src/components/SectionHeader.tsx
+index efca21d16..615ad7d97 100644
+--- a/client/web/src/components/SectionHeader.tsx
++++ b/client/web/src/components/SectionHeader.tsx
+@@ -13,7 +13,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
+     const [visible, setVisible] = useState(false);
+ 
+     return (
+-      <div className="h-12 relative flex items-center py-0 text-[15px] font-semibold flex-shrink-0 border-b border-black/5 dark:border-white/10 bg-[#f7f7f7] dark:bg-white dark:bg-opacity-[0.03]">
++      <div className="h-12 relative flex items-center py-0 text-[15px] font-semibold flex-shrink-0 border-b border-black/5 dark:border-white/10 bg-tc-bg-elevated dark:bg-white dark:bg-opacity-[0.03]">
+         {props.menu ? (
+           <Dropdown
+             className="overflow-hidden"
+@@ -26,11 +26,11 @@ export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
+               className="cursor-pointer flex flex-1"
+               data-testid={props['data-testid']}
+             >
+-              <header className="flex-1 truncate px-4 text-[#111827] dark:text-white">
++              <header className="flex-1 truncate px-4 text-tc-text-primary dark:text-white">
+                 {props.children}
+               </header>
+               <Icon
+-                className={clsx('text-xl text-[#6b7280] transition-transform transform', {
++                className={clsx('text-xl text-tc-text-secondary transition-transform transform', {
+                   'rotate-180': visible,
+                 })}
+                 icon="mdi:chevron-down"
+@@ -41,7 +41,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
+           </Dropdown>
+         ) : (
+           <header
+-            className="flex-1 truncate px-4 select-text text-[#111827] dark:text-white"
++            className="flex-1 truncate px-4 select-text text-tc-text-primary dark:text-white"
+             data-testid={props['data-testid']}
+           >
+             {props.children}
+diff --git a/client/web/src/components/SidebarView.tsx b/client/web/src/components/SidebarView.tsx
+index 84fd72828..e183fb4a9 100644
+--- a/client/web/src/components/SidebarView.tsx
++++ b/client/web/src/components/SidebarView.tsx
+@@ -157,7 +157,7 @@ export const SidebarView: React.FC<SidebarViewProps> = React.memo((props) => {
+         </div>
+ 
+         <div
+-          className="pt-20 pb-20 px-10 mobile:pt-10 mobile:px-2 desktop:overflow-auto bg-[#f5f5f5]"
++          className="pt-20 pb-20 px-10 mobile:pt-10 mobile:px-2 desktop:overflow-auto bg-tc-bg-elevated"
+           style={{ flex: '1 1 800px' }}
+         >
+           {content}
+diff --git a/client/web/src/components/modals/CreateGroupInvite/CreateInviteCode.tsx b/client/web/src/components/modals/CreateGroupInvite/CreateInviteCode.tsx
+index f048ee6dc..5f21736be 100644
+--- a/client/web/src/components/modals/CreateGroupInvite/CreateInviteCode.tsx
++++ b/client/web/src/components/modals/CreateGroupInvite/CreateInviteCode.tsx
+@@ -87,7 +87,7 @@ export const CreateInviteCode: React.FC<CreateInviteCodeProps> = React.memo(
+         {createdInvite ? (
+           <div className="rounded-2xl border border-black/5 bg-[#f8f8f8] px-4 py-4">
+             <Typography.Title
+-              className="bg-white dark:bg-[#2b2b2b] px-3 py-2 select-text text-base rounded-2xl border border-black/5 dark:border-white/10"
++              className="bg-white dark:bg-tc-bg-sunken px-3 py-2 select-text text-base rounded-2xl border border-black/5 dark:border-white/10"
+               level={4}
+               copyable={true}
+             >
+diff --git a/client/web/src/components/modals/CreateGroupInvite/index.tsx b/client/web/src/components/modals/CreateGroupInvite/index.tsx
+index ff00097db..ec949118d 100644
+--- a/client/web/src/components/modals/CreateGroupInvite/index.tsx
++++ b/client/web/src/components/modals/CreateGroupInvite/index.tsx
+@@ -29,13 +29,13 @@ export const CreateGroupInvite: React.FC<CreateGroupInviteProps> = React.memo(
+ 
+     return (
+       <ModalWrapper title={t('邀请加入群聊')}>
+-        <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#232323] px-5 py-5 text-center shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
++        <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-tc-bg-elevated px-5 py-5 text-center shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+           <Icon
+-            className="text-6xl block m-auto opacity-30 mb-4 mt-2 text-[#07c160]"
++            className="text-6xl block m-auto opacity-30 mb-4 mt-2 text-tc-primary"
+             icon="mdi:email-edit-outline"
+           />
+ 
+-          <div className="text-[#111827] dark:text-white font-semibold text-lg mb-1">
++          <div className="text-tc-text-primary dark:text-white font-semibold text-lg mb-1">
+             {groupInfo.name}
+           </div>
+           <div className="text-gray-500 dark:text-gray-400 text-sm mb-5">
+diff --git a/client/web/src/components/modals/EditGroupInvite/index.tsx b/client/web/src/components/modals/EditGroupInvite/index.tsx
+index 017c6640e..27a24efd1 100644
+--- a/client/web/src/components/modals/EditGroupInvite/index.tsx
++++ b/client/web/src/components/modals/EditGroupInvite/index.tsx
+@@ -118,7 +118,7 @@ export const EditGroupInvite: React.FC<EditGroupInviteProps> = React.memo(
+ 
+     return (
+       <ModalWrapper title={t('编辑邀请链接')}>
+-        <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#232323] px-5 py-5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
++        <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-tc-bg-elevated px-5 py-5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+           <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+             {t('调整邀请链接的有效期和可使用次数。')}
+           </div>
+diff --git a/client/web/src/components/modals/GroupDetail/Role/index.tsx b/client/web/src/components/modals/GroupDetail/Role/index.tsx
+index 01c224a17..a95493327 100644
+--- a/client/web/src/components/modals/GroupDetail/Role/index.tsx
++++ b/client/web/src/components/modals/GroupDetail/Role/index.tsx
+@@ -37,7 +37,7 @@ export const GroupRole: React.FC<GroupPermissionProps> = React.memo((props) => {
+   return (
+     <Loading spinning={loading} className="h-full">
+       <div className="flex h-full rounded-[24px] border border-black/5 bg-white shadow-[0_8px_20px_rgba(15,23,42,0.04)] overflow-hidden">
+-        <div className="pr-2 mr-0 w-44 mobile:w-32 border-r border-black/5 bg-[#f7f7f7] p-3">
++        <div className="pr-2 mr-0 w-44 mobile:w-32 border-r border-black/5 bg-tc-bg-elevated p-3">
+           {/* 角色列表 */}
+           <RoleItem
+             active={roleId === ALL_PERMISSION}
+@@ -63,7 +63,7 @@ export const GroupRole: React.FC<GroupPermissionProps> = React.memo((props) => {
+           </RoleItem>
+         </div>
+ 
+-        <div className="flex-1 overflow-y-auto bg-[#f5f5f5]">
++        <div className="flex-1 overflow-y-auto bg-tc-bg-elevated">
+           <PillTabs
+             defaultActiveKey="permission"
+             items={[
+diff --git a/client/web/src/components/modals/SettingsView/Status.tsx b/client/web/src/components/modals/SettingsView/Status.tsx
+index 8c65d0e8b..949430592 100644
+--- a/client/web/src/components/modals/SettingsView/Status.tsx
++++ b/client/web/src/components/modals/SettingsView/Status.tsx
+@@ -91,19 +91,19 @@ export const SettingsStatus: React.FC = React.memo(() => {
+           服务状态中心
+         </div>
+         <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+-          <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
++          <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
+             <div className="text-xs text-gray-500 dark:text-gray-400">整体状态</div>
+             <div className="mt-2 text-base font-semibold text-gray-900 dark:text-white">
+               {healthLevel}
+             </div>
+           </div>
+-          <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
++          <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
+             <div className="text-xs text-gray-500 dark:text-gray-400">可用服务</div>
+             <div className="mt-2 text-base font-semibold text-gray-900 dark:text-white">
+               {availableCount ?? 0} / {totalCount}
+             </div>
+           </div>
+-          <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
++          <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
+             <div className="text-xs text-gray-500 dark:text-gray-400">建议动作</div>
+             <div className="mt-2 text-sm font-semibold text-gray-900 dark:text-white">
+               {healthLevel === '健康'
+@@ -150,7 +150,7 @@ export const SettingsStatus: React.FC = React.memo(() => {
+             {inspectServices.map((service) => (
+               <div
+                 key={service.name}
+-                className="flex items-center justify-between rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-3"
++                className="flex items-center justify-between rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-3"
+               >
+                 <span className="text-sm text-gray-700 dark:text-gray-200">
+                   {service.label}
+diff --git a/client/web/src/components/popover/UserPopover/GroupUserPopover.tsx b/client/web/src/components/popover/UserPopover/GroupUserPopover.tsx
+index 6bd00065b..8cdcf4bb6 100644
+--- a/client/web/src/components/popover/UserPopover/GroupUserPopover.tsx
++++ b/client/web/src/components/popover/UserPopover/GroupUserPopover.tsx
+@@ -84,7 +84,7 @@ export const GroupUserPopover: React.FC<{
+   return (
+     <div className="w-80 -mx-2 -my-2 bg-transparent">
+       <UserProfileContainer userInfo={userInfo}>
+-        <div className="text-xl text-[#111827] dark:text-white">
++        <div className="text-xl text-tc-text-primary dark:text-white">
+           <span className="font-semibold">
+             {friendInfo?.nickname || <UserName userId={userId} />}
+           </span>
+@@ -133,17 +133,17 @@ export const GroupUserPopover: React.FC<{
+           )}
+         </div>
+ 
+-        <div className="mt-4 rounded-2xl bg-[#f7f7f7] dark:bg-white/5 px-3 py-3 text-sm">
++        <div className="mt-4 rounded-2xl bg-tc-bg-elevated dark:bg-white/5 px-3 py-3 text-sm">
+           <div className="flex items-start justify-between gap-3">
+             <span className="text-gray-400">{t('昵称')}</span>
+-            <span className="text-right text-[#111827] dark:text-white">
++            <span className="text-right text-tc-text-primary dark:text-white">
+               {userInfo.nickname}
+             </span>
+           </div>
+           {friendInfo?.nickname && (
+             <div className="mt-2 flex items-start justify-between gap-3">
+               <span className="text-gray-400">{t('备注')}</span>
+-              <span className="text-right text-[#111827] dark:text-white">
++              <span className="text-right text-tc-text-primary dark:text-white">
+                 {friendInfo.nickname}
+               </span>
+             </div>
+@@ -151,7 +151,7 @@ export const GroupUserPopover: React.FC<{
+           {roleNames.length > 0 && (
+             <div className="mt-2 flex items-start justify-between gap-3">
+               <span className="text-gray-400">{t('群内角色')}</span>
+-              <span className="text-right text-[#111827] dark:text-white">
++              <span className="text-right text-tc-text-primary dark:text-white">
+                 {roleNames.join(' / ')}
+               </span>
+             </div>
+diff --git a/client/web/src/components/popover/UserPopover/PersonalUserPopover.tsx b/client/web/src/components/popover/UserPopover/PersonalUserPopover.tsx
+index 27cba6869..b46c127b0 100644
+--- a/client/web/src/components/popover/UserPopover/PersonalUserPopover.tsx
++++ b/client/web/src/components/popover/UserPopover/PersonalUserPopover.tsx
+@@ -70,7 +70,7 @@ export const PersonalUserPopover: React.FC<{
+   return (
+     <div className="w-80 -mx-2 -my-2 bg-transparent">
+       <UserProfileContainer userInfo={userInfo}>
+-        <div className="text-xl text-[#111827] dark:text-white">
++        <div className="text-xl text-tc-text-primary dark:text-white">
+           <span className="font-semibold">
+             {friendInfo?.nickname || <UserName userId={userInfo._id} />}
+           </span>
+@@ -107,17 +107,17 @@ export const PersonalUserPopover: React.FC<{
+           )}
+         </div>
+ 
+-        <div className="mt-4 rounded-2xl bg-[#f7f7f7] dark:bg-white/5 px-3 py-3 text-sm">
++        <div className="mt-4 rounded-2xl bg-tc-bg-elevated dark:bg-white/5 px-3 py-3 text-sm">
+           <div className="flex items-start justify-between gap-3">
+             <span className="text-gray-400">{t('昵称')}</span>
+-            <span className="text-right text-[#111827] dark:text-white">
++            <span className="text-right text-tc-text-primary dark:text-white">
+               {userInfo.nickname}
+             </span>
+           </div>
+           {friendInfo?.nickname && (
+             <div className="mt-2 flex items-start justify-between gap-3">
+               <span className="text-gray-400">{t('备注')}</span>
+-              <span className="text-right text-[#111827] dark:text-white">
++              <span className="text-right text-tc-text-primary dark:text-white">
+                 {friendInfo.nickname}
+               </span>
+             </div>
+diff --git a/client/web/src/routes/Entry/DocumentLayout.tsx b/client/web/src/routes/Entry/DocumentLayout.tsx
+index 8c7b81ba6..1c27bbfe6 100644
+--- a/client/web/src/routes/Entry/DocumentLayout.tsx
++++ b/client/web/src/routes/Entry/DocumentLayout.tsx
+@@ -14,17 +14,17 @@ export const DocumentLayout: React.FC<Props> = React.memo((props) => {
+   }, [props.title]);
+ 
+   return (
+-    <div className="w-full text-[#111827]">
++    <div className="w-full text-tc-text-primary">
+       <div className="mb-6 flex justify-center overflow-hidden">
+         <BrandLogo alt="財訊" className="w-32 max-w-full h-auto mobile:w-28" />
+       </div>
+ 
+       <div className="text-center mb-6">
+-        <div className="font-bold text-2xl tracking-tight text-[#111827]">
++        <div className="font-bold text-2xl tracking-tight text-tc-text-primary">
+           {props.title}
+         </div>
+         {props.subtitle && (
+-          <div className="mt-2 text-sm text-[#6b7280]">
++          <div className="mt-2 text-sm text-tc-text-secondary">
+             {props.subtitle}
+           </div>
+         )}
+@@ -34,7 +34,7 @@ export const DocumentLayout: React.FC<Props> = React.memo((props) => {
+         {props.children}
+       </div>
+ 
+-      <div className="mt-5 flex flex-wrap gap-4 text-xs text-[#6b7280]">
++      <div className="mt-5 flex flex-wrap gap-4 text-xs text-tc-text-secondary">
+         <Link to="/entry/login" className="underline underline-offset-4">
+           返回登錄
+         </Link>
+diff --git a/client/web/src/routes/Entry/LoginView.tsx b/client/web/src/routes/Entry/LoginView.tsx
+index fbedfd7eb..3840b7ac3 100755
+--- a/client/web/src/routes/Entry/LoginView.tsx
++++ b/client/web/src/routes/Entry/LoginView.tsx
+@@ -93,13 +93,13 @@ export const LoginView: React.FC = React.memo(() => {
+       </div>
+ 
+       <div className="text-center mb-8">
+-        <div className="font-bold text-[28px] mobile:text-xl tracking-tight text-[#111827]">
++        <div className="font-bold text-[28px] mobile:text-xl tracking-tight text-tc-text-primary">
+           {BRAND_NAME_FULL}
+         </div>
+-        <div className="mt-2 text-sm text-[#6b7280]">
++        <div className="mt-2 text-sm text-tc-text-secondary">
+           {BRAND_SUBTITLE}
+         </div>
+-        <div className="mt-3 text-sm text-[#6b7280] italic">
++        <div className="mt-3 text-sm text-tc-text-secondary italic">
+           "{dailyQuote}"
+         </div>
+       </div>
+@@ -159,7 +159,7 @@ export const LoginView: React.FC = React.memo(() => {
+         })}
+       </div>
+ 
+-      <div className="mt-6 text-xs text-[#9ca3af] leading-6">
++      <div className="mt-6 text-xs text-tc-text-tertiary leading-6">
+         <div>{BRAND_COMPANY}</div>
+         <div>TLS 1.3 傳輸保護 · 日本數據節點部署</div>
+       </div>
+diff --git a/client/web/src/routes/Entry/components/Input.tsx b/client/web/src/routes/Entry/components/Input.tsx
+index 6f912915e..70ce2fe51 100644
+--- a/client/web/src/routes/Entry/components/Input.tsx
++++ b/client/web/src/routes/Entry/components/Input.tsx
+@@ -13,7 +13,7 @@ export const EntryInput: React.FC<InputHTMLAttributes<HTMLInputElement>> =
+           ...props.style,
+         }}
+         className={clsx(
+-          'appearance-none rounded-2xl relative block w-full px-4 py-3 bg-white border border-[#d9d9d9] placeholder-[#9ca3af] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#07c160]/20 focus:border-[#07c160] focus:z-10 text-base mobile:text-sm transition-colors select-text shadow-none',
++          'appearance-none rounded-2xl relative block w-full px-4 py-3 bg-white border border-[#d9d9d9] placeholder-[#9ca3af] text-tc-text-primary focus:outline-none focus:ring-2 focus:ring-tc-primary-light focus:border-tc-primary focus:z-10 text-base mobile:text-sm transition-colors select-text shadow-none',
+           props.className
+         )}
+       >
+diff --git a/client/web/src/routes/Entry/components/PrimaryBtn.tsx b/client/web/src/routes/Entry/components/PrimaryBtn.tsx
+index 036331f90..4a46549c2 100644
+--- a/client/web/src/routes/Entry/components/PrimaryBtn.tsx
++++ b/client/web/src/routes/Entry/components/PrimaryBtn.tsx
+@@ -13,7 +13,7 @@ export const PrimaryBtn: React.FC<
+       disabled={props.loading}
+       {..._omit(props, ['loading'])}
+       className={clsx(
+-        'w-full py-3.5 px-4 mb-3 border border-transparent text-base font-semibold rounded-2xl text-white bg-[#07c160] hover:bg-[#06ad56] focus:outline-none focus:ring-2 focus:ring-[#07c160]/20 disabled:opacity-50 shadow-none transition-colors duration-200 ease-in-out',
++        'w-full py-3.5 px-4 mb-3 border border-transparent text-base font-semibold rounded-2xl text-white bg-tc-primary hover:bg-tc-primary-hover focus:outline-none focus:ring-2 focus:ring-tc-primary-light disabled:opacity-50 shadow-none transition-colors duration-200 ease-in-out',
+         props.className
+       )}
+     >
+diff --git a/client/web/src/routes/Entry/components/SecondaryBtn.tsx b/client/web/src/routes/Entry/components/SecondaryBtn.tsx
+index c73e26068..d13d8a280 100644
+--- a/client/web/src/routes/Entry/components/SecondaryBtn.tsx
++++ b/client/web/src/routes/Entry/components/SecondaryBtn.tsx
+@@ -7,7 +7,7 @@ export const SecondaryBtn: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> =
+       <button
+         {...props}
+         className={clsx(
+-          'w-full py-2.5 px-4 border border-[#d9d9d9] bg-white rounded-2xl text-sm font-medium text-[#4b5563] hover:text-[#111827] hover:border-[#bfbfbf] transition-colors focus:outline-none disabled:opacity-50',
++          'w-full py-2.5 px-4 border border-[#d9d9d9] bg-white rounded-2xl text-sm font-medium text-tc-text-secondary hover:text-tc-text-primary hover:border-[#bfbfbf] transition-colors focus:outline-none disabled:opacity-50',
+           props.className
+         )}
+       >
+diff --git a/client/web/src/routes/Entry/index.tsx b/client/web/src/routes/Entry/index.tsx
+index d88a2bda0..7081458d4 100644
+--- a/client/web/src/routes/Entry/index.tsx
++++ b/client/web/src/routes/Entry/index.tsx
+@@ -20,10 +20,10 @@ const EntryRoute = React.memo(() => {
+       <div
+         className={clsx(
+           styles.entryLeft,
+-          'entry-left relative overflow-hidden w-[520px] mobile:w-full px-10 mobile:px-6 bg-[#f7f7f7] text-slate-900 min-h-full flex items-center justify-center z-10 border-r border-black/5'
++          'entry-left relative overflow-hidden w-[520px] mobile:w-full px-10 mobile:px-6 bg-tc-bg-elevated text-slate-900 min-h-full flex items-center justify-center z-10 border-r border-black/5'
+         )}
+       >
+-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white via-[#f8f8f8] to-[#efefef]" />
++        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-tc-bg-base via-tc-bg-elevated to-tc-bg-sunken" />
+         <div className="pointer-events-none absolute -top-48 -left-48 w-[640px] h-[640px] rounded-full bg-[rgba(7,193,96,0.08)] blur-3xl" />
+         <div className="pointer-events-none absolute -bottom-56 -right-56 w-[720px] h-[720px] rounded-full bg-[rgba(0,0,0,0.04)] blur-3xl" />
+         <div className="relative z-20 w-full max-w-[420px] pb-14">
+diff --git a/client/web/src/routes/Main/Content/Feed/CommentComposer.tsx b/client/web/src/routes/Main/Content/Feed/CommentComposer.tsx
+index 1d1b07fdd..7ae4a1dd0 100644
+--- a/client/web/src/routes/Main/Content/Feed/CommentComposer.tsx
++++ b/client/web/src/routes/Main/Content/Feed/CommentComposer.tsx
+@@ -22,7 +22,7 @@ export const CommentComposer: React.FC<CommentComposerProps> = React.memo(
+         <div className="mt-3 flex justify-end">
+           <button
+             type="button"
+-            className="rounded-2xl bg-[#07c160] px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-[#06ad56]"
++            className="rounded-2xl bg-tc-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-tc-primary-hover"
+             disabled={submitting || content.trim() === ''}
+             onClick={async () => {
+               try {
+diff --git a/client/web/src/routes/Main/Content/Feed/FeedCard.tsx b/client/web/src/routes/Main/Content/Feed/FeedCard.tsx
+index abc65476a..75b3cd026 100644
+--- a/client/web/src/routes/Main/Content/Feed/FeedCard.tsx
++++ b/client/web/src/routes/Main/Content/Feed/FeedCard.tsx
+@@ -42,7 +42,7 @@ export const FeedCard: React.FC<FeedCardProps> = React.memo(({ post, onRemoved }
+           {post.groupId && (
+             <Link
+               to={`/main/group/${post.groupId}`}
+-              className="text-xs text-[#07c160] dark:text-[#8db8ff] underline underline-offset-4"
++              className="text-xs text-tc-primary dark:text-[#8db8ff] underline underline-offset-4"
+             >
+               查看关联群组
+             </Link>
+@@ -73,7 +73,7 @@ export const FeedCard: React.FC<FeedCardProps> = React.memo(({ post, onRemoved }
+       <div className="mt-4 flex items-center gap-5 text-xs text-gray-500 dark:text-gray-400">
+         <button
+           type="button"
+-          className="hover:text-[#07c160] dark:hover:text-white"
++          className="hover:text-tc-primary dark:hover:text-white"
+           onClick={() => {
+             likeFeedPost(post._id)
+               .then((res) => setLikesCount(res.likesCount))
+diff --git a/client/web/src/routes/Main/Content/Feed/FeedComposer.tsx b/client/web/src/routes/Main/Content/Feed/FeedComposer.tsx
+index ecf334dda..5745120b3 100644
+--- a/client/web/src/routes/Main/Content/Feed/FeedComposer.tsx
++++ b/client/web/src/routes/Main/Content/Feed/FeedComposer.tsx
+@@ -29,7 +29,7 @@ export const FeedComposer: React.FC<FeedComposerProps> = React.memo(
+           </div>
+           <button
+             type="button"
+-            className="rounded-2xl bg-[#07c160] px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-[#06ad56]"
++            className="rounded-2xl bg-tc-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-tc-primary-hover"
+             disabled={submitting || content.trim() === ''}
+             onClick={async () => {
+               try {
+diff --git a/client/web/src/routes/Main/Content/Feed/FeedDetail.tsx b/client/web/src/routes/Main/Content/Feed/FeedDetail.tsx
+index 89cb65264..c3e8b9f11 100644
+--- a/client/web/src/routes/Main/Content/Feed/FeedDetail.tsx
++++ b/client/web/src/routes/Main/Content/Feed/FeedDetail.tsx
+@@ -26,7 +26,7 @@ const RecentMessageItem: React.FC<{ message: ChatMessage }> = React.memo(({ mess
+     : '刚刚';
+ 
+   return (
+-    <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-3 py-2">
++    <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-3 py-2">
+       <div className="flex items-center justify-between gap-3 text-[11px] text-gray-500 dark:text-gray-400">
+         <span className="truncate">{author.nickname ?? '群成员'}</span>
+         <span>{createdAtText}</span>
+@@ -121,7 +121,7 @@ export const FeedDetail: React.FC = React.memo(() => {
+             {post.groupId && (
+               <Link
+                 to={`/main/group/${post.groupId}`}
+-                className="text-xs text-[#07c160] dark:text-[#8db8ff] underline underline-offset-4"
++                className="text-xs text-tc-primary dark:text-[#8db8ff] underline underline-offset-4"
+               >
+                 返回关联群组
+               </Link>
+@@ -151,7 +151,7 @@ export const FeedDetail: React.FC = React.memo(() => {
+               </div>
+               <Link
+                 to={`/main/group/${post.groupId}`}
+-                className="rounded-2xl bg-[#07c160] px-4 py-2 text-sm font-medium text-white hover:bg-[#06ad56]"
++                className="rounded-2xl bg-tc-primary px-4 py-2 text-sm font-medium text-white hover:bg-tc-primary-hover"
+               >
+                 去群里参与讨论
+               </Link>
+diff --git a/client/web/src/routes/Main/Content/Feed/FeedSidebar.tsx b/client/web/src/routes/Main/Content/Feed/FeedSidebar.tsx
+index 4cac0035e..fca952ade 100644
+--- a/client/web/src/routes/Main/Content/Feed/FeedSidebar.tsx
++++ b/client/web/src/routes/Main/Content/Feed/FeedSidebar.tsx
+@@ -13,7 +13,7 @@ export const FeedSidebar: React.FC = React.memo(() => {
+       <SectionHeader>{t('动态')}</SectionHeader>
+ 
+       <div className="p-3 space-y-3 overflow-y-auto overflow-x-hidden">
+-        <div className="rounded-2xl border border-black/5 dark:border-white/10 bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-3">
++        <div className="rounded-2xl border border-black/5 dark:border-white/10 bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-3">
+           <div className="text-sm font-semibold text-gray-900 dark:text-white">
+             社区动态
+           </div>
+@@ -22,7 +22,7 @@ export const FeedSidebar: React.FC = React.memo(() => {
+           </div>
+         </div>
+ 
+-        <div className="rounded-2xl border border-black/5 dark:border-white/10 bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-3">
++        <div className="rounded-2xl border border-black/5 dark:border-white/10 bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-3">
+           <div className="text-sm font-semibold text-gray-900 dark:text-white">
+             当前视图
+           </div>
+@@ -31,7 +31,7 @@ export const FeedSidebar: React.FC = React.memo(() => {
+           </div>
+         </div>
+ 
+-        <div className="rounded-2xl border border-black/5 dark:border-white/10 bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-3">
++        <div className="rounded-2xl border border-black/5 dark:border-white/10 bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-3">
+           <div className="text-sm font-semibold text-gray-900 dark:text-white">
+             主场联动
+           </div>
+diff --git a/client/web/src/routes/Main/Content/Groups/index.tsx b/client/web/src/routes/Main/Content/Groups/index.tsx
+index 8504ca127..f890b4c7f 100644
+--- a/client/web/src/routes/Main/Content/Groups/index.tsx
++++ b/client/web/src/routes/Main/Content/Groups/index.tsx
+@@ -57,7 +57,7 @@ const GroupsSidebar: React.FC = React.memo(() => {
+         {canCreateGroup && (
+           <button
+             type="button"
+-            className="mx-4 my-3 w-[calc(100%-2rem)] h-11 rounded-2xl px-3 text-left text-[15px] flex items-center gap-3 bg-[#07c160] text-white shadow-none hover:bg-[#06ad56]"
++            className="mx-4 my-3 w-[calc(100%-2rem)] h-11 rounded-2xl px-3 text-left text-[15px] flex items-center gap-3 bg-tc-primary text-white shadow-none hover:bg-tc-primary-hover"
+             onClick={handleCreateGroup}
+           >
+             <Icon icon="mdi:plus" className="text-2xl flex-shrink-0" />
+@@ -92,19 +92,19 @@ export const GroupsOverview: React.FC = React.memo(() => {
+               群组是財訊客户端里承接主题交流和长期讨论的主场。你可以先从左侧选择一个现有群组进入，也可以创建新的交流空间。
+             </div>
+             <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+-              <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
++              <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
+                 <div className="text-sm font-semibold text-gray-900 dark:text-white">看群说明</div>
+                 <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                   先理解群当前主题、定位和公告内容。
+                 </div>
+               </div>
+-              <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
++              <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
+                 <div className="text-sm font-semibold text-gray-900 dark:text-white">看最近交流</div>
+                 <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                   快速判断这个群最近是否仍在活跃讨论。
+                 </div>
+               </div>
+-              <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
++              <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
+                 <div className="text-sm font-semibold text-gray-900 dark:text-white">继续参与</div>
+                 <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                   再决定是发消息、继续讨论，还是围绕动态继续承接。
+diff --git a/client/web/src/routes/Main/Content/Inbox/Content/Markdown.tsx b/client/web/src/routes/Main/Content/Inbox/Content/Markdown.tsx
+index e6473d5e0..d046cf7f4 100644
+--- a/client/web/src/routes/Main/Content/Inbox/Content/Markdown.tsx
++++ b/client/web/src/routes/Main/Content/Inbox/Content/Markdown.tsx
+@@ -17,7 +17,7 @@ export const InboxMarkdownContent: React.FC<Props> = React.memo((props) => {
+ 
+   return (
+     <CommonPanelWrapper header={payload.title ?? t('新消息')}>
+-      <div className="h-full min-w-0 overflow-y-auto overflow-x-hidden px-4 py-4 bg-[#f5f5f5]">
++      <div className="h-full min-w-0 overflow-y-auto overflow-x-hidden px-4 py-4 bg-tc-bg-elevated">
+         <div className="max-w-3xl rounded-[24px] border border-black/5 bg-white px-5 py-5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+           <Markdown raw={payload.content ?? ''} />
+         </div>
+diff --git a/client/web/src/routes/Main/Content/Inbox/Content/Message.tsx b/client/web/src/routes/Main/Content/Inbox/Content/Message.tsx
+index 8553d005c..7f1e54e44 100644
+--- a/client/web/src/routes/Main/Content/Inbox/Content/Message.tsx
++++ b/client/web/src/routes/Main/Content/Inbox/Content/Message.tsx
+@@ -27,7 +27,7 @@ export const InboxMessageContent: React.FC<Props> = React.memo((props) => {
+ 
+   return (
+     <CommonPanelWrapper header={t('提及我的消息')}>
+-      <div className="h-full min-w-0 overflow-y-auto overflow-x-hidden px-0 py-0 pb-18 relative bg-[#f5f5f5]">
++      <div className="h-full min-w-0 overflow-y-auto overflow-x-hidden px-0 py-0 pb-18 relative bg-tc-bg-elevated">
+         <NearbyMessages
+           groupId={groupId}
+           converseId={converseId}
+diff --git a/client/web/src/routes/Main/Content/Inbox/Sidebar.tsx b/client/web/src/routes/Main/Content/Inbox/Sidebar.tsx
+index 436af7fb2..08ff5e2cc 100644
+--- a/client/web/src/routes/Main/Content/Inbox/Sidebar.tsx
++++ b/client/web/src/routes/Main/Content/Inbox/Sidebar.tsx
+@@ -191,7 +191,7 @@ const InboxSidebarItem: React.FC<{
+         className={clsx(
+           'mx-0 my-0 px-4 py-3 overflow-hidden cursor-pointer border-b border-black/5 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white dark:hover:bg-opacity-5 transition-colors duration-150',
+           {
+-            'bg-white border-l-[3px] border-l-[#07c160] dark:bg-[#2b2b2b]': isActive,
++            'bg-white border-l-[3px] border-l-[#07c160] dark:bg-tc-bg-sunken': isActive,
+             'bg-[#f8fffb] dark:bg-[#253228]': !props.readed,
+           },
+           props.readed ? '' : ''
+@@ -199,17 +199,17 @@ const InboxSidebarItem: React.FC<{
+       >
+         <div className="flex items-center gap-2">
+           {!props.readed && (
+-            <span className="w-2 h-2 rounded-full bg-[#07c160] flex-shrink-0" />
++            <span className="w-2 h-2 rounded-full bg-tc-primary flex-shrink-0" />
+           )}
+           <div className="truncate flex-1 text-[15px] font-medium text-gray-800 dark:text-white">
+             {props.title || <span>&nbsp;</span>}
+           </div>
+-          <div className="text-[11px] text-[#9ca3af] flex-shrink-0">{props.time}</div>
++          <div className="text-[11px] text-tc-text-tertiary flex-shrink-0">{props.time}</div>
+         </div>
+-        <div className="line-clamp-2 break-words text-[#6b7280] dark:text-opacity-80 dark:text-white text-[13px] mt-1.5 pl-3 border-l border-gray-200 dark:border-gray-600 overflow-hidden">
++        <div className="line-clamp-2 break-words text-tc-text-secondary dark:text-opacity-80 dark:text-white text-[13px] mt-1.5 pl-3 border-l border-gray-200 dark:border-gray-600 overflow-hidden">
+           {props.desc}
+         </div>
+-        <div className="truncate text-[11px] mt-2 text-[#9ca3af] dark:text-opacity-50 dark:text-white">
++        <div className="truncate text-[11px] mt-2 text-tc-text-tertiary dark:text-opacity-50 dark:text-white">
+           {t('来自')}: {props.source}
+         </div>
+       </div>
+diff --git a/client/web/src/routes/Main/Content/Inbox/index.tsx b/client/web/src/routes/Main/Content/Inbox/index.tsx
+index d7400b247..cad9a6647 100644
+--- a/client/web/src/routes/Main/Content/Inbox/index.tsx
++++ b/client/web/src/routes/Main/Content/Inbox/index.tsx
+@@ -30,19 +30,19 @@ const InboxNoSelect: React.FC = React.memo(() => {
+             这里会集中展示需要你处理的提醒、提及和系统通知。选择左侧任一项，可以继续查看详情并回到对应会话、群组或动态链路。
+           </div>
+           <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+-            <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
++            <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
+               <div className="text-sm font-semibold text-gray-900 dark:text-white">系统提醒</div>
+               <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                 用来查看平台公告、状态变化和关键系统消息。
+               </div>
+             </div>
+-            <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
++            <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
+               <div className="text-sm font-semibold text-gray-900 dark:text-white">提及与你</div>
+               <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                 当别人 @ 你或与你有关的讨论发生时，会优先出现在这里。
+               </div>
+             </div>
+-            <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
++            <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
+               <div className="text-sm font-semibold text-gray-900 dark:text-white">回到现场</div>
+               <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
+                 选中一条提醒后，可以继续回到群组、动态或会话现场处理。
+diff --git a/client/web/src/routes/Main/Content/PageContent.tsx b/client/web/src/routes/Main/Content/PageContent.tsx
+index dd8e11415..8f30417ca 100644
+--- a/client/web/src/routes/Main/Content/PageContent.tsx
++++ b/client/web/src/routes/Main/Content/PageContent.tsx
+@@ -95,7 +95,7 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
+     const sidebarEl = _isNil(sidebar) ? null : (
+       <div
+         className={clsx(
+-          'bg-[#f7f7f7] dark:bg-sidebar-dark flex-shrink-0 transition-width w-[17rem] min-w-0 overflow-hidden border-r border-black/5'
++          'bg-tc-bg-elevated dark:bg-tc-bg-elevated flex-shrink-0 transition-width w-[17rem] min-w-0 overflow-hidden border-r border-black/5'
+         )}
+       >
+         {props.sidebar}
+@@ -124,7 +124,7 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
+ 
+         <div
+           className={clsx(
+-            'flex min-w-0 flex-auto bg-[#f5f5f5] dark:bg-content-dark overflow-hidden',
++            'flex min-w-0 flex-auto bg-tc-bg-elevated dark:bg-content-dark overflow-hidden',
+             isMobile &&
+               'transform left-0 w-full h-full absolute transition-transform duration-200 ease-out',
+             isMobile && {
+diff --git a/client/web/src/routes/Main/Content/Personal/Friends/FriendList.tsx b/client/web/src/routes/Main/Content/Personal/Friends/FriendList.tsx
+index 0e5a84b74..073cafcca 100644
+--- a/client/web/src/routes/Main/Content/Personal/Friends/FriendList.tsx
++++ b/client/web/src/routes/Main/Content/Personal/Friends/FriendList.tsx
+@@ -98,7 +98,7 @@ export const FriendList: React.FC<{
+   }
+ 
+   return (
+-    <div className="py-4 px-0 h-full flex flex-col bg-[#f5f5f5]">
++    <div className="py-4 px-0 h-full flex flex-col bg-tc-bg-elevated">
+       <div className="px-5 text-sm font-medium text-gray-500 dark:text-gray-400">
+         {t('联系人列表')}
+       </div>
+diff --git a/client/web/src/routes/Main/Content/Personal/Friends/index.tsx b/client/web/src/routes/Main/Content/Personal/Friends/index.tsx
+index 46ba82c58..5d41bde0b 100644
+--- a/client/web/src/routes/Main/Content/Personal/Friends/index.tsx
++++ b/client/web/src/routes/Main/Content/Personal/Friends/index.tsx
+@@ -29,7 +29,7 @@ export const FriendPanel: React.FC = React.memo(() => {
+ 
+   return (
+     <div className="w-full h-full min-w-0">
+-      <div className="px-4 pt-4 bg-[#f5f5f5]">
++      <div className="px-4 pt-4 bg-tc-bg-elevated">
+         <details className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white px-5 py-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+           <summary className="cursor-pointer text-sm font-semibold text-gray-900 dark:text-white">
+             查看联系人使用建议
+diff --git a/client/web/src/routes/Main/Content/SidebarItem.tsx b/client/web/src/routes/Main/Content/SidebarItem.tsx
+index d464f0c39..0d0007a89 100644
+--- a/client/web/src/routes/Main/Content/SidebarItem.tsx
++++ b/client/web/src/routes/Main/Content/SidebarItem.tsx
+@@ -26,7 +26,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
+         className={clsx(
+           'w-full min-w-0 overflow-hidden border-b border-black/5 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white dark:hover:bg-opacity-10 cursor-pointer text-gray-700 dark:text-white rounded-none px-3 h-14 mobile:h-16 flex items-center text-[15px] group transition-colors duration-150',
+           {
+-            'bg-white text-[#111827] border-l-[3px] border-l-[#07c160] dark:bg-[#2b2b2b]': isActive,
++            'bg-white text-tc-text-primary border-l-[3px] border-l-[#07c160] dark:bg-tc-bg-sunken': isActive,
+           }
+         )}
+       >
+@@ -49,13 +49,13 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
+             <div className="min-w-0 flex items-center gap-2">
+               <div className="flex-1 truncate">{name}</div>
+               {trailing && (
+-                <div className="flex-shrink-0 text-[11px] text-[#9ca3af]">
++                <div className="flex-shrink-0 text-[11px] text-tc-text-tertiary">
+                   {trailing}
+                 </div>
+               )}
+             </div>
+             {subtitle && (
+-              <div className="truncate text-[11px] text-[#9ca3af] mt-0.5">
++              <div className="truncate text-[11px] text-tc-text-tertiary mt-0.5">
+                 {subtitle}
+               </div>
+             )}
+diff --git a/client/web/src/routes/Main/Navbar/NavItem.tsx b/client/web/src/routes/Main/Navbar/NavItem.tsx
+index 40e818e0f..a942fe93f 100644
+--- a/client/web/src/routes/Main/Navbar/NavItem.tsx
++++ b/client/web/src/routes/Main/Navbar/NavItem.tsx
+@@ -38,11 +38,11 @@ export const NavbarNavItem: React.FC<
+     >
+       <div
+         className={clsx(
+-          'w-12 h-12 border border-transparent bg-transparent text-[#4b5563] hover:bg-white hover:text-[#111827] transition-all duration-200 cursor-pointer flex items-center justify-center overflow-hidden',
++          'w-12 h-12 border border-transparent bg-transparent text-tc-text-secondary hover:bg-white hover:text-tc-text-primary transition-all duration-200 cursor-pointer flex items-center justify-center overflow-hidden',
+           className,
+           {
+             'rounded-2xl': !isActive,
+-            'rounded-2xl bg-white text-[#07c160] border-black/5 shadow-[0_4px_14px_rgba(15,23,42,0.06)]': isActive,
++            'rounded-2xl bg-white text-tc-primary border-black/5 shadow-[0_4px_14px_rgba(15,23,42,0.06)]': isActive,
+           }
+         )}
+         onClick={handleClick}
+@@ -70,7 +70,7 @@ export const NavbarNavItem: React.FC<
+         >
+           <span
+             className={clsx(
+-              'bg-[#07c160] dark:bg-green-300 w-1.5 h-1.5 rounded-full transition-all duration-200',
++              'bg-tc-primary dark:bg-green-300 w-1.5 h-1.5 rounded-full transition-all duration-200',
+               {
+                 'h-1.5 group-hover:h-4': !isActive,
+                 'h-8': isActive,
+diff --git a/client/web/src/routes/Main/Navbar/index.tsx b/client/web/src/routes/Main/Navbar/index.tsx
+index 8d92e7548..fda8b3eb9 100644
+--- a/client/web/src/routes/Main/Navbar/index.tsx
++++ b/client/web/src/routes/Main/Navbar/index.tsx
+@@ -19,7 +19,7 @@ export const Navbar: React.FC = React.memo(() => {
+   return (
+     <div
+       data-tc-role="navbar"
+-      className="w-18 mobile:zoom-4/5 bg-[#ededed] dark:bg-navbar-dark border-r border-black/5 dark:border-white dark:border-opacity-10 flex flex-col justify-start items-center pt-3 pb-3"
++      className="w-18 mobile:zoom-4/5 bg-tc-bg-sunken dark:bg-navbar-dark border-r border-black/5 dark:border-white dark:border-opacity-10 flex flex-col justify-start items-center pt-3 pb-3"
+     >
+       <MobileMenuBtn />
+ 
+diff --git a/client/web/src/styles/global.less b/client/web/src/styles/global.less
+index 76280f03f..ece81d114 100755
+--- a/client/web/src/styles/global.less
++++ b/client/web/src/styles/global.less
+@@ -15,7 +15,7 @@ body {
+   --tc-background-image: '';
+   --tc-content-background-image: '';
+   --tc-content-background-image-opacity: 0;
+-  --tc-content-background-color: rgba(245, 245, 245, 1);
++  --tc-content-background-color: var(--tc-bg-elevated);
+ 
+   .tc-background {
+     @apply bg-center bg-no-repeat;
+@@ -99,7 +99,7 @@ body {
+   // 深色模式覆盖
+   &.dark {
+     @apply text-typography-dark bg-content-dark;
+-    --tc-content-background-color: rgba(26, 26, 26, 1);
++    --tc-content-background-color: var(--tc-bg-elevated);
+ 
+     h1,h2,h3,h4,h5,h6 {
+       @apply text-typography-dark;
+-- 
+2.34.1
+
+
+From fbe2b57e6e45e51e9022261a3f3a3bd68f4c7488 Mon Sep 17 00:00:00 2001
+From: Tailchat Dev <dev@tailchat.com>
+Date: Wed, 13 May 2026 21:10:26 +0800
+Subject: [PATCH 4/4] =?UTF-8?q?style(theme):=20=E9=98=B6=E6=AE=B5=E5=9B=9B?=
+ =?UTF-8?q?=20-=20=E6=9A=97=E8=89=B2=E6=A8=A1=E5=BC=8F=E5=AE=8C=E6=95=B4?=
+ =?UTF-8?q?=E9=80=82=E9=85=8D=EF=BC=8C=E4=BF=AE=E5=A4=8DAntd=E7=BB=84?=
+ =?UTF-8?q?=E4=BB=B6=E6=A0=B7=E5=BC=8F?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ client/web/src/styles/antd/dark.less | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/client/web/src/styles/antd/dark.less b/client/web/src/styles/antd/dark.less
+index 4c14e08d6..c76e888d7 100644
+--- a/client/web/src/styles/antd/dark.less
++++ b/client/web/src/styles/antd/dark.less
+@@ -142,7 +142,7 @@
+     &.ant-input-focused {
+       border-color: #d4af37;
+       border-right-width: 1px !important;
+-      box-shadow: 0 0 0 2px rgb(23 125 220 / 20%);
++      box-shadow: var(--tc-shadow-focus);
+     }
+ 
+     &.border-0 {
+@@ -194,7 +194,7 @@
+     color: rgba(255, 255, 255, 0.65);
+ 
+     .ant-dropdown-menu {
+-      background-color: #1f1f1f;
++      background-color: var(--tc-bg-sunken);
+ 
+       .ant-dropdown-menu-item,
+       .ant-dropdown-menu-submenu-title {
+@@ -238,7 +238,7 @@
+ 
+   // 菜单
+   .ant-menu {
+-    background-color: #222222;
++    background-color: var(--tc-bg-elevated);
+     color: rgba(255, 255, 255, 0.85);
+     border-right: 1px solid #333333;
+   }
+@@ -319,7 +319,7 @@
+   // Modal
+   .ant-modal {
+     .ant-modal-content {
+-      background-color: #222222;
++      background-color: var(--tc-bg-elevated);
+ 
+       .ant-modal-confirm-content {
+         @apply text-typography-dark;
+@@ -337,10 +337,10 @@
+   // Table
+   .ant-table {
+     color: rgba(255, 255, 255, 0.85);
+-    background: rgba(0, 0, 0, 0.2);
++    background: var(--tc-bg-elevated);
+ 
+     .ant-table-thead > tr > th {
+-      background: rgba(0, 0, 0, 0.2);
++      background: var(--tc-bg-elevated);
+       color: rgba(255, 255, 255, 0.85);
+       border-bottom: 1px solid #303030;
+     }
+@@ -374,7 +374,7 @@
+   }
+ 
+   .ant-select-dropdown {
+-    background-color: #1f1f1f;
++    background-color: var(--tc-bg-sunken);
+ 
+     .ant-select-item {
+       color: rgba(255, 255, 255, 0.85);
+@@ -450,7 +450,7 @@
+     .ant-popover-arrow > .ant-popover-arrow-content,
+     .ant-popover-arrow > .ant-popover-arrow-content::before,
+     .ant-popover-inner {
+-      background-color: #1f1f1f;
++      background-color: var(--tc-bg-sunken);
+     }
+ 
+     .ant-popover-inner-content {
+-- 
+2.34.1
+
