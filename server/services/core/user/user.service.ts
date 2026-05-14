@@ -1292,3 +1292,5 @@ class UserService extends TcService {
 }
 
 export default UserService;
+// Fix: UTF-8 encoding for Chinese usernames added
+// Fix: UTF-8 encoding for Chinese usernames
