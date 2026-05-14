@@ -57,7 +57,7 @@ const GroupsSidebar: React.FC = React.memo(() => {
         {canCreateGroup && (
           <button
             type="button"
-            className="mx-4 my-3 w-[calc(100%-2rem)] h-11 rounded-2xl px-3 text-left text-[15px] flex items-center gap-3 bg-[#07c160] text-white shadow-none hover:bg-[#06ad56]"
+            className="mx-4 my-3 w-[calc(100%-2rem)] h-11 rounded-2xl px-3 text-left text-[15px] flex items-center gap-3 bg-tc-primary text-white shadow-none hover:bg-tc-primary-hover"
             onClick={handleCreateGroup}
           >
             <Icon icon="mdi:plus" className="text-2xl flex-shrink-0" />
@@ -92,19 +92,19 @@ export const GroupsOverview: React.FC = React.memo(() => {
               群组是財訊客户端里承接主题交流和长期讨论的主场。你可以先从左侧选择一个现有群组进入，也可以创建新的交流空间。
             </div>
             <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
-              <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
+              <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
                 <div className="text-sm font-semibold text-gray-900 dark:text-white">看群说明</div>
                 <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
                   先理解群当前主题、定位和公告内容。
                 </div>
               </div>
-              <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
+              <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
                 <div className="text-sm font-semibold text-gray-900 dark:text-white">看最近交流</div>
                 <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
                   快速判断这个群最近是否仍在活跃讨论。
                 </div>
               </div>
-              <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
+              <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
                 <div className="text-sm font-semibold text-gray-900 dark:text-white">继续参与</div>
                 <div className="mt-2 text-xs leading-6 text-gray-500 dark:text-gray-400">
                   再决定是发消息、继续讨论，还是围绕动态继续承接。

@@ -142,7 +142,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
       }}
     >
       <div className="px-4 py-2 min-w-0 mobile:px-3 mobile:py-2">
-        <div className="bg-white dark:bg-[#2b2b2b] flex min-w-0 rounded-[24px] items-center relative border border-black/5 dark:border-white/10 shadow-[0_2px_8px_rgba(15,23,42,0.04)]">
+        <div className="bg-white dark:bg-tc-bg-sunken flex min-w-0 rounded-[24px] items-center relative border border-black/5 dark:border-white/10 shadow-[0_2px_8px_rgba(15,23,42,0.04)]">
           {/* This w-0 is magic to ensure show mention and long text */}
           <div className="flex-1 w-0">
             <ChatInputBoxInput
@@ -176,7 +176,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
               {message ? (
                 <Icon
                   icon="mdi:send-circle"
-                  className="text-[30px] text-[#07c160] cursor-pointer hover:text-[#06ad56] transition-colors"
+                  className="text-[30px] text-tc-primary cursor-pointer hover:text-tc-primary-hover transition-colors"
                   onClick={handleSendMsg}
                 />
               ) : (
@@ -190,7 +190,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
             className={clsx(
               'mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 px-2 text-[11px] leading-5 mobile:hidden',
               sendError
-                ? 'text-[#ef4444] dark:text-[#f87171]'
+                ? 'text-tc-danger dark:text-tc-danger'
                 : 'text-gray-400 dark:text-gray-500'
             )}
           >

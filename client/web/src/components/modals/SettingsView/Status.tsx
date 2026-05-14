@@ -91,19 +91,19 @@ export const SettingsStatus: React.FC = React.memo(() => {
           服务状态中心
         </div>
         <div className="mt-4 grid gap-3 mobile:grid-cols-1" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
-          <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
+          <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
             <div className="text-xs text-gray-500 dark:text-gray-400">整体状态</div>
             <div className="mt-2 text-base font-semibold text-gray-900 dark:text-white">
               {healthLevel}
             </div>
           </div>
-          <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
+          <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
             <div className="text-xs text-gray-500 dark:text-gray-400">可用服务</div>
             <div className="mt-2 text-base font-semibold text-gray-900 dark:text-white">
               {availableCount ?? 0} / {totalCount}
             </div>
           </div>
-          <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-4">
+          <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-4">
             <div className="text-xs text-gray-500 dark:text-gray-400">建议动作</div>
             <div className="mt-2 text-sm font-semibold text-gray-900 dark:text-white">
               {healthLevel === '健康'
@@ -150,7 +150,7 @@ export const SettingsStatus: React.FC = React.memo(() => {
             {inspectServices.map((service) => (
               <div
                 key={service.name}
-                className="flex items-center justify-between rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-4 py-3"
+                className="flex items-center justify-between rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-4 py-3"
               >
                 <span className="text-sm text-gray-700 dark:text-gray-200">
                   {service.label}

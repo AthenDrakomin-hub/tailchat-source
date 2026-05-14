@@ -83,7 +83,7 @@ export const GroupUserPopover: React.FC<{
   return (
     <div className="w-80 -mx-2 -my-2 bg-transparent">
       <UserProfileContainer userInfo={userInfo}>
-        <div className="text-xl text-[#111827] dark:text-white">
+        <div className="text-xl text-tc-text-primary dark:text-white">
           <span className="font-semibold">
             {friendInfo?.nickname || <UserName userId={userId} />}
           </span>
@@ -132,17 +132,17 @@ export const GroupUserPopover: React.FC<{
           )}
         </div>
 
-        <div className="mt-4 rounded-2xl bg-[#f7f7f7] dark:bg-white/5 px-3 py-3 text-sm">
+        <div className="mt-4 rounded-2xl bg-tc-bg-elevated dark:bg-white/5 px-3 py-3 text-sm">
           <div className="flex items-start justify-between gap-3">
             <span className="text-gray-400">{t('昵称')}</span>
-            <span className="text-right text-[#111827] dark:text-white">
+            <span className="text-right text-tc-text-primary dark:text-white">
               {userInfo.nickname}
             </span>
           </div>
           {friendInfo?.nickname && (
             <div className="mt-2 flex items-start justify-between gap-3">
               <span className="text-gray-400">{t('备注')}</span>
-              <span className="text-right text-[#111827] dark:text-white">
+              <span className="text-right text-tc-text-primary dark:text-white">
                 {friendInfo.nickname}
               </span>
             </div>
@@ -150,7 +150,7 @@ export const GroupUserPopover: React.FC<{
           {roleNames.length > 0 && (
             <div className="mt-2 flex items-start justify-between gap-3">
               <span className="text-gray-400">{t('群内角色')}</span>
-              <span className="text-right text-[#111827] dark:text-white">
+              <span className="text-right text-tc-text-primary dark:text-white">
                 {roleNames.join(' / ')}
               </span>
             </div>

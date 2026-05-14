@@ -26,7 +26,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
         className={clsx(
           'w-full min-w-0 overflow-hidden border-b border-black/5 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white dark:hover:bg-opacity-10 cursor-pointer text-gray-700 dark:text-white rounded-none px-3 h-14 mobile:h-16 flex items-center text-[15px] group transition-colors duration-150',
           {
-            'bg-white text-[#111827] border-l-[3px] border-l-[#07c160] dark:bg-[#2b2b2b]': isActive,
+            'bg-white text-tc-text-primary border-l-[3px] border-l-[#07c160] dark:bg-tc-bg-sunken': isActive,
           }
         )}
       >
@@ -49,13 +49,13 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
             <div className="min-w-0 flex items-center gap-2">
               <div className="flex-1 truncate">{name}</div>
               {trailing && (
-                <div className="flex-shrink-0 text-[11px] text-[#9ca3af]">
+                <div className="flex-shrink-0 text-[11px] text-tc-text-tertiary">
                   {trailing}
                 </div>
               )}
             </div>
             {subtitle && (
-              <div className="truncate text-[11px] text-[#9ca3af] mt-0.5">
+              <div className="truncate text-[11px] text-tc-text-tertiary mt-0.5">
                 {subtitle}
               </div>
             )}

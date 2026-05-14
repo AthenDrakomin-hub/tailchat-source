@@ -22,7 +22,7 @@ export const CommentComposer: React.FC<CommentComposerProps> = React.memo(
         <div className="mt-3 flex justify-end">
           <button
             type="button"
-            className="rounded-2xl bg-[#07c160] px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-[#06ad56]"
+            className="rounded-2xl bg-tc-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-tc-primary-hover"
             disabled={submitting || content.trim() === ''}
             onClick={async () => {
               try {

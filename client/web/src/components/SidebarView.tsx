@@ -157,7 +157,7 @@ export const SidebarView: React.FC<SidebarViewProps> = React.memo((props) => {
         </div>
 
         <div
-          className="pt-20 pb-20 px-10 mobile:pt-10 mobile:px-2 desktop:overflow-auto bg-[#f5f5f5]"
+          className="pt-20 pb-20 px-10 mobile:pt-10 mobile:px-2 desktop:overflow-auto bg-tc-bg-elevated"
           style={{ flex: '1 1 800px' }}
         >
           {content}

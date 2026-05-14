@@ -191,7 +191,7 @@ const InboxSidebarItem: React.FC<{
         className={clsx(
           'mx-0 my-0 px-4 py-3 overflow-hidden cursor-pointer border-b border-black/5 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white dark:hover:bg-opacity-5 transition-colors duration-150',
           {
-            'bg-white border-l-[3px] border-l-[#07c160] dark:bg-[#2b2b2b]': isActive,
+            'bg-white border-l-[3px] border-l-[#07c160] dark:bg-tc-bg-sunken': isActive,
             'bg-[#f8fffb] dark:bg-[#253228]': !props.readed,
           },
           props.readed ? '' : ''
@@ -199,17 +199,17 @@ const InboxSidebarItem: React.FC<{
       >
         <div className="flex items-center gap-2">
           {!props.readed && (
-            <span className="w-2 h-2 rounded-full bg-[#07c160] flex-shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-tc-primary flex-shrink-0" />
           )}
           <div className="truncate flex-1 text-[15px] font-medium text-gray-800 dark:text-white">
             {props.title || <span>&nbsp;</span>}
           </div>
-          <div className="text-[11px] text-[#9ca3af] flex-shrink-0">{props.time}</div>
+          <div className="text-[11px] text-tc-text-tertiary flex-shrink-0">{props.time}</div>
         </div>
-        <div className="line-clamp-2 break-words text-[#6b7280] dark:text-opacity-80 dark:text-white text-[13px] mt-1.5 pl-3 border-l border-gray-200 dark:border-gray-600 overflow-hidden">
+        <div className="line-clamp-2 break-words text-tc-text-secondary dark:text-opacity-80 dark:text-white text-[13px] mt-1.5 pl-3 border-l border-gray-200 dark:border-gray-600 overflow-hidden">
           {props.desc}
         </div>
-        <div className="truncate text-[11px] mt-2 text-[#9ca3af] dark:text-opacity-50 dark:text-white">
+        <div className="truncate text-[11px] mt-2 text-tc-text-tertiary dark:text-opacity-50 dark:text-white">
           {t('来自')}: {props.source}
         </div>
       </div>

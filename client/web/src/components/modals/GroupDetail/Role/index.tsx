@@ -37,7 +37,7 @@ export const GroupRole: React.FC<GroupPermissionProps> = React.memo((props) => {
   return (
     <Loading spinning={loading} className="h-full">
       <div className="flex h-full rounded-[24px] border border-black/5 bg-white shadow-[0_8px_20px_rgba(15,23,42,0.04)] overflow-hidden">
-        <div className="pr-2 mr-0 w-44 mobile:w-32 border-r border-black/5 bg-[#f7f7f7] p-3">
+        <div className="pr-2 mr-0 w-44 mobile:w-32 border-r border-black/5 bg-tc-bg-elevated p-3">
           {/* 角色列表 */}
           <RoleItem
             active={roleId === ALL_PERMISSION}
@@ -63,7 +63,7 @@ export const GroupRole: React.FC<GroupPermissionProps> = React.memo((props) => {
           </RoleItem>
         </div>
 
-        <div className="flex-1 overflow-y-auto bg-[#f5f5f5]">
+        <div className="flex-1 overflow-y-auto bg-tc-bg-elevated">
           <PillTabs
             defaultActiveKey="permission"
             items={[

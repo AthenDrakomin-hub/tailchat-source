@@ -47,7 +47,7 @@ const ConversePanelTitle: React.FC<{
           />
         )}
         <div className="min-w-0">
-          <div className="truncate text-[15px] font-semibold text-[#111827] dark:text-white">
+          <div className="truncate text-[15px] font-semibold text-tc-text-primary dark:text-white">
             {name}
           </div>
           <div className="mt-0.5 text-[11px] font-normal text-gray-500 dark:text-gray-400 truncate">

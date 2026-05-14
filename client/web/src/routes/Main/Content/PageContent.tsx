@@ -95,7 +95,7 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
     const sidebarEl = _isNil(sidebar) ? null : (
       <div
         className={clsx(
-          'bg-[#f7f7f7] dark:bg-sidebar-dark flex-shrink-0 transition-width w-[17rem] min-w-0 overflow-hidden border-r border-black/5'
+          'bg-tc-bg-elevated dark:bg-tc-bg-elevated flex-shrink-0 transition-width w-[17rem] min-w-0 overflow-hidden border-r border-black/5'
         )}
       >
         {props.sidebar}
@@ -124,7 +124,7 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
 
         <div
           className={clsx(
-            'flex min-w-0 flex-auto bg-[#f5f5f5] dark:bg-content-dark overflow-hidden',
+            'flex min-w-0 flex-auto bg-tc-bg-elevated dark:bg-content-dark overflow-hidden',
             isMobile &&
               'transform left-0 w-full h-full absolute transition-transform duration-200 ease-out',
             isMobile && {

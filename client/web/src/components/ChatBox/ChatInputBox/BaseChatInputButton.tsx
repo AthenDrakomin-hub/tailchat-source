@@ -34,9 +34,9 @@ export const BaseChatInputButton: React.FC<BaseChatInputButtonProps> =
       >
         <div
           className={clsx(
-            'w-8 h-8 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-300 hover:text-[#07c160] hover:bg-[#f3f4f6] dark:hover:bg-white/10 transition-colors cursor-pointer',
+            'w-8 h-8 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-300 hover:text-tc-primary hover:bg-tc-bg-elevated dark:hover:bg-white/10 transition-colors cursor-pointer',
             {
-              'text-[#07c160] bg-[#f3f4f6] dark:bg-white/10': visible,
+              'text-tc-primary bg-tc-bg-elevated dark:bg-white/10': visible,
             }
           )}
         >

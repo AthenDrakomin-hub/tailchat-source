@@ -13,7 +13,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
     const [visible, setVisible] = useState(false);
 
     return (
-      <div className="h-12 relative flex items-center py-0 text-[15px] font-semibold flex-shrink-0 border-b border-black/5 dark:border-white/10 bg-[#f7f7f7] dark:bg-white dark:bg-opacity-[0.03]">
+      <div className="h-12 relative flex items-center py-0 text-[15px] font-semibold flex-shrink-0 border-b border-black/5 dark:border-white/10 bg-tc-bg-elevated dark:bg-white dark:bg-opacity-[0.03]">
         {props.menu ? (
           <Dropdown
             className="overflow-hidden"
@@ -26,11 +26,11 @@ export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
               className="cursor-pointer flex flex-1"
               data-testid={props['data-testid']}
             >
-              <header className="flex-1 truncate px-4 text-[#111827] dark:text-white">
+              <header className="flex-1 truncate px-4 text-tc-text-primary dark:text-white">
                 {props.children}
               </header>
               <Icon
-                className={clsx('text-xl text-[#6b7280] transition-transform transform', {
+                className={clsx('text-xl text-tc-text-secondary transition-transform transform', {
                   'rotate-180': visible,
                 })}
                 icon="mdi:chevron-down"
@@ -41,7 +41,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
           </Dropdown>
         ) : (
           <header
-            className="flex-1 truncate px-4 select-text text-[#111827] dark:text-white"
+            className="flex-1 truncate px-4 select-text text-tc-text-primary dark:text-white"
             data-testid={props['data-testid']}
           >
             {props.children}

@@ -43,7 +43,7 @@ export const CommonPanelWrapper: React.FC<CommonPanelWrapperProps> = React.memo(
         {/* 右侧面板 */}
         <div
           className={clsx(
-            'transition-all min-w-0 overflow-hidden border-l border-black/5 dark:border-white/10 flex flex-col bg-[#f5f5f5] dark:bg-[#1f1f1f]',
+            'transition-all min-w-0 overflow-hidden border-l border-black/5 dark:border-white/10 flex flex-col bg-tc-bg-elevated dark:bg-tc-bg-sunken',
             {
               'w-[24rem] mobile:w-full': rightPanel,
               'w-0': !rightPanel,

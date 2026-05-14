@@ -81,7 +81,7 @@ export const ProfilePanel: React.FC<{
   return (
     <div className="p-4 space-y-4">
       <UserProfileContainer userInfo={userInfo}>
-        <div className="text-xl font-semibold text-[#111827] dark:text-white">
+        <div className="text-xl font-semibold text-tc-text-primary dark:text-white">
           {friendInfo?.nickname || userInfo.nickname}
           <span className="ml-1 text-sm font-normal text-gray-400">
             #{userInfo.discriminator}
@@ -100,8 +100,8 @@ export const ProfilePanel: React.FC<{
         </div>
       </UserProfileContainer>
 
-      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#232323] px-4 py-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
-        <div className="text-sm font-semibold text-[#111827] dark:text-white mb-3">
+      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-tc-bg-elevated px-4 py-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+        <div className="text-sm font-semibold text-tc-text-primary dark:text-white mb-3">
           {t('常用操作')}
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -136,27 +136,27 @@ export const ProfilePanel: React.FC<{
         </div>
       </div>
 
-      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#232323] px-4 py-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
-        <div className="text-sm font-semibold text-[#111827] dark:text-white mb-3">
+      <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-tc-bg-elevated px-4 py-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+        <div className="text-sm font-semibold text-tc-text-primary dark:text-white mb-3">
           {t('资料信息')}
         </div>
         <div className="space-y-3 text-sm">
           <div className="flex items-start justify-between gap-3">
             <span className="text-gray-400">{t('昵称')}</span>
-            <span className="text-right text-[#111827] dark:text-white">
+            <span className="text-right text-tc-text-primary dark:text-white">
               {userInfo.nickname}
             </span>
           </div>
           <div className="flex items-start justify-between gap-3">
             <span className="text-gray-400">{t('标识')}</span>
-            <span className="text-right text-[#111827] dark:text-white">
+            <span className="text-right text-tc-text-primary dark:text-white">
               #{userInfo.discriminator}
             </span>
           </div>
           {friendInfo?.nickname && (
             <div className="flex items-start justify-between gap-3">
               <span className="text-gray-400">{t('备注')}</span>
-              <span className="text-right text-[#111827] dark:text-white">
+              <span className="text-right text-tc-text-primary dark:text-white">
                 {friendInfo.nickname}
               </span>
             </div>

@@ -118,7 +118,7 @@ export const EditGroupInvite: React.FC<EditGroupInviteProps> = React.memo(
 
     return (
       <ModalWrapper title={t('编辑邀请链接')}>
-        <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#232323] px-5 py-5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+        <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-tc-bg-elevated px-5 py-5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
           <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
             {t('调整邀请链接的有效期和可使用次数。')}
           </div>

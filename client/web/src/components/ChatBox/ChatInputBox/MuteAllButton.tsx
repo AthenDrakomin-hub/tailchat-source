@@ -91,13 +91,13 @@ export const MuteAllButton: React.FC<{ groupId?: string; panelId?: string }> =
         title={isMuted ? t('解除默认成员发言限制') : t('默认成员禁言')}
         onClick={handleToggleMute}
         className={clsx(
-          'w-8 h-8 rounded-full flex items-center justify-center hover:bg-[#f3f4f6] dark:hover:bg-white/10 transition-colors',
+          'w-8 h-8 rounded-full flex items-center justify-center hover:bg-tc-bg-elevated dark:hover:bg-white/10 transition-colors',
           isMuted && 'bg-red-50 dark:bg-red-500/10'
         )}
       >
         <Icon
           className={clsx(
-            'text-[22px] cursor-pointer text-gray-500 dark:text-gray-300 hover:text-[#07c160]',
+            'text-[22px] cursor-pointer text-gray-500 dark:text-gray-300 hover:text-tc-primary',
             isMuted && 'text-red-500',
             loading && 'opacity-50'
           )}

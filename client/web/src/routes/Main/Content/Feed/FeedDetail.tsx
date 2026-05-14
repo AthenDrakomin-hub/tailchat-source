@@ -26,7 +26,7 @@ const RecentMessageItem: React.FC<{ message: ChatMessage }> = React.memo(({ mess
     : '刚刚';
 
   return (
-    <div className="rounded-2xl bg-[#f7f7f7] dark:bg-white/[0.03] px-3 py-2">
+    <div className="rounded-2xl bg-tc-bg-elevated dark:bg-white/[0.03] px-3 py-2">
       <div className="flex items-center justify-between gap-3 text-[11px] text-gray-500 dark:text-gray-400">
         <span className="truncate">{author.nickname ?? '群成员'}</span>
         <span>{createdAtText}</span>
@@ -121,7 +121,7 @@ export const FeedDetail: React.FC = React.memo(() => {
             {post.groupId && (
               <Link
                 to={`/main/group/${post.groupId}`}
-                className="text-xs text-[#07c160] dark:text-[#8db8ff] underline underline-offset-4"
+                className="text-xs text-tc-primary dark:text-[#8db8ff] underline underline-offset-4"
               >
                 返回关联群组
               </Link>
@@ -151,7 +151,7 @@ export const FeedDetail: React.FC = React.memo(() => {
               </div>
               <Link
                 to={`/main/group/${post.groupId}`}
-                className="rounded-2xl bg-[#07c160] px-4 py-2 text-sm font-medium text-white hover:bg-[#06ad56]"
+                className="rounded-2xl bg-tc-primary px-4 py-2 text-sm font-medium text-white hover:bg-tc-primary-hover"
               >
                 去群里参与讨论
               </Link>

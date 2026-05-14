@@ -98,7 +98,7 @@ export const FriendList: React.FC<{
   }
 
   return (
-    <div className="py-4 px-0 h-full flex flex-col bg-[#f5f5f5]">
+    <div className="py-4 px-0 h-full flex flex-col bg-tc-bg-elevated">
       <div className="px-5 text-sm font-medium text-gray-500 dark:text-gray-400">
         {t('联系人列表')}
       </div>

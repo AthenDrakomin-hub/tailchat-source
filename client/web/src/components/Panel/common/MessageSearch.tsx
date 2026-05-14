@@ -80,7 +80,7 @@ export const MessageSearchPanel: React.FC<{
         ))}
 
         {(nearbyMessages as ChatMessage[]).length > 0 && (
-          <div className="mt-4 rounded-2xl border border-black/5 dark:border-white/10 bg-white/80 dark:bg-[#232323] p-2">
+          <div className="mt-4 rounded-2xl border border-black/5 dark:border-white/10 bg-white/80 dark:bg-tc-bg-elevated p-2">
             <div className="px-2 pb-2 text-xs text-gray-400">
               {nearbyLoading ? t('加载上下文中') : t('消息上下文')}
             </div>

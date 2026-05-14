@@ -142,7 +142,7 @@
     &.ant-input-focused {
       border-color: #d4af37;
       border-right-width: 1px !important;
-      box-shadow: 0 0 0 2px rgb(23 125 220 / 20%);
+      box-shadow: var(--tc-shadow-focus);
     }
 
     &.border-0 {
@@ -194,7 +194,7 @@
     color: rgba(255, 255, 255, 0.65);
 
     .ant-dropdown-menu {
-      background-color: #1f1f1f;
+      background-color: var(--tc-bg-sunken);
 
       .ant-dropdown-menu-item,
       .ant-dropdown-menu-submenu-title {
@@ -238,7 +238,7 @@
 
   // 菜单
   .ant-menu {
-    background-color: #222222;
+    background-color: var(--tc-bg-elevated);
     color: rgba(255, 255, 255, 0.85);
     border-right: 1px solid #333333;
   }
@@ -319,7 +319,7 @@
   // Modal
   .ant-modal {
     .ant-modal-content {
-      background-color: #222222;
+      background-color: var(--tc-bg-elevated);
 
       .ant-modal-confirm-content {
         @apply text-typography-dark;
@@ -337,10 +337,10 @@
   // Table
   .ant-table {
     color: rgba(255, 255, 255, 0.85);
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--tc-bg-elevated);
 
     .ant-table-thead > tr > th {
-      background: rgba(0, 0, 0, 0.2);
+      background: var(--tc-bg-elevated);
       color: rgba(255, 255, 255, 0.85);
       border-bottom: 1px solid #303030;
     }
@@ -374,7 +374,7 @@
   }
 
   .ant-select-dropdown {
-    background-color: #1f1f1f;
+    background-color: var(--tc-bg-sunken);
 
     .ant-select-item {
       color: rgba(255, 255, 255, 0.85);
@@ -450,7 +450,7 @@
     .ant-popover-arrow > .ant-popover-arrow-content,
     .ant-popover-arrow > .ant-popover-arrow-content::before,
     .ant-popover-inner {
-      background-color: #1f1f1f;
+      background-color: var(--tc-bg-sunken);
     }
 
     .ant-popover-inner-content {

@@ -93,13 +93,13 @@ export const LoginView: React.FC = React.memo(() => {
       </div>
 
       <div className="text-center mb-8">
-        <div className="font-bold text-[28px] mobile:text-xl tracking-tight text-[#111827]">
+        <div className="font-bold text-[28px] mobile:text-xl tracking-tight text-tc-text-primary">
           {BRAND_NAME_FULL}
         </div>
-        <div className="mt-2 text-sm text-[#6b7280]">
+        <div className="mt-2 text-sm text-tc-text-secondary">
           {BRAND_SUBTITLE}
         </div>
-        <div className="mt-3 text-sm text-[#6b7280] italic">
+        <div className="mt-3 text-sm text-tc-text-secondary italic">
           "{dailyQuote}"
         </div>
       </div>
@@ -159,7 +159,7 @@ export const LoginView: React.FC = React.memo(() => {
         })}
       </div>
 
-      <div className="mt-6 text-xs text-[#9ca3af] leading-6">
+      <div className="mt-6 text-xs text-tc-text-tertiary leading-6">
         <div>{BRAND_COMPANY}</div>
         <div>TLS 1.3 傳輸保護 · 日本數據節點部署</div>
       </div>

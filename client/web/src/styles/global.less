@@ -15,7 +15,7 @@ body {
   --tc-background-image: '';
   --tc-content-background-image: '';
   --tc-content-background-image-opacity: 0;
-  --tc-content-background-color: rgba(245, 245, 245, 1);
+  --tc-content-background-color: var(--tc-bg-elevated);
 
   .tc-background {
     @apply bg-center bg-no-repeat;
@@ -99,7 +99,7 @@ body {
   // 深色模式覆盖
   &.dark {
     @apply text-typography-dark bg-content-dark;
-    --tc-content-background-color: rgba(26, 26, 26, 1);
+    --tc-content-background-color: var(--tc-bg-elevated);
 
     h1,h2,h3,h4,h5,h6 {
       @apply text-typography-dark;

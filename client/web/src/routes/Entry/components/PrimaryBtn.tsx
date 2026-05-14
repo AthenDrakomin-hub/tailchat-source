@@ -13,7 +13,7 @@ export const PrimaryBtn: React.FC<
       disabled={props.loading}
       {..._omit(props, ['loading'])}
       className={clsx(
-        'w-full py-3.5 px-4 mb-3 border border-transparent text-base font-semibold rounded-2xl text-white bg-[#07c160] hover:bg-[#06ad56] focus:outline-none focus:ring-2 focus:ring-[#07c160]/20 disabled:opacity-50 shadow-none transition-colors duration-200 ease-in-out',
+        'w-full py-3.5 px-4 mb-3 border border-transparent text-base font-semibold rounded-2xl text-white bg-tc-primary hover:bg-tc-primary-hover focus:outline-none focus:ring-2 focus:ring-tc-primary-light disabled:opacity-50 shadow-none transition-colors duration-200 ease-in-out',
         props.className
       )}
     >

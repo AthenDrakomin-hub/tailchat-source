@@ -147,7 +147,7 @@ export const FullModalField: React.FC<FullModalFieldProps> = React.memo(
             </span>
           )}
         </div>
-        <div className="min-h-10 text-base truncate text-[#111827]">
+        <div className="min-h-10 text-base truncate text-tc-text-primary">
           {allowEditor === true ? (
             <FullModalFieldEditor {...props} />
           ) : (

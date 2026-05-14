@@ -20,10 +20,10 @@ const EntryRoute = React.memo(() => {
       <div
         className={clsx(
           styles.entryLeft,
-          'entry-left relative overflow-hidden w-[520px] mobile:w-full px-10 mobile:px-6 bg-[#f7f7f7] text-slate-900 min-h-full flex items-center justify-center z-10 border-r border-black/5'
+          'entry-left relative overflow-hidden w-[520px] mobile:w-full px-10 mobile:px-6 bg-tc-bg-elevated text-slate-900 min-h-full flex items-center justify-center z-10 border-r border-black/5'
         )}
       >
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white via-[#f8f8f8] to-[#efefef]" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-tc-bg-base via-tc-bg-elevated to-tc-bg-sunken" />
         <div className="pointer-events-none absolute -top-48 -left-48 w-[640px] h-[640px] rounded-full bg-[rgba(7,193,96,0.08)] blur-3xl" />
         <div className="pointer-events-none absolute -bottom-56 -right-56 w-[720px] h-[720px] rounded-full bg-[rgba(0,0,0,0.04)] blur-3xl" />
         <div className="relative z-20 w-full max-w-[420px] pb-14">
