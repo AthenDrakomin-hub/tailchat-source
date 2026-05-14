@@ -58,3 +58,52 @@
     }
   }
 }
+
+
+// ===== TailChat 样式优化补丁 =====
+.chat-message-item {
+  // 1. 基础间距优化
+  padding-top: 4px;
+  padding-bottom: 4px;
+
+  &:not(.is-merged-prev) {
+    padding-top: 8px;
+  }
+
+  // 2. Hover效果增强
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+  }
+
+  .dark &:hover {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+  }
+
+  // 3. 选中状态优化
+  &.is-selected {
+    background-color: rgba(22, 119, 255, 0.08) !important;
+  }
+
+  // 4. 引用消息行高统一
+  .chat-message-item_quote {
+    line-height: 24px !important;
+  }
+
+  // 5. Emoji基线对齐
+  .chat-message-item_body {
+    .emoji-mart-emoji > span {
+      vertical-align: -0.15em !important;
+    }
+  }
+}
+
+// 6. 暗色模式自己消息颜色优化
+.dark .message-self .chat-message-item_body {
+  background-color: #84d15c !important;
+}
+
+// 7. 操作按钮位置修正
+.message-self .chat-message-item_actions {
+  left: auto !important;
+  right: 60px !important;
+}
