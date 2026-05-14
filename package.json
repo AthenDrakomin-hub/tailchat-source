@@ -84,8 +84,8 @@
       "zustand": "4.3.6",
       "immer": "9.0.21",
       "mongodb": "4.2.1",
-      "mongoose@~6.0.14": "6.1.1",
-      "mongoose@^6.0.0": "6.1.1",
+      "mongoose@~6.0.14": "6.12.8",
+      "mongoose@^6.0.0": "6.12.8",
       "mongoose-findorcreate": "3.0.0",
       "@types/estree": "1.0.8",
       "@types/eslint-scope": "3.7.7"

@@ -178,7 +178,6 @@ class MessageService extends TcService {
         .exec(),
     ]);
 
-    console.log({ prev, next });
 
     return this.transformDocuments(ctx, {}, [...prev, message, ...next]);
   }

@@ -62,7 +62,6 @@ export const PersonalUserPopover: React.FC<{
   useEffect(() => {
     if (userInfo.avatar) {
       fetchImagePrimaryColor(userInfo.avatar).then((rgba) => {
-        console.log('fetchImagePrimaryColor', rgba);
       });
     }
   }, [userInfo.avatar]);

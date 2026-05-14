@@ -136,39 +136,33 @@ export class AppSocket {
 
     // 网络状态管理
     socket.on('connect', () => {
-      console.log('连接成功');
       closeConnecting();
 
       sharedEvent.emit('updateNetworkStatus', 'connected');
     });
     socket.on('connecting', (data) => {
-      console.log('正在连接');
 
       showConnecting();
 
       sharedEvent.emit('updateNetworkStatus', 'reconnecting');
     });
     socket.on('disconnect', (data) => {
-      console.log('与服务器的链接已断开');
       showErrorToasts(t('与服务器的链接已断开'));
       closeConnecting();
       sharedEvent.emit('updateNetworkStatus', 'disconnected');
     });
     socket.on('connect_error', (data) => {
-      console.log('连接失败');
       showErrorToasts(t('连接失败'));
       closeConnecting();
       sharedEvent.emit('updateNetworkStatus', 'disconnected');
     });
 
     socket.io.on('reconnect', (data) => {
-      console.log('重连成功');
 
       closeConnecting();
       sharedEvent.emit('updateNetworkStatus', 'connected');
     });
     socket.io.on('reconnect_attempt', (data) => {
-      console.log('重连中...');
       showConnecting();
       sharedEvent.emit('updateNetworkStatus', 'reconnecting');
     });

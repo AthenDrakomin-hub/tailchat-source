@@ -78,5 +78,5 @@ type VirtualChatListInterface = typeof InternalVirtualChatList & React.FC;
 
 export const VirtualChatList: VirtualChatListInterface = React.memo(
   InternalVirtualChatList
-) as any;
+) as VirtualChatListInterface;
 VirtualChatList.displayName = 'VirtualChatList';

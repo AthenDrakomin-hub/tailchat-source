@@ -34,7 +34,7 @@
     "ahooks": "^3.7.4",
     "antd": "^4.24.13",
     "array-move": "3.0.1",
-    "axios": "^0.21.4",
+    "axios": "^1.7.2",
     "bytemd": "^1.21.0",
     "clsx": "^1.2.1",
     "compressorjs": "^1.1.1",

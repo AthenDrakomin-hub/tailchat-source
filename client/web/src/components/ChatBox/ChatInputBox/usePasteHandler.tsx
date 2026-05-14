@@ -34,7 +34,6 @@ export function usePasteHandler() {
       }; // for get data later, because event is sync
 
       if (handlers.length === 1) {
-        console.log(`Running paste handler: ${handlers[0].name}`);
         event.stopPropagation();
         event.preventDefault();
         handlers[0].handler(data, context);
@@ -52,7 +51,6 @@ export function usePasteHandler() {
                 key={h.name}
                 className="bg-black bg-opacity-40 hover:bg-opacity-80 rounded px-2 py-1 cursor-pointer"
                 onClick={() => {
-                  console.log(`Running paste handler: ${h.name}`);
                   h.handler(data, context);
                   setInner(null);
                 }}

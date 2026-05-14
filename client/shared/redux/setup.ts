@@ -50,7 +50,6 @@ export function setupRedux(socket: AppSocket, store: AppStore) {
  * 初始化数据
  */
 function initial(socket: AppSocket, store: AppStore) {
-  console.log('初始化Redux上下文...');
 
   // 立即请求加入房间
   socket

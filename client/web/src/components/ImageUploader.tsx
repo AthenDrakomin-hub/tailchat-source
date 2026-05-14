@@ -29,12 +29,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = React.memo(
           usage: props.usage,
           onProgress(percent) {
             const uploadProgress = Number((percent * 100).toFixed());
-            console.log(`进度:${uploadProgress}`);
             setUploadProgress(uploadProgress);
           },
         });
 
-        console.log('上传成功', fileInfo);
         props.onUploadSuccess(fileInfo);
       },
       []

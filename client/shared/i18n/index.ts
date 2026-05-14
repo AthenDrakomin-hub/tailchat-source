@@ -29,7 +29,6 @@ i18next
       loadPath: '/locales/{{lng}}/{{ns}}.json',
       allowMultiLoading: false,
       addPath: (...args: any[]) => {
-        console.log('Lost translate:', ...args);
       },
     },
     react: {
