@@ -1194,7 +1194,7 @@ class GroupService extends TcService {
       groupId,
       memberId,
       'muteUntil',
-      isUnmute ? undefined : new Date(new Date().valueOf() + muteMs)
+      isUnmute ? null : new Date(new Date().valueOf() + muteMs)
     );
 
     this.notifyGroupInfoUpdate(ctx, group);
