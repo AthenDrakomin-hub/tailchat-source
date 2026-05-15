@@ -104,7 +104,7 @@ export class MongooseDbAdapter<TDocument extends Document>
         .createConnection(this.uri, this.opts)
         .asPromise()
         .then((conn) => {
-          this.model = conn.model(this.modelName, this.schema);
+          this.model = conn.model(this.modelName, this.schema) as any;
           return conn;
         });
     }
