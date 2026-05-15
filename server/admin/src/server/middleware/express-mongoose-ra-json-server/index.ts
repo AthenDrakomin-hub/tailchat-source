@@ -166,7 +166,7 @@ export function raExpressMongoose<T extends ADPBaseModel, I>(
           res.set('X-Total-Count', totalCount);
 
           const result = await query.lean();
-          return res.json(virtualId(result));
+          return res.json(virtualId(result as any));
         } catch (err) {
           console.error('[raExpressMongoose] list failed:', err);
           res.set('X-Total-Count', '0');
