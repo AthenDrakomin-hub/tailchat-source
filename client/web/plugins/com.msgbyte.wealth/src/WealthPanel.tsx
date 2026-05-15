@@ -179,7 +179,7 @@ const WealthPanelInner: React.FC = () => {
     <div className="p-6 h-full flex flex-col overflow-hidden bg-gray-50 text-gray-800 relative">
       <div className="mb-4 border-b border-gray-200 pb-4 shrink-0">
         <h1 className="text-2xl font-bold flex items-center">
-          <Icon icon="mdi:robot-outline" className="mr-2 text-[#d4af37]" />
+          <Icon icon="mdi:robot-outline" className="mr-2 text-tc-primary" />
           AI 财富助手
         </h1>
         <p className="text-sm text-gray-500 mt-2">
@@ -191,7 +191,7 @@ const WealthPanelInner: React.FC = () => {
         <button
           className={`px-4 py-2 rounded-md transition-colors font-medium shadow-sm ${
             activeTab === 'pick'
-              ? 'bg-[#0b192c] text-[#d4af37]'
+              ? 'bg-tc-bg-sunken text-tc-primary'
               : 'bg-white hover:bg-gray-100 text-gray-600'
           }`}
           onClick={() => setActiveTab('pick')}
@@ -201,7 +201,7 @@ const WealthPanelInner: React.FC = () => {
         <button
           className={`px-4 py-2 rounded-md transition-colors font-medium shadow-sm ${
             activeTab === 'diag'
-              ? 'bg-[#0b192c] text-[#d4af37]'
+              ? 'bg-tc-bg-sunken text-tc-primary'
               : 'bg-white hover:bg-gray-100 text-gray-600'
           }`}
           onClick={() => setActiveTab('diag')}
@@ -237,8 +237,8 @@ const WealthPanelInner: React.FC = () => {
               {loadingStep > 0 ? (
                 <div className="py-12 flex flex-col items-center justify-center bg-gray-50 rounded-lg border border-dashed border-gray-200">
                   <LoadingSpinner />
-                  <p className="mt-4 text-[#0b192c] font-medium flex items-center">
-                    <Icon icon="mdi:brain" className="mr-2 text-[#d4af37] animate-pulse" />
+                  <p className="mt-4 text-tc-text-primary font-medium flex items-center">
+                    <Icon icon="mdi:brain" className="mr-2 text-tc-primary animate-pulse" />
                     {loadingStep === 1 ? 'AI 正在深度扫描全网实时资讯与研报...' : '正在结合多因子量化模型计算安全边际...'}
                   </p>
                 </div>
@@ -306,14 +306,14 @@ const WealthPanelInner: React.FC = () => {
               <div className="flex space-x-2">
                 <input
                   type="text"
-                  className="flex-1 border-2 border-gray-200 bg-gray-50 rounded-lg px-4 py-3 focus:outline-none focus:border-[#d4af37] focus:bg-white transition-colors text-lg"
+                  className="flex-1 border-2 border-gray-200 bg-gray-50 rounded-lg px-4 py-3 focus:outline-none focus:border-tc-primary focus:bg-white transition-colors text-lg"
                   placeholder="输入股票代码 (如: 600519) 呼唤 AI 诊股"
                   value={stockCode}
                   onChange={(e) => setStockCode(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleDiag()}
                 />
                 <button
-                  className="bg-[#0b192c] hover:bg-[#d4af37] text-white px-8 py-3 rounded-lg transition-colors font-bold text-lg flex items-center shadow-md"
+                  className="bg-tc-bg-sunken hover:bg-tc-primary text-white px-8 py-3 rounded-lg transition-colors font-bold text-lg flex items-center shadow-md"
                   onClick={() => handleDiag()}
                 >
                   <Icon icon="mdi:magnify-scan" className="mr-2" />

@@ -17,7 +17,7 @@ export const FeedComposer: React.FC<FeedComposerProps> = React.memo(
           发布动态
         </div>
         <textarea
-          className="mt-3 min-h-[112px] w-full resize-none rounded-2xl border border-black/5 dark:border-white/10 bg-[#fafafa] px-4 py-3 text-sm outline-none"
+          className="mt-3 min-h-[112px] w-full resize-none rounded-2xl border border-tc-border-default bg-tc-bg-elevated px-4 py-3 text-sm outline-none"
           placeholder="分享今天的想法、观察或公开动态"
           value={content}
           onChange={(e) => setContent(e.target.value)}

@@ -172,7 +172,7 @@ const ProfileCard: React.FC<{ profile: StarProfile }> = React.memo(
               {profile.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-2.5 py-1 rounded-full text-xs bg-[rgba(212,175,55,0.15)] border border-[rgba(212,175,55,0.3)] text-[#f3e5ab] font-medium"
+                  className="px-2.5 py-1 rounded-full text-xs bg-tc-primary/15 border border-tc-primary/30 text-tc-primary font-medium"
                 >
                   {tag}
                 </span>
@@ -243,7 +243,7 @@ export const BeidouStars: React.FC = React.memo(() => {
         >
           {/* 发光核心 */}
           <div
-            className="star-node w-3 h-3 bg-[#f3e5ab] rounded-full relative"
+            className="star-node w-3 h-3 bg-tc-primary rounded-full relative"
             style={
               {
                 '--duration': profile.twinkle.duration,
@@ -256,9 +256,9 @@ export const BeidouStars: React.FC = React.memo(() => {
           </div>
 
           {/* 悬浮时显示的名字标签 */}
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-[rgba(11,25,44,0.85)] border border-[rgba(212,175,55,0.3)] rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap backdrop-blur-sm">
-            <div className="text-[#f3e5ab] font-bold text-sm tracking-widest">{profile.name}</div>
-            <div className="text-[rgba(255,255,255,0.6)] text-[10px] mt-0.5">{profile.title}</div>
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-tc-bg-sunken/85 border border-tc-primary/30 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap backdrop-blur-sm">
+            <div className="text-tc-primary font-bold text-sm tracking-widest">{profile.name}</div>
+            <div className="text-tc-text-tertiary text-[10px] mt-0.5">{profile.title}</div>
           </div>
         </div>
       ))}

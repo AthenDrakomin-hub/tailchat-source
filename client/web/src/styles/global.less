@@ -105,6 +105,15 @@ body {
       @apply text-typography-dark;
     }
 
+    // 暗色模式输入框样式
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+      background-color: var(--tc-bg-elevated);
+      border-color: var(--tc-border-default);
+      color: var(--tc-text-primary);
+    }
+
     ::-webkit-scrollbar-corner {
       background-color: transparent;
     }

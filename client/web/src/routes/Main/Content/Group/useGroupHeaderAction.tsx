@@ -1,8 +1,7 @@
 import { closeModal, openModal } from '@/components/Modal';
 import { GroupDetail } from '@/components/modals/GroupDetail';
 import { CreateGroupInvite } from '@/components/modals/CreateGroupInvite';
-import React from 'react';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { quitGroup, showAlert, t, useIsGroupOwner } from 'tailchat-shared';
 import { useLocationNav } from '@/hooks/useHistoryNav';

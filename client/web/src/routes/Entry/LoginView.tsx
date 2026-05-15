@@ -9,23 +9,18 @@ import {
   BRAND_SUBTITLE,
   BRAND_COMPANY,
 } from 'tailchat-shared';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { string } from 'yup';
 import { useLocation, useNavigate } from 'react-router';
 import { setUserJWT } from '../../utils/jwt-helper';
 import { setGlobalUserLoginInfo, tryAutoLogin } from '../../utils/user-helper';
 import { useSearchParam } from '@/hooks/useSearchParam';
 import { useNavToView } from './utils';
-import { IconBtn } from '@/components/IconBtn';
-import { openModal } from '@/components/Modal';
-import { ServiceUrlSettings } from '@/components/modals/ServiceUrlSettings';
-import { LanguageSelect } from '@/components/LanguageSelect';
 import { EntryInput } from './components/Input';
 import { SecondaryBtn } from './components/SecondaryBtn';
 import { PrimaryBtn } from './components/PrimaryBtn';
 import { pluginLoginAction } from '@/plugin/common';
 import { BrandLogo } from '@/components/BrandLogo';
-import { useMemo } from 'react';
 import { EventBanner } from './components/EventBanner';
 import { TrustLinks } from './components/TrustLinks';
 
@@ -108,7 +103,7 @@ export const LoginView: React.FC = React.memo(() => {
 
       <div>
         <div className="mb-4">
-          <div className="mb-2 text-sm font-medium text-[#374151]">
+          <div className="mb-2 text-sm font-medium text-tc-text-secondary">
             {t('账号')}
           </div>
           <EntryInput
@@ -120,7 +115,7 @@ export const LoginView: React.FC = React.memo(() => {
           />
         </div>
         <div className="mb-4">
-          <div className="mb-2 text-sm font-medium text-[#374151]">
+          <div className="mb-2 text-sm font-medium text-tc-text-secondary">
             {t('密码')}
           </div>
           <EntryInput

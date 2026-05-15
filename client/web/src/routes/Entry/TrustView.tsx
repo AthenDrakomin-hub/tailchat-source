@@ -37,7 +37,7 @@ export const TrustView: React.FC = React.memo(() => {
             {badges.map((badge) => (
               <span
                 key={badge}
-                className="rounded-full border border-[#d4af37]/30 bg-[#d4af37]/10 px-3 py-1 text-xs font-medium text-[#f6d98b]"
+                className="rounded-full border border-tc-primary/30 bg-tc-primary/10 px-3 py-1 text-xs font-medium text-tc-primary"
               >
                 {badge}
               </span>

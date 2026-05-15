@@ -1,0 +1,23 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "composite": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "baseUrl": ".",
+    "typeRoots": ["../../node_modules/@types", "../../node_modules/.pnpm"],
+    "paths": {
+      "tailchat-types": ["../../packages/types/src"],
+      "react": ["../node_modules/.pnpm/react@18.2.0/node_modules/react"],
+      "react-dom": ["../node_modules/.pnpm/react-dom@18.2.0/node_modules/react-dom"],
+      "lodash": ["../node_modules/.pnpm/lodash@4.17.21/node_modules/lodash"],
+      "yup": ["../node_modules/.pnpm/yup@0.32.11/node_modules/yup"]
+    }
+  },
+  "include": ["**/*"]
+}

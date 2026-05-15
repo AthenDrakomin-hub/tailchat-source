@@ -12,7 +12,7 @@ export const CommentComposer: React.FC<CommentComposerProps> = React.memo(
     const [submitting, setSubmitting] = useState(false);
 
     return (
-      <div className="rounded-2xl border border-black/5 dark:border-white/10 bg-[#fafafa] px-4 py-3">
+      <div className="rounded-2xl border border-tc-border-default bg-tc-bg-elevated px-4 py-3">
         <textarea
           className="min-h-[84px] w-full resize-none bg-transparent text-sm outline-none"
           placeholder="补充你的观点、问题或互动评论"

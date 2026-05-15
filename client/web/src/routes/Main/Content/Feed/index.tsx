@@ -63,7 +63,7 @@ const FeedHome: React.FC = React.memo(() => {
             </div>
           </details>
           {!groupId && (
-            <div className="mt-4 inline-flex rounded-full border border-black/5 dark:border-white/10 p-1 bg-[#ededed] dark:bg-white/[0.03]">
+            <div className="mt-4 inline-flex rounded-full border border-tc-border-default p-1 bg-tc-bg-elevated">
               <Link
                 to="/main/feed"
                 className={`rounded-full px-4 py-2 text-sm ${

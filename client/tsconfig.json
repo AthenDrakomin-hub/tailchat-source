@@ -1,12 +1,35 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "target": "esnext",
-    "lib": ["DOM"],
-    "jsx": "react",
+    "jsx": "react-jsx",
     "module": "ESNext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "typeRoots": ["./node_modules/@types", "../node_modules/@types", "./types"]
-  }
+    "composite": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "typeRoots": ["../../node_modules/@types", "../../node_modules/.pnpm"],
+    "baseUrl": ".",
+    "paths": {
+      "tailchat-shared": ["./shared/index"],
+      "tailchat-design": ["./packages/design/components"],
+      "tailchat-types": ["../packages/types/src"],
+      "react": ["../node_modules/.pnpm/react@18.2.0/node_modules/react"],
+      "react-dom": ["../node_modules/.pnpm/react-dom@18.2.0/node_modules/react-dom"],
+      "antd": ["../node_modules/.pnpm/antd@4.24.16_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/antd"],
+      "clsx": ["../node_modules/.pnpm/clsx@1.2.1/node_modules/clsx"],
+      "@loadable/component": ["../node_modules/.pnpm/@loadable+component@5.16.7_react@18.2.0/node_modules/@loadable/component"],
+      "p-min-delay": ["../node_modules/.pnpm/p-min-delay@4.0.2/node_modules/p-min-delay"],
+      "lodash": ["../node_modules/.pnpm/lodash@4.17.21/node_modules/lodash"],
+      "yup": ["../node_modules/.pnpm/yup@0.32.11/node_modules/yup"],
+      "react-router-dom": ["../node_modules/.pnpm/react-router-dom@6.30.3/node_modules/react-router-dom"],
+      "react-router": ["../node_modules/.pnpm/react-router@6.30.3/node_modules/react-router"],
+      "react-virtuoso": ["../node_modules/.pnpm/react-virtuoso@4.18.6/node_modules/react-virtuoso"],
+      "ahooks": ["../node_modules/.pnpm/ahooks@3.9.7_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/ahooks"]
+    }
+  },
+  "references": [
+    { "path": "./shared" },
+    { "path": "./web" }
+  ]
 }

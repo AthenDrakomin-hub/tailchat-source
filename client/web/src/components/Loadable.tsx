@@ -16,8 +16,6 @@ function promiseUsage<T>(p: Promise<T>, name: string): Promise<T> {
   return p.then((r) => {
     const end = new Date().valueOf();
 
-    console.debug(`[Loadable] load ${name} usage: ${end - start}ms`);
-
     return r;
   });
 }

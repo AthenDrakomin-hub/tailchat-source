@@ -148,7 +148,7 @@ export const SidebarView: React.FC<SidebarViewProps> = React.memo((props) => {
     <SidebarViewContext.Provider value={{ content, setContent }}>
       <div className="flex w-full h-full mobile:flex-col mobile:overflow-auto">
         <div
-          className="bg-[#ededed] flex flex-col justify-start items-end py-16 px-3 mobile:items-start mobile:py-10 text-sm border-r border-black/5"
+          className="bg-tc-bg-elevated flex flex-col justify-start items-end py-16 px-3 mobile:items-start mobile:py-10 text-sm border-r border-tc-border-default"
           style={{ flex: '1 0 218px' }}
         >
           {menu.map((item, i) => (

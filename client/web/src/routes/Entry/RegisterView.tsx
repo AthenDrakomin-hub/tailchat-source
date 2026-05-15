@@ -14,7 +14,7 @@ import {
   TERMS_TITLE,
   PRIVACY_TITLE,
 } from 'tailchat-shared';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { string } from 'yup';
 import { Icon } from 'tailchat-design';
 import { useNavigate } from 'react-router';
@@ -28,7 +28,6 @@ import { PrimaryBtn } from './components/PrimaryBtn';
 import { TipIcon } from '@/components/TipIcon';
 import { BrandLogo } from '@/components/BrandLogo';
 import { openModal, ModalWrapper } from '@/components/Modal';
-import { useMemo } from 'react';
 import { EventBanner } from './components/EventBanner';
 import { TrustLinks } from './components/TrustLinks';
 
@@ -203,7 +202,7 @@ export const RegisterView: React.FC = React.memo(() => {
               {RISK_AGREE_LABEL}
               <button
                 type="button"
-                className="ml-2 underline opacity-90 hover:opacity-100 text-[#d4af37]"
+                className="ml-2 underline opacity-90 hover:opacity-100 text-tc-primary"
                 onClick={openRiskDeclaration}
               >
                 查看

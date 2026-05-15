@@ -29,15 +29,7 @@ export function uploadMessageImage(image: File): Promise<{
             const uploadOriginImage = info.uploadOriginImage;
             if (uploadOriginImage === false) {
               // 不上传原图
-              const originImageSize = image.size;
               uploadImage = await compressImage(image);
-              const compressedImageSize = uploadImage.size;
-
-              console.log(
-                `压缩结果: ${
-                  (compressedImageSize / originImageSize) * 100
-                }%(${originImageSize} -> ${compressedImageSize})`
-              );
             }
             const fileInfo = await uploadFile(uploadImage, {
               usage: 'chat',

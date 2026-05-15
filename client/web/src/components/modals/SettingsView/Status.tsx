@@ -115,17 +115,17 @@ export const SettingsStatus: React.FC = React.memo(() => {
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-3 text-xs">
-          <a href="/entry/about" target="_blank" rel="noreferrer" className="rounded-full bg-[#f2f2f2] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
+          <a href="/entry/about" target="_blank" rel="noreferrer" className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
             查看关于我们
           </a>
-          <a href="/entry/trust" target="_blank" rel="noreferrer" className="rounded-full bg-[#f2f2f2] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
+          <a href="/entry/trust" target="_blank" rel="noreferrer" className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
             查看安全与合规
           </a>
-          <a href="/downloads" target="_blank" rel="noreferrer" className="rounded-full bg-[#f2f2f2] dark:bg-white/[0.08] px-3 py-1.5 text-gray-600 dark:text-gray-300">
+          <a href="/downloads" target="_blank" rel="noreferrer" className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
             查看客户端下载说明
           </a>
         </div>
-        <details className="mt-4 rounded-2xl bg-[#f8f8f8] dark:bg-white/5 px-4 py-3">
+        <details className="mt-4 rounded-2xl bg-tc-bg-elevated px-4 py-3">
           <summary className="cursor-pointer text-sm font-semibold text-gray-900 dark:text-white">
             查看状态页使用建议
           </summary>

@@ -42,7 +42,7 @@ export const FeedCard: React.FC<FeedCardProps> = React.memo(({ post, onRemoved }
           {post.groupId && (
             <Link
               to={`/main/group/${post.groupId}`}
-              className="text-xs text-tc-primary dark:text-[#8db8ff] underline underline-offset-4"
+              className="text-xs text-tc-primary underline underline-offset-4"
             >
               查看关联群组
             </Link>

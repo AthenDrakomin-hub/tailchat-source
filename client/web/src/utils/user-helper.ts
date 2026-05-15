@@ -28,7 +28,6 @@ export async function tryAutoLogin(): Promise<UserLoginInfo> {
       throw new Error('Token 格式不合法');
     }
 
-    console.debug('正在尝试使用Token登录');
     userLoginInfo = await model.user.loginWithToken(token);
     if (userLoginInfo === null) {
       throw new Error('Token 内容不合法');

@@ -35,14 +35,11 @@ let beforeinstallprompt: BeforeInstallPromptEvent;
  * 处理registration相关任务和状态
  */
 function handleRegistration(registration: ServiceWorkerRegistration) {
-  console.log('registered', registration);
   if (registration.waiting) {
-    console.log('updated', registration);
     handleShowUpdateTip();
     return;
   }
   registration.onupdatefound = () => {
-    console.log('updatefound', registration);
     const installingWorker = registration.installing;
     if (installingWorker === null) {
       return;
@@ -51,17 +48,7 @@ function handleRegistration(registration: ServiceWorkerRegistration) {
     installingWorker.onstatechange = () => {
       if (installingWorker.state === 'installed') {
         if (navigator.serviceWorker.controller) {
-          // At this point, the old content will have been purged and
-          // the fresh content will have been added to the cache.
-          // It's the perfect time to display a "New content is
-          // available; please refresh." message in your web app.
-          console.log('updated', registration);
           handleShowUpdateTip();
-        } else {
-          // At this point, everything has been precached.
-          // It's the perfect time to display a
-          // "Content is cached for offline use." message.
-          console.log('cached', registration);
         }
       }
     };

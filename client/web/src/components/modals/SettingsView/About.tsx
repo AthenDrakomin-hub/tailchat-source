@@ -17,7 +17,7 @@ export const SettingsAbout: React.FC = React.memo(() => {
     <div className="select-text space-y-6">
       <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white p-6 overflow-hidden shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
         <BrandLogo
-          className="float-right select-none bg-[#111827] rounded-2xl p-2"
+          className="float-right select-none bg-tc-bg-sunken rounded-2xl p-2"
           width={108}
           height={108}
         />

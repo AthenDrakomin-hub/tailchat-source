@@ -45,7 +45,7 @@ const EntryRoute = React.memo(() => {
         </div>
       </div>
 
-      <div className="flex-1 mobile:hidden tc-background relative overflow-hidden bg-[#f2f2f2]">
+      <div className="flex-1 mobile:hidden tc-background relative overflow-hidden bg-tc-bg-base">
         <BeidouStars />
       </div>
     </div>

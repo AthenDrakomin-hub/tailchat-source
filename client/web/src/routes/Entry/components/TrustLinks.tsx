@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const linkClassName =
-  'transition-colors hover:text-white text-[rgba(255,255,255,0.72)] underline underline-offset-4';
+  'transition-colors hover:text-tc-primary text-tc-text-tertiary underline underline-offset-4';
 
 export const TrustLinks: React.FC = React.memo(() => {
   return (

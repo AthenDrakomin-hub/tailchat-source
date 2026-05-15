@@ -17,7 +17,7 @@ export const SettingsLinkPanel: React.FC<SettingsLinkPanelProps> = React.memo(
           {description}
         </div>
         <a
-          className="mt-4 inline-flex items-center text-sm font-medium text-[#0b4a8b] dark:text-[#8db8ff] underline underline-offset-4"
+          className="mt-4 inline-flex items-center text-sm font-medium text-tc-primary underline underline-offset-4"
           href={href}
           target="_blank"
           rel="noreferrer"

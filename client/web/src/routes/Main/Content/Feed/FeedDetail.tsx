@@ -121,7 +121,7 @@ export const FeedDetail: React.FC = React.memo(() => {
             {post.groupId && (
               <Link
                 to={`/main/group/${post.groupId}`}
-                className="text-xs text-tc-primary dark:text-[#8db8ff] underline underline-offset-4"
+                className="text-xs text-tc-primary underline underline-offset-4"
               >
                 返回关联群组
               </Link>

@@ -108,7 +108,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
     return (
       <div
         className={clsx(
-          'chat-message-item flex min-w-0 px-3 py-1.5 mobile:px-0 group relative select-text text-sm',
+          'chat-message-item flex min-w-0 px-3 mobile:px-0 group relative select-text text-sm',
           {
             'bg-black bg-opacity-5 dark:bg-white/5': isActionBtnActive,
             'hover:bg-black hover:bg-opacity-[0.02] dark:hover:bg-white/5': !isActionBtnActive,

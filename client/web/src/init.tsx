@@ -114,7 +114,6 @@ const backToLoginPage = (() => {
       return;
     }
 
-    console.warn('账号授权已过期, 2秒后自动跳转到登录页');
     showToasts(t('账号授权已过期, 2秒后自动跳转到登录页'), 'warning');
 
     timer = window.setTimeout(() => {

@@ -4,17 +4,22 @@
     "target": "ES2020",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "baseUrl": ".",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": false,
+    "noEmit": true,
     "paths": {
       "@/*": ["./src/*"],
       "@test/*": ["./test/*"],
       "@assets/*": ["./assets/*"],
       "tailchat-design": ["../packages/design/components"],
+      "tailchat-shared": ["../shared/index"],
       "tailchat-types": ["../../packages/types/src"],
-      "tailchat-plugin-declaration-generator": [
-        "../packages/plugin-declaration-generator/src"
-      ]
-    },
-    "typeRoots": ["./node_modules/@types", "./types"]
+      "tailchat-plugin-declaration-generator": ["../packages/plugin-declaration-generator/src"]
+    }
   },
   "exclude": ["e2e", "plugins", "tailchat.d.ts"]
 }
