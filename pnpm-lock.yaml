@@ -24,8 +24,8 @@ overrides:
   zustand: 4.3.6
   immer: 9.0.21
   mongodb: 4.2.1
-  mongoose@~6.0.14: 6.1.1
-  mongoose@^6.0.0: 6.1.1
+  mongoose@~6.0.14: 6.12.8
+  mongoose@^6.0.0: 6.12.8
   mongoose-findorcreate: 3.0.0
   '@types/estree': 1.0.8
   '@types/eslint-scope': 3.7.7
@@ -256,8 +256,8 @@ importers:
   apps/github-app:
     dependencies:
       axios:
-        specifier: ^0.21.1
-        version: 0.21.4
+        specifier: ^1.7.2
+        version: 1.15.2(debug@4.4.3)
       body-parser:
         specifier: ^1.20.1
         version: 1.20.5
@@ -531,8 +531,8 @@ importers:
         specifier: 4.33.0
         version: 4.33.0(@tanstack/react-query@4.33.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       axios:
-        specifier: ^0.21.1
-        version: 0.21.4
+        specifier: ^1.7.2
+        version: 1.15.2(debug@4.4.3)
       crc:
         specifier: ^3.8.0
         version: 3.8.0
@@ -640,8 +640,8 @@ importers:
         specifier: 3.0.1
         version: 3.0.1
       axios:
-        specifier: ^0.21.4
-        version: 0.21.4
+        specifier: ^1.7.2
+        version: 1.15.2(debug@4.4.3)
       bytemd:
         specifier: ^1.21.0
         version: 1.22.0
@@ -1361,7 +1361,7 @@ importers:
         version: 8.3.0(socket.io-adapter@2.5.6)
       '@typegoose/typegoose':
         specifier: 9.3.1
-        version: 9.3.1(mongoose@6.1.1)
+        version: 9.3.1(mongoose@6.12.8)
       '@types/blessed':
         specifier: ^0.1.19
         version: 0.1.27
@@ -1411,8 +1411,8 @@ importers:
         specifier: ^4.27.6
         version: 4.31.0
       jsonwebtoken:
-        specifier: ^8.5.1
-        version: 8.5.1
+        specifier: ^9.0.2
+        version: 9.0.3
       link-preview-js:
         specifier: ^2.1.10
         version: 2.1.19(encoding@0.1.13)
@@ -1438,8 +1438,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1
       mongoose:
-        specifier: 6.1.1
-        version: 6.1.1
+        specifier: 6.12.8
+        version: 6.12.8
       mongoose-findorcreate:
         specifier: 3.0.0
         version: 3.0.0
@@ -1626,13 +1626,13 @@ importers:
         version: 4.22.1
       express-mongoose-ra-json-server:
         specifier: ^0.1.0
-        version: 0.1.0(express@4.22.1)(mongoose@6.1.1)
+        version: 0.1.0(express@4.22.1)(mongoose@6.12.8)
       filesize:
         specifier: ^8.0.7
         version: 8.0.7
       jsonwebtoken:
-        specifier: ^8.5.1
-        version: 8.5.1
+        specifier: ^9.0.2
+        version: 9.0.3
       lodash:
         specifier: ^4.17.21
         version: 4.18.1
@@ -1640,8 +1640,8 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0
       mongoose:
-        specifier: 6.1.1
-        version: 6.1.1
+        specifier: 6.12.8
+        version: 6.12.8
       morgan:
         specifier: ^1.10.0
         version: 1.10.1
@@ -1736,7 +1736,7 @@ importers:
         version: 1.2.1
       '@typegoose/typegoose':
         specifier: 9.3.1
-        version: 9.3.1(mongoose@6.1.1)
+        version: 9.3.1(mongoose@6.12.8)
       accept-language:
         specifier: ^3.0.18
         version: 3.0.20
@@ -1798,8 +1798,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1
       mongoose:
-        specifier: 6.1.1
-        version: 6.1.1
+        specifier: 6.12.8
+        version: 6.12.8
       path-to-regexp:
         specifier: ^6.2.1
         version: 6.3.0
@@ -2145,8 +2145,8 @@ importers:
   server/test/demo/openapi-client:
     dependencies:
       axios:
-        specifier: ^0.26.0
-        version: 0.26.1
+        specifier: ^1.7.2
+        version: 1.15.2(debug@4.4.3)
       express:
         specifier: ^4.17.2
         version: 4.22.1
@@ -2161,8 +2161,8 @@ importers:
   server/test/demo/openapi-client-simple:
     dependencies:
       axios:
-        specifier: ^0.26.0
-        version: 0.26.1
+        specifier: ^1.7.2
+        version: 1.15.2(debug@4.4.3)
       express:
         specifier: ^4.17.2
         version: 4.22.1
@@ -6189,7 +6189,7 @@ packages:
     resolution: {integrity: sha512-sdH1lpqZRIQYioffUq/EMhZlZsTP+8SNhmEaoULiFsRd0Go0QxuiUzy1DFHHMA8+k8h2XDIs1EGzqChih91jhw==}
     engines: {node: '>=12.22.0'}
     peerDependencies:
-      mongoose: 6.1.1
+      mongoose: 6.12.8
 
   '@types/accepts@1.3.7':
     resolution: {integrity: sha512-Pay9fq2lM2wXPWbteBsRAGiWH2hig4ZE2asK+mm7kUzlxRTfL961rj89I6zV/E3PcIkDqyuBEcMxFT7rccugeQ==}
@@ -7419,9 +7419,6 @@ packages:
 
   axios@0.25.0:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
-
-  axios@0.26.1:
-    resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
 
   axios@0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
@@ -10085,7 +10082,7 @@ packages:
     resolution: {integrity: sha512-y/Z5zb3RWVsCLgof8MMWMmpyAe2ZUEy6sYqczELOqaCr0cChbI9Y1VNr5DcbwEjqWmEIoU9aqcsURoUse8r/gw==}
     peerDependencies:
       express: ^4.0.0 || ^3.0.0
-      mongoose: 6.1.1
+      mongoose: 6.12.8
 
   express@4.22.1:
     resolution: {integrity: sha512-F2X8g9P1X7uCPZMA3MVf9wcTqlyNp7IhH5qPCI0izhaOIYXaW9L535tGA3qmjRzpH+bZczqq7hVKxTR4NWnu+g==}
@@ -12243,10 +12240,6 @@ packages:
   jsonschema@1.5.0:
     resolution: {integrity: sha512-K+A9hhqbn0f3pJX17Q/7H6yQfD/5OXgdrR5UE12gMXCiN9D5Xq2o5mddV2QEcX/bjla99ASsAAQUyMCCRWAEhw==}
 
-  jsonwebtoken@8.5.1:
-    resolution: {integrity: sha512-XjwVfRS6jTMsqYs0EsuJ4LGxXV14zQybNd4L2r0UvbVnSF9Af8x7p5MzbJ90Ioz/9TI41/hTCvznF/loiSzn8w==}
-    engines: {node: '>=4', npm: '>=1.4.28'}
-
   jsonwebtoken@9.0.3:
     resolution: {integrity: sha512-MT/xP0CrubFRNLNKvxJ2BYfy53Zkm++5bX9dtuPbqAeQpTVe0MQTFhao8+Cp//EmJp244xt6Drw/GVEGCUj40g==}
     engines: {node: '>=12', npm: '>=6'}
@@ -12263,14 +12256,8 @@ packages:
     resolution: {integrity: sha512-pBxcB3LFc8QVgdggvZWyeys+hnrNWg4OcZIU/1X59k5jQdLBlCsYGRQaz234SqoRLTCgMH00fY0xRJH+F9METQ==}
     engines: {node: '>=8'}
 
-  jwa@1.4.2:
-    resolution: {integrity: sha512-eeH5JO+21J78qMvTIDdBXidBd6nG2kZjg5Ohz/1fpa28Z4CcsWUzJ1ZZyFq/3z3N17aZy+ZuBoHljASbL1WfOw==}
-
   jwa@2.0.1:
     resolution: {integrity: sha512-hRF04fqJIP8Abbkq5NKGN0Bbr3JxlQ+qhZufXVr0DvujKy93ZCbXZMHDL4EOtodSbCWxOqR8MS1tXA5hwqCXDg==}
-
-  jws@3.2.3:
-    resolution: {integrity: sha512-byiJ0FLRdLdSVSReO/U4E7RoEyOCKnEnEPMjq3HxWtvzLsV08/i5RQKsFVNkCldrCaPr2vDNAOMsfs8T/Hze7g==}
 
   jws@4.0.1:
     resolution: {integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==}
@@ -12278,8 +12265,9 @@ packages:
   jwt-decode@3.1.2:
     resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
 
-  kareem@2.3.2:
-    resolution: {integrity: sha512-STHz9P7X2L4Kwn72fA4rGyqyXdmrMSdxqHx9IXon/FXluXieaFA6KJ2upcHAHxQPQ0LeM/OjLrhFxifHewOALQ==}
+  kareem@2.5.1:
+    resolution: {integrity: sha512-7jFxRVm+jD+rkq3kY0iZDJfsO2/t4BBPeEb2qKn2lR/9KhuksYk5hxzfRYWMPV8P/x2d0kHD306YyWLzjjH+uA==}
+    engines: {node: '>=12.0.0'}
 
   keygrip@1.1.0:
     resolution: {integrity: sha512-iYSchDJ+liQ8iwbSI2QqsQOvqv58eJCEanyJPJi+Khyu8smkcKSFUCbPwzFcL7YVtZ6eONjqRX/38caJ7QjRAQ==}
@@ -13228,8 +13216,8 @@ packages:
   mongoose-findorcreate@3.0.0:
     resolution: {integrity: sha512-kQhDe5XDj6tMv8kq1wjK+hITGIGUl60rj8oGLupF9poNsqIDkAJBXudZKcCdSyBZ7p6DLK2+0jSBthrb26tSYQ==}
 
-  mongoose@6.1.1:
-    resolution: {integrity: sha512-9IODOeFDxW0hzvGmE2Yvy/TaFGLIXQWgE/L1D/x3lKVo8PGyokklgnvX0/Qia7lxiZvxe6+na1aA7v0gT+TN+g==}
+  mongoose@6.12.8:
+    resolution: {integrity: sha512-/9KOOVq1a4XNzqcWiWoOckvCE9eJPQ4M6rA8BmGTeuyi/w8t7F7LZ+8Lv3yilcqV5JP78SfMmgzm4YqlGl3fOg==}
     engines: {node: '>=12.0.0'}
 
   moo@0.5.3:
@@ -13239,12 +13227,12 @@ packages:
     resolution: {integrity: sha512-223dMRJtI/l25dJKWpgij2cMtywuG/WiUKXdvwfbhGKBhy1puASqXwFzmWZ7+K73vUPoR7SS2Qz2cI/g9MKw0A==}
     engines: {node: '>= 0.8.0'}
 
-  mpath@0.8.4:
-    resolution: {integrity: sha512-DTxNZomBcTWlrMW76jy1wvV37X/cNNxPW1y2Jzd4DZkAaC5ZGsm8bfGfNOthcDuRJujXLqiuS6o3Tpy0JEoh7g==}
+  mpath@0.9.0:
+    resolution: {integrity: sha512-ikJRQTk8hw5DEoFVxHG1Gn9T/xcjtdnOKIU1JTmGjZZlg9LST2mBLmcX3/ICIbgJydT2GOc15RnNy5mHmzfSew==}
     engines: {node: '>=4.0.0'}
 
-  mquery@4.0.0:
-    resolution: {integrity: sha512-nGjm89lHja+T/b8cybAby6H0YgA4qYC/lx6UlwvHGqvTq8bDaNeCwl1sY8uRELrNbVWJzIihxVd+vphGGn1vBw==}
+  mquery@4.0.3:
+    resolution: {integrity: sha512-J5heI+P08I6VJ2Ky3+33IpCdAvlYGTSUjwTPxkAr8i8EoduPMBX2OY/wa3IKZIQl7MU4SbFk8ndgSKyB/cl1zA==}
     engines: {node: '>=12.0.0'}
 
   mri@1.1.4:
@@ -15689,9 +15677,6 @@ packages:
     resolution: {integrity: sha512-J6SDjUgDxQj5NusnOtdFxDwN/+HWykR8GELwctJ7mdqhcyy1xEc4SRFHUXvxTp661YaVKAjfRLZ9cCqS6tn32A==}
     engines: {node: '>=0.10.0'}
 
-  regexp-clone@1.0.0:
-    resolution: {integrity: sha512-TuAasHQNamyyJ2hb97IuBEif4qBHGjPHBS64sZwytpLEqtBQ1gPJTnOaQ6qmpET16cK14kkjbazl6+p0RRv0yw==}
-
   regexp.prototype.flags@1.5.4:
     resolution: {integrity: sha512-dYqgNSZbDwkaJ2ceRd9ojCGjBq+mOm9LmtXnAnEGyHhN/5R7iDW2TRw3h+o/jCFxus3P2LfWIIiwowAjANm7IA==}
     engines: {node: '>= 0.4'}
@@ -16326,8 +16311,8 @@ packages:
     resolution: {integrity: sha512-ZX99e6tRweoUXqR+VBrslhda51Nh5MTQwou5tnUDgbtyM0dBgmhEDtWGP/xbKn6hqfPRHujUNwz5fy/wbbhnpw==}
     engines: {node: '>= 0.4'}
 
-  sift@13.5.2:
-    resolution: {integrity: sha512-+gxdEOMA2J+AI+fVsCqeNn7Tgx3M9ZN9jdi95939l1IJ8cZsqS8sqpJyOkic2SJk+1+98Uwryt/gL6XDaV+UZA==}
+  sift@16.0.1:
+    resolution: {integrity: sha512-Wv6BjQ5zbhW7VFefWusVP33T/EM0vYikCaQ2qR8yULbsilAT8/wQaXvuQ3ptGLpoKx+lihJE3y2UTgKDyyNHZQ==}
 
   signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
@@ -16385,9 +16370,6 @@ packages:
   slice-ansi@5.0.0:
     resolution: {integrity: sha512-FC+lgizVPfie0kkhqUScwRu1O/lF6NOgJmlCgK+/LYxDCTk8sGelYaHDhFcDN+Sn3Cv+3VSa4Byeo+IMCzpMgQ==}
     engines: {node: '>=12'}
-
-  sliced@1.0.1:
-    resolution: {integrity: sha512-VZBmZP8WU3sMOZm1bdgTadsQbcscK0UM8oKxKVBs4XAhUo2Xxzm/OFMGBkPusxw9xL3Uy8LrzEqGqJhclsr0yA==}
 
   slide@1.1.6:
     resolution: {integrity: sha512-NwrtjCg+lZoqhFU8fOwl4ay2ei8PaqCBOUV3/ektPY9trO1yQ1oXEfmHAhKArUVUr/hOHvy5f6AdP17dCM0zMw==}
@@ -24752,11 +24734,11 @@ snapshots:
 
   '@tsconfig/node16@1.0.4': {}
 
-  '@typegoose/typegoose@9.3.1(mongoose@6.1.1)':
+  '@typegoose/typegoose@9.3.1(mongoose@6.12.8)':
     dependencies:
       lodash: 4.18.1
       loglevel: 1.9.2
-      mongoose: 6.1.1
+      mongoose: 6.12.8
       reflect-metadata: 0.1.14
       semver: 7.7.4
       tslib: 2.8.1
@@ -26261,12 +26243,6 @@ snapshots:
       - debug
 
   axios@0.25.0:
-    dependencies:
-      follow-redirects: 1.16.0(debug@4.4.3)
-    transitivePeerDependencies:
-      - debug
-
-  axios@0.26.1:
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3)
     transitivePeerDependencies:
@@ -29363,11 +29339,11 @@ snapshots:
       graceful-fs: 4.2.11
       handlebars: 4.7.9
 
-  express-mongoose-ra-json-server@0.1.0(express@4.22.1)(mongoose@6.1.1):
+  express-mongoose-ra-json-server@0.1.0(express@4.22.1)(mongoose@6.12.8):
     dependencies:
       escape-string-regexp: 4.0.0
       express: 4.22.1
-      mongoose: 6.1.1
+      mongoose: 6.12.8
 
   express@4.22.1:
     dependencies:
@@ -32174,19 +32150,6 @@ snapshots:
 
   jsonschema@1.5.0: {}
 
-  jsonwebtoken@8.5.1:
-    dependencies:
-      jws: 3.2.3
-      lodash.includes: 4.3.0
-      lodash.isboolean: 3.0.3
-      lodash.isinteger: 4.0.4
-      lodash.isnumber: 3.0.3
-      lodash.isplainobject: 4.0.6
-      lodash.isstring: 4.0.1
-      lodash.once: 4.1.1
-      ms: 2.1.3
-      semver: 5.7.2
-
   jsonwebtoken@9.0.3:
     dependencies:
       jws: 4.0.1
@@ -32216,21 +32179,10 @@ snapshots:
 
   junk@3.1.0: {}
 
-  jwa@1.4.2:
-    dependencies:
-      buffer-equal-constant-time: 1.0.1
-      ecdsa-sig-formatter: 1.0.11
-      safe-buffer: 5.2.1
-
   jwa@2.0.1:
     dependencies:
       buffer-equal-constant-time: 1.0.1
       ecdsa-sig-formatter: 1.0.11
-      safe-buffer: 5.2.1
-
-  jws@3.2.3:
-    dependencies:
-      jwa: 1.4.2
       safe-buffer: 5.2.1
 
   jws@4.0.1:
@@ -32240,7 +32192,7 @@ snapshots:
 
   jwt-decode@3.1.2: {}
 
-  kareem@2.3.2: {}
+  kareem@2.5.1: {}
 
   keygrip@1.1.0:
     dependencies:
@@ -33536,17 +33488,15 @@ snapshots:
 
   mongoose-findorcreate@3.0.0: {}
 
-  mongoose@6.1.1:
+  mongoose@6.12.8:
     dependencies:
       bson: 4.7.2
-      kareem: 2.3.2
+      kareem: 2.5.1
       mongodb: 4.2.1
-      mpath: 0.8.4
-      mquery: 4.0.0
-      ms: 2.1.2
-      regexp-clone: 1.0.0
-      sift: 13.5.2
-      sliced: 1.0.1
+      mpath: 0.9.0
+      mquery: 4.0.3
+      ms: 2.1.3
+      sift: 16.0.1
     transitivePeerDependencies:
       - supports-color
 
@@ -33562,13 +33512,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  mpath@0.8.4: {}
+  mpath@0.9.0: {}
 
-  mquery@4.0.0:
+  mquery@4.0.3:
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
-      regexp-clone: 1.0.0
-      sliced: 1.0.1
     transitivePeerDependencies:
       - supports-color
 
@@ -36528,8 +36476,6 @@ snapshots:
       extend-shallow: 3.0.2
       safe-regex: 1.1.0
 
-  regexp-clone@1.0.0: {}
-
   regexp.prototype.flags@1.5.4:
     dependencies:
       call-bind: 1.0.9
@@ -37453,7 +37399,7 @@ snapshots:
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
 
-  sift@13.5.2: {}
+  sift@16.0.1: {}
 
   signal-exit@3.0.7: {}
 
@@ -37518,8 +37464,6 @@ snapshots:
     dependencies:
       ansi-styles: 6.2.3
       is-fullwidth-code-point: 4.0.0
-
-  sliced@1.0.1: {}
 
   slide@1.1.6: {}
 
