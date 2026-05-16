@@ -29,6 +29,7 @@ class FeedService extends TcService {
     this.commentModel = require('../../../models/feed/comment').default;
 
     this.registerAction('createPost', this.createPost, {
+      rest: 'POST /',
       params: {
         content: 'string',
         images: { type: 'array', items: 'string', optional: true },
@@ -36,37 +37,44 @@ class FeedService extends TcService {
       },
     });
     this.registerAction('listPosts', this.listPosts, {
+      rest: 'GET /',
       params: {
         groupId: { type: 'string', optional: true },
       },
     });
     this.registerAction('getPostDetail', this.getPostDetail, {
+      rest: 'GET /:postId',
       params: {
         postId: 'string',
       },
     });
     this.registerAction('listUserPosts', this.listUserPosts, {
+      rest: 'GET /user/:userId',
       params: {
         userId: 'string',
       },
     });
     this.registerAction('commentPost', this.commentPost, {
+      rest: 'POST /:postId/comment',
       params: {
         postId: 'string',
         content: 'string',
       },
     });
     this.registerAction('listPostComments', this.listPostComments, {
+      rest: 'GET /:postId/comments',
       params: {
         postId: 'string',
       },
     });
     this.registerAction('likePost', this.likePost, {
+      rest: 'POST /:postId/like',
       params: {
         postId: 'string',
       },
     });
     this.registerAction('removePost', this.removePost, {
+      rest: 'DELETE /:postId',
       params: {
         postId: 'string',
       },
