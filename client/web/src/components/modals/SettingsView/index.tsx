@@ -11,7 +11,6 @@ import { SettingsAbout } from './About';
 import { SettingsAccount } from './Account';
 import { SettingsDebug } from './Debug';
 import { SettingsLinkPanel } from './LinkPanel';
-import { SettingsStatus } from './Status';
 import { SettingsSystem } from './System';
 import { SettingsWechatNotify } from './WechatNotify';
 
@@ -43,11 +42,7 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
           title: t('偏好设置'),
           content: <SettingsSystem />,
         },
-        {
-          type: 'item',
-          title: t('服务与支持'),
-          content: <SettingsStatus />,
-        },
+        
         {
           type: 'item',
           title: t('微信通知'),

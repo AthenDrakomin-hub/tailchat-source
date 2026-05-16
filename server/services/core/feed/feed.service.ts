@@ -29,7 +29,7 @@ class FeedService extends TcService {
     this.commentModel = require('../../../models/feed/comment').default;
 
     this.registerAction('createPost', this.createPost, {
-      rest: 'POST /',
+      rest: 'POST /createPost',
       params: {
         content: 'string',
         images: { type: 'array', items: 'string', optional: true },
@@ -37,44 +37,44 @@ class FeedService extends TcService {
       },
     });
     this.registerAction('listPosts', this.listPosts, {
-      rest: 'GET /',
+      rest: 'GET /listPosts',
       params: {
         groupId: { type: 'string', optional: true },
       },
     });
     this.registerAction('getPostDetail', this.getPostDetail, {
-      rest: 'GET /:postId',
+      rest: 'GET /getPostDetail',
       params: {
         postId: 'string',
       },
     });
     this.registerAction('listUserPosts', this.listUserPosts, {
-      rest: 'GET /user/:userId',
+      rest: 'GET /listUserPosts',
       params: {
         userId: 'string',
       },
     });
     this.registerAction('commentPost', this.commentPost, {
-      rest: 'POST /:postId/comment',
+      rest: 'POST /commentPost',
       params: {
         postId: 'string',
         content: 'string',
       },
     });
     this.registerAction('listPostComments', this.listPostComments, {
-      rest: 'GET /:postId/comments',
+      rest: 'GET /listPostComments',
       params: {
         postId: 'string',
       },
     });
     this.registerAction('likePost', this.likePost, {
-      rest: 'POST /:postId/like',
+      rest: 'POST /likePost',
       params: {
         postId: 'string',
       },
     });
     this.registerAction('removePost', this.removePost, {
-      rest: 'DELETE /:postId',
+      rest: 'POST /removePost',
       params: {
         postId: 'string',
       },
