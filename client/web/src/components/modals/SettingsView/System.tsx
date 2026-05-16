@@ -6,7 +6,6 @@ import { Select, Switch, Button } from 'antd';
 import React from 'react';
 import {
   t,
-  useAlphaMode,
   useColorScheme,
   useUserSettings,
 } from 'tailchat-shared';
@@ -15,7 +14,6 @@ import _get from 'lodash/get';
 export const SettingsSystem: React.FC = React.memo(() => {
   const { colorScheme, setColorScheme } = useColorScheme();
   const { settings, setSettings, loading } = useUserSettings();
-  const { isAlphaMode, setAlphaMode } = useAlphaMode();
 
   return (
     <div className="space-y-6">
@@ -81,37 +79,6 @@ export const SettingsSystem: React.FC = React.memo(() => {
               />
             );
           })}
-
-        <FullModalField
-          title={t('Alpha测试开关')}
-          tip={t(
-            '在 Alpha 模式下会有一些尚处于测试阶段的功能将会被开放，如果出现问题欢迎反馈'
-          )}
-          content={
-            <Switch
-              checked={isAlphaMode}
-              onChange={(checked) => setAlphaMode(checked)}
-            />
-          }
-        />
-
-        {isAlphaMode && (
-          <FullModalField
-            title={t('聊天列表虚拟化') + ' (Beta)'}
-            content={
-              <Switch
-                disabled={loading}
-                loading={loading}
-                checked={settings.messageListVirtualization ?? false}
-                onChange={(checked) =>
-                  setSettings({
-                    messageListVirtualization: checked,
-                  })
-                }
-              />
-            }
-          />
-        )}
       </div>
       <Button type="primary" onClick={() => window.location.reload()}>
         {t('重新加载')}

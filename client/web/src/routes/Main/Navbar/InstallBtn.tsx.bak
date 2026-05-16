@@ -14,7 +14,7 @@ export const InstallBtn: React.FC = React.memo(() => {
 
   return (
     <Icon
-      className="text-3xl text-tc-text-secondary cursor-pointer"
+      className="text-3xl text-gray-600 dark:text-white cursor-pointer"
       icon="mdi:download"
       onClick={showInstallPrompt}
     />

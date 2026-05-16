@@ -16,7 +16,6 @@ import {
   showToasts,
   t,
   UploadFileResult,
-  useAlphaMode,
   useAppDispatch,
   useAsyncRequest,
   userActions,
@@ -27,7 +26,6 @@ import { ModifyPassword } from '../ModifyPassword';
 export const SettingsAccount: React.FC = React.memo(() => {
   const userInfo = useUserInfo();
   const dispatch = useAppDispatch();
-  const { isAlphaMode } = useAlphaMode();
   const userExtra = userInfo?.extra ?? {};
 
   const [, handleUserAvatarChange] = useAsyncRequest(
@@ -91,7 +89,7 @@ export const SettingsAccount: React.FC = React.memo(() => {
     <div className="space-y-6">
       <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white p-6 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
         <div className="text-lg font-semibold text-gray-900 dark:text-white mb-5">
-          個人資料
+          个人资料
         </div>
         <div className="flex flex-wrap">
           <div className="w-1/3 mobile:w-full">
@@ -104,9 +102,10 @@ export const SettingsAccount: React.FC = React.memo(() => {
             </AvatarUploader>
           </div>
           <div className="w-2/3 mobile:w-full">
-            {isAlphaMode && (
-              <FullModalField title={t('用户ID')} content={userInfo._id} />
-            )}
+            <FullModalField
+              title={t('用户ID')}
+              content={userInfo._id}
+            />
             <FullModalField
               title={t('用户昵称')}
               value={userInfo.nickname}
@@ -158,7 +157,7 @@ export const SettingsAccount: React.FC = React.memo(() => {
 
       <div className="rounded-[24px] border border-black/5 dark:border-white/10 bg-white p-6 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
         <div className="text-lg font-semibold text-gray-900 dark:text-white mb-5">
-          賬號與安全
+          账号与安全
         </div>
         <Button type="primary" onClick={handleUpdatePassword}>
           {t('修改密码')}
@@ -167,7 +166,7 @@ export const SettingsAccount: React.FC = React.memo(() => {
 
       <div className="rounded-[24px] border border-red-200 dark:border-red-900/40 bg-red-50/80 dark:bg-red-500/10 p-6">
         <div className="text-lg font-semibold text-red-600 dark:text-red-300 mb-5">
-          賬號操作
+          账号操作
         </div>
         <Button type="primary" danger={true} onClick={handleLogout}>
           {t('退出登录')}

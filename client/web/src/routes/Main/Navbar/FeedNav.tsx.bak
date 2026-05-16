@@ -7,7 +7,7 @@ export const FeedNav: React.FC = React.memo(() => {
   return (
     <div data-tc-role="navbar-feed">
       <NavbarNavItem name={t('动态')} to="/main/feed" showPill={true}>
-        <Icon className="text-3xl text-tc-text-secondary" icon="mdi:post-outline" />
+        <Icon className="text-3xl text-white" icon="mdi:post-outline" />
       </NavbarNavItem>
     </div>
   );

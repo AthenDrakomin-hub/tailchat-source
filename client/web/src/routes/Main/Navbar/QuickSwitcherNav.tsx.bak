@@ -14,7 +14,7 @@ export const QuickSwitcherNav: React.FC = React.memo(() => {
       }}
       data-testid="search"
     >
-      <Icon className="text-3xl text-tc-text-secondary" icon="mdi:search" />
+      <Icon className="text-3xl text-white" icon="mdi:search" />
     </NavbarNavItem>
   );
 });

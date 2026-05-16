@@ -3,12 +3,10 @@ import { Button } from 'antd';
 import React from 'react';
 import { Icon } from 'tailchat-design';
 import { t, useGlobalConfigStore } from 'tailchat-shared';
-import { useNavigate } from 'react-router';
 
 export const GlobalAnnouncementBar: React.FC = React.memo(() => {
   const announcementInfo = useGlobalConfigStore((state) => state.announcement);
   const [ackId, setAckId] = useLocalStorageState('ackGlobalAnnouncement');
-  const navigate = useNavigate();
 
   if (!announcementInfo) {
     return null;
@@ -19,18 +17,6 @@ export const GlobalAnnouncementBar: React.FC = React.memo(() => {
     return null;
   }
 
-  const handleLinkClick = () => {
-    if (announcementInfo.link) {
-      // 检查是否是内部路由
-      if (announcementInfo.link.startsWith('/')) {
-        navigate(announcementInfo.link);
-      } else {
-        // 外部链接在当前窗口打开
-        window.location.href = announcementInfo.link;
-      }
-    }
-  };
-
   return (
     <div className="text-center bg-indigo-400 text-white relative px-6">
       <span className="select-text">{announcementInfo.text}</span>
@@ -40,7 +26,7 @@ export const GlobalAnnouncementBar: React.FC = React.memo(() => {
           type="link"
           className="text-indigo-700 font-bold ml-2"
           size="small"
-          onClick={handleLinkClick}
+          onClick={() => window.open(announcementInfo.link)}
         >
           {t('了解更多')}
         </Button>

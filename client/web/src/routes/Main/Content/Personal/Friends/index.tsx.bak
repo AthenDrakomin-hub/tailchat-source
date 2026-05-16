@@ -7,7 +7,7 @@ import { RequestReceived } from './RequestReceived';
 import { FriendList } from './FriendList';
 import { Badge } from 'antd';
 import _compact from 'lodash/compact';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
 /**
  * 主要内容组件
@@ -19,7 +19,6 @@ export const FriendPanel: React.FC = React.memo(() => {
   const disableAddFriend = useGlobalConfigStore(
     (state) => state.disableAddFriend
   );
-  const navigate = useNavigate();
 
   const send = friendRequests.filter((item) => item.from === userId);
   const received = friendRequests.filter((item) => item.to === userId);
@@ -37,7 +36,7 @@ export const FriendPanel: React.FC = React.memo(() => {
           </summary>
           <div className="mt-3 space-y-2 text-sm leading-7 text-gray-500 dark:text-gray-400">
             <div>联系人是私信与长期协作的起点，建议先整理联系人关系，再进入最近聊天持续沟通。</div>
-            <div>建议按"动态、群组、私信"顺序体验主链路，便于更快熟悉内容、讨论和一对一沟通场景。</div>
+            <div>建议按“动态、群组、私信”顺序体验主链路，便于更快熟悉内容、讨论和一对一沟通场景。</div>
           </div>
           <div className="mt-4 flex flex-wrap gap-3 text-xs">
             <Link to="/main/feed" className="rounded-full bg-tc-bg-elevated px-3 py-1.5 no-underline text-tc-text-secondary">
@@ -46,12 +45,12 @@ export const FriendPanel: React.FC = React.memo(() => {
             <Link to="/main/group" className="rounded-full bg-tc-bg-elevated px-3 py-1.5 no-underline text-tc-text-secondary">
               再进群组
             </Link>
-            <button onClick={() => navigate('/entry/trust')} className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
+            <a href="/entry/trust" target="_blank" rel="noreferrer" className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
               查看安全与合规
-            </button>
-            <button onClick={() => navigate('/downloads')} className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
+            </a>
+            <a href="/downloads" target="_blank" rel="noreferrer" className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
               查看客户端下载说明
-            </button>
+            </a>
           </div>
         </details>
       </div>

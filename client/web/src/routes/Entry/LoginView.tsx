@@ -6,10 +6,8 @@ import {
   useAsyncFn,
   useGlobalConfigStore,
   BRAND_NAME_FULL,
-  BRAND_SUBTITLE,
-  BRAND_COMPANY,
 } from 'tailchat-shared';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { string } from 'yup';
 import { useLocation, useNavigate } from 'react-router';
 import { setUserJWT } from '../../utils/jwt-helper';
@@ -21,24 +19,18 @@ import { SecondaryBtn } from './components/SecondaryBtn';
 import { PrimaryBtn } from './components/PrimaryBtn';
 import { pluginLoginAction } from '@/plugin/common';
 import { BrandLogo } from '@/components/BrandLogo';
-import { EventBanner } from './components/EventBanner';
 import { TrustLinks } from './components/TrustLinks';
-
-const QUOTES = [
-  '研究先於交易，紀律先於情緒。',
-  '看得懂，才值得重倉；看不懂，就先等待。',
-  '長期主義不是口號，而是對風險與價值的反覆驗證。',
-  '真正的投資交流，不是跟風，而是建立自己的判斷力。',
-  '在市場喧囂時保持克制，往往比做出動作更難也更重要。',
-];
+import PeekingCharacters from './components/PeekingCharacters';
 
 /**
  * 登录视图
  */
 export const LoginView: React.FC = React.memo(() => {
-  const dailyQuote = useMemo(() => QUOTES[Math.floor(Math.random() * QUOTES.length)], []);
   const [account, setAccount] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const navigate = useNavigate();
   const navRedirect = useSearchParam('redirect');
   const { pathname } = useLocation();
@@ -72,7 +64,6 @@ export const LoginView: React.FC = React.memo(() => {
     await setUserJWT(data.token);
 
     if (isValidStr(navRedirect) && navRedirect !== pathname) {
-      // 增加非当前状态判定避免循环
       navigate(decodeURIComponent(navRedirect));
     } else {
       navigate('/main');
@@ -81,25 +72,46 @@ export const LoginView: React.FC = React.memo(() => {
 
   const navToView = useNavToView();
 
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    if (e.target.value.length > 0) {
+      setIsTyping(true);
+    }
+  };
+
+  const handlePasswordBlur = () => {
+    setIsPasswordFocused(false);
+    setIsTyping(false);
+  };
+
+  const handlePasswordFocus = () => {
+    setIsPasswordFocused(true);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="w-full relative">
+      {/* Logo */}
       <div className="mb-6 flex justify-center">
         <BrandLogo alt="財訊" className="max-h-24 max-w-[80%]" />
       </div>
 
+      {/* 标题 */}
       <div className="text-center mb-8">
         <div className="font-bold text-[28px] mobile:text-xl tracking-tight text-tc-text-primary">
           {BRAND_NAME_FULL}
         </div>
-        <div className="mt-2 text-sm text-tc-text-secondary">
-          {BRAND_SUBTITLE}
-        </div>
-        <div className="mt-3 text-sm text-tc-text-secondary italic">
-          "{dailyQuote}"
-        </div>
       </div>
 
-      <EventBanner />
+      {/* 偷看密码的小人 */}
+      <PeekingCharacters
+        isPasswordFocused={isPasswordFocused}
+        isPasswordVisible={showPassword}
+        isTyping={isTyping}
+      />
 
       <div>
         <div className="mb-4">
@@ -114,17 +126,31 @@ export const LoginView: React.FC = React.memo(() => {
             onChange={(e) => setAccount(e.target.value)}
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <div className="mb-2 text-sm font-medium text-tc-text-secondary">
             {t('密码')}
           </div>
           <EntryInput
             name="login-password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             placeholder="******"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
+            onFocus={handlePasswordFocus}
+            onBlur={handlePasswordBlur}
           />
+          {/* 显示/隐藏密码按钮 */}
+          <button
+            type="button"
+            className="absolute right-3 top-[38px] text-tc-text-tertiary hover:text-tc-text-secondary transition-colors"
+            onClick={togglePasswordVisibility}
+            style={{ top: 'calc(50% + 2px)' }}
+          >
+            <Icon
+              icon={showPassword ? 'mdi:eye-off' : 'mdi:eye'}
+              className="w-5 h-5"
+            />
+          </button>
         </div>
 
         {loading === false && error && (
@@ -154,10 +180,6 @@ export const LoginView: React.FC = React.memo(() => {
         })}
       </div>
 
-      <div className="mt-6 text-xs text-tc-text-tertiary leading-6">
-        <div>{BRAND_COMPANY}</div>
-        <div>TLS 1.3 傳輸保護 · 日本數據節點部署</div>
-      </div>
       <TrustLinks />
     </div>
   );

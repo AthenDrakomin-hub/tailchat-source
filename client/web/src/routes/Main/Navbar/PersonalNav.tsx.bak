@@ -34,7 +34,7 @@ export const PersonalNav: React.FC = React.memo(() => {
         showPill={true}
         badge={badge}
       >
-        <Icon className="text-3xl text-tc-text-secondary" icon="mdi:message-text" />
+        <Icon className="text-3xl text-white" icon="mdi:message-text" />
       </NavbarNavItem>
     </div>
   );

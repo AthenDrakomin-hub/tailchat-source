@@ -16,7 +16,7 @@ export const DownloadNav: React.FC = React.memo(() => {
         onClick={handleOpenDownloads}
         data-testid="navbar-downloads"
       >
-        <Icon className="text-3xl text-tc-text-secondary" icon="mdi:download-circle-outline" />
+        <Icon className="text-3xl text-white" icon="mdi:download-circle-outline" />
       </NavbarNavItem>
     </div>
   );

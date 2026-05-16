@@ -22,7 +22,7 @@ export const InboxNav: React.FC = React.memo(() => {
       }}
       data-testid="inbox"
     >
-      <Icon className="text-3xl text-tc-text-secondary" icon="mdi:bell-ring" />
+      <Icon className="text-3xl text-white" icon="mdi:bell-ring" />
     </NavbarNavItem>
   );
 });

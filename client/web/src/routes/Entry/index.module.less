@@ -1,3 +1,47 @@
+// 登录页布局样式
 .entryLeft {
-  box-shadow: 2px 0px 10px 0px rgba(0, 0, 0, 0.8);
+  box-shadow: 2px 0px 20px 0px rgba(0, 0, 0, 0.5);
+  position: relative;
+  
+  // Logo在深色背景下可见
+  :global(.brand-logo) {
+    filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.3));
+  }
+}
+
+// 确保所有文本在深色背景上清晰可见
+.entryLeft :global(.text-tc-text-primary) {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.entryLeft :global(.text-tc-text-secondary) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.entryLeft :global(.text-tc-text-tertiary) {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+// 输入框深色样式
+.entryLeft :global(input),
+.entryLeft :global(.entry-input) {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  
+  &:focus {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(212, 175, 55, 0.5) !important;
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15) !important;
+  }
+  
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.35) !important;
+  }
+}
+
+// 按钮样式优化
+.entryLeft :global(.primary-btn),
+.entryLeft :global(.secondary-btn) {
+  font-weight: 500;
 }

@@ -34,8 +34,8 @@ import { TrustLinks } from './components/TrustLinks';
 const QUOTES = [
   '便宜不是目的，理解才是底氣。',
   '市場會放大情緒，也會獎勵紀律。',
-  '深度研究與長期跟蹤，才配得上重倉決策。',
-  '先建立風險邊界，再談收益彈性。',
+  '深度研究與长期跟蹤，才配得上重倉決策。',
+  '先建立风险边界，再談收益彈性。',
   '真正的交流，是互相校正，而不是互相裹挾。',
 ];
 
@@ -55,7 +55,7 @@ export const RegisterView: React.FC = React.memo(() => {
 
   const [{ loading, error }, handleRegister] = useAsyncFn(async () => {
     if (!agreeRisk) {
-      showErrorToasts(`請先閱讀並同意《${TERMS_TITLE}》與《${PRIVACY_TITLE}》`);
+      showErrorToasts(`请先阅读并同意《${TERMS_TITLE}》與《${PRIVACY_TITLE}》`);
       return;
     }
 
@@ -95,7 +95,7 @@ export const RegisterView: React.FC = React.memo(() => {
 
   const navToView = useNavToView();
   useEffect(() => {
-    document.title = '註冊賬號 - 財訊';
+    document.title = '注册账号 - 財訊';
   }, []);
   const openRiskDeclaration = () => {
     openModal(
@@ -209,7 +209,7 @@ export const RegisterView: React.FC = React.memo(() => {
               </button>
             </span>
             <span className="block mt-1 text-[rgba(255,255,255,0.60)] font-medium">
-              第十屆交流會名額註冊僅限特邀內部成員
+              第十屆交流會名額注册僅限特邀内部成員
             </span>
           </div>
         </label>
@@ -232,7 +232,7 @@ export const RegisterView: React.FC = React.memo(() => {
 
       <div className="mt-6 text-xs text-[rgba(255,255,255,0.55)] leading-6">
         <div>{BRAND_COMPANY}</div>
-        <div>TLS 1.3 傳輸保護 · 日本數據節點部署</div>
+        <div>TLS 1.3 传输保护 · 日本数据节点部署</div>
       </div>
       <TrustLinks />
     </div>

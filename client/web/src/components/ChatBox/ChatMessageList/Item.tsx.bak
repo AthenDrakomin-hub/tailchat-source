@@ -112,8 +112,8 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
           {
             'bg-black bg-opacity-5 dark:bg-white/5': isActionBtnActive,
             'hover:bg-black hover:bg-opacity-[0.02] dark:hover:bg-white/5': !isActionBtnActive,
-            'justify-start': layout.rowAlign === 'right',
-            'justify-end': layout.rowAlign === 'left',
+            'justify-end': layout.rowAlign === 'right',
+            'justify-start': layout.rowAlign === 'left',
             'pt-0.5': isMergedPrev,
           }
         )}
@@ -124,8 +124,8 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
           className={clsx(
             'w-14 mobile:w-12 flex-shrink-0 flex items-start justify-center pt-0.5',
             {
-              'order-1': layout.rowAlign === 'right',
-              'order-2': layout.rowAlign === 'left',
+              'order-2': layout.rowAlign === 'right',
+              'order-1': layout.rowAlign === 'left',
             }
           )}
         >
@@ -175,8 +175,8 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
         >
           <div
             className={clsx('flex min-w-0 flex-col flex-1 overflow-hidden group', {
-              'items-end order-2': layout.rowAlign === 'right',
-              'items-start order-1': layout.rowAlign === 'left',
+              'items-end order-1': layout.rowAlign === 'right',
+              'items-start order-2': layout.rowAlign === 'left',
             })}
             onContextMenu={stopPropagation}
           >

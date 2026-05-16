@@ -16,7 +16,7 @@ export const GroupsNav: React.FC = React.memo(() => {
       badge={hasGroups}
       data-testid="groups"
     >
-      <Icon className="text-3xl text-tc-text-secondary" icon="mdi:account-group" />
+      <Icon className="text-3xl text-white" icon="mdi:account-group" />
     </NavbarNavItem>
   );
 });

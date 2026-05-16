@@ -39,10 +39,10 @@ export const DocumentLayout: React.FC<Props> = React.memo((props) => {
           返回登錄
         </Link>
         <Link to="/entry/about" className="underline underline-offset-4">
-          關於我們
+          关于我們
         </Link>
         <Link to="/entry/trust" className="underline underline-offset-4">
-          安全與合規
+          安全與合规
         </Link>
       </div>
     </div>

@@ -84,32 +84,32 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
       children: [
         {
           type: 'item',
-          title: t('用戶協議'),
+          title: t('用户协议'),
           content: (
             <SettingsLinkPanel
-              title="用戶協議"
-              description="查看財訊賬號使用規則、禁止行為、知識產權與免責邊界。"
+              title="用户协议"
+              description="查看财讯账号使用规则、禁止行为、知识产权与免责边界。"
               href="/entry/terms"
             />
           ),
         },
         {
           type: 'item',
-          title: t('隱私政策'),
+          title: t('隐私政策'),
           content: (
             <SettingsLinkPanel
-              title="隱私政策"
-              description="查看平台收集的信息類型、存儲地點、日本節點部署與加密保護方式。"
+              title="隐私政策"
+              description="查看平台收集的信息类型、存储地点、日本节点部署与加密保护方式。"
               href="/entry/privacy"
             />
           ),
         },
         {
           type: 'item',
-          title: t('社區公約'),
+          title: t('社区公约'),
           content: (
             <SettingsLinkPanel
-              title="社區公約"
+              title="社区公约"
               description="查看社区交流规范，了解平台禁止行为与秩序要求。"
               href="/entry/community"
             />
@@ -117,22 +117,22 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
         },
         {
           type: 'item',
-          title: t('安全與合規'),
+          title: t('安全與合规'),
           content: (
             <SettingsLinkPanel
-              title="財訊 · 安全與合規"
-              description="查看 TLS 1.3、HSTS、日本東京數據節點、每日備份與信任標識。"
+              title="財訊 · 安全與合规"
+              description="查看 TLS 1.3、HSTS、日本东京数据节点、每日备份與信任标识。"
               href="/entry/trust"
             />
           ),
         },
         {
           type: 'item',
-          title: t('下載說明'),
+          title: t('下载说明'),
           content: (
             <SettingsLinkPanel
-              title="下載說明"
-              description="查看桌面端、移動端與 Web 的使用入口與下載方式。"
+              title="下载说明"
+              description="查看桌面端、移動端與 Web 的使用入口與下载方式。"
               href="/downloads"
             />
           ),

@@ -46,7 +46,7 @@ export const PersonalSidebar: React.FC = React.memo(() => {
   );
   return (
     <CommonSidebarWrapper data-tc-role="sidebar-personal">
-      <SectionHeader>{t('微信式会话')}</SectionHeader>
+      <SectionHeader>{t('专业会话')}</SectionHeader>
 
       <div className="p-0 overflow-y-auto overflow-x-hidden">
         <SidebarSection

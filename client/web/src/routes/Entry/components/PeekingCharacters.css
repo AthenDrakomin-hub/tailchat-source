@@ -1,0 +1,225 @@
+/* 偷看密码小人组件样式 */
+.peeking-characters-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 140px;
+  margin-bottom: 24px;
+  gap: 12px;
+  padding: 0 20px;
+}
+
+.peeking-character {
+  width: 48px;
+  height: 90px;
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.peeking-character-0 { transform: translateY(-8px); }
+.peeking-character-1 { transform: translateY(4px); }
+.peeking-character-2 { transform: translateY(-3px); }
+.peeking-character-3 { transform: translateY(6px); }
+
+.peeking-body {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 头部 */
+.peeking-head {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(145deg, #ffd9b3, #f5c99a);
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 5;
+}
+
+.peeking-eyes {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.peeking-eye {
+  width: 6px;
+  height: 6px;
+  background-color: #2d2d2d;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.peeking-eye::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+}
+
+.peeking-mouth {
+  width: 8px;
+  height: 4px;
+  background-color: #ff9999;
+  border-radius: 0 0 4px 4px;
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 0.3s ease;
+}
+
+/* 身体 */
+.peeking-torso {
+  width: 28px;
+  height: 26px;
+  background: linear-gradient(145deg, #d4af37, #b8942e);
+  border-radius: 8px 8px 4px 4px;
+  margin-top: -2px;
+  position: relative;
+  z-index: 4;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* 双手 */
+.peeking-hands {
+  position: absolute;
+  top: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 10;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.peeking-hand {
+  width: 14px;
+  height: 18px;
+  background: linear-gradient(145deg, #ffd9b3, #f5c99a);
+  border-radius: 50% 50% 40% 40%;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.peeking-hand-left {
+  transform: translateX(4px) translateY(35px) rotate(0deg);
+}
+
+.peeking-hand-right {
+  transform: translateX(-4px) translateY(35px) rotate(0deg);
+}
+
+/* 双腿 */
+.peeking-legs {
+  display: flex;
+  gap: 6px;
+  margin-top: -2px;
+  z-index: 3;
+}
+
+.peeking-leg {
+  width: 10px;
+  height: 22px;
+  background: linear-gradient(145deg, #4a4a5a, #3a3a4a);
+  border-radius: 4px 4px 6px 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== 状态样式 ===== */
+
+/* 空闲状态 - 双手自然下垂 */
+.peeking-state-idle .peeking-hand-left {
+  transform: translateX(4px) translateY(35px) rotate(0deg);
+}
+
+.peeking-state-idle .peeking-hand-right {
+  transform: translateX(-4px) translateY(35px) rotate(0deg);
+}
+
+/* 捂眼状态 - 双手抬起遮住眼睛 */
+.peeking-state-covering .peeking-hand-left {
+  transform: translateX(4px) translateY(2px) rotate(-25deg);
+}
+
+.peeking-state-covering .peeking-hand-right {
+  transform: translateX(-4px) translateY(2px) rotate(25deg);
+}
+
+.peeking-state-covering .peeking-eye {
+  height: 2px;
+  margin-top: 2px;
+}
+
+.peeking-state-covering .peeking-mouth {
+  width: 6px;
+  height: 2px;
+  border-radius: 2px;
+  background-color: #cc8888;
+}
+
+/* 偷看状态 - 一只手慢慢移开 */
+.peeking-state-peeking .peeking-hand-left {
+  transform: translateX(4px) translateY(2px) rotate(-25deg);
+}
+
+.peeking-state-peeking .peeking-hand-right {
+  transform: translateX(-4px) translateY(-8px) rotate(45deg);
+}
+
+.peeking-state-peeking .peeking-eye {
+  height: 5px;
+  width: 7px;
+}
+
+/* 观看状态 - 双手完全放下，眼睛睁大 */
+.peeking-state-watching .peeking-hand-left {
+  transform: translateX(4px) translateY(35px) rotate(0deg);
+}
+
+.peeking-state-watching .peeking-hand-right {
+  transform: translateX(-4px) translateY(35px) rotate(0deg);
+}
+
+.peeking-state-watching .peeking-eye {
+  width: 9px;
+  height: 9px;
+}
+
+.peeking-state-watching .peeking-eye::after {
+  width: 3px;
+  height: 3px;
+}
+
+.peeking-state-watching .peeking-mouth {
+  width: 12px;
+  height: 7px;
+  border-radius: 0 0 6px 6px;
+  background-color: #ff7777;
+}
+
+/* 悬浮动画 */
+.peeking-character:hover {
+  transform: translateY(-12px) scale(1.05);
+}
+
+.peeking-character-0:hover { transform: translateY(-20px) scale(1.05); }
+.peeking-character-1:hover { transform: translateY(-4px) scale(1.05); }
+.peeking-character-2:hover { transform: translateY(-15px) scale(1.05); }
+.peeking-character-3:hover { transform: translateY(-6px) scale(1.05); }

@@ -1,17 +1,11 @@
 export const BRAND_NAME_FULL = '財訊';
 export const BRAND_NAME_SHORT = '財訊';
 export const BRAND_NAME_ADMIN = '財訊後台';
-export const BRAND_SUBTITLE = '高质量交流与即时沟通平台';
-export const BRAND_COMPANY = '日斗投資諮詢有限公司';
-export const BRAND_EVENT_NAME = '品牌资讯';
+export const BRAND_SUBTITLE = '';
+export const BRAND_COMPANY = '';
+export const BRAND_EVENT_NAME = '';
 export const BRAND_EVENT_FULL = '財訊即时沟通平台';
-export const BRAND_TAGLINE = '即時通訊 · 社區交流 · 語音互動';
-export const PRIVACY_TITLE = '隱私政策';
-export const TERMS_TITLE = '用戶協議';
-export const COMMUNITY_TITLE = '社區公約';
-export const TRUST_TITLE = '財訊 · 安全與合規';
-export const ENTRY_META_DESCRIPTION =
-  '財訊｜高质量交流与即时沟通平台，支持即時交流、群组协作与语音互动。';
+export const BRAND_TAGLINE = '';
 
 export type Quote = {
   text: string;
@@ -22,18 +16,11 @@ export type Quote = {
 };
 
 /**
- * 语录库（来自用户提供内容的“拆句精选”）
+ * 语录库（来自用户提供内容的"拆句精选"）
  * 注意：语录仅用于交流氛围与价值观表达，不构成任何投资建议。
  */
 export const QUOTES: Record<'entry' | 'sidebar' | 'chatEmpty', Quote[]> = {
-  entry: [
-    { text: '便宜是硬道理，成长是真功夫' },
-    { text: '价值投资既是一场财富的盛宴，也是一场艰苦的修行' },
-    { text: '价值投资的最大敌人，是内心的贪婪与恐惧' },
-    { text: '不追涨杀跌，跨越周期' },
-    { text: '大钱一定是有方向的' },
-    { text: '真正赚大钱，往往靠一只股票赚很多倍' },
-  ],
+  entry: [],
   sidebar: [
     { text: '低估值、高现金流、高分红' },
     { text: '长期跟踪，多方求证' },

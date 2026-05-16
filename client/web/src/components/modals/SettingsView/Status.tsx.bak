@@ -4,7 +4,6 @@ import React, { useMemo } from 'react';
 import { t, useAvailableServices } from 'tailchat-shared';
 import { Button } from 'antd';
 import { Loading } from '@/components/Loading';
-import { useNavigate } from 'react-router';
 
 /**
  * 默认检查服务列表
@@ -74,7 +73,6 @@ export const SettingsStatus: React.FC = React.memo(() => {
   ); // 需要检查服务状态的列表
 
   const { loading, availableServices, refetch } = useAvailableServices();
-  const navigate = useNavigate();
   const availableCount = availableServices?.filter((service) =>
     inspectServices.some((item) => item.name === service)
   ).length;
@@ -117,13 +115,13 @@ export const SettingsStatus: React.FC = React.memo(() => {
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-3 text-xs">
-          <a href="/entry/about"  className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
+          <a href="/entry/about" target="_blank" rel="noreferrer" className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
             查看关于我们
           </a>
-          <a href="/entry/trust"  className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
+          <a href="/entry/trust" target="_blank" rel="noreferrer" className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
             查看安全与合规
           </a>
-          <a href="/downloads"  className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
+          <a href="/downloads" target="_blank" rel="noreferrer" className="rounded-full bg-tc-bg-elevated px-3 py-1.5 text-tc-text-secondary">
             查看客户端下载说明
           </a>
         </div>
