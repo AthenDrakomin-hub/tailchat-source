@@ -32,7 +32,8 @@ export const Navbar: React.FC = React.memo(() => {
           <GroupsNav />
 
           <FeedNav />
-<QuickSwitcherNav />
+
+          <QuickSwitcherNav />
 
           {pluginCustomPanel
             .filter((p) => ['navbar-personal', 'navbar-group'].includes(p.position))
