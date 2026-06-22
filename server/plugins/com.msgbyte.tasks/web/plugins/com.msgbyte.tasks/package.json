@@ -3,5 +3,9 @@
   "main": "src/index.tsx",
   "version": "0.0.0",
   "private": true,
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "@types/styled-components": "^5.1.26",
+    "react": "18.2.0"
+  }
 }

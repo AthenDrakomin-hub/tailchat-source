@@ -10,7 +10,7 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "tailchat-shared": "workspace:*",
-    "tailchat-design": "workspace:*"
+    "@types/styled-components": "^5.1.26",
+    "react": "18.2.0"
   }
 }
